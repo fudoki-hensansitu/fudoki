@@ -1204,7 +1204,9 @@ def declared_unread(built, logicals_: list, columns: dict | None, observation: d
                 continue
             for glyph in band.words:
                 # A lone sign (`△`) is printed over its figure, and the builder reads it so (`tree`): not unread.
-                if (len(glyph.text.strip()) == 1 and not any(c.isdigit() for c in glyph.text) and glyph.text != '円'
+                # `計` is the label of a total line printed in the amount column (大田区の予算説明書 歳入: 補正経過 …
+                # 計 (752,000) under 前年度), not a figure.
+                if (len(glyph.text.strip()) == 1 and not any(c.isdigit() for c in glyph.text) and glyph.text not in ('円', '計')
                         and glyph.text.strip() not in SIGNS
                         and glyph.text not in DASHES
                         and not is_amount(glyph.text)

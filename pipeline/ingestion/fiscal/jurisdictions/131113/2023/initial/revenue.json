@@ -1,0 +1,579 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131113",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の名前と額・積算で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true
+          }
+        },
+        "rule_pieces": [
+          {
+            "id": "p44-rule-rows",
+            "page": 44,
+            "box": [
+              466.5,
+              487.5,
+              536.0,
+              597.5
+            ],
+            "reason": "原典の画像で、頁44の比較の欄のこの墨は、読んだ数字（(△332,685)・0・43,135 が3つ）と、行の間の横の罫（y 511・541・561・581）だけで、ほかに数字は印字されていない。墨の検出が横の罫で数字の行を1つの塊にした。"
+          },
+          {
+            "id": "p56-rule-458",
+            "page": 56,
+            "box": [
+              440.5,
+              538.0,
+              535.0,
+              573.0
+            ],
+            "reason": "原典の画像で、頁56の比較の欄の空白の墨は、前年度と比較の間の縦の罫（x 446.5〜447.5、1画素の幅）だけで、数字は印字されていない。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-initial-ocr-1",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "83a5f5fdef690e5de5ef2084b90ce539b7e6f598d39da2dca2260d5e6bfb0dc9",
+          "bytes": 2186617
+        },
+        {
+          "id": "general-initial-ocr-2",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "b5428e832fece5a8a0251ad24740f62c512df938da4dc3d2b3fa9cec848eb9fe",
+          "bytes": 2126495
+        },
+        {
+          "id": "general-initial-ocr-3",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "b14b63fe1be3f25642d6ab142394cfc7597d413d204925950fd94ecb5ae6a698",
+          "bytes": 3176543
+        },
+        {
+          "id": "general-initial-ocr-4",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "b77aad78d54f3c762a540961f2274ef2f2f9ad80991520ea4a221958208b1971",
+          "bytes": 2510184
+        },
+        {
+          "id": "general-initial-ocr-5",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "5ed43005636eab5beb03aed9fc4d475dae4dfb1ca85171ef3e3d4a1b575c9d39",
+          "bytes": 2659162
+        },
+        {
+          "id": "general-initial-ocr-6",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              58,
+              59
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "7682142e7bbe08bd463063ae297d4eb3fffcff6c60810ee13847f564be8eb36c",
+          "bytes": 304587
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "c1809256c4a7f6cefa882a8a599d714f3d0498632a66dbd80e4b0fd562315109"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の名前と額・積算で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "national-health-initial-ocr-1",
+          "origin_sha256": "c1809256c4a7f6cefa882a8a599d714f3d0498632a66dbd80e4b0fd562315109",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "ff646ce6d7ca92002515f2d812b31370e4f7b553031cb28e88e7b339c416af26",
+          "bytes": 1586838
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ]
+    },
+    {
+      "id": "late-elderly-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "a355d723407b65a8df0e75f00813f016ae4673ad71d36dea07dfc68d2029cdf9"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "late-elderly-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の名前と額・積算で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "late-elderly-initial-ocr-1",
+          "origin_sha256": "a355d723407b65a8df0e75f00813f016ae4673ad71d36dea07dfc68d2029cdf9",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "332e3b70c2be76f023390cb9773c26504be69ebe666e3cdcacc374eb0159e242",
+          "bytes": 1059088
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "late-elderly-initial"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "90ee6e11e5b0e5c5363fd99965fc7832b322bb1c5f4b5d145738254d925cdb5c"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の名前と額・積算で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "ltc-p12-glued-moku",
+            "page": 12,
+            "observation_id": "p12:full-page:a0:result0:r46",
+            "observed": "4雑入",
+            "reason": "物理12頁の目「4 雑入」。OCR が目の欄の番号「4」と名前の欄の「雑入」を、間の罫をまたぐ1語に読み、番号の無い科目「入」になった。この読みは使わず、番号と名前を宣言する。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "ltc-p12-moku-4",
+            "page": 12,
+            "box": [
+              93.0,
+              333.0,
+              103.5,
+              347.5
+            ],
+            "code": "4",
+            "name": "雑入",
+            "name_box": [
+              107.5,
+              332.4,
+              152.8,
+              348.2
+            ],
+            "reason": "物理12頁の目「4 雑入」。OCR は番号と名前を罫をまたぐ1語「4雑入」に読んだ（その読みは dropped_readings で外す）。原典の画像で番号と名前を確認し、その位置で読む。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-initial-ocr-1",
+          "origin_sha256": "90ee6e11e5b0e5c5363fd99965fc7832b322bb1c5f4b5d145738254d925cdb5c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "0a27d6cb10e26c8941ec9bc71d5f3d21fd54f6f680c54abef82fa66987f086a1",
+          "bytes": 1751010
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ]
+    }
+  ]
+}
