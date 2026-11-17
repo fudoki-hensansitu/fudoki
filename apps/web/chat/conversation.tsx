@@ -224,7 +224,7 @@ export function Conversation({
           {suggestions.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {suggestions.map((s) => (
-                <Button key={s.label} variant="outline" size="sm" className="h-auto whitespace-normal py-1.5 text-left" onClick={() => send(s.prompt)}>
+                <Button key={s.label} variant="outline" size="sm" className="h-auto whitespace-normal py-2 text-left" onClick={() => send(s.prompt)}>
                   {s.label}
                 </Button>
               ))}
@@ -264,9 +264,9 @@ export function Conversation({
 function ContextNote({ text }: { text: string }) {
   const { quote, screen } = splitContext(text)
   return (
-    <div className="mb-1.5 ml-auto flex max-w-[85%] flex-col items-end gap-1 text-xs text-muted-foreground">
+    <div className="mb-2 ml-auto flex max-w-[85%] flex-col items-end gap-1 text-xs text-muted-foreground">
       {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
-      {quote ? <blockquote className="line-clamp-3 border-l-2 border-primary/60 pl-2.5 text-left">{quote}</blockquote> : null}
+      {quote ? <blockquote className="line-clamp-3 border-l-2 border-primary/60 pl-3 text-left">{quote}</blockquote> : null}
       {screen ? (
         <details className="group/ctx text-right">
           <summary className="cursor-pointer list-none select-none hover:text-foreground [&::-webkit-details-marker]:hidden">見ていた画面を添えています</summary>

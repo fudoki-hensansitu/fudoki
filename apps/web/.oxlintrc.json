@@ -1,12 +1,15 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  // DESIGN.md の token 以外の色を見つける rule（lint/design.js）だけを有効にする
+  // DESIGN.md から外れた色・余白・文字の大きさ・太さを見つける rule（lint/design.js）だけを有効にする
   "jsPlugins": ["./lint/design.js"],
   "categories": { "correctness": "off" },
   "rules": {
     "design/color-literal": "error",
     "design/color-palette": "error",
-    "design/color-opacity": "error"
+    "design/color-opacity": "error",
+    "design/space-step": "error",
+    "design/text-size": "error",
+    "design/font-weight": "error"
   },
   // 色の値を持ってよいもの: shadcn の部品、token の値（tokens.ts）、CSS 変数が届かない出力（OGP・PWA・ロゴ）。
   "ignorePatterns": ["chat/components/ui/**", "tokens.ts", "server/og.ts", "pwa.ts", "logo.ts"]

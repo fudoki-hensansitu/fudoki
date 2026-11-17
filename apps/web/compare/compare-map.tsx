@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button'
 import { QUESTIONS, questionOf, type Question } from './questions'
 import { reiwa } from '../jurisdiction/types'
 import type { CompareMap, MapTown } from '../server/compare-map'
-import { Title } from '@/components/ui/title'
+import { Title, titleVariants } from '@/components/ui/title'
 import { Card, CardTitle } from '@/components/ui/card'
 
 const STEPS = 5
@@ -58,7 +58,7 @@ const popText = (n: number | null) => (!n ? '' : n >= 1e4 ? `人口 ${(n / 1e4).
 /** タイル地図。large は名前を書いて押せる地図、そうでなければ一覧のカードの小さな地図（押せない） */
 function TileMap({ map, q, scale, selected, onPick, large }: { map: CompareMap; q: Question; scale: Scale | null; selected?: string | null; onPick?: (code: string) => void; large?: boolean }) {
   return (
-    <div className={cn('grid', large ? 'gap-0.5 sm:gap-1' : 'gap-0.5')} style={{ gridTemplateColumns: `repeat(${map.cols}, minmax(0, 1fr))` }}>
+    <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${map.cols}, minmax(0, 1fr))` }}>
       {map.towns.map((t) => {
         const v = t.values[q.slug] ?? null
         const step = scale ? scale.step(v) : -1
@@ -80,7 +80,7 @@ function TileMap({ map, q, scale, selected, onPick, large }: { map: CompareMap; 
           <button key={t.code} type="button" onClick={() => onPick?.(t.code)} aria-label={`${t.name} ${plain(v, q)}`} aria-pressed={selected === t.code} className={cn(tile, 'cursor-pointer outline-offset-1 hover:outline-1 hover:outline-muted-foreground active:scale-95')} style={style}>
             {/* 狭い幅ではタイルが小さく名前が読めないので塗りだけにし、名前は札で出す */}
             {/* 長い名前は2行に折り返し、それでも入らなければ … で切る */}
-            <span className="hidden max-w-full px-0.5 text-center text-[11px] leading-tight font-medium sm:line-clamp-2">{shortName(t.name)}</span>
+            <span className="hidden max-w-full px-1 text-center text-xs leading-tight font-medium sm:line-clamp-2">{shortName(t.name)}</span>
           </button>
         )
       })}
@@ -120,14 +120,14 @@ function Legend({ map, q, scale, selected, onPick }: { map: CompareMap; q: Quest
   }
   const end = (t: MapTown | undefined, label: string) =>
     t ? (
-      <button type="button" onClick={() => onPick?.(t.code)} className="flex items-baseline gap-1.5 rounded-sm text-left transition-colors hover:text-foreground">
+      <button type="button" onClick={() => onPick?.(t.code)} className="flex items-baseline gap-2 rounded-sm text-left transition-colors hover:text-foreground">
         <span>{label}</span>
         <span className="font-medium text-foreground">{t.name}</span>
         <Num v={t.values[q.slug] ?? null} q={q} />
       </button>
     ) : null
   return (
-    <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-muted-foreground">
+    <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
       {scale ? (
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           {end(bottom, '最小')}
@@ -149,7 +149,7 @@ function Legend({ map, q, scale, selected, onPick }: { map: CompareMap; q: Quest
             onPointerCancel={() => setDrag(null)}
             className="cursor-ew-resize touch-none rounded-sm py-2 outline-none select-none focus-visible:ring-2 focus-visible:ring-ring"
           >
-            <span ref={band} className="relative flex gap-0.5">
+            <span ref={band} className="relative flex gap-1">
               {at != null ? (
                 <span
                   aria-hidden="true"
@@ -173,10 +173,14 @@ function Legend({ map, q, scale, selected, onPick }: { map: CompareMap; q: Quest
 
 const failedText = <p className="text-sm text-muted-foreground">今は読み込めません。少し時間をおいてやり直してください。</p>
 
-/** 何年度の決算の値かを、数字を載せている面に書く（頁の値はすべて同じ年度） */
-function YearNote({ year }: { year: number | null }) {
+/** 図の下に置く出典。何年度の決算の値かもここに書く（頁の値はすべて同じ年度）。q が無い一覧では両方の出典を並べる */
+function SourceNote({ year, q }: { year: number | null; q?: Question }) {
   if (year == null) return null
-  return <p className="mt-1 text-[13px] text-muted-foreground">値は{reiwa(year)}の決算です。</p>
+  const y = reiwa(year)
+  const finance = `総務省「市町村別決算状況調」${y}（普通会計）`
+  const fiscal = `各まちの${y}の決算（一般会計）`
+  const text = q == null ? `${finance}、${fiscal}` : q.source === 'finance' ? finance : fiscal
+  return <p className="mt-4 text-xs text-muted-foreground">出典：{text}</p>
 }
 
 /** いちばん大きいまちと小さいまち */
@@ -190,8 +194,7 @@ export function CompareList({ map, failed }: { map: CompareMap; failed: boolean 
     <main className="mx-auto w-full max-w-6xl px-4 pt-10 pb-28 sm:px-8 sm:pt-14">
       <header className="mb-5">
         <Title size="h1">まち比べ</Title>
-        <p className="mt-1 text-[15px] text-muted-foreground">まちのお金を1人あたりの金額に直すと、いろいろな見方で比べられます。いまは{map.prefecture || '東京都'}のまちから、少しずつ広げています。</p>
-        <YearNote year={map.year} />
+        <p className="mt-1 text-sm text-muted-foreground">まちのお金を1人あたりの金額に直すと、いろいろな見方で比べられます。いまは{map.prefecture || '東京都'}のまちから、少しずつ広げています。</p>
       </header>
       {failed ? failedText : (
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 lg:gap-4">
@@ -212,13 +215,14 @@ export function CompareList({ map, failed }: { map: CompareMap; failed: boolean 
                   {top ? <span>最多 <b className="font-medium text-foreground">{top.name}</b> <Num v={top.values[q.slug]!} q={q} /></span> : null}
                   {bottom ? <span>最小 <b className="font-medium text-foreground">{bottom.name}</b> <Num v={bottom.values[q.slug]!} q={q} /></span> : null}
                 </p>
-                <p className="mt-auto text-[11px] leading-relaxed text-muted-foreground">※{q.caveat}</p>
+                <p className="mt-auto text-xs leading-relaxed text-muted-foreground">※{q.caveat}</p>
                 </Card>
               </Link>
             )
           })}
         </div>
       )}
+      {failed ? null : <SourceNote year={map.year} />}
     </main>
   )
 }
@@ -255,25 +259,25 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
       <header className="mb-4">
         <Title size="h1">{q.title}</Title>
         <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{q.note}</p>
-        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">※{q.caveat}</p>
-        <YearNote year={map.year} />
+        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">※{q.caveat}</p>
       </header>
       {failed ? failedText : (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
           <div>
             <TileMap map={map} q={q} scale={scale} selected={code} onPick={pick} large />
             <Legend map={map} q={q} scale={scale} selected={code} onPick={pick} />
+            <SourceNote year={map.year} q={q} />
           </div>
           {t ? (
             <aside key={t.code} aria-live="polite" className="flex animate-in flex-col rounded-2xl border bg-background p-5 fade-in slide-in-from-bottom-1 duration-200 motion-reduce:animate-none">
-              <p className="flex items-baseline gap-2 text-lg font-semibold">
+              <Title size="h3" as="p" className="flex items-baseline gap-2">
                 {t.name}
                 <small className="text-xs font-normal text-muted-foreground">{popText(t.pop)}</small>
-              </p>
-              <p className="mt-4 text-[13px] text-muted-foreground">{q.short}</p>
-              <Num v={t.values[q.slug] ?? null} q={q} className="text-[32px] leading-tight font-semibold text-primary" />
-              {scale ? <p className="text-[13px] text-muted-foreground">都内の中央値 <Num v={scale.median} q={q} /></p> : null}
-              <Button size="lg" nativeButton={false} render={<Link href={t.path} />} className="mt-6 h-11 w-full text-[15px]">
+              </Title>
+              <p className="mt-4 text-sm text-muted-foreground">{q.short}</p>
+              <Num v={t.values[q.slug] ?? null} q={q} className={cn(titleVariants({ size: 'h1' }), 'leading-tight text-primary')} />
+              {scale ? <p className="text-sm text-muted-foreground">都内の中央値 <Num v={scale.median} q={q} /></p> : null}
+              <Button size="lg" nativeButton={false} render={<Link href={t.path} />} className="mt-6 h-11 w-full text-sm">
                 {t.name}を開く
                 <ArrowRightIcon aria-hidden="true" />
               </Button>
@@ -289,7 +293,7 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
               key={x.slug}
               href={hrefOf(x.slug)}
               aria-current={x.slug === slug ? 'page' : undefined}
-              className="inline-flex h-9 shrink-0 items-center rounded-full border bg-background px-3.5 text-sm font-medium transition-colors hover:bg-card aria-[current=page]:border-primary aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground"
+              className="inline-flex h-9 shrink-0 items-center rounded-full border bg-background px-4 text-sm font-medium transition-colors hover:bg-card aria-[current=page]:border-primary aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground"
             >
               {x.short}
             </Link>

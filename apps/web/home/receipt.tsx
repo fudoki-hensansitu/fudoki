@@ -3,6 +3,8 @@
 import * as React from 'react'
 import { ArrowRightIcon } from '@phosphor-icons/react'
 import { Link } from '../nav/link'
+import { cn } from '@/lib/utils'
+import { titleVariants } from '@/components/ui/title'
 import { reiwa, yearName } from '../jurisdiction/types'
 import type { YearView } from '../jurisdiction/app/data'
 import { OTHER_FRAME } from '../jurisdiction/domains'
@@ -41,7 +43,7 @@ function useCountUp(to: number) {
 const Yen = ({ n, className }: { n: number; className?: string }) => (
   <span className={`whitespace-nowrap tabular-nums ${className ?? ''}`}>
     {n.toLocaleString('ja-JP')}
-    <small className="ml-0.5 text-[0.55em]">円</small>
+    <small className="ml-1 text-[0.55em]">円</small>
   </span>
 )
 
@@ -151,25 +153,27 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
         {/* 表示窓。予算と1人あたりをいちばん大きく出す */}
         <dl className="rm-display mt-5 grid gap-4 px-5 py-5 sm:mt-6 sm:gap-5 sm:px-7 sm:py-6">
           <div>
-            <dt className="text-[15px] opacity-80">{what}</dt>
-            <dd className="mt-1.5 text-[clamp(28px,8vw,60px)] leading-none font-semibold">
+            <dt className="text-sm opacity-80">{what}</dt>
+            {/* oxlint-disable-next-line design/text-size -- ホームのレシートの機械は画面幅に合わせて金額を伸ばす見せ場なので、Title の段の外を許す */}
+            <dd className="mt-2 text-[clamp(28px,8vw,60px)] leading-none font-semibold">
               <Yen n={total} />
             </dd>
           </div>
           {pop ? (
             <div className="rm-divider pt-4 sm:pt-5">
-              <dt className="text-[15px] opacity-80">1人あたりに直すと</dt>
-              <dd className="mt-1.5 text-[clamp(44px,13vw,84px)] leading-none font-semibold">
+              <dt className="text-sm opacity-80">1人あたりに直すと</dt>
+              {/* oxlint-disable-next-line design/text-size -- ホームのレシートの機械は画面幅に合わせて金額を伸ばす見せ場なので、Title の段の外を許す */}
+              <dd className="mt-2 text-[clamp(44px,13vw,84px)] leading-none font-semibold">
                 <Yen n={per} />
               </dd>
-              <p className="mt-2 text-[13px] opacity-80">
+              <p className="mt-2 text-sm opacity-80">
                 {settled ? '決算' : '予算'}の額を、人口 {pop.toLocaleString('ja-JP')}人で割った額です
               </p>
             </div>
           ) : null}
         </dl>
         <div className="mt-4 flex justify-end">
-          <Link href={detailHref} className="rm-key inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-medium">
+          <Link href={detailHref} className="rm-key inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium">
             詳細を見る
             <ArrowRightIcon className="size-4" />
           </Link>
@@ -181,30 +185,30 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
           {/* 年度を替えたら刷り直す */}
           <div key={year} className="rc-print rc-run">
           <div className="rc-paper">
-            <p className="text-center text-[18px] font-semibold tracking-[0.3em]">{name}</p>
-            <p className="mt-1 text-center text-[13px] text-muted-foreground">
+            <p className="text-center text-base font-semibold tracking-[0.3em]">{name}</p>
+            <p className="mt-1 text-center text-sm text-muted-foreground">
               {reiwa(year)} {settled ? '決算' : '当初予算'}・1人あたり
             </p>
             <ul className="rc-rule mt-4 pt-2">
               {v.fields.map((f, i) => {
                 const row = (
                   <>
-                    <span className="flex items-baseline gap-2 text-[15px]">
+                    <span className="flex items-baseline gap-2 text-sm">
                       <FieldIcon id={f.id} className="size-[18px] shrink-0 self-center text-muted-foreground" />
                       <span className="whitespace-nowrap">{f.name}</span>
                       <span className="rc-lead" />
-                      <Yen n={receipt.parts[i]!} className="text-[16px]" />
+                      <Yen n={receipt.parts[i]!} className="text-base" />
                     </span>
-                    {f.examples ? <span className="mt-0.5 block pl-[26px] text-[12px] text-muted-foreground">{f.examples}</span> : null}
+                    {f.examples ? <span className="mt-1 block pl-7 text-xs text-muted-foreground">{f.examples}</span> : null}
                   </>
                 )
                 // その他は事業の絞り込みに無いので押せない
                 return (
                   <li key={f.id}>
                     {f.id === OTHER_FRAME.id ? (
-                      <div className="px-1.5 py-2">{row}</div>
+                      <div className="px-2 py-2">{row}</div>
                     ) : (
-                      <Link href={`${base}/projects?field=${f.id}`} className="block rounded-lg px-1.5 py-2 transition-colors hover:bg-card">
+                      <Link href={`${base}/projects?field=${f.id}`} className="block rounded-lg px-2 py-2 transition-colors hover:bg-card">
                         {row}
                       </Link>
                     )}
@@ -213,10 +217,10 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
               })}
             </ul>
             <p className="rc-rule mt-2 flex items-baseline justify-between pt-3">
-              <span className="text-[15px]">合計</span>
-              <Yen n={receipt.sum} className="text-[28px] font-semibold text-primary" />
+              <span className="text-sm">合計</span>
+              <Yen n={receipt.sum} className={cn(titleVariants({ size: 'h1' }), 'text-primary')} />
             </p>
-            <p className="mt-3 text-center text-[12px] leading-relaxed text-muted-foreground">
+            <p className="mt-3 text-center text-xs leading-relaxed text-muted-foreground">
               {v.total.toLocaleString('ja-JP')}円 ÷ {pop!.toLocaleString('ja-JP')}人
               <br />
               払った税金の額ではありません

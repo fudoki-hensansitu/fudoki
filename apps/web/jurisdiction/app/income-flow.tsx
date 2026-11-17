@@ -6,6 +6,7 @@ import { AmountTip } from '../amount-tip'
 import { useFlowSeen } from '../sankey'
 import { formatShare, type Drill, type RevenueDoc } from '../types'
 import { Amt } from './amount'
+import { titleVariants } from '@/components/ui/title'
 
 const BAR = 8
 const LEAD = 13
@@ -148,9 +149,9 @@ export function MoneyFlow({ incoming, outgoing, heads, name }: { incoming: Node[
 }
 
 function Stat({ tone, word, sub, yen, per }: { tone: 'in' | 'out'; word: string; sub: string; yen: number; per: { label: string; yen: number } | null }) {
-  const big = cn('block text-[22px] leading-tight font-semibold sm:text-[32px]', tone === 'in' ? 'text-(--kincha-ink)' : 'text-primary')
+  const big = cn(titleVariants({ size: 'h1' }), 'block leading-tight', tone === 'in' ? 'text-(--kincha-ink)' : 'text-primary')
   return (
-    <div className="rounded-2xl bg-card px-4 py-3.5 sm:px-5 sm:py-4">
+    <div className="rounded-2xl bg-card px-4 py-4 sm:px-5 sm:py-4">
       <p className="text-sm text-muted-foreground">{word}</p>
       {/* 総額と1人あたりは同じ大きさ・同じ見出しの付け方で並べる（狭い幅は上下） */}
       <div className="mt-1 flex flex-col gap-x-6 gap-y-1 sm:flex-row sm:items-end">
