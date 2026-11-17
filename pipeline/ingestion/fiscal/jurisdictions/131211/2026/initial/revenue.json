@@ -1,0 +1,299 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131211",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "15bea200ab90cae6596d262a181eb040df1b9f8ae2eb16f026dd036e9ce598e1"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "framed_blocks",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "節／区分": {
+                  "heading": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・見込額など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "text_layer": {
+                "crop_box": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "centered_codes": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "codeless_name_levels": true
+          }
+        },
+        "pages": [
+          [
+            42,
+            43
+          ],
+          [
+            46,
+            98
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "15bea200ab90cae6596d262a181eb040df1b9f8ae2eb16f026dd036e9ce598e1"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "framed_blocks",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "節／区分": {
+                  "heading": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・見込額など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "text_layer": {
+                "crop_box": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "centered_codes": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "codeless_name_levels": true
+          }
+        },
+        "pages": [
+          [
+            216,
+            217
+          ],
+          [
+            220,
+            225
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial-revenue"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "15bea200ab90cae6596d262a181eb040df1b9f8ae2eb16f026dd036e9ce598e1"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "framed_blocks",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "節／区分": {
+                  "heading": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・見込額など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "text_layer": {
+                "crop_box": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "centered_codes": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "codeless_name_levels": true
+          }
+        },
+        "pages": [
+          [
+            250,
+            251
+          ],
+          [
+            254,
+            262
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial-revenue"
+        }
+      ]
+    },
+    {
+      "id": "late-elderly-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "15bea200ab90cae6596d262a181eb040df1b9f8ae2eb16f026dd036e9ce598e1"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "late-elderly-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "framed_blocks",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "節／区分": {
+                  "heading": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・見込額など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "text_layer": {
+                "crop_box": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "centered_codes": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "codeless_name_levels": true
+          }
+        },
+        "pages": [
+          [
+            290,
+            291
+          ],
+          [
+            294,
+            298
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "late-elderly-initial-revenue"
+        }
+      ]
+    }
+  ]
+}

@@ -100,6 +100,7 @@
     "bracket_line_closes_name": "ingestion.generic.patterns.quirks.bracket_line_closes_name",
     "bracket_marks": "ingestion.generic.patterns.quirks.bracket_marks",
     "bracketed_counts": "ingestion.generic.patterns.quirks.bracketed_counts",
+    "centered_codes": "ingestion.generic.patterns.quirks.centered_codes",
     "next_number_counts": "ingestion.generic.patterns.quirks.next_number_counts",
     "bracketed_remainder": "ingestion.generic.patterns.quirks.bracketed_remainder",
     "codeless_column_items": "ingestion.generic.patterns.quirks.codeless_column_items",
