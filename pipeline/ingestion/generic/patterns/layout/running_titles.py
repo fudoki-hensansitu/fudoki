@@ -129,6 +129,8 @@ def title(name: list[Glyph]) -> tuple[str, str, str] | None:
     match = SUFFIXED.match(value)
     if match:
         return match.group(2), match.group(1), match.group(3)
+    if (bare := document_quirk('unnumbered_titles')) is not None:
+        return bare.module.title(value)
     return None
 
 
@@ -379,6 +381,7 @@ def complete_titles(logicals: list[layout.Logical]) -> None:
     """Drop the amount of a 款・項 title whose table the pages read do not hold whole (see the module doc)."""
     kan, kou = None, None  # the open (款 code) and (款 code, 項 code)
     opened, closed, kous_of = {}, set(), {}
+    zero = document_quirk('zero_coded_drops')  # a dropped 項 and its 目 printed with the code 0
     for logical in logicals:
         for event in subject_events(logical):
             if event[0] == 'title':
@@ -392,7 +395,7 @@ def complete_titles(logicals: list[layout.Logical]) -> None:
                         if kou not in kous_of.setdefault(kan, []):
                             kous_of[kan].append(kou)
             elif event[0] == 'moku' and kou is not None and kou not in opened:
-                opened[kou] = event[1] == '1'
+                opened[kou] = event[1] in (zero.module.OPENING_CODES if zero is not None else ('1',))
             elif event[0] == 'total' and kou is not None:
                 closed.add(kou)
     whole_kou = {k for k in opened if opened[k] and k in closed}
