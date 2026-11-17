@@ -13,14 +13,17 @@ export const loader = defineHandler<Props>(async (c) => {
   if (!questionOf(slug)) throw new HTTPException(404, { res: notFound() })
   const env = c.env as unknown as Env
   try {
-    return { slug, map: await loadCompareMap(env), failed: false }
+    const map = await loadCompareMap(env)
+    // 一部を読めなかった頁は CDN に残さない（直ったあとも1時間欠けたまま出続けるため）
+    if (map.partial) c.header('x-revalidate', '0')
+    return { slug, map, failed: false }
   } catch {
     c.header('x-revalidate', '0')
-    return { slug, map: { prefecture: '', cols: 0, rows: 0, year: null, towns: [] }, failed: true }
+    return { slug, map: { prefecture: '', cols: 0, rows: 0, year: null, towns: [], partial: false }, failed: true }
   }
 })
 
 export const head = defineHead<Props>((_c, props) => {
   const q = questionOf(props.slug)
-  return { title: `${q?.title ?? 'まち比べ'} — まち比べ — 風土記`, meta: [{ name: 'description', content: q?.note ?? '' }] }
+  return { title: `${q?.title ?? 'まち比べ'} — まち比べ — 風土記`, link: [{ rel: 'canonical', href: `https://fudoki.dev/compare/${props.slug}` }], meta: [{ name: 'description', content: q?.note ?? '' }] }
 })

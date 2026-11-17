@@ -20,7 +20,8 @@ export type MapTown = {
   /** 問いの slug ごとの値。無いもの（未収録）は null */
   values: Record<string, number | null>
 }
-export type CompareMap = { prefecture: string; cols: number; rows: number; year: number | null; towns: MapTown[] }
+/** partial は一部を読めなかった（D1・api の失敗）印。その頁は CDN に置かない */
+export type CompareMap = { prefecture: string; cols: number; rows: number; year: number | null; towns: MapTown[]; partial: boolean }
 
 const PREFECTURE = PREFECTURE_MAPS.find((m) => m.code === '13')!
 
@@ -32,32 +33,34 @@ type FinanceRow = { jurisdiction_code: string; fiscal_year: number; expenditure_
 // list_expenditures は1回に10資料まで
 const VERSIONS_PER_CALL = 10
 
-async function loadFinance(env: Env, codes: string[]): Promise<FinanceRow[]> {
+/** 読めなければ null（D1 の無い手元は空の配列） */
+async function loadFinance(env: Env, codes: string[]): Promise<FinanceRow[] | null> {
   const statement = env.DB?.prepare(FINANCE_SQL).bind(JSON.stringify(codes))
   if (!statement?.all) return []
   try {
     return (await statement.all<FinanceRow>()).results
   } catch (e) {
     logError(e)
-    return []
+    return null
   }
 }
 
-/** year 年度の決算（一般会計）の分野の額。読めない資料は入らない */
-async function loadFields(env: Env, codes: string[], year: number): Promise<Map<string, FieldTotals>> {
+/** year 年度の決算（一般会計）の分野の額。収録の無い資料は入らない。api を読めなかった束があれば failed */
+async function loadFields(env: Env, codes: string[], year: number): Promise<{ totals: Map<string, FieldTotals>; failed: boolean }> {
   const out = new Map<string, FieldTotals>()
+  let failed = false
   const chunks = Array.from({ length: Math.ceil(codes.length / VERSIONS_PER_CALL) }, (_, i) => codes.slice(i * VERSIONS_PER_CALL, (i + 1) * VERSIONS_PER_CALL))
   await Promise.all(
     chunks.map(async (chunk) => {
       const versions = chunk.map((code) => ({ code, year, kind: 'settlement' as const }))
-      const totalsOf = await loadFieldTotals(env, versions).catch((e) => (logError(e), () => undefined))
+      const totalsOf = await loadFieldTotals(env, versions).catch((e) => (logError(e), (failed = true), () => undefined))
       for (const v of versions) {
         const t = totalsOf(v)
         if (t) out.set(v.code, t)
       }
     }),
   )
-  return out
+  return { totals: out, failed }
 }
 
 const per = (yen: number | null | undefined, pop: number | null) => (yen == null || !pop ? null : yen / pop)
@@ -74,9 +77,10 @@ export async function loadCompareMap(env: Env): Promise<CompareMap> {
   const islands = PREFECTURE.islands.map((t, i) => ({ code: t.code, name: t.name, col: i, row: PREFECTURE.rows + 1 }))
   const tiles = [...mainland, ...islands]
   const codes = tiles.map((t) => t.code)
-  const [finance, populations] = await Promise.all([loadFinance(env, codes), loadPopulations(env, codes)])
+  const [loaded, populations] = await Promise.all([loadFinance(env, codes), loadPopulations(env, codes)])
+  const finance = loaded ?? []
   const year = finance[0]?.fiscal_year ?? null
-  const fields = year ? await loadFields(env, codes, year) : new Map<string, FieldTotals>()
+  const { totals: fields, failed } = year ? await loadFields(env, codes, year) : { totals: new Map<string, FieldTotals>(), failed: false }
   const financeOf = new Map(finance.map((r) => [r.jurisdiction_code, r]))
   // N 年度の額には N+1 年1月1日の人口を使い、無ければいちばん新しい人口
   const asOf = year ? `${year + 1}-01-01` : ''
@@ -95,5 +99,5 @@ export async function loadCompareMap(env: Env): Promise<CompareMap> {
     const values = Object.fromEntries(QUESTIONS.map((q) => [q.slug, q.source === 'fiscal' ? share(totals, FIELD_OF_QUESTION[q.slug]!) : (finance[q.slug] ?? null)]))
     return { ...t, path: jurisdictionPath(t.code), pop, values }
   })
-  return { prefecture: PREFECTURE.name, cols: PREFECTURE.cols, rows: PREFECTURE.rows + (islands.length ? 2 : 0), year, towns }
+  return { prefecture: PREFECTURE.name, cols: PREFECTURE.cols, rows: PREFECTURE.rows + (islands.length ? 2 : 0), year, towns, partial: loaded === null || failed }
 }
