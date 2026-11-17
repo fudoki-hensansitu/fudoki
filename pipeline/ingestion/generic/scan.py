@@ -1314,7 +1314,7 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
 def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict | None = None):
     from ingestion.generic.runtime import page_titles
     from ingestion.generic.workflow import build_reading, effective_settings
-    from ingestion.generic.convert import Table, canonical_headings, correct_names, excluded_regions, fine_sections, scope_pages, split_notes
+    from ingestion.generic.convert import Table, canonical_headings, correct_names, correct_parents, excluded_regions, fine_sections, scope_pages, split_notes
     from ingestion.generic.repair import Report
     from ingestion.generic.units import check as check_units
     from ingestion.lib.node_tables import coverage_regions
@@ -1430,6 +1430,8 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
     # A misread annotation (`教育センタ一費へ流用`, 131164 R5) is put right like a node.
     built.notes.extend({'kind': 'name correction', 'text': text} for text in correct_names([*built.nodes, *notes], by_node))
     built.notes.extend({'kind': 'variant characters', 'text': text} for text in variants)
+    built.notes.extend({'kind': 'parent correction', 'text': text}
+                       for text in correct_parents(built.nodes, options.get('parent_corrections')))
     nodes = [*built.nodes, *notes]
     amounts, headings = canonical_headings([*kept, *amounts], nodes, kind, header)
     fine_sections(nodes)
