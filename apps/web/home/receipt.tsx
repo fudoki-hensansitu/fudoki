@@ -367,7 +367,8 @@ type Older = { r: Printed; height: number }
 let printedId = 0
 
 /** 刷った一枚の紙（数え上げの key と、その年度のデータ） */
-type Printed = { id: number; key: string; year: number; v: YearView }
+/** href はその紙を刷ったときの年度の頁（QR の行き先）。年度を替えても前の紙の QR は前の年度を指す */
+type Printed = { id: number; key: string; year: number; v: YearView; href: string }
 
 export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: { name: string; v: YearView; year: number; pop: number | null; base: string; detailHref: string; head: React.ReactNode }) {
   const settled = v.word === '決算'
@@ -385,9 +386,9 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
     setSeen(counted)
     const latest = feed.current?.querySelector<HTMLElement>('[data-latest]')
     const height = latest ? paperHeight(latest) : 0
-    const keep = !!pop && printed && height > 0 && !reduced() && !ribbonOff
-    // 前の紙は3枚まで（それより古い紙は差し出し口の奥へ戻って見えない）
-    setOlder(keep ? [{ r: printed, height }, ...older].slice(0, 3) : [])
+    const keep = !!pop && !reduced() && !ribbonOff
+    // 前の紙は3枚まで（それより古い紙は差し出し口の奥へ戻って見えない）。数え終える前にまた替えたとき（まだ刷っていない）は、前の紙をそのまま残す
+    setOlder(!keep ? [] : printed && height > 0 ? [{ r: printed, height }, ...older].slice(0, 3) : older)
     setPrinted(null)
   }
   const total = useCountUp(v.total)
@@ -396,7 +397,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
   const card = React.useRef<HTMLElement>(null)
   const phase = usePhase(counted)
   React.useEffect(() => {
-    if (phase === 'print' && pop && printed?.key !== counted) setPrinted({ id: ++printedId, key: counted, year, v })
+    if (phase === 'print' && pop && printed?.key !== counted) setPrinted({ id: ++printedId, key: counted, year, v, href: detailHref })
   }, [phase, counted])
   /** いま刷っている紙の key（刷り終えるまで）。頁送りと紙の動きに使う */
   const printing = phase === 'print' && printed?.key === counted ? counted : null
@@ -461,7 +462,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
       </p>
       {/* 読み取るとまちの頁を開く QR と、このレシートをシェアするボタン（X とリンクのコピー。リンクはホーム） */}
       <div className="mt-5 flex items-center justify-center gap-5">
-        <Qr url={detailHref} />
+        <Qr url={r.href} />
         <Share />
       </div>
     </div>
