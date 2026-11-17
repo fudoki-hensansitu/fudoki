@@ -136,6 +136,7 @@
     "dotted_column_rules": "ingestion.generic.patterns.quirks.dotted_column_rules",
     "unread_marks": "ingestion.generic.patterns.quirks.unread_marks",
     "bracketed_repeats": "ingestion.generic.patterns.quirks.bracketed_repeats",
+    "nearest_subject_code": "ingestion.generic.patterns.quirks.nearest_subject_code",
     "skewed_cell_rows": "ingestion.generic.patterns.quirks.skewed_cell_rows",
     "wrapped_years": "ingestion.generic.patterns.quirks.wrapped_years",
     "stacked_digits": "ingestion.generic.patterns.quirks.stacked_digits",
