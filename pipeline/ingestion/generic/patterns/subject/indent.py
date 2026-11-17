@@ -34,9 +34,12 @@ def alignment(all_items, codes_right, glued=None):
             if group.subject and group.mode == 'indent':
                 for item in found[id(group)]:
                     if item.code is not None and item.role == 'node' and item.glyphs:
-                        code_starts[item.level].append(item.glyphs[0].x0)
-                        if len(item.glyphs[0].text) == 1:
-                            digit_widths[item.level].append(item.glyphs[0].x1 - item.glyphs[0].x0)
+                        # Where the code starts: a code printed between the two lines of its name (`第一号被保険` / `1` /
+                        # `者保険料`, 渋谷区 R6 決算の介護保険の歳入, `code_between_name_lines`) is not the name line above it.
+                        code = next((g for g in item.glyphs if normalize(digits_of(g)).startswith(item.code)), item.glyphs[0])
+                        code_starts[item.level].append(code.x0)
+                        if len(code.text) == 1:
+                            digit_widths[item.level].append(code.x1 - code.x0)
     # Codes set right across the whole subject column (a 款 `5` and `10` of nested boxes): a two-digit code starts
     # one digit before a one-digit code of its level, so it is read at the position the one-digit codes start.
     # (A two-digit code the text layer cuts after its first digit, `1` `3.文` of `13.文化費`, is a two-digit one.)
