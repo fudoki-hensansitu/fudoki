@@ -34,7 +34,7 @@ export function TownPalette({ open, onOpenChange }: { open: boolean; onOpenChang
           {(entries ?? []).map((e) => (
             <CommandItem key={e.code} value={e.code} onSelect={() => pick(e)}>
               {e.name}
-              <span className="text-[11px] text-muted-foreground">{e.kind === '都道府県' ? '都道府県' : e.prefecture}</span>
+              <span className="text-xs text-muted-foreground">{e.kind === '都道府県' ? '都道府県' : e.prefecture}</span>
             </CommandItem>
           ))}
           {hasMore ? <MoreDots key={moreKey} onVisible={more} /> : null}

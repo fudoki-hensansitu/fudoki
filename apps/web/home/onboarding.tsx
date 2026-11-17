@@ -44,7 +44,7 @@ export function AskTown({ listed, onPick }: { listed: boolean; onPick: (e: MapEn
             <button
               type="button"
               onClick={() => void locate()}
-              className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full border border-brand-foreground px-5 text-[15px] font-medium text-brand-foreground transition-[background-color,color,transform] duration-150 ease-out hover:bg-brand-fill hover:text-brand-fill-foreground active:scale-[0.97] motion-reduce:transition-none"
+              className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full border border-brand-foreground px-5 text-sm font-medium text-brand-foreground transition-[background-color,color,transform] duration-150 ease-out hover:bg-brand-fill hover:text-brand-fill-foreground active:scale-[0.97] motion-reduce:transition-none"
             >
               <NavigationArrowIcon className="size-4" />
               現在地から選ぶ
@@ -55,11 +55,11 @@ export function AskTown({ listed, onPick }: { listed: boolean; onPick: (e: MapEn
               <LocateResult loc={loc} onPick={onPick} onRetry={() => void locate()} onClose={() => setLoc(null)} />
             </div>
           ) : (
-            <p className="mt-3 text-[12px] opacity-75">{LOCATION_NOTE}</p>
+            <p className="mt-3 text-xs opacity-75">{LOCATION_NOTE}</p>
           )}
         </>
       ) : (
-        <p className="text-[14px] opacity-80">今は自治体の一覧を読み込めません。少し時間をおいて開き直してください。</p>
+        <p className="text-sm opacity-80">今は自治体の一覧を読み込めません。少し時間をおいて開き直してください。</p>
       )}
     </section>
   )
@@ -72,31 +72,31 @@ const LOCATION_NOTE = '位置情報は保存されません'
 function LocateResult({ loc, onPick, onRetry, onClose }: { loc: Locate; onPick: (e: MapEntry) => void; onRetry: () => void; onClose: () => void }) {
   if (loc.busy)
     return (
-      <div role="status" className="flex items-center gap-3 rounded-2xl bg-secondary px-4 py-3.5 text-[14px]">
+      <div role="status" className="flex items-center gap-3 rounded-2xl bg-secondary px-4 py-4 text-sm">
         <span className="ob-ping relative grid size-9 place-items-center rounded-full bg-background text-primary">
           <NavigationArrowIcon className="size-[18px]" />
         </span>
-        <span className="flex flex-col gap-0.5">
+        <span className="flex flex-col gap-1">
           現在地のまちを調べています…
-          <span className="text-[12px] text-muted-foreground">{LOCATION_NOTE}</span>
+          <span className="text-xs text-muted-foreground">{LOCATION_NOTE}</span>
         </span>
       </div>
     )
   if (loc.hit)
     return (
-      <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-secondary px-4 py-3.5">
-        <span className="min-w-0 flex-1 text-[14px]">
-          現在地は <b className="text-[16px]">{loc.hit.name}</b> です
+      <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-secondary px-4 py-4">
+        <span className="min-w-0 flex-1 text-sm">
+          現在地は <b className="text-base">{loc.hit.name}</b> です
         </span>
-        <button type="button" onClick={() => onPick(loc.hit!)} className="rounded-full bg-primary px-4 py-2 text-[13px] font-medium text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none">
+        <button type="button" onClick={() => onPick(loc.hit!)} className="rounded-full bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none">
           このまちを選ぶ
         </button>
       </div>
     )
   // 失敗は帯の上に1行で控えめに出す。ブロックされているときはサイトから聞き直せないので、ブラウザでの許可か名前で探すことを案内する。「もう一度」は許可を直したあとに押せるよう残す
   return (
-    <div role="status" className="flex items-start gap-2 text-[13px] leading-relaxed">
-      <WarningCircleIcon className="mt-[3px] size-4 shrink-0 opacity-80" />
+    <div role="status" className="flex items-start gap-2 text-sm leading-relaxed">
+      <WarningCircleIcon className="mt-1 size-4 shrink-0 opacity-80" />
       <p className="min-w-0 flex-1">
         <span className="font-medium">{loc.error}。</span>
         {loc.denied ? 'アドレスバーの鍵のアイコンから位置情報を許可するか、自治体名で探してください。' : '自治体名でも探せます。'}
@@ -119,7 +119,7 @@ export function OtherTowns({ className }: { className?: string }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex h-12 w-full items-center gap-3 rounded-full border border-border bg-background px-4 text-left text-[15px] text-muted-foreground transition-colors hover:bg-card"
+        className="flex h-12 w-full items-center gap-3 rounded-full border border-border bg-background px-4 text-left text-sm text-muted-foreground transition-colors hover:bg-card"
       >
         <MagnifyingGlassIcon className="size-5 shrink-0" aria-hidden="true" />
         まちを探す
@@ -144,7 +144,7 @@ export function Intro({ mode }: { mode: 'full' | 'compact' | 'hidden' }) {
         {shown ? <Mark className="size-9 shrink-0 text-primary sm:size-11" /> : null}
         <Title size="h1">{title}</Title>
       </div>
-      <p className="mt-2 text-[15px] text-muted-foreground">{lead}</p>
+      <p className="mt-2 text-sm text-muted-foreground">{lead}</p>
     </header>
   )
 }

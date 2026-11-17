@@ -1,10 +1,11 @@
 // まとめタブの財政の状況（借金と貯金・事業に回ったお金・財政の指標）。総務省「市町村別決算状況調」の普通会計（PageData.finance）から描く。
 // 開いた年度までの最新の決算の年度を出し、推移はそこまでの5年。評価の言葉や色は付けず、項目の意味だけを書く
 import * as React from 'react'
+import { cn } from '@/lib/utils'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { reiwa, type LocalFinance } from '../types'
 import { Amt, yenParts } from './amount'
-import { Title } from '@/components/ui/title'
+import { Title, titleVariants } from '@/components/ui/title'
 
 const YEARS = 5
 const r = (y: number) => `R${y - 2018}`
@@ -13,7 +14,7 @@ const pctText = (n: number) => `${n.toFixed(1)}%`
 
 /** 時点の札（年度・資料・出典） */
 export function Tag({ children }: { children: React.ReactNode }) {
-  return <span className="inline-flex h-6 shrink-0 items-center whitespace-nowrap rounded-full border bg-background px-2.5 text-xs text-muted-foreground">{children}</span>
+  return <span className="inline-flex h-6 shrink-0 items-center whitespace-nowrap rounded-full border bg-background px-3 text-xs text-muted-foreground">{children}</span>
 }
 
 function Head({ title, term, tag }: { title: string; term?: string; tag: React.ReactNode }) {
@@ -21,7 +22,7 @@ function Head({ title, term, tag }: { title: string; term?: string; tag: React.R
     <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
       <Title size="h3" as="h2">
         {title}
-        {term ? <span className="ml-1.5 text-[13px] font-normal text-muted-foreground">{term}</span> : null}
+        {term ? <span className="ml-2 text-sm font-normal text-muted-foreground">{term}</span> : null}
       </Title>
       {tag}
     </div>
@@ -41,7 +42,7 @@ function Spark({ points, format, zero, full }: { points: { year: number; v: numb
   const first = points[0]!
   const last = points.at(-1)!
   return (
-    <figure className={`m-0 flex flex-col gap-0.5 ${full ? 'w-full' : 'w-[168px] self-start'}`}>
+    <figure className={`m-0 flex flex-col gap-1 ${full ? 'w-full' : 'w-[168px] self-start'}`}>
       <svg width="100%" height={h} aria-hidden="true" className="block overflow-visible">
         {points.slice(1).map((p, i) => (
           <line key={p.year} x1={x(i)} y1={y(points[i]!.v)} x2={x(i + 1)} y2={y(p.v)} stroke="var(--primary)" strokeWidth={1.75} strokeLinecap="round" />
@@ -51,7 +52,7 @@ function Spark({ points, format, zero, full }: { points: { year: number; v: numb
           return <circle key={p.year} cx={x(i)} cy={y(p.v)} r={end ? 3 : 1.75} fill={end ? 'var(--primary)' : 'var(--background)'} stroke="var(--primary)" strokeWidth={1.25} />
         })}
       </svg>
-      <figcaption className="flex justify-between gap-2 whitespace-nowrap text-[11px] tabular-nums text-muted-foreground">
+      <figcaption className="flex justify-between gap-2 whitespace-nowrap text-xs tabular-nums text-muted-foreground">
         <span>{r(first.year)} {format(first.v)}</span>
         <span>{r(last.year)} {format(last.v)}</span>
       </figcaption>
@@ -74,7 +75,7 @@ const freeOf = (f: LocalFinance) => {
 function PerHead({ yen, people }: { yen: number; people: number | null }) {
   if (!people) return null
   return (
-    <p className="text-[13px] text-muted-foreground">
+    <p className="text-sm text-muted-foreground">
       1人あたり <Amt yen={yen / people} />
     </p>
   )
@@ -87,11 +88,11 @@ function DebtSide({ label, term, yen, people, spark, children, say }: { label: s
         {label}
         <span className="ml-2 text-xs font-normal text-muted-foreground">{term}</span>
       </p>
-      <Amt yen={yen} className="text-[28px] text-primary" />
-      <div className="mb-1.5"><PerHead yen={yen} people={people} /></div>
+      <Amt yen={yen} className={cn(titleVariants({ size: 'h1' }), 'text-primary')} />
+      <div className="mb-2"><PerHead yen={yen} people={people} /></div>
       {spark}
       {children}
-      <p className="mt-1.5 text-sm leading-[1.7] text-muted-foreground">{say}</p>
+      <p className="mt-2 text-sm leading-[1.7] text-muted-foreground">{say}</p>
     </div>
   )
 }
@@ -114,7 +115,7 @@ function DebtAndFunds({ at, rows, people }: { at: LocalFinance; rows: LocalFinan
           say="基金は、自治体が目的を決めて積み立てているお金です。使い道を決めていない財政調整基金は、災害や税収が減った年に取り崩します。ほかに、借金の返済や施設の建て替えなどに充てる基金があります。">
           <ul className="mt-2 max-w-[360px] border-t">
             {kinds.map(([name, yen]) => (
-              <li key={name} className="flex justify-between gap-3 border-b py-1.5 text-sm">
+              <li key={name} className="flex justify-between gap-3 border-b py-2 text-sm">
                 <span>{name}</span>
                 <Amt yen={yen} />
               </li>
@@ -128,9 +129,9 @@ function DebtAndFunds({ at, rows, people }: { at: LocalFinance; rows: LocalFinan
 
 function Tile({ label, yen, sub, on }: { label: string; yen: number; sub?: string; on?: boolean }) {
   return (
-    <div data-on={on || undefined} className="flex flex-col gap-0.5 rounded-xl border bg-background px-3 py-2.5 data-on:border-primary data-on:bg-accent">
-      <span className="text-[13px] text-muted-foreground">{label}</span>
-      <Amt yen={yen} className={on ? 'text-[28px] text-primary' : 'text-lg'} />
+    <div data-on={on || undefined} className="flex flex-col gap-1 rounded-xl border bg-background px-3 py-3 data-on:border-primary data-on:bg-accent">
+      <span className="text-sm text-muted-foreground">{label}</span>
+      <Amt yen={yen} className={on ? cn(titleVariants({ size: 'h1' }), 'text-primary') : titleVariants({ size: 'h3' })} />
       {sub ? <span className="text-xs text-muted-foreground">{sub}</span> : null}
     </div>
   )
@@ -143,13 +144,13 @@ const DUTY_FILLS = ['bg-muted-foreground', 'bg-paper', 'bg-foreground']
 function ShareBar({ total, parts }: { total: number; parts: { name: string; yen: number; fill: string }[] }) {
   const pct = (yen: number) => `${((yen / total) * 100).toFixed(1)}%`
   return (
-    <div className="flex flex-col gap-2.5">
-      <div className="flex h-7 gap-0.5 overflow-hidden rounded-lg" role="img" aria-label={`歳出の内訳: ${parts.map((p) => `${p.name} ${pct(p.yen)}`).join('、')}`}>
+    <div className="flex flex-col gap-3">
+      <div className="flex h-7 gap-1 overflow-hidden rounded-lg" role="img" aria-label={`歳出の内訳: ${parts.map((p) => `${p.name} ${pct(p.yen)}`).join('、')}`}>
         {parts.map((p) => (p.yen > 0 ? <span key={p.name} className={`min-w-0.5 ${p.fill}`} style={{ flex: p.yen }} /> : null))}
       </div>
-      <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-sm" aria-hidden="true">
+      <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm" aria-hidden="true">
         {parts.map((p, i) => (
-          <li key={p.name} className="flex items-center gap-1.5">
+          <li key={p.name} className="flex items-center gap-2">
             <span className={`size-3 shrink-0 rounded-sm ${p.fill}`} />
             <span className={i === 0 ? 'text-foreground' : 'text-muted-foreground'}>{p.name}</span>
             <span className={`tabular-nums ${i === 0 ? 'text-primary' : 'text-muted-foreground'}`}>{pct(p.yen)}</span>
@@ -165,9 +166,9 @@ function FreeMoney({ at, rows, people }: { at: LocalFinance; rows: LocalFinance[
   const free = freeOf(at)
   if (duty == null || free == null || at.expenditureTotal == null) return null
   const parts = [['扶助費', at.socialAssistance], ['人件費', at.personnel], ['公債費', at.debtService]] as const
-  const op = (c: string) => <span className="grid place-items-center text-xl text-muted-foreground" aria-hidden="true">{c}</span>
+  const op = (c: string) => <span className={cn(titleVariants({ size: 'h3' }), 'grid place-items-center font-normal text-muted-foreground')} aria-hidden="true">{c}</span>
   return (
-    <div className="flex flex-col gap-3.5">
+    <div className="flex flex-col gap-4">
       <div className="grid items-stretch gap-2 @3xl:grid-cols-[1.2fr_24px_1fr_24px_1fr]">
         <Tile on label="事業に回るお金" yen={free} {...(people ? { sub: `1人あたり ${yenParts(free / people).join('')}` } : {})} />
         {op('=')}
@@ -220,31 +221,31 @@ function OtherNumbers({ at, rows }: { at: LocalFinance; rows: LocalFinance[] }) 
       <>
         <div className="grid grid-cols-2 gap-2 @3xl:grid-cols-4">
           {kenzen.map(([name, v, means]) => (
-            <div key={name} className="flex flex-col gap-0.5 rounded-xl border bg-background p-3">
-              <span className="text-[22px] tabular-nums text-foreground">{ratio(v)}</span>
-              <span className="text-[13px] font-medium text-foreground">{name}</span>
+            <div key={name} className="flex flex-col gap-1 rounded-xl border bg-background p-3">
+              <span className={cn(titleVariants({ size: 'h3' }), 'font-normal tabular-nums text-foreground')}>{ratio(v)}</span>
+              <span className="text-sm font-medium text-foreground">{name}</span>
               <span className="text-xs leading-normal">{means}</span>
             </div>
           ))}
         </div>
-        <p className="mt-2.5">「－」は、その比率が計算上ゼロ以下で数字が出ないこと（赤字が無い、将来払うお金よりそのための備えが多い）。法律（財政健全化法）で毎年公表する4つの数字です。</p>
+        <p className="mt-3">「－」は、その比率が計算上ゼロ以下で数字が出ないこと（赤字が無い、将来払うお金よりそのための備えが多い）。法律（財政健全化法）で毎年公表する4つの数字です。</p>
       </>
     ) })
   return (
     <Accordion multiple className="border-t">
       {items.map((x) => (
         <AccordionItem key={x.key} value={x.key} className="border-b">
-          <AccordionTrigger className="items-center gap-4 rounded-none px-2.5 py-4 hover:bg-card hover:no-underline">
+          <AccordionTrigger className="items-center gap-4 rounded-none px-3 py-4 hover:bg-card hover:no-underline">
             {/* 狭い画面は値を名前の下に置き、名前を押しつぶさない */}
             <span className="flex min-w-0 flex-1 flex-col gap-1 @xl:flex-row @xl:items-center @xl:gap-4">
-              <span className="flex min-w-0 flex-1 flex-col gap-0.5">
+              <span className="flex min-w-0 flex-1 flex-col gap-1">
                 <span className="text-base font-medium">{x.name}</span>
                 <span className="text-xs font-normal text-muted-foreground">{x.term}</span>
               </span>
-              {x.answer ? <span className="shrink-0 text-xl font-normal text-primary @xl:text-right">{x.answer}</span> : null}
+              {x.answer ? <span className={cn(titleVariants({ size: 'h3' }), 'shrink-0 font-normal text-primary @xl:text-right')}>{x.answer}</span> : null}
             </span>
           </AccordionTrigger>
-          <AccordionContent className="px-2.5 pb-[18px] text-[15px] leading-[1.7] text-muted-foreground">{x.body}</AccordionContent>
+          <AccordionContent className="px-3 pb-5 text-sm leading-[1.7] text-muted-foreground">{x.body}</AccordionContent>
         </AccordionItem>
       ))}
     </Accordion>
