@@ -45,8 +45,5 @@
   "devDependencies": {
     "@types/bun": "catalog:",
     "typescript": "catalog:"
-  },
-  "patchedDependencies": {
-    "@void/isr@1.7.0": "patches/@void%2Fisr@1.7.0.patch"
   }
 }
