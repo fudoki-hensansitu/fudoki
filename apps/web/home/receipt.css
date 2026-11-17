@@ -1,5 +1,5 @@
 /* ホームのうちのまちの札（レジに見立てる）と、その下端の差し出し口から出てくるレシート。
- * 紙は札のすぐ下に敷き、差し出し口の線から下だけを見せる（.rc-feed が切り口）。紙は clip-path で上から伸ばし、ほかの動きは transform・opacity。入りは ease-out */
+ * 紙は札のすぐ下に敷き、差し出し口の線から下だけを見せる（.rc-feed が切り口）。紙は高さを伸ばして上から順に見せ、前の紙は下の端で巻き取って丸める */
 .rc-feed {
   position: relative;
   /* 上端を札の差し出し口の溝の中心に重ねる（.rm-slot の bottom + 高さの半分） */
@@ -38,14 +38,32 @@
   pointer-events: none;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.04) 45%, transparent);
 }
-.rc-print.rc-run {
-  /* 長さは motion.ts の PRINT_MS。紙送りの機械らしく、出だしと終わりだけ緩めてほぼ一定の速さで送る */
-  animation: rc-print 3600ms cubic-bezier(0.3, 0.1, 0.45, 1) both;
+/* 一枚の紙の入れ物（receipt.tsx の Strip）。高さを 0 から伸ばして刷り出し、前の紙は高さを 0 まで縮めて下の端へ巻き取る */
+.rc-strip {
+  overflow: hidden;
 }
-/* 刷った行から上から順に出てくる（紙の頭が差し出し口に残り、下へ伸びる） */
-@keyframes rc-print {
-  from { clip-path: inset(0 -24px 100% -24px); transform: translateY(-8px); }
-  to { clip-path: inset(0 -24px -40px -24px); transform: none; }
+/* 巻き取られる紙は、下の方から見えなくなる（紙が下へ送られて丸まりに入っていく） */
+.rc-strip-roll {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+/* 前の紙の続きとして刷った紙は、下でつながっているのでちぎった跡を付けない */
+.rc-paper-cont {
+  -webkit-mask: none;
+  mask: none;
+}
+/* 前に刷った紙が下の端で巻き取られて丸まったところ（筒を横から見た陰影）。高さは receipt.tsx の CURL_PX */
+.rc-curl {
+  height: 30px;
+  margin-inline: -3px;
+  border-radius: 0 0 16px 16px / 0 0 15px 15px;
+  background: linear-gradient(180deg, #e6dfd1 0%, #f8f5ee 30%, #fffdf8 45%, #e2dbcc 75%, #cfc6b4 100%);
+  box-shadow: 0 6px 10px -4px rgba(43, 39, 35, 0.25);
+  animation: rc-curl-in 3600ms cubic-bezier(0.3, 0.1, 0.45, 1) both;
+}
+@keyframes rc-curl-in {
+  from { height: 0; }
 }
 /* 数字の札。札そのものをレジに見立て、平らなまま動かさない（数字だけが数え上がる）。下端に差し出し口（.rm-slot）を持つ */
 .rm-card {
@@ -87,7 +105,7 @@
   height: 88px;
 }
 @media (prefers-reduced-motion: reduce) {
-  .rc-print.rc-run {
+  .rc-curl {
     animation: none;
   }
   .rm-per {

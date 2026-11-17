@@ -1,4 +1,5 @@
 // ホームのうちのまちの札。緑の札で予算と1人あたりの額を順に数え上げ、札の下端の差し出し口から分野ごとの1人あたりのレシートを刷り出す。
+// 年度を替えて刷り直すときは前の紙の続きとして刷り、前の紙は下の端で巻き取って丸める。
 // 札そのものをレジに見立て、立体は使わない（平らな描き方に揃える）。
 // 1人あたりは予算を人口で割った額（払った税金の額ではない）。分野の行の和が合計に合うよう、大きい端数から1円ずつ足して丸める
 import * as React from 'react'
@@ -123,10 +124,10 @@ const easeInOut = (p: number) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p 
 
 /** 段に合わせて頁を送り、動かさなくても見えるようにする（カメラの代わり）。上へは戻さない。
  * count: 札の下端が画面の外なら、札の上端を越えない範囲で札が収まる位置へ。
- * print: 紙が伸びるのと同じ長さ・同じ緩急で、刷り終えたレシートの下端が画面の下端に来る位置まで送り、紙が出てくるのを追う。
+ * print（printing が新しく刷る紙の key になったとき）: 紙が伸びるのと同じ長さ・同じ緩急で、刷り終えたレシートの下端が画面の下端に来る位置まで送り、紙が出てくるのを追う。
  * 利用者が自分で送ったら（ホイール・タッチ・キー・ポインタ）、それ以降は動かさない。
  * scroll の event は数えない（レイアウトの補正でも起き、利用者の操作と区別できない） */
-function useFollow(phase: Phase, card: React.RefObject<HTMLElement | null>, feed: React.RefObject<HTMLElement | null>) {
+function useFollow(phase: Phase, printing: string | null, card: React.RefObject<HTMLElement | null>, feed: React.RefObject<HTMLElement | null>) {
   const touched = React.useRef(false)
   const raf = React.useRef(0)
   React.useEffect(() => {
@@ -157,17 +158,51 @@ function useFollow(phase: Phase, card: React.RefObject<HTMLElement | null>, feed
       }
       raf.current = requestAnimationFrame(step)
     }
-    if (phase === 'count' && card.current) {
+    if (phase === 'count' && !printing && card.current) {
       const r = card.current.getBoundingClientRect()
       if (r.bottom > vh) go(window.scrollY + Math.min(r.top - 16, r.bottom - vh + 16), SCROLL_MS, easeInOut)
     }
-    if (phase === 'print' && feed.current) {
-      // 紙（receipt.css の rc-print）と同じ緩急で、レシートの最後（合計・QR コード）まで送る。紙は clip-path で伸ばすので、高さは最初から刷り終えた分ある
-      const r = feed.current.getBoundingClientRect()
-      go(window.scrollY + r.bottom - vh + 16, PRINT_MS, (p) => 1 - Math.pow(1 - p, 1.6))
+    if (printing && feed.current) {
+      // 紙と同じ長さ・緩急で、刷り終えたときのレシートの最後（合計・QR コード）と、その下で丸まった前の紙まで送る。
+      // 紙は高さを 0 から伸ばすので、刷り終えた高さは中身の高さ（scrollHeight）から求める
+      const f = feed.current
+      const latest = f.querySelector<HTMLElement>('[data-latest]')
+      const curl = f.querySelector<HTMLElement>('.rc-curl') ? CURL_PX : 0
+      if (latest) go(window.scrollY + f.getBoundingClientRect().top + latest.scrollHeight + curl + FEED_PAD - vh + 16, PRINT_MS, PRINT_EASE)
     }
-  }, [phase, card, feed])
+  }, [phase, printing, card, feed])
 }
+
+/** 紙送りの緩急（出だしと終わりだけ緩め、ほぼ一定の速さで送る）。頁送りも同じにする */
+const PRINT_EASE_CSS = 'cubic-bezier(0.3, 0.1, 0.45, 1)'
+const PRINT_EASE = (p: number) => 1 - Math.pow(1 - p, 1.6)
+/** 前の紙が巻き取られて丸まった部分の高さ（receipt.css の .rc-curl） */
+const CURL_PX = 30
+/** .rc-feed の下の余白（receipt.css） */
+const FEED_PAD = 28
+
+/** 一枚の紙。grow: 差し出し口から高さ 0 から伸びて出る（上から順に見える）。roll: 次の紙に押し出されて下の端へ送られ、高さ 0 まで巻き取られる（下の方から見えなくなる）。
+ * still: 動かさない。reduced-motion では動かさずに終わりの姿にする */
+function Strip({ mode, latest, children }: { mode: 'grow' | 'roll' | 'still'; latest?: boolean; children: React.ReactNode }) {
+  const ref = React.useRef<HTMLDivElement>(null)
+  React.useLayoutEffect(() => {
+    const el = ref.current
+    if (!el || mode === 'still') return
+    const h = el.scrollHeight
+    if (mode === 'roll') el.style.height = '0px'
+    if (reduced()) return
+    const a = el.animate(mode === 'grow' ? [{ height: '0px' }, { height: `${h}px` }] : [{ height: `${h}px` }, { height: '0px' }], { duration: PRINT_MS, easing: PRINT_EASE_CSS })
+    return () => a.cancel()
+  }, [mode])
+  return (
+    <div ref={ref} data-latest={latest ? true : undefined} className={`rc-strip ${mode === 'roll' ? 'rc-strip-roll' : ''}`}>
+      {children}
+    </div>
+  )
+}
+
+/** 刷った一枚の紙（数え上げの key と、その年度のデータ） */
+type Printed = { key: string; year: number; v: YearView }
 
 export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: { name: string; v: YearView; year: number; pop: number | null; base: string; detailHref: string; head: React.ReactNode }) {
   const settled = v.word === '決算'
@@ -179,7 +214,65 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
   const counted = `${year}:${v.total}`
   const phase = usePhase(counted)
   const feed = React.useRef<HTMLDivElement>(null)
-  useFollow(phase, card, feed)
+  /** 刷った紙を古い順に持つ。新しく数え終えるたびに足す（前の紙の続きとして刷る） */
+  const [printed, setPrinted] = React.useState<Printed[]>([])
+  const last = printed.at(-1)
+  React.useEffect(() => {
+    if (phase === 'print' && pop && last?.key !== counted) setPrinted((p) => [...p.slice(-1), { key: counted, year, v }])
+  }, [phase, counted])
+  /** いま刷っている紙の key（刷り終えるまで）。頁送りと紙の動きに使う */
+  const printing = phase === 'print' && last?.key === counted && printed.length ? counted : null
+  /** 見せる紙。新しい紙と、その下で巻き取られていく一つ前の紙 */
+  const shown = printed.slice(-2).reverse()
+  useFollow(phase, printing, card, feed)
+  /** 一枚の紙の中身 */
+  const paper = (r: Printed, cont: boolean) => {
+    const { parts, sum } = perHeadParts(r.v.fields, r.v.total, pop!)
+    return (
+    <div className={`rc-paper ${cont ? 'rc-paper-cont' : ''}`}>
+      <p className="text-center text-[18px] font-semibold tracking-[0.3em]">{name}</p>
+      <p className="mt-1 text-center text-[13px] text-muted-foreground">
+        {reiwa(r.year)} {r.v.word === '決算' ? '決算' : '当初予算'}・1人あたり
+      </p>
+      <ul className="rc-rule mt-4 pt-2">
+        {r.v.fields.map((f, i) => {
+          const row = (
+            <>
+              <span className="flex items-baseline gap-2 text-[15px]">
+                <FieldIcon id={f.id} className="size-[18px] shrink-0 self-center text-muted-foreground" />
+                <span className="whitespace-nowrap">{f.name}</span>
+                <span className="rc-lead" />
+                <Yen n={parts[i]!} className="text-[16px]" />
+              </span>
+              {f.examples ? <span className="mt-0.5 block pl-[26px] text-[12px] text-muted-foreground">{f.examples}</span> : null}
+            </>
+          )
+          // その他は事業の絞り込みに無いので押せない
+          return (
+            <li key={f.id}>
+              {f.id === OTHER_FRAME.id ? (
+                <div className="px-1.5 py-2">{row}</div>
+              ) : (
+                <Link href={`${base}/projects?field=${f.id}`} className="block rounded-lg px-1.5 py-2 transition-colors hover:bg-card">
+                  {row}
+                </Link>
+              )}
+            </li>
+          )
+        })}
+      </ul>
+      <p className="rc-rule mt-2 flex items-baseline justify-between pt-3">
+        <span className="text-[15px]">1人あたりの合計</span>
+        <Yen n={sum} className="text-[28px] font-semibold text-primary" />
+      </p>
+      {/* 読み取るとまちの頁を開く QR と、同じ頁を共有するボタン */}
+      <div className="mt-5 flex items-center justify-center gap-5">
+        <Qr url={detailHref} />
+        <Share url={detailHref} title={`${name}の1人あたりのレシート｜風土記`} />
+      </div>
+    </div>
+    )
+  }
   return (
     <div className="rm" data-phase={phase}>
       <section ref={card} className={`rm-card p-5 text-brand-foreground sm:p-7 ${receipt ? 'pb-12 sm:pb-14' : ''}`}>
@@ -211,52 +304,16 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
         {/* 札の下端の差し出し口。紙はここから出る */}
         {receipt ? <div className="rm-slot" aria-hidden="true" /> : null}
       </section>
-      {receipt && phase === 'print' ? (
+      {pop && shown.length ? (
         <div ref={feed} className="rc-feed">
-          {/* 年度を替えたら刷り直す */}
-          <div key={year} className="rc-print rc-run">
-          <div className="rc-paper">
-            <p className="text-center text-[18px] font-semibold tracking-[0.3em]">{name}</p>
-            <p className="mt-1 text-center text-[13px] text-muted-foreground">
-              {reiwa(year)} {settled ? '決算' : '当初予算'}・1人あたり
-            </p>
-            <ul className="rc-rule mt-4 pt-2">
-              {v.fields.map((f, i) => {
-                const row = (
-                  <>
-                    <span className="flex items-baseline gap-2 text-[15px]">
-                      <FieldIcon id={f.id} className="size-[18px] shrink-0 self-center text-muted-foreground" />
-                      <span className="whitespace-nowrap">{f.name}</span>
-                      <span className="rc-lead" />
-                      <Yen n={receipt.parts[i]!} className="text-[16px]" />
-                    </span>
-                    {f.examples ? <span className="mt-0.5 block pl-[26px] text-[12px] text-muted-foreground">{f.examples}</span> : null}
-                  </>
-                )
-                // その他は事業の絞り込みに無いので押せない
-                return (
-                  <li key={f.id}>
-                    {f.id === OTHER_FRAME.id ? (
-                      <div className="px-1.5 py-2">{row}</div>
-                    ) : (
-                      <Link href={`${base}/projects?field=${f.id}`} className="block rounded-lg px-1.5 py-2 transition-colors hover:bg-card">
-                        {row}
-                      </Link>
-                    )}
-                  </li>
-                )
-              })}
-            </ul>
-            <p className="rc-rule mt-2 flex items-baseline justify-between pt-3">
-              <span className="text-[15px]">1人あたりの合計</span>
-              <Yen n={receipt.sum} className="text-[28px] font-semibold text-primary" />
-            </p>
-            {/* 読み取るとまちの頁を開く QR と、同じ頁を共有するボタン */}
-            <div className="mt-5 flex items-center justify-center gap-5">
-              <Qr url={detailHref} />
-              <Share url={detailHref} title={`${name}の1人あたりのレシート｜風土記`} />
-            </div>
-          </div>
+          <div className="rc-print">
+            {shown.map((r, i) => (
+              <Strip key={r.key} latest={i === 0} mode={i === 0 ? (r.key === printing ? 'grow' : 'still') : printing ? 'roll' : 'still'}>
+                {paper(r, i === 0 && printed.length > 1)}
+              </Strip>
+            ))}
+            {/* 前に刷った紙は下の端で巻き取られて丸まる */}
+            {printed.length > 1 ? <div className="rc-curl" aria-hidden="true" /> : null}
           </div>
         </div>
       ) : null}
