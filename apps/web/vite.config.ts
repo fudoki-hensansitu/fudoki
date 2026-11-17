@@ -10,7 +10,7 @@ import { voidPlugin } from 'void'
 // void は void.config.ts の custom domain の route を cf の domains の文字列（本番だけ）に移し、wrangler の previews_enabled を移せない。
 // 文字列のまま deploy すると fudoki.dev の Preview（pr-<番号>.fudoki.dev）が止まるので、build の出力で本番と Preview の両方を出す形に書き換える
 const PREVIEW_DOMAIN = 'fudoki.dev'
-const WORKER_CONFIG = fileURLToPath(new URL('./.cloudflare/output/v0/workers/default/worker.config.json', import.meta.url))
+const WORKER_CONFIG = fileURLToPath(new URL('./.cloudflare/output/v1/workers/default/worker.config.json', import.meta.url))
 const previewDomains = (): Plugin => ({
   name: 'fudoki:preview-domains',
   // Cloudflare の plugin は worker.config.json を buildApp（post）で書くので、その後に書き換える

@@ -1,4 +1,4 @@
-// 公開 web の Worker（fudoki）の設定。build（vite build）が cf の形で .cloudflare/output/v0 に書き出し、deploy・preview は cf がそれを読む。
+// 公開 web の Worker（fudoki）の設定。build（vite build）が cf の形で .cloudflare/output/v1 に書き出し、deploy・preview は cf がそれを読む。
 // データ（D1・R2・KV など）の binding は持たせず、データは apps/api に Service Binding で聞く（pipeline/verify/boundaries.ts が検査する）。
 // 例外は web 自身のデータの D1（binding DB・fudoki-web。AI との会話の保存と、外部サービスから引く参照データ）だけ。風土記のデータではなく、web だけが使う別の D1 にする
 import { defineConfig } from 'void/config'
