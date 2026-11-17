@@ -257,6 +257,8 @@ BULLET = re.compile(r'^[〇○●◎□■◇◆]')
 SUBJECT_MARK = re.compile(r'^(?:[〇○◯]|[OＯ](?=[^\x00-\x7f０-９Ａ-Ｚａ-ｚ]))\s*')
 # The words that qualify a printed amount as carried over (`一部繰越明許`, `逓次繰越`), printed after it.
 CARRY_OVER_TAG = re.compile(r'[(（]?(?:一部)?(?:繰越明許費?|逓次繰越|事故繰越し?)[)）]?')
+# A rate printed after an amount in a column of its own (`1／2`, a 補助率).
+RATE_TAG = re.compile(r'[0-9]+/[0-9]+')
 # Every parenthesised remark at the end of a name (`委託料（…へ流用△280,000）（…から流用1,815,000）`).
 PAREN_TAIL = re.compile(r'(?:[(（][^()（）]*[)）])+$')
 # A number printed against a counter word (`110番`, `3歳児`, `3階`, `2025年`, `2人目加算`) is a count in a name.
@@ -415,6 +417,10 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
     # is no part of the item's name or of the amount. The amount stays the line's last run.
     if len(parts) >= 3 and CARRY_OVER_TAG.fullmatch(normalize(text(parts[-1]))) and is_amount(text(parts[-2])):
         parts.pop()
+    # A rate printed in a column after the amount (台東区 当初予算の歳入, a table drawn in characters:
+    # `健康づくり啓発推進 2,925 1／2`): the amount stays the line's last run, and the rate goes with the name.
+    if len(parts) >= 3 and RATE_TAG.fullmatch(normalize(text(parts[-1]))) and is_amount(text(parts[-2])):
+        parts.insert(-1, parts.pop())
     if parts and (short_yen := document_quirk('short_yen_notes')) is not None \
             and (kept := short_yen.module.digits(normalize(text([g for part in parts for g in part])))) is not None:
         return [], [_cut([g for part in parts for g in part], kept)[0]]  # `400円` under a remark: its amount
@@ -1920,6 +1926,9 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
             note, item.hint, item.role = False, counts.module.HINT, 'annotation'
         mark = next((m for m in ordered_marks
                      if (shape_of(item) == shapes[m] if m in shapes else raw.startswith(normalize(m)))), None)
+        if (not note and (bare := quirk(settings, 'unnumbered_notes')) is not None and item.role in ('node', 'note')
+                and id(item) not in column_amount_items and bare.module.note(item, mark, result[-1] if result else None)):
+            note, item.hint = True, bare.module.KIND
         if note:
             item.hint = whole_names.get(raw) or next((kind for prefix, kind in note_kinds.items() if raw.startswith(prefix)), item.hint)
             if id(item) in column_amount_items:

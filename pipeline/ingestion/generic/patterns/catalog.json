@@ -228,6 +228,7 @@
     "unnumbered_names_at_rule": "ingestion.generic.patterns.quirks.unnumbered_names_at_rule",
     "unopened_brackets": "ingestion.generic.patterns.quirks.unopened_brackets",
     "whole_name_notes": "ingestion.generic.patterns.quirks.whole_name_notes",
+    "unnumbered_notes": "ingestion.generic.patterns.quirks.unnumbered_notes",
     "yen_split_amounts": "ingestion.generic.patterns.quirks.yen_split_amounts",
     "amount_under_name": "ingestion.generic.patterns.quirks.amount_under_name",
     "blank_line_breaks": "ingestion.generic.patterns.quirks.blank_line_breaks",
