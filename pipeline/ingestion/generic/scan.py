@@ -1220,6 +1220,8 @@ def declared_unread(built, logicals_: list, columns: dict | None, observation: d
                 for logical in logicals_ for b in logical.bands if b.page == page_['page_number'] for g in b.words)
             ink = document_quirk('rule_ink')
             ruled = ink is not None and ink.module.ruled(box, page_, logicals_)
+            slash = document_quirk('slashed_cells')
+            ruled = ruled or (slash is not None and slash.module.slashed(box, page_, logicals_))
             if not unit and not bracket and not ruled and any(b.page == page_['page_number'] and b.kind == 'amount'
                                 and b.x0 - b.offset < cx < b.x1 - b.offset and b.body_top < cy < b.body_bottom
                                 for logical in logicals_ for b in logical.bands):
