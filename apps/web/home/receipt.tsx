@@ -197,6 +197,8 @@ function Strip({ mode, joined, children }: { mode: 'grow' | 'still'; joined: boo
 const RIBBON_MARGIN = 48
 /** 新しい紙の下端から床までに、少なくとも空ける高さ */
 const RIBBON_GAP = 40
+/** 押し出された紙を描く canvas を、何 px ずつまとめて伸ばすか */
+const RIBBON_GROW = 160
 /** 紙の境のミシン目の色（紙の上なので明暗で変えない） */
 // oxlint-disable-next-line design/color-literal -- canvas に描く絵の色で、receipt.css の .rc-ribbon-dom::before と同じ値にする
 const PERFORATION = 'rgba(0, 0, 0, 0.3)'
@@ -290,11 +292,12 @@ function Ribbon({ papers, onHeight, onFail, children }: { papers: Older[]; onHei
           const L = sheets.reduce((n, x) => n + x.height, 0)
           const floor = incoming + RIBBON_GAP + pileAbove(L)
           const width = print.clientWidth
-          // canvas の高さは、紙が手前へ広がって届いた所まで伸ばす（縮めると頁が揺れるので伸ばすだけ）
-          const want = Math.ceil(floor + RIBBON_GAP)
-          const h = Math.max(shown, want)
+          // canvas の高さは、紙が手前へ広がって届いた所まで伸ばす（縮めると頁が揺れるので伸ばすだけ）。
+          // 高さを変えると描く場を作り直すので、毎コマ少しずつではなく、まとめて伸ばす
+          const step = (px: number) => Math.ceil(px / RIBBON_GROW) * RIBBON_GROW
+          const h = Math.max(shown, step(floor + RIBBON_GAP))
           const { bottom, moving } = stage!.frame(sheets, attach, floor, width, width + RIBBON_MARGIN * 2, h)
-          const next = Math.max(h, Math.ceil(bottom + 8))
+          const next = Math.max(h, step(bottom + 8))
           if (next !== shown) {
             shown = next
             height.current(next)
