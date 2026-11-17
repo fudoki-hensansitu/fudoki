@@ -153,7 +153,6 @@
     "inner_tables": "ingestion.generic.patterns.quirks.inner_tables",
     "kana_set_apart": "ingestion.generic.patterns.quirks.kana_set_apart",
     "narrow_number_gaps": "ingestion.generic.patterns.quirks.narrow_number_gaps",
-    "twin_amount_columns": "ingestion.generic.patterns.quirks.twin_amount_columns",
     "letter_spaced_lines": "ingestion.generic.patterns.quirks.letter_spaced_lines",
     "line_starts": "ingestion.generic.patterns.quirks.line_starts",
     "list_cut": "ingestion.generic.patterns.quirks.list_cut",

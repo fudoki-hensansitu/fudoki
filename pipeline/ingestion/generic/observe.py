@@ -389,12 +389,9 @@ def observe(pdf: Path, pages: list[int], cache: Path | None = None,
     """Observe the listed physical pages. A JSON cache keeps reruns cheap."""
     if not pages:  # every page of the scope is read from OCR (a document whose glyphs are outlines)
         return []
-    from ingestion.generic.patterns import document_quirk
-    twins = document_quirk('twin_amount_columns') is not None
     if cache is not None and cache.exists():
         data = json.loads(cache.read_text())
-        if data['pages'] == pages and data.get('character_map', {}) == (character_map or {}) \
-                and data.get('twin_amount_columns', False) == twins:
+        if data['pages'] == pages and data.get('character_map', {}) == (character_map or {}):
             return [Page(p['number'], p['width'], p['height'], [Word(*w) for w in p['words']],
                          [Rule(*r) for r in p['rules']]) for p in data['observed']]
     import pdfplumber
@@ -405,15 +402,14 @@ def observe(pdf: Path, pages: list[int], cache: Path | None = None,
         for number in pages:
             width, height, items = poppler[number]
             page = document.pages[number - 1]
-            # `twin_amount_columns`: two amount columns that print the same figure on most rows are no hidden copy.
-            items = items if twins else drop_hidden_copies(pdf, number, width, items)
+            items = drop_hidden_copies(pdf, number, width, items)
             items = covered_by_notes(page, items)
             items, glyph_rules = rule_glyphs(items, page.chars)
             result.append(Page(number, width, height, items, merge_rules(_to_poppler(page, _segments(page, pdf)) + glyph_rules)))
             page.close()
     if cache is not None:
         cache.parent.mkdir(parents=True, exist_ok=True)
-        cache.write_text(json.dumps({'pages': pages, 'character_map': character_map or {}, 'twin_amount_columns': twins, 'observed': [
+        cache.write_text(json.dumps({'pages': pages, 'character_map': character_map or {}, 'observed': [
             {'number': p.number, 'width': p.width, 'height': p.height,
              'words': [[w.text, w.x0, w.y0, w.x1, w.y1] for w in p.words],
              'rules': [[r.x0, r.y0, r.x1, r.y1] for r in p.rules]} for p in result]}, ensure_ascii=False))
