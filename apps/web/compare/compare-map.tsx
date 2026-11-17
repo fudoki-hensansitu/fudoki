@@ -260,13 +260,13 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
                 {t.name}
                 <small className="text-xs font-normal text-muted-foreground">{popText(t.pop)}</small>
               </p>
-              <Button size="lg" nativeButton={false} render={<Link href={t.path} />} className="mt-3 h-11 w-full text-[15px]">
+              <p className="mt-4 text-[13px] text-muted-foreground">{q.short}</p>
+              <Num v={t.values[q.slug] ?? null} q={q} className="text-[32px] leading-tight font-semibold text-primary" />
+              {scale ? <p className="text-[13px] text-muted-foreground">都内の中央値 <Num v={scale.median} q={q} /></p> : null}
+              <Button size="lg" nativeButton={false} render={<Link href={t.path} />} className="mt-6 h-11 w-full text-[15px]">
                 {t.name}を開く
                 <ArrowRightIcon aria-hidden="true" />
               </Button>
-              <p className="mt-6 text-[13px] text-muted-foreground">{q.short}</p>
-              <Num v={t.values[q.slug] ?? null} q={q} className="text-[32px] leading-tight font-semibold text-primary" />
-              {scale ? <p className="text-[13px] text-muted-foreground">都内の中央値 <Num v={scale.median} q={q} /></p> : null}
             </aside>
           ) : null}
         </div>
