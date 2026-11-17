@@ -1,4 +1,4 @@
-// ホームのうちのまちの札。札をレシートの機械に見立て、予算と1人あたりの額を数え上げ、差し出し口から分野ごとの1人あたりのレシートを出す。
+// ホームのうちのまちの札。札を立体のレシートの機械（天板・前面・表示窓・差し出し口）に見立て、予算と1人あたりの額を数え上げ、差し出し口から分野ごとの1人あたりのレシートを出す。
 // 1人あたりは予算を人口で割った額（払った税金の額ではない）。分野の行の和が合計に合うよう、大きい端数から1円ずつ足して丸める
 import * as React from 'react'
 import { ArrowRightIcon } from '@phosphor-icons/react'
@@ -58,33 +58,55 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
   const total = useCountUp(v.total)
   const per = useCountUp(pop ? Math.round(v.total / pop) : 0)
   const receipt = pop ? perHeadParts(v.fields, v.total, pop) : null
+  const machine = React.useRef<HTMLDivElement>(null)
+  const front = React.useRef<HTMLElement>(null)
+  const [solid, setSolid] = React.useState(false)
+  // 本体を three.js で描く（読み込みは後から）。描けるまで・描けないときは CSS の本体のまま
+  React.useEffect(() => {
+    let stop: (() => void) | null = null
+    let alive = true
+    // サーバーの bundle に three.js を入れない（import.meta.env.SSR はビルド時に定数になり、この import ごと消える）
+    if (import.meta.env.SSR) return
+    void import('./machine3d').then(({ mountMachine }) => {
+      if (!alive || !machine.current || !front.current) return
+      stop = mountMachine(machine.current, front.current)
+      setSolid(!!stop)
+    }).catch(() => {})
+    return () => {
+      alive = false
+      stop?.()
+    }
+  }, [])
   return (
-    <div>
-      <section className="relative z-10 rounded-[24px] bg-brand p-5 pb-12 text-brand-foreground sm:p-7 sm:pb-12">
+    <div ref={machine} className="rm relative" data-solid={solid || undefined}>
+      {/* 天板。手前の辺を軸に奥へ倒し、奥ほど狭く見せる（three.js で描けたら隠す） */}
+      <div className="rm-top" aria-hidden="true" />
+      <section ref={front} className="rm-body relative z-10 p-5 pb-14 text-brand-foreground sm:p-7 sm:pb-16">
         {head}
-        <div className="mt-6 flex flex-wrap items-end justify-between gap-x-10 gap-y-4">
-          <dl className="flex flex-wrap gap-x-10 gap-y-4">
-            <div>
-              <dt className="text-sm opacity-80">{what}</dt>
-              <dd className="mt-1 text-[30px] leading-none font-semibold sm:text-[40px]">
-                <Yen n={total} />
+        {/* 表示窓。予算と1人あたりをいちばん大きく出す */}
+        <dl className="rm-display mt-5 grid gap-4 px-5 py-5 sm:mt-6 sm:gap-5 sm:px-7 sm:py-6">
+          <div>
+            <dt className="text-[15px] opacity-80">{what}</dt>
+            <dd className="mt-1.5 text-[clamp(28px,8vw,60px)] leading-none font-semibold">
+              <Yen n={total} />
+            </dd>
+          </div>
+          {pop ? (
+            <div className="rm-divider pt-4 sm:pt-5">
+              <dt className="text-[15px] opacity-80">1人あたりに直すと</dt>
+              <dd className="mt-1.5 text-[clamp(44px,13vw,84px)] leading-none font-semibold">
+                <Yen n={per} />
               </dd>
             </div>
-            {pop ? (
-              <div>
-                <dt className="text-sm opacity-80">1人あたりに直すと</dt>
-                <dd className="mt-1 text-[30px] leading-none font-semibold sm:text-[40px]">
-                  <Yen n={per} />
-                </dd>
-              </div>
-            ) : null}
-          </dl>
-          <Link href={detailHref} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-fill px-3.5 py-2 text-[13px] font-medium text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover">
+          ) : null}
+        </dl>
+        <div className="mt-4 flex justify-end">
+          <Link href={detailHref} className="rm-key inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-medium">
             詳細を見る
             <ArrowRightIcon className="size-4" />
           </Link>
         </div>
-        {receipt ? <div className="rc-slot absolute inset-x-0 bottom-5" aria-hidden="true" /> : null}
+        {receipt ? <div className="rm-slot absolute inset-x-0 bottom-[22px]" aria-hidden="true" /> : null}
       </section>
       {receipt ? (
         <div className="rc-feed">

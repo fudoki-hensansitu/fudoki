@@ -3,9 +3,11 @@
 .rc-feed {
   position: relative;
   overflow: hidden;
-  /* 札の下の余白（差し出し口の中心まで）だけ上に重ねる。札が上に乗るので、紙の頭は差し出し口から出てくるように見える */
-  margin-top: -24px;
+  /* 前面の下の余白（差し出し口の中心まで）だけ上に重ねる */
+  margin-top: -29px;
   padding: 0 0 28px;
+  /* 紙は差し出し口から前面の手前に垂れる。前面（z-10）より上に置き、差し出し口より上は切る */
+  z-index: 20;
 }
 /* 紙の影。紙は下端を mask で切るので、影は外側の箱に drop-shadow で付ける */
 .rc-print {
@@ -22,8 +24,17 @@
   --border: #ddd6c8;
   --card: #f8f5ee;
   --primary: #2f5d43;
-  padding: 34px 22px 34px;
-  /* 下端だけ、ちぎった跡のぎざぎざ */
+  padding: 40px 22px 34px;
+  /* 紙の頭は差し出し口の影に入る */
+.rc-paper::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 40px;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.06) 45%, transparent);
+}
+/* 下端だけ、ちぎった跡のぎざぎざ */
   -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 8px) no-repeat, conic-gradient(from -45deg at bottom, transparent 90deg, #000 0) bottom / 14px 8px repeat-x;
   mask: linear-gradient(#000 0 0) top / 100% calc(100% - 8px) no-repeat, conic-gradient(from -45deg at bottom, transparent 90deg, #000 0) bottom / 14px 8px repeat-x;
 }
@@ -34,14 +45,82 @@
   from { transform: translateY(-100%); }
   to { transform: none; }
 }
-/* 差し出し口。札の下端に彫った細い溝 */
-.rc-slot {
-  height: 8px;
-  width: min(480px, calc(100% - 16px));
+/* three.js の本体（machine3d.ts）。天板の上端から前面の下端までを覆い、DOM の前面の後ろに敷く */
+.rm > canvas {
+  position: absolute;
+  top: -12px;
+  left: -12px;
+  z-index: 0;
+  pointer-events: none;
+  filter: drop-shadow(0 16px 16px rgba(0, 0, 0, 0.28));
+  animation: rc-fade 300ms ease-out both;
+}
+@keyframes rc-fade {
+  from { opacity: 0; }
+}
+.rm[data-solid] .rm-top {
+  visibility: hidden;
+}
+.rm[data-solid] .rm-body {
+  background: none;
+  box-shadow: none;
+}
+/* 機械の天板。手前の辺を軸に奥へ倒す（perspective で奥ほど狭くなる） */
+.rm-top {
+  height: 40px;
+  margin-inline: 6px;
+  margin-bottom: -1px;
+  border-radius: 28px 28px 0 0;
+  background: linear-gradient(180deg, #6f9c80 0%, #4c7d61 55%, #3a6a4f 100%);
+  transform: perspective(700px) rotateX(62deg);
+  transform-origin: bottom;
+}
+/* 機械の前面。上の縁に光、下に厚みの陰、床への影 */
+.rm-body {
+  border-radius: 10px 10px 28px 28px;
+  background: linear-gradient(180deg, #386c4f 0%, var(--brand) 38%, #284f39 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -8px 0 rgba(0, 0, 0, 0.22),
+    inset 1px 0 0 rgba(255, 255, 255, 0.06),
+    inset -1px 0 0 rgba(0, 0, 0, 0.18),
+    0 2px 3px rgba(0, 0, 0, 0.18),
+    0 28px 36px -20px rgba(0, 0, 0, 0.55);
+}
+/* 表示窓。前面に彫り込み、ガラスの映り込みを斜めに置く */
+.rm-display {
+  position: relative;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #19342a 0%, #1f4031 100%);
+  box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 -1px 0 rgba(255, 255, 255, 0.08), 0 1px 0 rgba(255, 255, 255, 0.14);
+  overflow: hidden;
+}
+.rm-display::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.07) 0 34%, transparent 34%);
+}
+/* 押せるキー。押すと沈む */
+.rm-key {
+  background: linear-gradient(180deg, #ffffff 0%, #efeae0 100%);
+  color: var(--brand-fill-foreground);
+  box-shadow: 0 3px 0 #b9b1a1, 0 5px 10px rgba(0, 0, 0, 0.28);
+  transition: transform 120ms ease-out, box-shadow 120ms ease-out;
+}
+.rm-key:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #b9b1a1, 0 2px 4px rgba(0, 0, 0, 0.28);
+}
+/* 差し出し口。前面の下に彫った深い溝と、その下の受けの縁 */
+.rm-slot {
+  height: 14px;
+  width: min(500px, calc(100% - 28px));
   margin-inline: auto;
-  border-radius: 9999px;
-  background: rgba(0, 0, 0, 0.42);
-  box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.5), 0 1px 0 rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: linear-gradient(180deg, #050d09 0%, #13261c 100%);
+  box-shadow: inset 0 5px 6px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 255, 255, 0.18), 0 2px 0 rgba(0, 0, 0, 0.2);
 }
 .rc-rule {
   border-top: 1px dashed var(--border);
@@ -63,4 +142,8 @@
   .rc-print.rc-run {
     animation: none;
   }
+}
+/* 表示窓の中の区切り */
+.rm-divider {
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
 }
