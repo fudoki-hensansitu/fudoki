@@ -640,8 +640,13 @@ def correct_names(nodes: list[dict], rules: list[dict] | None) -> list[str]:
         at = lambda n, name: n['physical_page'] == rule['page'] and n['name_text'] == name \
             and n['code_text'] == rule.get('code') and ('y' not in rule or abs(n['y0'] - rule['y']) <= 3)
         found = [n for n in nodes if at(n, rule['observed_name'])]
-        if not found and 'corrected_code' not in rule and len([n for n in nodes if at(n, rule['corrected_name'])]) == 1:
-            notes.append(f'{rule["observed_name"]}→{rule["corrected_name"]}（字形表で直っていた）')
+        # (the reading may print the number apart by itself now: `1年金総務費` read as `1` and `年金総務費`)
+        done = lambda n: at(n, rule['corrected_name']) if 'corrected_code' not in rule else \
+            n['physical_page'] == rule['page'] and n['name_text'] == rule['corrected_name'] \
+            and n['code_text'] == rule['corrected_code'] and ('y' not in rule or abs(n['y0'] - rule['y']) <= 3)
+        if not found and len([n for n in nodes if done(n)]) == 1:
+            notes.append(f'{rule["observed_name"]}→{rule["corrected_name"]}（' + ('字形表' if 'corrected_code' not in rule else '読み')
+                         + 'で直っていた）')
             continue
         if len(found) != 1:
             raise ValueError(f'A name correction must find one node: {rule["id"]} ({len(found)})')

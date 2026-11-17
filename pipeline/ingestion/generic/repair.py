@@ -113,7 +113,7 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
         address = ctypes.cast(handle, ctypes.c_void_p).value
         if address not in clips:
             clip = raw.FPDFPageObj_GetClipPath(handle)
-            box = None
+            box, boxes = None, []
             for i in range(raw.FPDFClipPath_CountPaths(clip) if clip else 0):
                 xs, ys = [], []
                 for j in range(raw.FPDFClipPath_CountPathSegments(clip, i)):
@@ -122,9 +122,15 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
                     raw.FPDFPathSegment_GetPoint(segment, x, y)
                     xs.append(x.value); ys.append(y.value)
                 if xs:
-                    path = (min(xs), min(ys), max(xs), max(ys))
-                    box = path if box is None else (max(box[0], path[0]), max(box[1], path[1]),
-                                                    min(box[2], path[2]), min(box[3], path[3]))
+                    boxes.append((min(xs), min(ys), max(xs), max(ys)))
+            # A path read as a line (under 1pt across) is no clip to meet: pdfium gives such a box for a clip under which
+            # the text still prints (`595.3 8.5 595.3 841.9` beside the frame of 中央区の予算書 2023 p2). With only such
+            # paths, the box around them stands (`line_clips`).
+            areas = [b for b in boxes if b[2] - b[0] >= 1 and b[3] - b[1] >= 1]
+            if areas:
+                box = (max(b[0] for b in areas), max(b[1] for b in areas), min(b[2] for b in areas), min(b[3] for b in areas))
+            elif boxes:
+                box = (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
             clips[address] = box if box is None or (box[0] <= box[2] and box[1] <= box[3]) else ()
         return clips[address]
 
