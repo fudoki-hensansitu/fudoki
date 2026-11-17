@@ -689,7 +689,8 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
           header: dict | None = None, code_corrections: list[dict] | None = None,
           header_readings: list[dict] | None = None, rule_dark: int = pdf_rules.DARK, rule_hook=None,
           keep_marks: bool = False, row_gaps: bool = False, short_columns: bool = False,
-          skewed: bool = False, row_columns: bool = False) -> list[Page]:
+          skewed: bool = False, row_columns: bool = False, skewed_columns: bool = False,
+          spread_rows: bool = False) -> list[Page]:
     """`rule_hook(PageRules) -> PageRules` completes the rules read from a rendered page before the words are cut at
     them; `keep_marks` keeps the bullet that starts a line in its first word (both for a text document's OCR pages, `mixed.py`)."""
     every = bool((header or {}).get('agree_all_frames'))
@@ -704,7 +705,10 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
     def detected(number):
         found = (rules or {}).get(number) or (
             vector.module.detected(pdf, number) if (vector := document_quirk('vector_rules')) is not None
-            else pdf_rules.detect(pdf, number, dark=rule_dark, skewed=skewed))
+            else pdf_rules.detect(pdf, number, dark=rule_dark, skewed=skewed,
+                                  skewed_columns=skewed_columns, spread_rows=spread_rows))
+        if (edges := document_quirk('page_edge_rules')) is not None:
+            found = edges.module.dropped(found)
         if (dotted := document_quirk('dotted_column_rules')) is not None:
             found = dotted.module.added(pdf, found, rule_dark)
         found = short_rows(pdf, found, rule_dark,
@@ -1276,7 +1280,9 @@ def read_pages(source: dict, options: dict, settings: dict | None, selected: lis
                     keep_marks=keep_marks, row_gaps=bool(((settings or {}).get('rules') or {}).get('row_gaps')),
                     short_columns=bool(((settings or {}).get('rules') or {}).get('short_columns')),
                     skewed=bool(((settings or {}).get('rules') or {}).get('skewed')),
-                    row_columns=bool(((settings or {}).get('rules') or {}).get('row_columns')))
+                    row_columns=bool(((settings or {}).get('rules') or {}).get('row_columns')),
+                    skewed_columns=bool(((settings or {}).get('rules') or {}).get('skewed_columns')),
+                    spread_rows=bool(((settings or {}).get('rules') or {}).get('spread_rows')))
     if (specks := document_quirk('specks')) is not None:
         printed = specks.module.drop(printed)
     printed = add_code_readings(printed, options.get('code_readings'))
