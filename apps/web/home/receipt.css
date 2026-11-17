@@ -4,9 +4,7 @@
   position: relative;
   /* 上端を札の差し出し口の溝の中心に重ねる（.rm-slot の bottom + 高さの半分） */
   margin-top: -22px;
-  /* 差し出し口より上だけを切る。落ちる紙は下と横へはみ出してよいが、頁を横に送らせない */
-  clip-path: inset(0 -100vw -200vh -100vw);
-  overflow-x: clip;
+  overflow: hidden;
   padding: 0 0 28px;
   /* 紙は差し出し口から札の手前に垂れる。差し出し口より上は切る */
   z-index: 1;
@@ -45,45 +43,10 @@
 .rc-strip {
   overflow: hidden;
 }
-/* 切り離した前の紙（receipt.tsx の Fall）。差し出し口の下に重ね、帯を入れ子にして奥行きで曲げる */
-.rc-fall {
+/* 切り離した前の紙（receipt.tsx の Falling）。立体に差し替えるまで、差し出し口の下の同じ場所に置いておく */
+.rc-falling {
   position: absolute;
   inset: 0 0 auto;
-  perspective: 1400px;
-  perspective-origin: 50% 0;
-  pointer-events: none;
-}
-.rc-fall-body {
-  transform-style: preserve-3d;
-  transform-origin: 50% 0;
-}
-.rc-band {
-  position: absolute;
-  inset-inline: 0;
-  transform-style: preserve-3d;
-  transform-origin: 50% 0;
-}
-.rc-fall-body > .rc-band {
-  position: relative;
-}
-/* 表は刷った面、裏は白い紙。巻いて裏が見える帯は白く見せる */
-.rc-band-face {
-  overflow: hidden;
-  backface-visibility: hidden;
-}
-.rc-band-back {
-  position: absolute;
-  inset: 0;
-  background: #f4f1ea;
-  transform: rotateY(180deg);
-  backface-visibility: hidden;
-}
-.rc-band-dim {
-  position: absolute;
-  inset: 0;
-  background: #000;
-  opacity: 0;
-  backface-visibility: hidden;
 }
 /* 数字の札。札そのものをレジに見立て、平らなまま動かさない（数字だけが数え上がる）。下端に差し出し口（.rm-slot）を持つ */
 .rm-card {

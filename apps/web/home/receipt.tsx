@@ -1,6 +1,6 @@
 // ホームのうちのまちの札。緑の札で予算と1人あたりの額を順に数え上げ、札の下端の差し出し口から分野ごとの1人あたりのレシートを刷り出す。
 // 年度を替えて刷り直すときは、前の紙を差し出し口で切り離して丸まりながら落とし、落ち終えてから数え直して新しい紙を刷る。
-// 札そのものをレジに見立て、立体は使わない（平らな描き方に揃える）。
+// 札そのものをレジに見立て、平らな描き方に揃える。切り離して落とす紙だけを立体にする（fall3d.ts）。
 // 1人あたりは予算を人口で割った額（払った税金の額ではない）。分野の行の和が合計に合うよう、大きい端数から1円ずつ足して丸める
 import * as React from 'react'
 import { encode } from 'uqr'
@@ -181,61 +181,41 @@ function Strip({ mode, children }: { mode: 'grow' | 'still'; children: React.Rea
   )
 }
 
-/** 落とす紙を横に切った帯の数。多いほど丸まりが滑らかになる */
-const FALL_BANDS = 24
-/** 帯ごとの曲がり（度）。紙全体で2回り巻く。帯ごとに少しねじり、横へ流れる螺旋にする（切ったレシートが丸まって落ちる姿） */
-const BEND = 720 / FALL_BANDS
-const TWIST = 2.2
-
-/** 切り離した前のレシート。差し出し口で切れて少し沈み、下の端から丸まりながら落ちて消える。
- * 紙を横の帯に切り、帯を入れ子にして一つ前の帯の下端を軸に曲げる（曲がりが積み重なって、紙が巻く）。紙の裏は白い */
-function Fall({ height, children }: { height: number; children: React.ReactNode }) {
-  const root = React.useRef<HTMLDivElement>(null)
-  const h = height / FALL_BANDS
-  React.useLayoutEffect(() => {
-    const el = root.current
-    if (!el) return
-    const opts = { duration: FALL_MS, easing: 'cubic-bezier(0.45, 0, 0.75, 0.6)', fill: 'forwards' } as const
-    const anims = [
-      el.animate(
-        [
-          { transform: 'translateY(0) rotateZ(0deg)', opacity: 1 },
-          { transform: 'translateY(12px) rotateZ(0deg)', opacity: 1, offset: 0.08 },
-          { transform: 'translateY(36px) rotateZ(-3deg)', opacity: 1, offset: 0.62 },
-          { transform: 'translateY(460px) rotateZ(-14deg)', opacity: 0 },
-        ],
-        opts,
-      ),
-    ]
-    // 下の端の帯から先に曲げ、紙が下から巻き上がって丸まる。巻き終えたら（全体の 6 割ほど）落ちる
-    const roll = { duration: FALL_MS * 0.5, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'forwards' } as const
-    el.querySelectorAll<HTMLElement>('[data-band]').forEach((b) => {
-      const i = Number(b.dataset.band)
-      if (i === 0) return
-      const delay = (1 - i / FALL_BANDS) * FALL_MS * 0.12
-      anims.push(b.animate([{ transform: 'rotateX(0deg) rotateZ(0deg)' }, { transform: `rotateX(${BEND}deg) rotateZ(${TWIST}deg)` }], { ...roll, delay }))
-      // 巻いた角度に合わせて陰を付ける（光に背を向けた帯ほど暗い）
-      const shade = (0.2 * (1 - Math.cos((BEND * i * Math.PI) / 180))) / 2
-      const dim = b.querySelector<HTMLElement>(':scope > .rc-band-dim')
-      if (dim) anims.push(dim.animate([{ opacity: 0 }, { opacity: shade }], { ...roll, delay }))
-    })
-    return () => anims.forEach((a) => a.cancel())
-  }, [height])
-  const band = (i: number): React.ReactNode => (
-    <div data-band={i} className="rc-band" style={{ height: h, top: i ? h : 0 }}>
-      <div className="rc-band-face" style={{ height: h + 1 }}>
-        <div style={{ marginTop: -i * h }}>{children}</div>
-      </div>
-      <div className="rc-band-back" />
-      <div className="rc-band-dim" />
-      {i < FALL_BANDS - 1 ? band(i + 1) : null}
-    </div>
-  )
+/** 切り離した前のレシート。差し出し口の下の同じ場所に置いたまま、紙を写した立体（fall3d.ts、切るときだけ読む）に差し替えて、
+ * 丸まりながら落とす。立体の最初の姿が出てから DOM の紙を隠す。WebGL が使えなければ、落とさずに消す */
+function Falling({ onDone, children }: { onDone: () => void; children: React.ReactNode }) {
+  const ref = React.useRef<HTMLDivElement>(null)
+  const done = React.useRef(onDone)
+  done.current = onDone
+  React.useEffect(() => {
+    let alive = true
+    let fall: { play: () => Promise<void>; dispose: () => void } | null = null
+    void (async () => {
+      const el = ref.current?.querySelector<HTMLElement>('.rc-paper')
+      try {
+        if (!el) throw new Error('紙がありません')
+        const { paperCanvas, fallPaper } = await import('./fall3d')
+        const texture = await paperCanvas(el)
+        if (!alive) return
+        fall = fallPaper(texture, el.getBoundingClientRect(), FALL_MS)
+        if (!fall) throw new Error('WebGL が使えません')
+        ref.current!.style.visibility = 'hidden'
+        await fall.play()
+      } catch {
+        // 落とせないときは、そのまま消す
+      }
+      fall?.dispose()
+      fall = null
+      if (alive) done.current()
+    })()
+    return () => {
+      alive = false
+      fall?.dispose()
+    }
+  }, [])
   return (
-    <div className="rc-fall" aria-hidden="true" inert>
-      <div ref={root} className="rc-fall-body">
-        {band(0)}
-      </div>
+    <div ref={ref} className="rc-falling" aria-hidden="true" inert>
+      {children}
     </div>
   )
 }
@@ -251,6 +231,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, shareOf, 
   /** 刷った紙（いま出ている一枚）と、切り離して落としている前の紙 */
   const [printed, setPrinted] = React.useState<Printed | null>(null)
   const [falling, setFalling] = React.useState<{ r: Printed; height: number } | null>(null)
+  const fell = React.useCallback(() => setFalling(null), [])
   /** 数え始めるまでの間。前の紙を落とすときは落ち終えてから数える（見せるものは常に一つ） */
   const [lead, setLead] = React.useState(0)
   const [seen, setSeen] = React.useState(counted)
@@ -263,11 +244,6 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, shareOf, 
     setLead(drop ? FALL_MS : 0)
     setPrinted(null)
   }
-  React.useEffect(() => {
-    if (!falling) return
-    const t = setTimeout(() => setFalling(null), FALL_MS)
-    return () => clearTimeout(t)
-  }, [falling])
   const total = useCountUp(v.total, lead)
   const per = useCountUp(pop ? Math.round(v.total / pop) : 0, COUNT_MS + lead)
   const receipt = pop ? perHeadParts(v.fields, v.total, pop) : null
@@ -368,9 +344,9 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, shareOf, 
             ) : null}
             {/* 切り離した前の紙は、丸まりながら落ちて消える */}
             {falling ? (
-              <Fall key={falling.r.key} height={falling.height}>
+              <Falling key={falling.r.key} onDone={fell}>
                 {paper(falling.r)}
-              </Fall>
+              </Falling>
             ) : null}
           </div>
         </div>
