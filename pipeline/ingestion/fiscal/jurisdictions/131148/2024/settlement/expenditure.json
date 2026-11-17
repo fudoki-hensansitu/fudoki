@@ -52,6 +52,190 @@
           "table_id": "general-expenditure"
         }
       ]
+    },
+    {
+      "id": "land-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "174af72dd454a4d658af50515f24b906a8a5094fa39b48b9c30ebafd781f51ae"
+        }
+      ],
+      "options": {
+        "account": "用地特別会計",
+        "table_id": "land-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "翌年度繰越額": {
+                  "kind": "amount"
+                }
+              },
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "national-health-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "174af72dd454a4d658af50515f24b906a8a5094fa39b48b9c30ebafd781f51ae"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "翌年度繰越額": {
+                  "kind": "amount"
+                }
+              },
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "174af72dd454a4d658af50515f24b906a8a5094fa39b48b9c30ebafd781f51ae"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "翌年度繰越額": {
+                  "kind": "amount"
+                }
+              },
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "care-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "174af72dd454a4d658af50515f24b906a8a5094fa39b48b9c30ebafd781f51ae"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "care-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "翌年度繰越額": {
+                  "kind": "amount"
+                }
+              },
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-expenditure"
+        }
+      ]
     }
   ]
 }
