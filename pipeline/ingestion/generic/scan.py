@@ -1339,8 +1339,28 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
         built.unowned.extend({'kind': 'continued rows', 'detail': p} for p in problems)
     elif continued is not None:
         from ingestion.generic.convert import continue_volume
+
+        subject = next(n['axis_header'] for n in built.nodes if n.get('level_header') in ('款', '項', '目'))
+
+        def placed_nodes() -> set:
+            # (a row whose every row above stands one level up, or on another axis, up to a 款: what the
+            # diagnostics of a row with no parent or of a gap above it ask for)
+            by_key = {n['node_key']: n for n in built.nodes}
+            rooted: dict[str, bool] = {}
+
+            def placed(n: dict) -> bool:
+                if n['node_key'] not in rooted:
+                    parent = by_key.get(n['parent_node_key'])
+                    rooted[n['node_key']] = n['depth'] == 1 and n['axis_header'] == subject if parent is None else (
+                        (parent['axis_header'] != n['axis_header'] or parent['depth'] == n['depth'] - 1)
+                        and placed(parent))
+                return rooted[n['node_key']]
+            return {n['node_key'] for n in built.nodes if placed(n)}
+        before = placed_nodes()
         built.notes.append({'kind': 'continued rows', 'text': continue_volume(built.nodes, continued)})
-        placed = {(n['physical_page'], n['name_text']) for n in built.nodes if n['parent_node_key'] is not None}
+        # Only the diagnostics of the rows the continuation placed go: a gap it did not mend still stops the table.
+        mended = placed_nodes() - before
+        placed = {(n['physical_page'], n['name_text']) for n in built.nodes if n['node_key'] in mended}
         built.unowned = [u for u in built.unowned if not (u['kind'] in ('no subject parent', 'subject depth gap')
                                                           and (u.get('page'), u.get('text')) in placed)]
     if explained:
