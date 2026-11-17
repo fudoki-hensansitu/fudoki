@@ -1,17 +1,18 @@
-/* ホームのうちのまちの札と、その下のレジの本体（machine3d.ts）の差し出し口から出てくるレシート。
- * 紙は本体の置き場のすぐ下に敷き、差し出し口の線から下だけを見せる（.rc-feed が切り口）。紙は clip-path で上から伸ばし、ほかの動きは transform・opacity。入りは ease-out */
+/* ホームのうちのまちの札（レジに見立てる）と、その下端の差し出し口から出てくるレシート。
+ * 紙は札のすぐ下に敷き、差し出し口の線から下だけを見せる（.rc-feed が切り口）。紙は clip-path で上から伸ばし、ほかの動きは transform・opacity。入りは ease-out */
 .rc-feed {
   position: relative;
+  /* 上端を札の差し出し口の溝の中心に重ねる（.rm-slot の bottom + 高さの半分） */
+  margin-top: -22px;
   overflow: hidden;
   padding: 0 0 28px;
-  /* 紙は差し出し口から筐体の前面の手前に垂れる。canvas より上に置き、差し出し口より上は切る */
-  z-index: 20;
+  /* 紙は差し出し口から札の手前に垂れる。差し出し口より上は切る */
+  z-index: 1;
 }
 /* 紙の影。紙は下端を mask で切るので、影は外側の箱に drop-shadow で付ける */
 .rc-print {
   margin-inline: auto;
-  /* three.js で描けたら、差し出し口の幅（machine3d.ts の --rm-paper）に合わせる */
-  width: var(--rm-paper, min(440px, calc(100% - 40px)));
+  width: min(440px, calc(100% - 40px));
   filter: drop-shadow(0 1px 1px rgba(43, 39, 35, 0.12)) drop-shadow(0 8px 16px rgba(43, 39, 35, 0.1));
 }
 .rc-paper {
@@ -46,10 +47,9 @@
   from { clip-path: inset(0 -24px 100% -24px); transform: translateY(-8px); }
   to { clip-path: inset(0 -24px -40px -24px); transform: none; }
 }
-/* 数字の札。緑の平らな札のまま動かさない（数字だけが数え上がる）。レジの本体の手前に重ね、札の下端のすぐ下に差し出し口が来る */
+/* 数字の札。札そのものをレジに見立て、平らなまま動かさない（数字だけが数え上がる）。下端に差し出し口（.rm-slot）を持つ */
 .rm-card {
   position: relative;
-  z-index: 1;
   border-radius: 24px;
   background: var(--brand);
 }
@@ -60,40 +60,17 @@
 @keyframes rm-per-in {
   from { opacity: 0; transform: translateY(8px); }
 }
-/* レジの本体の置き場（machine3d.ts）。札のすぐ下で、高さは札の下端から差し出し口まで（three.js が決める）。本体の上の方は札の後ろに隠れる。紙は置き場のすぐ下から伸びる */
-.rm-stage {
-  margin-top: 20px;
-  height: 48px;
-}
-.rm[data-gl] .rm-stage {
-  margin-top: 0;
-}
-.rm-stage > canvas {
-  position: absolute;
-  top: 0;
-  z-index: 0;
-  pointer-events: none;
-  filter: drop-shadow(0 14px 14px rgba(0, 0, 0, 0.2));
-  /* 読み込めたら最初から据わった姿で、ふわっと出す */
-  animation: rm-in 600ms ease-out both;
-}
-@keyframes rm-in {
-  from { opacity: 0; }
-}
-/* three.js で描けないときの差し出し口。置き場の下端に溝だけを出す */
+/* 札の下端の差し出し口。紙（.rc-print）より少し広い溝で、中心が .rc-feed の上端に来る（下から 22px） */
 .rm-slot {
   position: absolute;
   left: 50%;
-  bottom: -7px;
-  height: 14px;
+  bottom: 16px;
+  height: 12px;
   width: min(468px, calc(100% - 12px));
   transform: translateX(-50%);
-  border-radius: 8px;
+  border-radius: 6px;
   background: linear-gradient(180deg, #050d09 0%, #13261c 100%);
-  box-shadow: inset 0 5px 6px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 255, 255, 0.18);
-}
-.rm[data-gl] .rm-slot {
-  display: none;
+  box-shadow: inset 0 4px 5px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 /* 押せるキー。押すと沈む */
 .rm-key {
@@ -127,7 +104,6 @@
   .rc-print.rc-run {
     animation: none;
   }
-  .rm-stage > canvas,
   .rm-per {
     animation: none;
   }

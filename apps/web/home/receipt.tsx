@@ -1,5 +1,5 @@
-// ホームのうちのまちの札。緑の札で予算と1人あたりの額を順に数え上げ、その下にレジの本体（three.js、形は Blender の model）が現れ、
-// 差し出し口から分野ごとの1人あたりのレシートを刷り出す。
+// ホームのうちのまちの札。緑の札で予算と1人あたりの額を順に数え上げ、札の下端の差し出し口から分野ごとの1人あたりのレシートを刷り出す。
+// 札そのものをレジに見立て、立体は使わない（平らな描き方に揃える）。
 // 1人あたりは予算を人口で割った額（払った税金の額ではない）。分野の行の和が合計に合うよう、大きい端数から1円ずつ足して丸める
 import * as React from 'react'
 import { ArrowRightIcon } from '@phosphor-icons/react'
@@ -8,7 +8,6 @@ import { reiwa, yearName } from '../jurisdiction/types'
 import type { YearView } from '../jurisdiction/app/data'
 import { OTHER_FRAME } from '../jurisdiction/domains'
 import { FieldIcon } from './parts'
-import type { Printer } from './machine3d'
 import { COUNT_MS, PRINT_MS, READ_MS, SCROLL_MS } from './motion'
 import './receipt.css'
 
@@ -59,7 +58,7 @@ export function perHeadParts(fields: { yen: number }[], total: number, pop: numb
   return { sum, parts }
 }
 
-/** 演出の段。count: 札で数え上げる（レジの本体は最初から札の下にある） → print: 差し出し口からレシートが出る */
+/** 演出の段。count: 札で数え上げる → print: 札の下端の差し出し口からレシートが出る */
 type Phase = 'count' | 'print'
 /** 予算を数え終えてから1人あたりを数える。2つを同時に動かすと目が追えない */
 const COUNT_ALL_MS = COUNT_MS * 2
@@ -79,11 +78,11 @@ function usePhase() {
 const easeInOut = (p: number) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2)
 
 /** 段に合わせて頁を送り、動かさなくても見えるようにする（カメラの代わり）。上へは戻さない。
- * count: 札とその下の本体（差し出し口まで）が画面の外にはみ出すなら、札の上端を越えない範囲で収まる位置へ。
- * print: 紙が伸びるのと同じ長さ・同じ緩急で、本体が画面の上に残る位置まで送り、紙が出てくるのを追う。
+ * count: 札の下端が画面の外なら、札の上端を越えない範囲で札が収まる位置へ。
+ * print: 紙が伸びるのと同じ長さ・同じ緩急で、札の下端（差し出し口）が画面の上に残る位置まで送り、紙が出てくるのを追う。
  * 利用者が自分で送ったら（ホイール・タッチ・キー・ポインタ）、それ以降は動かさない。
  * scroll の event は数えない（レイアウトの補正でも起き、利用者の操作と区別できない） */
-function useFollow(phase: Phase, card: React.RefObject<HTMLElement | null>, stage: React.RefObject<HTMLElement | null>) {
+function useFollow(phase: Phase, card: React.RefObject<HTMLElement | null>) {
   const touched = React.useRef(false)
   const raf = React.useRef(0)
   React.useEffect(() => {
@@ -115,16 +114,15 @@ function useFollow(phase: Phase, card: React.RefObject<HTMLElement | null>, stag
       raf.current = requestAnimationFrame(step)
     }
     if (phase === 'count' && card.current) {
-      const top = card.current.getBoundingClientRect().top
-      const bottom = (stage.current ?? card.current).getBoundingClientRect().bottom
-      if (bottom > vh) go(window.scrollY + Math.min(top - 16, bottom - vh + 16), SCROLL_MS, easeInOut)
+      const r = card.current.getBoundingClientRect()
+      if (r.bottom > vh) go(window.scrollY + Math.min(r.top - 16, r.bottom - vh + 16), SCROLL_MS, easeInOut)
     }
-    if (phase === 'print' && stage.current) {
+    if (phase === 'print' && card.current) {
       // 紙（receipt.css の rc-print）と同じ緩急で、差し出し口が画面の上から 3 割の位置に来るまで送る
-      const r = stage.current.getBoundingClientRect()
+      const r = card.current.getBoundingClientRect()
       go(window.scrollY + r.bottom - vh * 0.3, PRINT_MS, (p) => 1 - Math.pow(1 - p, 1.6))
     }
-  }, [phase, card, stage])
+  }, [phase, card])
 }
 
 export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: { name: string; v: YearView; year: number; pop: number | null; base: string; detailHref: string; head: React.ReactNode }) {
@@ -133,48 +131,12 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
   const total = useCountUp(v.total)
   const per = useCountUp(pop ? Math.round(v.total / pop) : 0, COUNT_MS)
   const receipt = pop ? perHeadParts(v.fields, v.total, pop) : null
-  const printable = !!receipt
   const card = React.useRef<HTMLElement>(null)
-  const stage = React.useRef<HTMLDivElement>(null)
   const phase = usePhase()
-  useFollow(phase, card, stage)
-  const [gl, setGl] = React.useState<Printer | null>(null)
-  // レジの本体を three.js で描く（読み込みは数え上げの間に済ませる）。描けないときは CSS の差し出し口だけ
-  React.useEffect(() => {
-    let m: Printer | null = null
-    let alive = true
-    // サーバーの bundle に three.js を入れない（import.meta.env.SSR はビルド時に定数になり、この import ごと消える）
-    if (import.meta.env.SSR || !printable) return
-    void import('./machine3d').then(async ({ mountPrinter }) => {
-      if (!alive || !stage.current) return
-      const mounted = await mountPrinter(stage.current, () => {
-        // コンテキストを失ったら canvas を外し、CSS の差し出し口へ戻す
-        m?.stop()
-        m = null
-        setGl(null)
-      })
-      if (!alive) return mounted?.stop()
-      m = mounted
-      setGl(m)
-    }).catch(() => {})
-    return () => {
-      alive = false
-      m?.stop()
-    }
-  }, [printable])
-  // 紙を送るときに本体のキーと灯を動かす。three.js の読み込みが段より遅れたときと reduced-motion では、動かさずに終わりの姿にする
-  const shown = React.useRef<{ m: Printer | null; phase: Phase; year: number }>({ m: null, phase: 'count', year })
-  React.useEffect(() => {
-    if (!gl) return
-    const was = shown.current
-    const fresh = was.m !== gl
-    const instant = fresh || reduced()
-    if (phase === 'print' && (fresh || was.phase !== 'print' || was.year !== year)) gl.print(instant)
-    shown.current = { m: gl, phase, year }
-  }, [gl, phase, year])
+  useFollow(phase, card)
   return (
-    <div className="rm" data-phase={phase} data-gl={gl ? true : undefined}>
-      <section ref={card} className="rm-card p-5 text-brand-foreground sm:p-7">
+    <div className="rm" data-phase={phase}>
+      <section ref={card} className={`rm-card p-5 text-brand-foreground sm:p-7 ${receipt ? 'pb-12 sm:pb-14' : ''}`}>
         {head}
         {/* 予算と1人あたりを同じ大きさでいちばん大きく出す。見出しも読める大きさにする */}
         <dl className="mt-5 grid gap-4 sm:mt-6 sm:gap-5">
@@ -200,13 +162,9 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
             <ArrowRightIcon className="size-4" />
           </Link>
         </div>
+        {/* 札の下端の差し出し口。紙はここから出る */}
+        {receipt ? <div className="rm-slot" aria-hidden="true" /> : null}
       </section>
-      {/* レジの本体の置き場。高さは支柱の上端から差し出し口までで、three.js が決める。描けないときは CSS の差し出し口 */}
-      {receipt ? (
-        <div ref={stage} className="rm-stage relative" aria-hidden="true">
-          <div className="rm-slot" />
-        </div>
-      ) : null}
       {receipt && phase === 'print' ? (
         <div className="rc-feed">
           {/* 年度を替えたら刷り直す */}
