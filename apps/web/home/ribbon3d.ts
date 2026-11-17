@@ -198,6 +198,20 @@ export function ribbon(canvas: HTMLCanvasElement, margin: number) {
       // 紙が紙をすり抜けないよう、毎回押し離す
       collide()
     }
+    // 紙は伸びない。上端から順に、伸びた所だけを紙の長さへ引き戻す（反復で詰めるだけだと、長い紙は重さでばねのように伸び縮みする）。
+    // 引き戻した分は前の位置も同じだけ動かし、速さは変えない
+    for (let i = 0; i < n - 1; i++) {
+      const dy = y[i + 1]! - y[i]!
+      const dz = z[i + 1]! - z[i]!
+      const d = Math.hypot(dy, dz) || 1e-6
+      if (d <= rest[i]!) continue
+      const ny = y[i]! + (dy / d) * rest[i]!
+      const nz = z[i]! + (dz / d) * rest[i]!
+      py[i + 1] = py[i + 1]! + ny - y[i + 1]!
+      pz[i + 1] = pz[i + 1]! + nz - z[i + 1]!
+      y[i + 1] = ny
+      z[i + 1] = nz
+    }
     // 床と、差し出し口の面
     for (let i = 1; i < n; i++) {
       if (z[i]! < 0) {
