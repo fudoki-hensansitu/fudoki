@@ -158,6 +158,20 @@ class Reader(Reading):
             raise ValueError('Incomplete Poppler page range')
         return pages
 
+    def with_image_readings(self, pages, readings):
+        """A block printed only as an image has no text layer (八王子 R6 の総務費・教育費の款集計). The words read
+        from the page's drawing are declared with their printed boxes and join the page's words."""
+        declared = {}
+        for reading in readings:
+            if not reading.get('reason') or not reading.get('words'):
+                raise ValueError('image_readings need words and a reason')
+            declared.setdefault(reading['page'], []).extend(
+                dict(text=w['text'], **dict(zip(('xMin', 'yMin', 'xMax', 'yMax'), map(float, w['box']))))
+                for w in reading['words'])
+        if missing := set(declared) - {page for page, _ in pages}:
+            raise ValueError(f'image_readings outside the pages read: {sorted(missing)}')
+        return [(page, words + declared.get(page, [])) for page, words in pages]
+
     def unglue(self, words):
         """「（N）M」や「M（N）」のように括弧金額と数値が結合した語を分ける。"""
         out = []
@@ -715,6 +729,7 @@ class Reader(Reading):
             # 連続1区間では従来と同一の観測path・同一出力にする。非連続ではgap頁をskipする。
             name = 'pages-bbox.html' if len(runs) == 1 else f'pages-bbox-{first}-{last}.html'
             pages.extend(self.observe(source['path'], first, last, observations / name))
+        pages = self.with_image_readings(pages, options.get('image_readings') or [])
 
         b = self.Builder(self)
         b.detail_cols = self.detail_columns(funds)
@@ -817,7 +832,9 @@ class Reader(Reading):
                     # 金額の無い升は何も印字しない（2023年度の介護・後期高齢者の款集計は保険料・都支出金が空）。集計行が
                     # 終わっていれば、決算額の右端から執行率の右端までを7等分した升へ、右端が最も近い升に割り当てる。
                     cells = sorted(b.kan_amount_cells, key=lambda c: c[0])
-                    if len(cells) < 7 and cells[-1][1].endswith(('%', '％')) and not cells[0][1].endswith(('%', '％')):
+                    # The rate's percent sign may not reach the text layer (`79.1`, 2023年度 労働費 p343).
+                    rate = lambda text: text.endswith(('%', '％')) or re.fullmatch(r'[0-9]{1,3}\.[0-9]', text)
+                    if len(cells) < 7 and rate(cells[-1][1]) and not rate(cells[0][1]):
                         left, right = cells[0][0], cells[-1][0]
                         slots = [left + (right - left) * n / 6 for n in range(7)]
                         taken = {}
@@ -911,7 +928,10 @@ class Reader(Reading):
                                            '前年度決算額': pm['前年度決算額']})
                         b.capture_subject()
                         continue
+                    # Not a heading after all (`37 団体 471 人` of a statistics table, 八王子 R6 p321): read but not
+                    # adopted, like the body around it.
                     b.emit_annex(b.pending_moku['物理頁'], b.pending_moku['words'])
+                    observe_unadopted(b.pending_moku['物理頁'], b.pending_moku['words'])
                     b.pending_moku = None
                 moku = self.rule('parse_moku_heading')(line, page)
                 if moku:

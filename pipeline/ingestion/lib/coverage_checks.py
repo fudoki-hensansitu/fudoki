@@ -44,11 +44,16 @@ PERCENT_WORD = re.compile(r'[△▲\-－―—]?[0-9][0-9,\.]*[％%]|[(（][0-9]
 CODE_WORD = re.compile(r'[0-9０-９]+[^0-9０-９,△▲\-－―—\.\(\)（）<>＜＞％%円]+')
 
 
+# A price per unit (`12,300円×延 8人`, the count set apart as its own word) is no amount, whatever Jev reads in a
+# word Poppler cut from it (`12,30`): it is explained outright, like a document number.
+UNIT_PRICE_WORDS = re.compile(r'[0-9][0-9,]*円×延?')
 QUANTITY_PHRASE = re.compile(
     r'(?:[^0-9円]|[0-9][0-9,]*(?:人|名|件|食|回|日|個|台|戸|世帯|本|床|箇所|校|番|丁目|歳|か月|カ月|ヶ月|ヵ月|号|基|m2|㎡|km|m|ｍ|年|月|路線|園|冊|区画|泊))+'
-    # an era-year range (`平成12～令和5年度`) and a unit price counted in people (`10,000円延113,835人`)
+    # an era-year range (`平成12～令和5年度`) and a unit price counted in people (`10,000円延113,835人`,
+    # `12,300円×延 8人`)
     r'|(?:令和|平成|昭和|大正|明治)[0-9]+[～〜~](?:令和|平成|昭和)?[0-9]+年度?[^0-9円]*'
-    r'|[0-9][0-9,]*円(?:延|×)?[0-9][0-9,]*(?:人|名|件|回|日|個|台|戸|世帯|本|冊|校|園)')
+    r'|[0-9][0-9,]*円(?:×?延|×)?[0-9][0-9,]*(?:人|名|件|回|日|個|台|戸|世帯|本|冊|校|園)'
+    r'|' + UNIT_PRICE_WORDS.pattern)
 
 
 # A date in an era's short form (`10. 5. 5から流用`: 令和 left out) opening a transfer remark. The words come without
@@ -601,7 +606,8 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
     non_amount_boxes, lines, merged_lines = _notation_context(
         words, lambda text: (_document_notation(text) or FISCAL_YEAR_DOCUMENT_NUMBER.fullmatch(text)
                              or QUANTITY_PHRASE.fullmatch(text) or ORDINAL_PHRASE.fullmatch(text) or ABBREVIATED_DATE.fullmatch(text)),
-        strong=lambda text: bool(FISCAL_YEAR_DOCUMENT_NUMBER.fullmatch(text)), strong_boxes=document_boxes)
+        strong=lambda text: bool(FISCAL_YEAR_DOCUMENT_NUMBER.fullmatch(text) or UNIT_PRICE_WORDS.fullmatch(text)),
+        strong_boxes=document_boxes)
     for word in normalized:
         # A fragment (7号) may already read as a glued code; the number still explains it.
         if word['covered'] in (None, 'non_amount') and (word['page'], tuple(word['bbox'])) in document_boxes:
