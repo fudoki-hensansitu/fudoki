@@ -1,5 +1,5 @@
 // はじめて開いたときの流れ（marketingskills の onboarding skill に沿う）。
-// 住んでいるまちを選ぶ（名前／現在地）→ 選んだまちの要点を一枚で見せる（価値の瞬間）。使い方のツアー・何歩目かの表示・はじめにやることのチェックリストは置かない（何のためにあるか伝わらないため外した、2026-11-17 yuito）。
+// 住んでいるまちを選ぶ（名前／現在地）だけの1歩。選んだ時点でそのまちに決め、ホームのダッシュボードを出す。要点を見せてから決めさせる2歩目・使い方のツアー・何歩目かの表示・はじめにやることのチェックリストは置かない（直感的でない・何のためにあるか伝わらないため外した、2026-11-17 yuito）。
 // まちの検索は、選ぶ前は住んでいるまちを選ぶ欄（AskTown）、選んだあとはほかのまちを見る欄（OtherTowns）の1つだけ出す。「ホーム」「見るまち」のような通じない言葉は使わない（2026-11-11 yuito）。文言は何が起きるかをそのまま書き、キャッチーにしない
 import * as React from 'react'
 import { MagnifyingGlassIcon, NavigationArrowIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react'
@@ -146,32 +146,4 @@ export function Intro({ mode }: { mode: 'full' | 'compact' | 'hidden' }) {
       <p className="mt-2 text-[15px] text-muted-foreground">{lead}</p>
     </header>
   )
-}
-
-/** まちを選んでいないときの画面。reveal があれば（まちを選んだ直後）2歩目の要点を出す */
-export function Empty({ listed, onPick, reveal }: { listed: boolean; onPick: (e: MapEntry) => void; reveal: React.ReactNode }) {
-  return (
-    <>
-      {reveal ? <div key="reveal">{reveal}</div> : <AskTown listed={listed} onPick={onPick} />}
-    </>
-  )
-}
-
-/** 前にまちを選んだことがあるか。ホームのリセットのあとは、要点を挟まずにまちだけ選び直す。前の版のチェックリスト・ツアーの保存も選んだことがある印として読む */
-const ONBOARDED = 'fudoki:onboarded'
-export const onboarded = () => {
-  try {
-    return [ONBOARDED, 'fudoki:checklist', 'fudoki:tour'].some((k) => localStorage.getItem(k) !== null)
-  } catch {
-    return false
-  }
-}
-
-/** まちを選んだ印を残す */
-export const markOnboarded = () => {
-  try {
-    localStorage.setItem(ONBOARDED, '1')
-  } catch {
-    // 保存できなければ、次も要点を挟むだけ
-  }
 }
