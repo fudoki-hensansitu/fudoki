@@ -73,6 +73,8 @@ export function subjectTree(subjects: readonly TreeSubject[]) {
   for (const r of (['款', '項', '目'] as const).flatMap((level) => rows.filter((x) => x.level === level))) {
     const yen = r.amount_yen ?? 0
     if (r.is_leaf) (fieldSubjects[fieldOf(r.cofog_code)] ??= []).push(r.subject_id)
+    // 分野の合計は末端の科目の和にする（目の無い項・項の無い款も末端なので足す）。和が款の総額に合う
+    if (r.is_leaf || r.level === '目') fields[fieldOf(r.cofog_code)] = (fields[fieldOf(r.cofog_code)] ?? 0) + yen
     if (r.level === '款') {
       const k: Kan = { name: r.name, yen, kou: [] }
       kan.push(k)
@@ -85,7 +87,6 @@ export function subjectTree(subjects: readonly TreeSubject[]) {
       const field = fieldOf(r.cofog_code)
       const kou = kouById.get(r.parent_subject_id ?? '')
       ;(kou?.moku ?? looseMoku).push({ id: r.subject_id, name: r.name, yen, field, cofog: r.cofog_code ?? null })
-      fields[field] = (fields[field] ?? 0) + yen
     }
   }
   return { kan, fields, fieldSubjects, looseMoku }

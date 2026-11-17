@@ -52,6 +52,57 @@ export function perHeadParts(fields: { yen: number }[], total: number, pop: numb
   return { sum, parts }
 }
 
+/** 演出の段。flat: 平らな札で数え上げる → solid: 札が立体の機械になる → print: 差し出し口からレシートが出る */
+type Phase = 'flat' | 'solid' | 'print'
+/** 数え上げを読み終える間（数え上げの後に置く） */
+const READ_MS = 500
+/** 立体になってからレシートが出るまで */
+const SOLID_MS = 650
+
+/** 段を進める。reduced-motion では最初から print */
+function usePhase() {
+  const [phase, setPhase] = React.useState<Phase>('flat')
+  React.useEffect(() => {
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return setPhase('print')
+    const t1 = setTimeout(() => setPhase('solid'), COUNT_MS + READ_MS)
+    const t2 = setTimeout(() => setPhase('print'), COUNT_MS + READ_MS + SOLID_MS)
+    return () => {
+      clearTimeout(t1)
+      clearTimeout(t2)
+    }
+  }, [])
+  return phase
+}
+
+/** 段に合わせて頁を送り、動かさなくても見えるようにする。最初は札（数字）が画面に収まる位置、レシートが出るときは差し出し口が画面の真ん中に来る位置へ。
+ * 利用者が自分で送ったら、それ以降は動かさない */
+function useFollow(phase: Phase, machine: React.RefObject<HTMLElement | null>, slot: React.RefObject<HTMLElement | null>) {
+  const touched = React.useRef(false)
+  React.useEffect(() => {
+    const mark = () => (touched.current = true)
+    const opts = { passive: true } as const
+    window.addEventListener('wheel', mark, opts)
+    window.addEventListener('touchmove', mark, opts)
+    window.addEventListener('keydown', mark)
+    return () => {
+      window.removeEventListener('wheel', mark)
+      window.removeEventListener('touchmove', mark)
+      window.removeEventListener('keydown', mark)
+    }
+  }, [])
+  React.useEffect(() => {
+    if (touched.current || matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    const vh = window.innerHeight
+    const go = (y: number) => y > window.scrollY + 4 && window.scrollTo({ top: y, behavior: 'smooth' })
+    if (phase === 'flat' && machine.current) {
+      // 札の下端が画面の外なら、札の上端まで送る（札が画面より高ければ上端を合わせる）
+      const r = machine.current.getBoundingClientRect()
+      if (r.bottom > vh) go(window.scrollY + Math.min(r.top - 16, r.bottom - vh + 16))
+    }
+    if (phase === 'print' && slot.current) go(window.scrollY + slot.current.getBoundingClientRect().top - vh * 0.5)
+  }, [phase, machine, slot])
+}
+
 export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: { name: string; v: YearView; year: number; pop: number | null; base: string; detailHref: string; head: React.ReactNode }) {
   const settled = v.word === '決算'
   const what = `${yearName(year)}の${settled ? '決算' : '予算'}`
@@ -60,8 +111,11 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
   const receipt = pop ? perHeadParts(v.fields, v.total, pop) : null
   const machine = React.useRef<HTMLDivElement>(null)
   const front = React.useRef<HTMLElement>(null)
-  const [solid, setSolid] = React.useState(false)
-  // 本体を three.js で描く（読み込みは後から）。描けるまで・描けないときは CSS の本体のまま
+  const slot = React.useRef<HTMLDivElement>(null)
+  const phase = usePhase()
+  useFollow(phase, machine, slot)
+  const [gl, setGl] = React.useState(false)
+  // 本体を three.js で描く（読み込みは数え上げの間に済ませ、立体になる段で見せる）。描けないときは CSS の本体
   React.useEffect(() => {
     let stop: (() => void) | null = null
     let alive = true
@@ -70,7 +124,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
     void import('./machine3d').then(({ mountMachine }) => {
       if (!alive || !machine.current || !front.current) return
       stop = mountMachine(machine.current, front.current)
-      setSolid(!!stop)
+      setGl(!!stop)
     }).catch(() => {})
     return () => {
       alive = false
@@ -78,8 +132,8 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
     }
   }, [])
   return (
-    <div ref={machine} className="rm relative" data-solid={solid || undefined}>
-      {/* 天板。手前の辺を軸に奥へ倒し、奥ほど狭く見せる（three.js で描けたら隠す） */}
+    <div ref={machine} className="rm relative" data-phase={phase} data-gl={gl || undefined}>
+      {/* 天板。手前の辺を軸に奥へ倒し、奥ほど狭く見せる（立体の段で出す。three.js で描けたら隠す） */}
       <div className="rm-top" aria-hidden="true" />
       <section ref={front} className="rm-body relative z-10 p-5 pb-14 text-brand-foreground sm:p-7 sm:pb-16">
         {head}
@@ -97,6 +151,9 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
               <dd className="mt-1.5 text-[clamp(44px,13vw,84px)] leading-none font-semibold">
                 <Yen n={per} />
               </dd>
+              <p className="mt-2 text-[13px] opacity-80">
+                {settled ? '決算' : '予算'}の額を、人口 {pop.toLocaleString('ja-JP')}人で割った額です
+              </p>
             </div>
           ) : null}
         </dl>
@@ -106,9 +163,9 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
             <ArrowRightIcon className="size-4" />
           </Link>
         </div>
-        {receipt ? <div className="rm-slot absolute inset-x-0 bottom-[22px]" aria-hidden="true" /> : null}
+        {receipt ? <div ref={slot} className="rm-slot absolute inset-x-0 bottom-[22px]" aria-hidden="true" /> : null}
       </section>
-      {receipt ? (
+      {receipt && phase === 'print' ? (
         <div className="rc-feed">
           {/* 年度を替えたら刷り直す */}
           <div key={year} className="rc-print rc-run">
