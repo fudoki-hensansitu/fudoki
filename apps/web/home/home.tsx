@@ -31,20 +31,22 @@ export interface HomeProps {
   listed: boolean
   /** くわしい頁（事業評価・新しく始めること）のある自治体 */
   featured: Featured[]
+  /** シェアされたレシート（/?town=&year=）。あれば住んでいるまちの代わりにそのまち・その年度の札を出し、住んでいるまちは変えない */
+  shared?: { town: Town; year: number; origin: string }
 }
 
 
 const toTown = (e: MapEntry): Town => ({ code: e.code, name: e.name, path: e.path })
 
 /** うちのまちのデータ。年度は収録の最新から始め、年度を切り替えたらその年度の分を読む（読んだ年度は持っておく） */
-function useSnapshot(code: string | null) {
+function useSnapshot(code: string | null, first: number | null = null) {
   const [byYear, setByYear] = React.useState<Record<string, Snapshot>>({})
   const [failed, setFailed] = React.useState(false)
-  const [year, setYear] = React.useState<number | null>(null)
+  const [year, setYear] = React.useState<number | null>(first)
   React.useEffect(() => {
     setByYear({})
     setFailed(false)
-    setYear(null)
+    setYear(first)
   }, [code])
   React.useEffect(() => {
     if (!code || (year != null && byYear[String(year)])) return
@@ -134,6 +136,7 @@ function Dashboard({ c }: { c: Ctx }) {
       pop={d.pop ?? null}
       base={c.base}
       detailHref={c.year === c.years.at(-1) ? c.town.path : flowHref(c)}
+      shareOf={(y) => `/?${new URLSearchParams({ town: town.code, year: String(y) })}`}
       head={
         <div className="flex items-start gap-4">
           <Emblem code={town.code} name={town.name} className="size-14 rounded-2xl border-0 p-2" />
@@ -232,9 +235,13 @@ function Footer() {
   )
 }
 
-export function Home({ listed, featured }: HomeProps) {
-  const { ready, town, set } = useMyTown()
-  const snap = useSnapshot(ready && town ? town.code : null)
+export function Home({ listed, featured, shared }: HomeProps) {
+  const mine = useMyTown()
+  const { set } = mine
+  // シェアされたレシートを開いたときは、そのまちを住んでいるまちの代わりに出す
+  const ready = shared ? true : mine.ready
+  const town = shared ? shared.town : mine.town
+  const snap = useSnapshot(ready && town ? town.code : null, shared?.year ?? null)
   const vision = town ? featured.find((f) => f.code === town.code)?.vision : undefined
   // 住んでいるまちを外す（選び直す）
   const reset = () => set(null)
@@ -247,11 +254,17 @@ export function Home({ listed, featured }: HomeProps) {
       <>
         {/* ほかのまちを見る導線。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
         <OtherTowns className="mb-3" />
-        {/* リセットはまちの札の右上に添える（住んでいるまちを選び直す） */}
+        {/* リセットはまちの札の右上に添える（住んでいるまちを選び直す）。シェアされたレシートでは、住んでいるまちのホームへ戻る口にする */}
         <div className="mb-2 flex justify-end">
-          <button type="button" onClick={reset} className="text-[13px] text-muted-foreground hover:text-foreground">
-            リセット
-          </button>
+          {shared ? (
+            <a href="/" className="text-[13px] text-muted-foreground hover:text-foreground">
+              うちのまちを見る
+            </a>
+          ) : (
+            <button type="button" onClick={reset} className="text-[13px] text-muted-foreground hover:text-foreground">
+              リセット
+            </button>
+          )}
         </div>
         <WithCtx town={town!} vision={vision} snap={snap}>
           {(c) => <Dashboard c={c} />}

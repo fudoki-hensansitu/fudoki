@@ -3,6 +3,8 @@ import { defineHandler, defineHead } from 'void'
 import type { HomeProps } from '../home/home'
 import { VISIONS } from '../jurisdiction/visions'
 import { catalog, homeEntries, pageYearsOf } from '../server/jurisdiction-routes'
+import { appYears } from '../server/app-data'
+import { reiwa } from '../jurisdiction/types'
 import type { Env } from '../server/env'
 
 export type Props = HomeProps
@@ -29,18 +31,38 @@ export const loader = defineHandler<Props>(async (c) => {
       const evalYear = j.evaluationYears.filter((y) => years.includes(y)).at(-1)
       return e ? [{ code: j.code, name: e.name, path: e.path, prefecture: e.prefecture, vision: VISIONS[j.code]?.text, ...(evalYear !== undefined ? { evalYear } : {}) }] : []
     })
+  // シェアされたレシート（?town=<自治体コード>&year=<年度>）。収録と年度を確かめて渡し、head の OG 画像をそのレシートにする
+  const q = new URL(c.req.url)
+  const code = q.searchParams.get('town') ?? ''
+  const yearText = q.searchParams.get('year') ?? ''
+  const j = /^\d{6}$/.test(code) ? jurisdictions.find((x) => x.code === code) : undefined
+  const e = j ? entries.find((x) => x.code === code) : undefined
+  const years = j ? appYears(j).map((y) => y.year) : []
+  const year = /^\d{4}$/.test(yearText) && years.includes(Number(yearText)) ? Number(yearText) : years[0]
+  const shared = e && year !== undefined ? { town: { code, name: e.name, path: e.path }, year, origin: q.origin } : undefined
   // 自治体の一覧そのものは渡さない（名前で探す欄はサーバーに少しずつ聞く）
-  return { listed: entries.length > 0, featured }
+  return { listed: entries.length > 0, featured, ...(shared ? { shared } : {}) }
 })
 
-export const head = defineHead(() => ({
-  title: TITLE,
+export const head = defineHead<Props>((_c, props) => {
+  const s = props.shared
+  // シェアされたレシートは、題と OG 画像をそのまちのレシートにする（canonical はホームのまま）
+  const title = s ? `${s.town.name}の1人あたりのレシート（${reiwa(s.year)}）｜風土記` : TITLE
+  const shared = s
+    ? [
+        { property: 'og:image', content: `${s.origin}/jurisdictions/${s.town.code}/receipt.png?year=${s.year}` },
+        { property: 'og:url', content: `${s.origin}/?town=${s.town.code}&year=${s.year}` },
+      ]
+    : [{ property: 'og:url', content: 'https://fudoki.dev/' }]
+  return {
+  title,
   meta: [
     { name: 'description', content: DESCRIPTION },
-    { property: 'og:title', content: TITLE },
+    { property: 'og:title', content: title },
     { property: 'og:description', content: DESCRIPTION },
-    { property: 'og:url', content: 'https://fudoki.dev/' },
+    ...shared,
   ],
   link: [{ rel: 'canonical', href: 'https://fudoki.dev/' }],
   script: [{ type: 'application/ld+json', innerHTML: JSON.stringify(ORGANIZATION) }],
-}))
+  }
+})

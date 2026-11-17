@@ -10,6 +10,7 @@ import { reiwa, yearName } from '../jurisdiction/types'
 import type { YearView } from '../jurisdiction/app/data'
 import { OTHER_FRAME } from '../jurisdiction/domains'
 import { FieldIcon } from './parts'
+import { perHeadParts } from './per-head'
 import { COUNT_MS, PRINT_MS, READ_MS, SCROLL_MS } from './motion'
 import './receipt.css'
 
@@ -82,20 +83,6 @@ const Yen = ({ n, className }: { n: number; className?: string }) => (
     <small className="ml-0.5 text-[0.55em]">円</small>
   </span>
 )
-
-/** 分野ごとの1人あたり（円）。和が合計（total を人口で割って丸めた額）に合うよう、大きい端数から1円ずつ足す */
-export function perHeadParts(fields: { yen: number }[], total: number, pop: number) {
-  const sum = Math.round(total / pop)
-  const raw = fields.map((f) => f.yen / pop)
-  const parts = raw.map(Math.floor)
-  const rest = sum - parts.reduce((a, b) => a + b, 0)
-  raw
-    .map((r, i) => [r - Math.floor(r), i] as const)
-    .sort((a, b) => b[0] - a[0])
-    .slice(0, Math.max(0, rest))
-    .forEach(([, i]) => parts[i]!++)
-  return { sum, parts }
-}
 
 /** 演出の段。count: 札で数え上げる → print: 札の下端の差し出し口からレシートが出る */
 type Phase = 'count' | 'print'
@@ -204,7 +191,7 @@ function Strip({ mode, latest, children }: { mode: 'grow' | 'roll' | 'still'; la
 /** 刷った一枚の紙（数え上げの key と、その年度のデータ） */
 type Printed = { key: string; year: number; v: YearView }
 
-export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: { name: string; v: YearView; year: number; pop: number | null; base: string; detailHref: string; head: React.ReactNode }) {
+export function ReceiptMachine({ name, v, year, pop, base, detailHref, shareOf, head }: { name: string; v: YearView; year: number; pop: number | null; base: string; detailHref: string; shareOf: (year: number) => string; head: React.ReactNode }) {
   const settled = v.word === '決算'
   const what = `${yearName(year)}の${settled ? '決算' : '予算'}`
   const total = useCountUp(v.total)
@@ -261,14 +248,14 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
           )
         })}
       </ul>
-      <p className="rc-rule mt-2 flex items-baseline justify-between pt-3">
+      <p className="rc-rule mt-2 flex items-center justify-between pt-3">
         <span className="text-[15px]">1人あたりの合計</span>
         <Yen n={sum} className="text-[28px] font-semibold text-primary" />
       </p>
-      {/* 読み取るとまちの頁を開く QR と、同じ頁を共有するボタン */}
+      {/* 読み取るとまちの頁を開く QR と、このレシートを共有するボタン（ホームの ?town=&year=。開くとこのレシートを出し、OG 画像もレシートになる） */}
       <div className="mt-5 flex items-center justify-center gap-5">
         <Qr url={detailHref} />
-        <Share url={detailHref} title={`${name}の1人あたりのレシート｜風土記`} />
+        <Share url={shareOf(r.year)} title={`${name}の1人あたりのレシート（${reiwa(r.year)}）｜風土記`} />
       </div>
     </div>
     )
