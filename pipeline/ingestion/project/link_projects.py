@@ -25,6 +25,7 @@ import re
 import unicodedata
 from collections import defaultdict
 from dataclasses import dataclass, field
+from functools import cache
 
 # 所管課を [] で印字する自治体（中央区・八王子など）。[1人分]・[科目存置] のような注記は所管課の語尾で外す
 DEPARTMENT_BRACKET = re.compile(r'\[[^\[\]0-9]*(?:課|部|局|室|所|係|センター|委員会|館)\]\s*$')
@@ -40,6 +41,8 @@ COUNT = re.compile(r'(?<![第0-9,.])(?:延|約)?[0-9][0-9,.]*(?:か所|箇所|�
 TRAILING_NUMBERS = re.compile(r'(?<![第0-9,.])[0-9][0-9,.×=\s]*$')
 
 
+# Names repeat across lines, years and sheets; one build normalizes the same text many times.
+@cache
 def normalize(name: str) -> str:
     """名前を比べる形。NFKC、【所管課】から後ろ（所管課と注記）、末尾の [所管課]、「(うち…)」の内訳の注記（職員費の退職手当負担金の額など、年度で変わる）と空白を除く。"""
     text = DEPARTMENT_BRACKET.sub('', re.sub(r'【.*$', '', unicodedata.normalize('NFKC', name)))
@@ -109,6 +112,7 @@ def pair_in_order(budget: list[Line], settled: list[Line]) -> list[Year]:
     return [Year(initial=b, settlement=s) for b, s in pairs]
 
 
+@cache
 def loose(name: str) -> str:
     """比べる名前（normalize 済み）から数を除いた形"""
     return TRAILING_NUMBERS.sub('', COUNT.sub('', name))

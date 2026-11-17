@@ -503,6 +503,8 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
         words = unbracketed.module.dropped(words, detected, unbracketed.value)
     if (marks := document_quirk('unread_marks')) is not None:
         words = marks.module.marked(words, pdf, number, cuts)
+    if (edges := document_quirk('page_edge_rules')) is not None:
+        words = edges.module.inside(words, detected)
     return Page(number, detected.width, detected.height, drop_covered_digits(words), rules)
 
 
@@ -723,7 +725,7 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
             else pdf_rules.detect(pdf, number, dark=dark, skewed=skewed,
                                   skewed_columns=skewed_columns, spread_rows=spread_rows))
         if (edges := document_quirk('page_edge_rules')) is not None:
-            found = edges.module.dropped(found)
+            found = edges.module.dropped(found, *([edges.value] if edges.value is not True else []))
         if (dotted := document_quirk('dotted_column_rules')) is not None:
             found = dotted.module.added(pdf, found, dark)
         found = short_rows(pdf, found, dark,

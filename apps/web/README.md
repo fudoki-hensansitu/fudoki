@@ -9,7 +9,7 @@ bun run build:web
 
 ## 構成（Void）
 
-[Void](https://void.cloud/)（Vite）で build する。設定は `void.config.ts`（head の既定・var・Cloudflare の binding と preview の差し替え）と `vite.config.ts`。`vite build` が cf の Build Output（`.cloudflare/output/v0`）を書き、`deploy` は `cf deploy --prebuilt`、PR の preview は `CLOUDFLARE_PREVIEW_BUILD=true` で build してから `cf previews deploy --prebuilt` で出す。Void は custom domain の `previews_enabled` を cf の形へ移せないので、`vite.config.ts` の `previewDomains` が出力の `domains` を本番と Preview の両方を出す形に書き換える。
+[Void](https://void.cloud/)（Vite）で build する。設定は `void.config.ts`（head の既定・var・Cloudflare の binding と preview の差し替え）と `vite.config.ts`。`vite build` が cf の Build Output（`.cloudflare/output/v1`）を書き、`deploy` は `cf deploy --prebuilt`、PR の preview は `CLOUDFLARE_PREVIEW_BUILD=true` で build してから `cf previews deploy --prebuilt` で出す。Void は custom domain の `previews_enabled` を cf の形へ移せないので、`vite.config.ts` の `previewDomains` が出力の `domains` を本番と Preview の両方を出す形に書き換える。
 
 - **頁は `pages/`**（Void の Pages）: `index`（ホーム）・`about`（紹介）・`assistant`・`compare/index`・`compare/[question]`・`jurisdictions`・`[prefecture]/index`・`[prefecture]/[name]` の `.server.ts` が loader と head を持ち、`.tsx` が React の画面を描く。`pages/layout.tsx` がサイドバーを置き、`Link`・`useRouter().visit` で頁の間を移ると layout は描き直さず本文だけを差し替える。全頁の head の既定（charset・viewport・OG・icon・manifest・service worker の登録）は `void.config.ts` の `head`
 - **会話の画面（`/s/:id`）は `pages/[prefecture]/[name]` が受ける**: Void は動的な経路を pattern の文字の順に当てるので、`pages/s/[id]` を置いても `/:prefecture/:name` が先に当たる。loader が先頭の段が `s` のときだけ会話の画面の props（`pages/[prefecture]/_session.ts` の `sessionProps`）を返し、`.tsx` が `chat/session-page.tsx` を描く

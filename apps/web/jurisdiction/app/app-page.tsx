@@ -299,10 +299,10 @@ function ProjectTable({ rows, ended }: { rows: Proj[]; /** やめた事業は前
   const columns = React.useMemo(() => projectColumn.columns([
     projectColumn.accessor('rank', { header: () => <span className="sr-only">順位</span>, cell: (c) => c.getValue(), meta: { className: 'w-8 pr-0 text-right tabular-nums' } }),
     projectColumn.display({ id: 'name', header: '事業名', cell: (c) => <ProjectNameCell p={c.row.original} />, meta: { className: 'whitespace-normal' } }),
-    projectColumn.display({ id: 'field', header: '分野', cell: (c) => <ProjectFieldCell p={c.row.original} />, meta: { className: '@max-3xl:hidden' } }),
-    projectColumn.accessor('yen', { header: () => <span className="inline-flex items-center gap-1">{amount}<ArrowDownIcon className="size-3.5" aria-label="多い順" /></span>, cell: (c) => (c.getValue() == null ? '—' : yenText(c.getValue()!)), meta: { className: 'text-right tabular-nums' } }),
+    projectColumn.display({ id: 'field', header: '分野', cell: (c) => <ProjectFieldCell p={c.row.original} />, meta: { className: '@max-3xl:hidden w-44' } }),
+    projectColumn.accessor('yen', { header: () => <span className="inline-flex items-center gap-1">{amount}<ArrowDownIcon className="size-3.5" aria-label="多い順" /></span>, cell: (c) => (c.getValue() == null ? '—' : yenText(c.getValue()!)), meta: { className: 'w-40 text-right tabular-nums' } }),
     // 評価の列は、頁の中に評価のある事業があるときだけ出す
-    ...(graded ? [projectColumn.accessor('grade', { header: '評価', cell: (c) => c.getValue() ?? '', meta: { className: '@max-3xl:hidden text-center' } })] : []),
+    ...(graded ? [projectColumn.accessor('grade', { header: '評価', cell: (c) => c.getValue() ?? '', meta: { className: '@max-3xl:hidden w-16 text-center' } })] : []),
   ]), [amount, graded])
   const data = React.useMemo(() => rows.map((p, i) => ({ ...p, rank: i + 1 })), [rows])
   const table = useTable({ features: projectFeatures, columns, data, getRowId: (p) => p.id })
@@ -696,7 +696,7 @@ function ProjectCrumbs({ label, close, open, ancestors }: { label: string; close
     <Breadcrumb className="min-w-0">
       <BreadcrumbList className="flex-nowrap text-sm sm:text-base">
         <BreadcrumbItem className="shrink-0">
-          <BreadcrumbLink render={<button type="button" onClick={close} />} className="cursor-pointer">{label}</BreadcrumbLink>
+          <BreadcrumbLink render={<button type="button" onClick={close} />} className="inline-flex cursor-pointer items-center gap-1"><ListBulletsIcon className="size-4 shrink-0" aria-hidden="true" />{label}</BreadcrumbLink>
         </BreadcrumbItem>
         {ancestors.map((a) => (
           <React.Fragment key={a.id}>
@@ -989,8 +989,10 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     }
   }, [tab, year, projectPage])
   const go: Go = (t, opt = {}) => {
-    if (opt.filter) setFilter(opt.filter)
-    if (t === 'projects') setFields(opt.field ? [opt.field] : [])
+    // タブと同じ描画で絞り込みも変える。transition で後から変えると、先に絞らない一覧が描かれてその続きの頁まで読みに行き、
+    // 絞った一覧も頁の移動（loader）が終わるまで出ない
+    if (opt.filter) setFilterState(opt.filter)
+    if (t === 'projects') setFieldsState(opt.field ? [opt.field] : [])
     const q = new URLSearchParams(Object.entries(opt).filter((e): e is [string, string] => !!e[1]))
     changeTab(t, t === 'projects' && (opt.filter || opt.field) ? `?${q}` : undefined)
   }

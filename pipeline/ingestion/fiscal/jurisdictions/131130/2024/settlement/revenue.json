@@ -1,0 +1,1575 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131130",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "b90aa8553e8299db0ad7f12511b47810435d1136c5368528664d5846c2bebe00"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／節区分": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "金額": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の名前と額・担当の部課の再掲で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "code_between_name_lines": true
+          }
+        },
+        "pages": [
+          [
+            52,
+            147
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "general-p53-digit-0-r0",
+            "page": 53,
+            "observation_id": "p53:digit-0:r0",
+            "observed": "1",
+            "reason": "物理53頁、款「1 特別区税」の行の収入未済額の欄の頭の「1」だけを数字の読み直しが読んだもの。欄の額は amount_readings で宣言する。"
+          },
+          {
+            "id": "general-p71-full-page-r1",
+            "page": 71,
+            "observation_id": "p71:full-page:a0:result0:r1",
+            "observed": "10,394,174,00010,394,174,000",
+            "reason": "物理71頁、款「6 地方消費税交付金」の行の調定額と収入済額を、間を空けずに1語に読んだもの。原典の描画で2つの欄の額を確かめ、この読みは使わず amount_readings で宣言する。"
+          },
+          {
+            "id": "general-p71-full-page-r6",
+            "page": 71,
+            "observation_id": "p71:full-page:a0:result0:r6",
+            "observed": "10,394,174,0001",
+            "reason": "物理71頁、目「1 地方消費税交付金」の行の調定額。右隣の収入済額の欄の頭の「1」まで1つに読んだ（10,394,174,0001）。原典の描画で欄の額を確かめ、この読みは使わず amount_readings で宣言する。"
+          },
+          {
+            "id": "general-p131-digit-0-r0",
+            "page": 131,
+            "observation_id": "p131:digit-0:r0",
+            "observed": "1",
+            "reason": "物理131頁、款「19 諸収入」の行の収入未済額の欄の頭の「1」だけを読んだもの。欄の額は amount_readings で宣言する。"
+          },
+          {
+            "id": "general-p131-digit-1-r0",
+            "page": 131,
+            "observation_id": "p131:digit-1:r0",
+            "observed": "1",
+            "reason": "物理131頁、款「19 諸収入」の行の収入未済額の欄の「1」だけを読んだもの。欄の額は amount_readings で宣言する。"
+          },
+          {
+            "id": "general-p141-digit-0-r0",
+            "page": 141,
+            "observation_id": "p141:digit-0:r0",
+            "observed": "1",
+            "reason": "物理141頁、款「19 諸収入」の続きの行の収入未済額の欄の頭の「1」だけを読んだもの。欄の額は amount_readings で宣言する。"
+          },
+          {
+            "id": "general-p146-digit-2-r0",
+            "page": 146,
+            "observation_id": "p146:digit-2:r0",
+            "observed": "1",
+            "reason": "物理146頁、歳入合計の行の継続費及び繰越事業費繰越財源充当額の欄の頭の「1」だけを読んだもの。欄の額は amount_readings で宣言する。"
+          },
+          {
+            "id": "general-p105-full-page-r1",
+            "page": 105,
+            "observation_id": "p105:full-page:a0:result0:r1",
+            "observed": "2,359,809,1402",
+            "reason": "物理105頁、節「1 児童福祉費補助金」の続きの行の調定額。右隣の収入済額の欄の頭の「2」まで1つに読んだ（2,359,809,1402）。原典の描画で欄の額を確かめ、この読みは使わず amount_readings で宣言する。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "general-p53-tokubetsukuzei-misai",
+            "page": 53,
+            "boxes": [
+              [
+                276.0,
+                99.3,
+                337.3,
+                111.8
+              ]
+            ],
+            "amount": "1,675,382,954",
+            "reason": "物理53頁、款「1 特別区税」の収入未済額。Paddle が欄の印字を読まなかった。原典の描画で 1,675,382,954 を確認した。"
+          },
+          {
+            "id": "general-p71-chiho-shohi-chotei",
+            "page": 71,
+            "boxes": [
+              [
+                63.0,
+                100.6,
+                128.5,
+                110.9
+              ]
+            ],
+            "amount": "10,394,174,000",
+            "reason": "物理71頁、款「6 地方消費税交付金」の調定額。原典の描画で 10,394,174,000 を確認した。"
+          },
+          {
+            "id": "general-p71-chiho-shohi-shunyu",
+            "page": 71,
+            "boxes": [
+              [
+                132.0,
+                100.6,
+                197.5,
+                110.9
+              ]
+            ],
+            "amount": "10,394,174,000",
+            "reason": "物理71頁、款「6 地方消費税交付金」の収入済額。原典の描画で 10,394,174,000 を確認した。"
+          },
+          {
+            "id": "general-p71-chiho-shohi-moku-chotei",
+            "page": 71,
+            "boxes": [
+              [
+                63.3,
+                142.1,
+                128.5,
+                152.2
+              ]
+            ],
+            "amount": "10,394,174,000",
+            "reason": "物理71頁、目「1 地方消費税交付金」の調定額。原典の描画で 10,394,174,000 を確認した。"
+          },
+          {
+            "id": "general-p128-kurikoshi-keizoku",
+            "page": 128,
+            "boxes": [
+              [
+                270.0,
+                151.2,
+                325.1,
+                165.2
+              ]
+            ],
+            "amount": "365,704,000",
+            "reason": "物理128頁、目「1 繰越金」の継続費及び繰越事業費繰越財源充当額。Paddle が欄の印字を読まなかった。原典の描画で 365,704,000 を確認した。"
+          },
+          {
+            "id": "general-p131-shoshunyu-misai",
+            "page": 131,
+            "boxes": [
+              [
+                275.9,
+                99.2,
+                337.0,
+                113.2
+              ]
+            ],
+            "amount": "1,348,657,531",
+            "reason": "物理131頁、款「19 諸収入」の収入未済額。原典の描画で 1,348,657,531 を確認した。"
+          },
+          {
+            "id": "general-p141-shoshunyu-misai",
+            "page": 141,
+            "boxes": [
+              [
+                276.4,
+                99.0,
+                337.1,
+                113.0
+              ]
+            ],
+            "amount": "1,237,884,905",
+            "reason": "物理141頁、項「6 雑入」の行の収入未済額。原典の描画で 1,237,884,905 を確認した。"
+          },
+          {
+            "id": "general-p146-total-keizoku",
+            "page": 146,
+            "boxes": [
+              [
+                262.0,
+                785.5,
+                326.5,
+                799.5
+              ]
+            ],
+            "amount": "1,159,835,000",
+            "reason": "物理146頁、歳入合計の継続費及び繰越事業費繰越財源充当額。原典の描画で 1,159,835,000 を確認した。"
+          },
+          {
+            "id": "general-p146-total-kei",
+            "page": 146,
+            "boxes": [
+              [
+                328.0,
+                785.5,
+                394.5,
+                799.5
+              ]
+            ],
+            "amount": "137,859,450,000",
+            "reason": "物理146頁、歳入合計の予算現額の計。原典の描画で 137,859,450,000 を確認した。"
+          },
+          {
+            "id": "general-p105-jidou-choutei",
+            "page": 105,
+            "boxes": [
+              [
+                66.9,
+                723.8,
+                128.5,
+                735.3
+              ]
+            ],
+            "amount": "2,359,809,140",
+            "reason": "物理105頁、節「児童福祉費補助金」の調定額。原典の描画で 2,359,809,140 を確認した。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "general-p70-moku-1",
+            "page": 70,
+            "box": [
+              55.5,
+              144.0,
+              58.8,
+              151.0
+            ],
+            "code": "1",
+            "reason": "物理70頁、目「1 地方消費税交付金」の番号。名前を2行に折り返し、2行の間の高さに印字された番号を OCR が読まなかった。原典の描画で番号1を確認した。"
+          },
+          {
+            "id": "general-p102-setsu-1",
+            "page": 102,
+            "box": [
+              402.0,
+              452.0,
+              406.0,
+              461.0
+            ],
+            "code": "1",
+            "reason": "物理102頁、節「1 社会福祉費補助金」の番号。名前を2行に折り返し、2行の間の高さに印字された番号を OCR が読まなかった。原典の描画で番号1を確認した。"
+          }
+        ],
+        "header_readings": [
+          {
+            "id": "general-R-調定額",
+            "box": [
+              59.5,
+              58.0,
+              127.5,
+              94.0
+            ],
+            "text": "調定額",
+            "reason": "右頁の見出しは字間を空けた印字で、OCR が「調定額収入済額不納欠損額収入未」と「入未済額」の2語に読み、欄の境を越えて「収入未入未済額」になる。原典の描画で升の印字と罫線の位置を確かめ、どの右頁も同じ位置なので、升ごとに宣言する。",
+            "pages": [
+              53,
+              55,
+              57,
+              59,
+              61,
+              63,
+              65,
+              67,
+              69,
+              71,
+              73,
+              75,
+              77,
+              79,
+              81,
+              83,
+              85,
+              87,
+              89,
+              91,
+              93,
+              95,
+              97,
+              99,
+              101,
+              103,
+              105,
+              107,
+              109,
+              111,
+              113,
+              115,
+              117,
+              119,
+              121,
+              123,
+              125,
+              127,
+              129,
+              131,
+              133,
+              135,
+              137,
+              139,
+              141,
+              143,
+              145,
+              147
+            ]
+          },
+          {
+            "id": "general-R-収入済額",
+            "box": [
+              129.5,
+              58.0,
+              197.5,
+              94.0
+            ],
+            "text": "収入済額",
+            "reason": "右頁の見出しは字間を空けた印字で、OCR が「調定額収入済額不納欠損額収入未」と「入未済額」の2語に読み、欄の境を越えて「収入未入未済額」になる。原典の描画で升の印字と罫線の位置を確かめ、どの右頁も同じ位置なので、升ごとに宣言する。",
+            "pages": [
+              53,
+              55,
+              57,
+              59,
+              61,
+              63,
+              65,
+              67,
+              69,
+              71,
+              73,
+              75,
+              77,
+              79,
+              81,
+              83,
+              85,
+              87,
+              89,
+              91,
+              93,
+              95,
+              97,
+              99,
+              101,
+              103,
+              105,
+              107,
+              109,
+              111,
+              113,
+              115,
+              117,
+              119,
+              121,
+              123,
+              125,
+              127,
+              129,
+              131,
+              133,
+              135,
+              137,
+              139,
+              141,
+              143,
+              145,
+              147
+            ]
+          },
+          {
+            "id": "general-R-不納欠損額",
+            "box": [
+              199.5,
+              58.0,
+              267.5,
+              94.0
+            ],
+            "text": "不納欠損額",
+            "reason": "右頁の見出しは字間を空けた印字で、OCR が「調定額収入済額不納欠損額収入未」と「入未済額」の2語に読み、欄の境を越えて「収入未入未済額」になる。原典の描画で升の印字と罫線の位置を確かめ、どの右頁も同じ位置なので、升ごとに宣言する。",
+            "pages": [
+              53,
+              55,
+              57,
+              59,
+              61,
+              63,
+              65,
+              67,
+              69,
+              71,
+              73,
+              75,
+              77,
+              79,
+              81,
+              83,
+              85,
+              87,
+              89,
+              91,
+              93,
+              95,
+              97,
+              99,
+              101,
+              103,
+              105,
+              107,
+              109,
+              111,
+              113,
+              115,
+              117,
+              119,
+              121,
+              123,
+              125,
+              127,
+              129,
+              131,
+              133,
+              135,
+              137,
+              139,
+              141,
+              143,
+              145,
+              147
+            ]
+          },
+          {
+            "id": "general-R-収入未済額",
+            "box": [
+              269.5,
+              58.0,
+              337.5,
+              94.0
+            ],
+            "text": "収入未済額",
+            "reason": "右頁の見出しは字間を空けた印字で、OCR が「調定額収入済額不納欠損額収入未」と「入未済額」の2語に読み、欄の境を越えて「収入未入未済額」になる。原典の描画で升の印字と罫線の位置を確かめ、どの右頁も同じ位置なので、升ごとに宣言する。",
+            "pages": [
+              53,
+              55,
+              57,
+              59,
+              61,
+              63,
+              65,
+              67,
+              69,
+              71,
+              73,
+              75,
+              77,
+              79,
+              81,
+              83,
+              85,
+              87,
+              89,
+              91,
+              93,
+              95,
+              97,
+              99,
+              101,
+              103,
+              105,
+              107,
+              109,
+              111,
+              113,
+              115,
+              117,
+              119,
+              121,
+              123,
+              125,
+              127,
+              129,
+              131,
+              133,
+              135,
+              137,
+              139,
+              141,
+              143,
+              145,
+              147
+            ]
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-settlement"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-settlement-ocr-1",
+          "origin_sha256": "b90aa8553e8299db0ad7f12511b47810435d1136c5368528664d5846c2bebe00",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61
+            ]
+          },
+          "sha256": "19bbb327756d365a6dc5a5e60f7f8c197f72b62d5053d5899d46c0ab935eb26a",
+          "bytes": 1167702
+        },
+        {
+          "id": "general-settlement-ocr-2",
+          "origin_sha256": "b90aa8553e8299db0ad7f12511b47810435d1136c5368528664d5846c2bebe00",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70,
+              71
+            ]
+          },
+          "sha256": "98f0560ba156a489b46904cacf195ee4e2a0a3468b0fdfcb799fddf3dfc8d4e6",
+          "bytes": 946653
+        },
+        {
+          "id": "general-settlement-ocr-3",
+          "origin_sha256": "b90aa8553e8299db0ad7f12511b47810435d1136c5368528664d5846c2bebe00",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              72,
+              73,
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80,
+              81
+            ]
+          },
+          "sha256": "ead8095e879594bf8cc06d31e63177e2550d5b53c3e2387daac6b41134072cdf",
+          "bytes": 1380048
+        },
+        {
+          "id": "general-settlement-ocr-4",
+          "origin_sha256": "b90aa8553e8299db0ad7f12511b47810435d1136c5368528664d5846c2bebe00",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              82,
+              83,
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90,
+              91
+            ]
+          },
+          "sha256": "96f8d23f6261e0637404377603abeccecb996310ed328d330e6315540f5d9b2c",
+          "bytes": 3462975
+        },
+        {
+          "id": "general-settlement-ocr-5",
+          "origin_sha256": "b90aa8553e8299db0ad7f12511b47810435d1136c5368528664d5846c2bebe00",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              92,
+              93,
+              94,
+              95,
+              96,
+              97,
+              98,
+              99,
+              100,
+              101
+            ]
+          },
+          "sha256": "ed677fe5d9bd04623373bf48b9097ced1af7166758ec50d5a1042b4769de8bc0",
+          "bytes": 2947277
+        },
+        {
+          "id": "general-settlement-ocr-6",
+          "origin_sha256": "b90aa8553e8299db0ad7f12511b47810435d1136c5368528664d5846c2bebe00",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              102,
+              103,
+              104,
+              105,
+              106,
+              107,
+              108,
+              109,
+              110,
+              111
+            ]
+          },
+          "sha256": "9daf6ec346f08afcbb792df59625980e371bb2c9128de2f6407fdd04fb617e89",
+          "bytes": 3214850
+        },
+        {
+          "id": "general-settlement-ocr-7",
+          "origin_sha256": "b90aa8553e8299db0ad7f12511b47810435d1136c5368528664d5846c2bebe00",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              112,
+              113,
+              114,
+              115,
+              116,
+              117,
+              118,
+              119,
+              120,
+              121
+            ]
+          },
+          "sha256": "5715c3a78326a355404b523dee236e742068b29c032103a7033c23af573ad58a",
+          "bytes": 2793933
+        },
+        {
+          "id": "general-settlement-ocr-8",
+          "origin_sha256": "b90aa8553e8299db0ad7f12511b47810435d1136c5368528664d5846c2bebe00",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              122,
+              123,
+              124,
+              125,
+              126,
+              127,
+              128,
+              129,
+              130,
+              131
+            ]
+          },
+          "sha256": "8c164bc000ed89b6dc22d9403a6878f5df10ef566e617ea9148379e5948afb49",
+          "bytes": 1281732
+        },
+        {
+          "id": "general-settlement-ocr-9",
+          "origin_sha256": "b90aa8553e8299db0ad7f12511b47810435d1136c5368528664d5846c2bebe00",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              132,
+              133,
+              134,
+              135,
+              136,
+              137,
+              138,
+              139,
+              140,
+              141
+            ]
+          },
+          "sha256": "3ce1a78db5dcb9c94e4c94692e62419dafab5230e391b21af1347f32c07c1b83",
+          "bytes": 2401326
+        },
+        {
+          "id": "general-settlement-ocr-10",
+          "origin_sha256": "b90aa8553e8299db0ad7f12511b47810435d1136c5368528664d5846c2bebe00",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              142,
+              143,
+              144,
+              145,
+              146,
+              147
+            ]
+          },
+          "sha256": "9d1bf61f0d4b60c3f309ef9178d2885553d9567f607f10d7e32947466a50e2c5",
+          "bytes": 1149852
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "b90aa8553e8299db0ad7f12511b47810435d1136c5368528664d5846c2bebe00"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-insurance-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／節区分": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "金額": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の名前と額・担当の部課の再掲で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "code_between_name_lines": true
+          }
+        },
+        "pages": [
+          [
+            284,
+            303
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "nhi-p285-digit-0-r0",
+            "page": 285,
+            "observation_id": "p285:digit-0:r0",
+            "observed": "1",
+            "reason": "物理285頁、1行目の収入未済額の欄の字を数字の読み直しが1字ずつ読んだもの。欄の額は amount_readings で宣言する。"
+          },
+          {
+            "id": "nhi-p285-digit-1-r0",
+            "page": 285,
+            "observation_id": "p285:digit-1:r0",
+            "observed": "5",
+            "reason": "物理285頁、1行目の収入未済額の欄の字を数字の読み直しが1字ずつ読んだもの。欄の額は amount_readings で宣言する。"
+          },
+          {
+            "id": "nhi-p285-digit-2-r0",
+            "page": 285,
+            "observation_id": "p285:digit-2:r0",
+            "observed": "1",
+            "reason": "物理285頁、1行目の収入未済額の欄の字を数字の読み直しが1字ずつ読んだもの。欄の額は amount_readings で宣言する。"
+          },
+          {
+            "id": "nhi-p285-digit-4-r0",
+            "page": 285,
+            "observation_id": "p285:digit-4:r0",
+            "observed": "1",
+            "reason": "物理285頁、1行目の収入未済額の欄の字を数字の読み直しが1字ずつ読んだもの。欄の額は amount_readings で宣言する。"
+          },
+          {
+            "id": "nhi-p285-digit-5-r0",
+            "page": 285,
+            "observation_id": "p285:digit-5:r0",
+            "observed": "1",
+            "reason": "物理285頁、3行目の収入未済額の欄の字を数字の読み直しが1字ずつ読んだもの。欄の額は amount_readings で宣言する。"
+          },
+          {
+            "id": "nhi-p285-digit-8-r0",
+            "page": 285,
+            "observation_id": "p285:digit-8:r0",
+            "observed": "1",
+            "reason": "物理285頁、3行目の収入未済額の欄の字を数字の読み直しが1字ずつ読んだもの。欄の額は amount_readings で宣言する。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "nhi-p285-row1-misai",
+            "page": 285,
+            "boxes": [
+              [
+                276.4,
+                99.2,
+                337.3,
+                113.2
+              ]
+            ],
+            "amount": "1,510,122,254",
+            "reason": "物理285頁、1行目の収入未済額。Paddle が欄の印字を読まなかった（2行目は読めている）。原典の描画で 1,510,122,254 を確認した。"
+          },
+          {
+            "id": "nhi-p285-row3-misai",
+            "page": 285,
+            "boxes": [
+              [
+                276.4,
+                151.2,
+                338.1,
+                165.2
+              ]
+            ],
+            "amount": "1,510,122,254",
+            "reason": "物理285頁、3行目の収入未済額。Paddle が欄の印字を読まなかった（2行目は読めている）。原典の描画で 1,510,122,254 を確認した。"
+          }
+        ],
+        "header_readings": [
+          {
+            "id": "nhi-R-調定額",
+            "box": [
+              59.5,
+              58.0,
+              127.5,
+              94.0
+            ],
+            "text": "調定額",
+            "reason": "右頁の見出しは字間を空けた印字で、OCR が「調定額収入済額不納欠損額収入未」と「入未済額」の2語に読み、欄の境を越えて「収入未入未済額」になる。原典の描画で升の印字と罫線の位置を確かめ、どの右頁も同じ位置なので、升ごとに宣言する。",
+            "pages": [
+              285,
+              287,
+              289,
+              291,
+              293,
+              295,
+              297,
+              299,
+              301,
+              303
+            ]
+          },
+          {
+            "id": "nhi-R-収入済額",
+            "box": [
+              129.5,
+              58.0,
+              197.5,
+              94.0
+            ],
+            "text": "収入済額",
+            "reason": "右頁の見出しは字間を空けた印字で、OCR が「調定額収入済額不納欠損額収入未」と「入未済額」の2語に読み、欄の境を越えて「収入未入未済額」になる。原典の描画で升の印字と罫線の位置を確かめ、どの右頁も同じ位置なので、升ごとに宣言する。",
+            "pages": [
+              285,
+              287,
+              289,
+              291,
+              293,
+              295,
+              297,
+              299,
+              301,
+              303
+            ]
+          },
+          {
+            "id": "nhi-R-不納欠損額",
+            "box": [
+              199.5,
+              58.0,
+              267.5,
+              94.0
+            ],
+            "text": "不納欠損額",
+            "reason": "右頁の見出しは字間を空けた印字で、OCR が「調定額収入済額不納欠損額収入未」と「入未済額」の2語に読み、欄の境を越えて「収入未入未済額」になる。原典の描画で升の印字と罫線の位置を確かめ、どの右頁も同じ位置なので、升ごとに宣言する。",
+            "pages": [
+              285,
+              287,
+              289,
+              291,
+              293,
+              295,
+              297,
+              299,
+              301,
+              303
+            ]
+          },
+          {
+            "id": "nhi-R-収入未済額",
+            "box": [
+              269.5,
+              58.0,
+              337.5,
+              94.0
+            ],
+            "text": "収入未済額",
+            "reason": "右頁の見出しは字間を空けた印字で、OCR が「調定額収入済額不納欠損額収入未」と「入未済額」の2語に読み、欄の境を越えて「収入未入未済額」になる。原典の描画で升の印字と罫線の位置を確かめ、どの右頁も同じ位置なので、升ごとに宣言する。",
+            "pages": [
+              285,
+              287,
+              289,
+              291,
+              293,
+              295,
+              297,
+              299,
+              301,
+              303
+            ]
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-settlement"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-settlement-ocr-1",
+          "origin_sha256": "b90aa8553e8299db0ad7f12511b47810435d1136c5368528664d5846c2bebe00",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              284,
+              285,
+              286,
+              287,
+              288,
+              289,
+              290,
+              291,
+              292,
+              293
+            ]
+          },
+          "sha256": "ccdfc48f5c05c8e7207b72d9caac5d76fd9f4f34943fea68f230aac31eb1909d",
+          "bytes": 1298923
+        },
+        {
+          "id": "national-health-insurance-settlement-ocr-2",
+          "origin_sha256": "b90aa8553e8299db0ad7f12511b47810435d1136c5368528664d5846c2bebe00",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              294,
+              295,
+              296,
+              297,
+              298,
+              299,
+              300,
+              301,
+              302,
+              303
+            ]
+          },
+          "sha256": "40689e7f6a5b4d99b3760559f0b70105deb67cf36770a8695fd743165c1b4c6f",
+          "bytes": 1404483
+        }
+      ]
+    },
+    {
+      "id": "care-insurance-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "b90aa8553e8299db0ad7f12511b47810435d1136c5368528664d5846c2bebe00"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "care-insurance-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／節区分": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "金額": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の名前と額・担当の部課の再掲で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "code_between_name_lines": true,
+            "glued_subject_codes": true
+          }
+        },
+        "pages": [
+          [
+            346,
+            373
+          ]
+        ],
+        "code_readings": [
+          {
+            "id": "care-p354-moku-1",
+            "page": 354,
+            "box": [
+              56.0,
+              144.0,
+              59.0,
+              151.0
+            ],
+            "code": "1",
+            "reason": "物理354頁、目「1 介護給付費交付金」の番号。名前を2行に折り返し、2行の間の高さに印字された番号を OCR が読まなかった。原典の描画で番号1を確認した。"
+          }
+        ],
+        "header_readings": [
+          {
+            "id": "care-R-調定額",
+            "box": [
+              59.5,
+              58.0,
+              127.5,
+              94.0
+            ],
+            "text": "調定額",
+            "reason": "右頁の見出しは字間を空けた印字で、OCR が「調定額収入済額不納欠損額収入未」と「入未済額」の2語に読み、欄の境を越えて「収入未入未済額」になる。原典の描画で升の印字と罫線の位置を確かめ、どの右頁も同じ位置なので、升ごとに宣言する。",
+            "pages": [
+              347,
+              349,
+              351,
+              353,
+              355,
+              357,
+              359,
+              361,
+              363,
+              365,
+              367,
+              369,
+              371,
+              373
+            ]
+          },
+          {
+            "id": "care-R-収入済額",
+            "box": [
+              129.5,
+              58.0,
+              197.5,
+              94.0
+            ],
+            "text": "収入済額",
+            "reason": "右頁の見出しは字間を空けた印字で、OCR が「調定額収入済額不納欠損額収入未」と「入未済額」の2語に読み、欄の境を越えて「収入未入未済額」になる。原典の描画で升の印字と罫線の位置を確かめ、どの右頁も同じ位置なので、升ごとに宣言する。",
+            "pages": [
+              347,
+              349,
+              351,
+              353,
+              355,
+              357,
+              359,
+              361,
+              363,
+              365,
+              367,
+              369,
+              371,
+              373
+            ]
+          },
+          {
+            "id": "care-R-不納欠損額",
+            "box": [
+              199.5,
+              58.0,
+              267.5,
+              94.0
+            ],
+            "text": "不納欠損額",
+            "reason": "右頁の見出しは字間を空けた印字で、OCR が「調定額収入済額不納欠損額収入未」と「入未済額」の2語に読み、欄の境を越えて「収入未入未済額」になる。原典の描画で升の印字と罫線の位置を確かめ、どの右頁も同じ位置なので、升ごとに宣言する。",
+            "pages": [
+              347,
+              349,
+              351,
+              353,
+              355,
+              357,
+              359,
+              361,
+              363,
+              365,
+              367,
+              369,
+              371,
+              373
+            ]
+          },
+          {
+            "id": "care-R-収入未済額",
+            "box": [
+              269.5,
+              58.0,
+              337.5,
+              94.0
+            ],
+            "text": "収入未済額",
+            "reason": "右頁の見出しは字間を空けた印字で、OCR が「調定額収入済額不納欠損額収入未」と「入未済額」の2語に読み、欄の境を越えて「収入未入未済額」になる。原典の描画で升の印字と罫線の位置を確かめ、どの右頁も同じ位置なので、升ごとに宣言する。",
+            "pages": [
+              347,
+              349,
+              351,
+              353,
+              355,
+              357,
+              359,
+              361,
+              363,
+              365,
+              367,
+              369,
+              371,
+              373
+            ]
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-insurance-settlement"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "care-insurance-settlement-ocr-1",
+          "origin_sha256": "b90aa8553e8299db0ad7f12511b47810435d1136c5368528664d5846c2bebe00",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              346,
+              347,
+              348,
+              349,
+              350,
+              351,
+              352,
+              353,
+              354,
+              355
+            ]
+          },
+          "sha256": "bcd391129142194075da2a7cd086328d1960be43fcddb088966dede255e14ddd",
+          "bytes": 1432377
+        },
+        {
+          "id": "care-insurance-settlement-ocr-2",
+          "origin_sha256": "b90aa8553e8299db0ad7f12511b47810435d1136c5368528664d5846c2bebe00",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              356,
+              357,
+              358,
+              359,
+              360,
+              361,
+              362,
+              363,
+              364,
+              365
+            ]
+          },
+          "sha256": "5969cc13f1b54c6dc7f1ed7a5ca93095af629912d6954e139a7299dc50b09e60",
+          "bytes": 1380475
+        },
+        {
+          "id": "care-insurance-settlement-ocr-3",
+          "origin_sha256": "b90aa8553e8299db0ad7f12511b47810435d1136c5368528664d5846c2bebe00",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              366,
+              367,
+              368,
+              369,
+              370,
+              371,
+              372,
+              373
+            ]
+          },
+          "sha256": "a47211786be06ad681f35a34a73cb24ead6faa97ba9173b8dc997d0de5b539d8",
+          "bytes": 786573
+        }
+      ]
+    },
+    {
+      "id": "late-stage-elderly-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "b90aa8553e8299db0ad7f12511b47810435d1136c5368528664d5846c2bebe00"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業会計",
+        "table_id": "late-stage-elderly-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／節区分": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "金額": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の名前と額・担当の部課の再掲で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "code_between_name_lines": true
+          }
+        },
+        "pages": [
+          [
+            400,
+            417
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "late-R-調定額",
+            "box": [
+              59.5,
+              58.0,
+              127.5,
+              94.0
+            ],
+            "text": "調定額",
+            "reason": "右頁の見出しは字間を空けた印字で、OCR が「調定額収入済額不納欠損額収入未」と「入未済額」の2語に読み、欄の境を越えて「収入未入未済額」になる。原典の描画で升の印字と罫線の位置を確かめ、どの右頁も同じ位置なので、升ごとに宣言する。",
+            "pages": [
+              401,
+              403,
+              405,
+              407,
+              409,
+              411,
+              413,
+              415,
+              417
+            ]
+          },
+          {
+            "id": "late-R-収入済額",
+            "box": [
+              129.5,
+              58.0,
+              197.5,
+              94.0
+            ],
+            "text": "収入済額",
+            "reason": "右頁の見出しは字間を空けた印字で、OCR が「調定額収入済額不納欠損額収入未」と「入未済額」の2語に読み、欄の境を越えて「収入未入未済額」になる。原典の描画で升の印字と罫線の位置を確かめ、どの右頁も同じ位置なので、升ごとに宣言する。",
+            "pages": [
+              401,
+              403,
+              405,
+              407,
+              409,
+              411,
+              413,
+              415,
+              417
+            ]
+          },
+          {
+            "id": "late-R-不納欠損額",
+            "box": [
+              199.5,
+              58.0,
+              267.5,
+              94.0
+            ],
+            "text": "不納欠損額",
+            "reason": "右頁の見出しは字間を空けた印字で、OCR が「調定額収入済額不納欠損額収入未」と「入未済額」の2語に読み、欄の境を越えて「収入未入未済額」になる。原典の描画で升の印字と罫線の位置を確かめ、どの右頁も同じ位置なので、升ごとに宣言する。",
+            "pages": [
+              401,
+              403,
+              405,
+              407,
+              409,
+              411,
+              413,
+              415,
+              417
+            ]
+          },
+          {
+            "id": "late-R-収入未済額",
+            "box": [
+              269.5,
+              58.0,
+              337.5,
+              94.0
+            ],
+            "text": "収入未済額",
+            "reason": "右頁の見出しは字間を空けた印字で、OCR が「調定額収入済額不納欠損額収入未」と「入未済額」の2語に読み、欄の境を越えて「収入未入未済額」になる。原典の描画で升の印字と罫線の位置を確かめ、どの右頁も同じ位置なので、升ごとに宣言する。",
+            "pages": [
+              401,
+              403,
+              405,
+              407,
+              409,
+              411,
+              413,
+              415,
+              417
+            ]
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "late-stage-elderly-settlement"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "late-stage-elderly-settlement-ocr-1",
+          "origin_sha256": "b90aa8553e8299db0ad7f12511b47810435d1136c5368528664d5846c2bebe00",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              400,
+              401,
+              402,
+              403,
+              404,
+              405,
+              406,
+              407,
+              408,
+              409
+            ]
+          },
+          "sha256": "f85da7b16c64b3e329d253d15f35e89949bf6b49cc9c013fe64debc8470b39fe",
+          "bytes": 1183849
+        },
+        {
+          "id": "late-stage-elderly-settlement-ocr-2",
+          "origin_sha256": "b90aa8553e8299db0ad7f12511b47810435d1136c5368528664d5846c2bebe00",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              410,
+              411,
+              412,
+              413,
+              414,
+              415,
+              416,
+              417
+            ]
+          },
+          "sha256": "4ec2f1888e201cb388aeeaa6c25c6a135ca6d75b6c0ac4e560bd52ed72a85a38",
+          "bytes": 691207
+        }
+      ]
+    }
+  ]
+}
