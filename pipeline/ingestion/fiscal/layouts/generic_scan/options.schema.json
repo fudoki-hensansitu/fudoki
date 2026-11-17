@@ -16,18 +16,44 @@
       "description": "The original is one volume of an account printed in several originals: its 款 are some of the account's, so the sum and digit checks of the unit are reported, not enforced."
     },
     "continued_rows": {
-      "type": "array",
-      "description": "The original starts inside a 事務事業 the volume before it opened (an account printed in volumes cut anywhere, with the quirk `explained_projects`): the 事務事業 rows still open at the end of the volume before, outermost first, as that volume prints them (a total row, then its department row with `department`, then a 細事業 `(1)`). Empty when the volume starts at a 事務事業 of a 目 the volume before opened. The 款・項・目 come from the running header of the first page (ingestion/generic/patterns/quirks/explained_projects.py `continue_rows`).",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["code", "name"],
-        "properties": {
-          "code": {"type": "string", "pattern": "^(?:[0-9]+|\\([0-9]+\\))$"},
-          "name": {"type": "string", "minLength": 1},
-          "department": {"type": "string", "minLength": 1}
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "The original starts inside a 事務事業 the volume before it opened (an account printed in volumes cut anywhere, with the quirk `explained_projects`): the 事務事業 rows still open at the end of the volume before, outermost first, as that volume prints them (a total row, then its department row with `department`, then a 細事業 `(1)`). Empty when the volume starts at a 事務事業 of a 目 the volume before opened. The 款・項・目 come from the running header of the first page (ingestion/generic/patterns/quirks/explained_projects.py `continue_rows`).",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["code", "name"],
+            "properties": {
+              "code": {"type": "string", "pattern": "^(?:[0-9]+|\\([0-9]+\\))$"},
+              "name": {"type": "string", "minLength": 1},
+              "department": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Without the quirk `explained_projects`: the original starts inside a 目 the volume before opened (小金井市 R2 決算). The 款・項・目 and 事業 rows as in generic_text (ingestion/generic/convert.py `continue_volume`); the 項・目 the first page prints under the ones it does not print go under them.",
+          "additionalProperties": false,
+          "required": ["subjects", "rows"],
+          "properties": {
+            "subjects": {
+              "type": "array", "minItems": 3, "maxItems": 3,
+              "items": {
+                "type": "object", "additionalProperties": false, "required": ["code"],
+                "properties": {"code": {"type": "string", "pattern": "^[0-9]+$"}, "name": {"type": "string", "minLength": 1}}
+              }
+            },
+            "rows": {
+              "type": "array",
+              "items": {
+                "type": "object", "additionalProperties": false, "required": ["code", "name"],
+                "properties": {"code": {"type": "string", "pattern": "^[0-9]+$"}, "name": {"type": "string", "minLength": 1}, "children": {"type": "integer", "minimum": 1}}
+              }
+            }
+          }
         }
-      }
+      ]
     },
     "explained_names": {
       "type": "array",
@@ -434,6 +460,21 @@
           "y_range",
           "reason"
         ]
+      }
+    },
+    "rule_pieces": {
+      "description": "OCR が読み残した墨のうち、原画で確かめると罫の切れ端だけのもの（quirk `rule_ink` が罫と見なす大きさを超えて、罫から罫まで広がった墨の範囲）。頁と読み残しの箱をそのまま宣言して除く。箱が読み残しに無ければ止める。",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "page", "box", "reason"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "page": {"type": "integer", "minimum": 1},
+          "box": {"type": "array", "items": {"type": "number"}, "minItems": 4, "maxItems": 4},
+          "reason": {"type": "string", "minLength": 10}
+        }
       }
     },
     "header_readings": {

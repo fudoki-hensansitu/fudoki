@@ -538,9 +538,10 @@ def continue_volume(nodes: list[dict], spec: dict) -> str:
         raise ValueError('continued_rows: the volume reads no row at the head with no parent')
     if spec['rows'] and any(n['axis_header'] != heads[0]['axis_header'] for n in heads):
         raise ValueError('continued_rows: the rows with no parent are on more than one axis')
-    # Rows read with no parent are on the first page. (Under the 款・項 the volume prints again, the rows are the
-    # 目's until the first 目 the volume prints, over as many spreads as it runs.)
-    if not printed and any(n['physical_page'] != first for n in heads):
+    # Rows read with no parent are on the first page, or all on the page after it (the right page of a spread, where
+    # a scan prints the 節: 小金井市 R2 決算). (Under the 款・項 the volume prints again, the rows are the 目's until
+    # the first 目 the volume prints, over as many spreads as it runs.)
+    if not printed and (len({n['physical_page'] for n in heads}) > 1 or heads[0]['physical_page'] > first + 1):
         raise ValueError('continued_rows: a row with no parent is not on the first page')
     axis = heads[0]['axis_header']
     top = min(n['y0'] for n in heads)
@@ -554,6 +555,17 @@ def continue_volume(nodes: list[dict], spec: dict) -> str:
                       'name_text': row.get('name'), 'physical_page': first,
                       'x0': box[0], 'y0': box[1], 'x1': box[2], 'y1': box[3]})
         parent = chain[-1]['node_key']
+    # A 項 or 目 the volume prints under the 款・項 it does not print (小金井市 R2 決算: the volume opens with the 目's
+    # 節 and then the next 項 and its siblings) goes under the last row read one level above it, a declared one
+    # until the volume prints its own: the builder left it with no parent, or under a row no level above it.
+    depths = {n['node_key']: n['depth'] for n in nodes}
+    last = {row['depth']: row['node_key'] for row in chain}
+    for n in nodes:
+        if n['axis_header'] != subject:
+            continue
+        if 1 < n['depth'] and depths.get(n['parent_node_key']) != n['depth'] - 1 and n['depth'] - 1 in last:
+            n['parent_node_key'] = last[n['depth'] - 1]
+        last = {d: key for d, key in last.items() if d < n['depth']} | {n['depth']: n['node_key']}
     under = parent
     rows = []
     for index, row in enumerate(spec['rows']):

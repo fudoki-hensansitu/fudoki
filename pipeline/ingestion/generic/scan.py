@@ -1337,6 +1337,12 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
         problems = explained_projects.continue_rows(built, observed, continued, levels, subject, explained['rows_axis'],
                                                     explained)
         built.unowned.extend({'kind': 'continued rows', 'detail': p} for p in problems)
+    elif continued is not None:
+        from ingestion.generic.convert import continue_volume
+        built.notes.append({'kind': 'continued rows', 'text': continue_volume(built.nodes, continued)})
+        placed = {(n['physical_page'], n['name_text']) for n in built.nodes if n['parent_node_key'] is not None}
+        built.unowned = [u for u in built.unowned if not (u['kind'] in ('no subject parent', 'subject depth gap')
+                                                          and (u.get('page'), u.get('text')) in placed)]
     if explained:
         built.unowned.extend({'kind': 'explained item', 'detail': p} for p in explained_projects.attach(
             built, items, explained, declared=options.get('explained_names')))
@@ -1356,6 +1362,16 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
         u['kind'] == 'unread ink in amount column'
         and any(page == u['page'] and box[0] <= (u['box'][0] + u['box'][2]) / 2 <= box[2]
                 and box[1] <= (u['box'][1] + u['box'][3]) / 2 <= box[3] for page, box in declared))]
+    # Ink the rendered page shows to be only pieces of the column rules (`rule_pieces`: 小金井市 R2 決算 p1, a cell
+    # whose ink area runs from one rule to the next, past what the quirk `rule_ink` takes for a rule's piece) is no
+    # figure. A declaration names the unread box exactly, and one that names none stops the conversion.
+    pieces_ = [(r['page'], r['box']) for r in options.get('rule_pieces', ())]
+    for page, box in pieces_:
+        if not any(u['kind'] == 'unread ink in amount column' and u['page'] == page and u['box'] == box
+                   for u in built.unowned):
+            raise ValueError(f'rule_pieces: no unread ink at p{page} {box}')
+    built.unowned = [u for u in built.unowned if not (
+        u['kind'] == 'unread ink in amount column' and (u['page'], u['box']) in pieces_)]
     # So is a heading the strip seam cut (`header_readings`: 不用額 on 132080 R5 p422): the declared cell stands for it.
     headings = [(page, r['box']) for r in options.get('header_readings', ()) for page in r['pages']]
     built.unowned = [u for u in built.unowned if not (
