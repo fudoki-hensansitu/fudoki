@@ -344,7 +344,11 @@ def _prolongs_katakana(before: list[Glyph], run: list[Glyph]) -> bool:
     if len(run) != 1 or run[0].text != 'ー' or not before or not re.search(r'[ァ-ヴ]$', before[-1].text):
         return False
     size = run[0].y1 - run[0].y0
-    return run[0].x0 - before[-1].x1 <= size
+    if run[0].x0 - before[-1].x1 <= size:
+        return True
+    # A name spaced out letter by letter (`シ ル バ ー`, 132195 R2 決算): the mark keeps the letters' pitch.
+    pitch = before[-1].x0 - before[-2].x0 if len(before) > 1 and len(before[-2].text) == 1 else None
+    return pitch is not None and abs(run[0].x0 - before[-1].x0 - pitch) <= 1
 
 
 def _split_code(line_text: str) -> tuple[str | None, str]:
@@ -435,7 +439,7 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
     money = []
     # A prolonged sound mark after a katakana in a name spaced out to fill its column (`ナ ン バ ー`) is the name's last
     # character, not a dash for no amount: it stands one letter space after the katakana, where an amount cell is not.
-    if len(parts) > 1 and _prolongs_katakana(parts[-2], parts[-1]):
+    if len(parts) > 1 and _prolongs_katakana([g for part in parts[:-1] for g in part], parts[-1]):
         parts[-2:] = [parts[-2] + parts[-1]]
     while parts and is_amount(text(parts[-1])) and len(parts) > 1:
         if not money and (listed := document_quirk('list_cut')) is not None and listed.module.cut(parts):
