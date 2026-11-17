@@ -392,6 +392,8 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
     rules += [Rule(r.start, r.position, r.end, r.position) for r in detected.horizontal]
     cuts = sorted(r.position for r in detected.vertical)
     gone = superseded(observation_page)
+    if (unfounded := document_quirk('unfounded_supersessions')) is not None:
+        gone -= unfounded.module.kept(observation_page)
     if (strips := document_quirk('strip_rereads')) is not None:
         gone |= strips.module.rereads(observation_page, gone)
     if (rule_pieces := document_quirk('rule_pieces_as_digits')) is not None:
@@ -698,8 +700,9 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
           header_readings: list[dict] | None = None, rule_dark: int = pdf_rules.DARK, rule_hook=None,
           keep_marks: bool = False, row_gaps: bool = False, short_columns: bool = False,
           skewed: bool = False, row_columns: bool = False, skewed_columns: bool = False,
-          spread_rows: bool = False, line_pieces: bool = False) -> list[Page]:
-    """`rule_hook(PageRules) -> PageRules` completes the rules read from a rendered page before the words are cut at
+          spread_rows: bool = False, line_pieces: bool = False, dark_pages: dict | None = None) -> list[Page]:
+    """`dark_pages` (the layout setting `rules.dark_pages`): a page whose rules print paler than the document's `dark`
+    takes its own gray level. `rule_hook(PageRules) -> PageRules` completes the rules read from a rendered page before the words are cut at
     them; `keep_marks` keeps the bullet that starts a line in its first word (both for a text document's OCR pages, `mixed.py`)."""
     every = bool((header or {}).get('agree_all_frames'))
     on_bottom = bool((header or {}).get('agree_on_bottom'))
@@ -711,15 +714,16 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
 
     @cache
     def detected(number):
+        dark = int((dark_pages or {}).get(str(number), rule_dark))
         found = (rules or {}).get(number) or (
             vector.module.detected(pdf, number) if (vector := document_quirk('vector_rules')) is not None
-            else pdf_rules.detect(pdf, number, dark=rule_dark, skewed=skewed,
+            else pdf_rules.detect(pdf, number, dark=dark, skewed=skewed,
                                   skewed_columns=skewed_columns, spread_rows=spread_rows))
         if (edges := document_quirk('page_edge_rules')) is not None:
             found = edges.module.dropped(found)
         if (dotted := document_quirk('dotted_column_rules')) is not None:
-            found = dotted.module.added(pdf, found, rule_dark)
-        found = short_rows(pdf, found, rule_dark,
+            found = dotted.module.added(pdf, found, dark)
+        found = short_rows(pdf, found, dark,
                            bool((header or {}).get('staircase')) or short_columns, row_columns)
         return rule_hook(found) if rule_hook else found
 
@@ -1236,11 +1240,17 @@ def declared_unread(built, logicals_: list, columns: dict | None, observation: d
                 built.unowned.append({'kind': 'unread ink in amount column', 'page': page_['page_number'], 'box': box})
         # A line the strip seam cut and no single re-read gave back (`settle_seams`) stops the conversion in any
         # column: a name has no tree check, so a name cut short would pass.
-        # A line outside every ruled frame of the page (the note printed under a table) holds no amount or name of it.
+        # A line outside every ruled frame of the page (the note printed under a table) holds no amount or name of it,
+        # and nor does a line inside a column declared out of the table.
         for box in page_.get('unread_seams', []):
             centre = (box[1] + box[3]) / 2
             if not any(b.page == page_['page_number'] and (b.top if b.top is not None else b.body_top) <= centre <= b.body_bottom
                        for logical in logicals_ for b in logical.bands):
+                continue
+            # (港区 R7 歳入: the 説明)
+            if any(b.page == page_['page_number'] and (b.excluded or b.ignored)
+                   and b.x0 - b.offset - 2 <= box[0] and box[2] <= b.x1 - b.offset + 2
+                   for logical in logicals_ for b in logical.bands):
                 continue
             if not any(u.get('page') == page_['page_number'] and u.get('box') == box for u in built.unowned):
                 built.unowned.append({'kind': 'unread strip seam', 'page': page_['page_number'], 'box': box})
@@ -1295,7 +1305,8 @@ def read_pages(source: dict, options: dict, settings: dict | None, selected: lis
                     row_columns=bool(((settings or {}).get('rules') or {}).get('row_columns')),
                     skewed_columns=bool(((settings or {}).get('rules') or {}).get('skewed_columns')),
                     spread_rows=bool(((settings or {}).get('rules') or {}).get('spread_rows')),
-                    line_pieces=bool(((settings or {}).get('rules') or {}).get('line_pieces')))
+                    line_pieces=bool(((settings or {}).get('rules') or {}).get('line_pieces')),
+                    dark_pages=((settings or {}).get('rules') or {}).get('dark_pages'))
     if (specks := document_quirk('specks')) is not None:
         printed = specks.module.drop(printed)
     printed = add_code_readings(printed, options.get('code_readings'))

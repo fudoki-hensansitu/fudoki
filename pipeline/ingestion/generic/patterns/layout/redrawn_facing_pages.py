@@ -24,6 +24,7 @@ import dataclasses
 import re
 
 from ingestion.generic.observe import Page, Rule, Word
+from ingestion.generic.patterns import document_quirk
 from ingestion.generic.patterns.layout import facing_pages
 from ingestion.generic.patterns.layout.redrawn_headers import frame, join_comma_groups, sides, verticals, word
 
@@ -218,6 +219,7 @@ def read(pages, **options):
     # rules as well, and stays an expenditure page)
     lefts = (REVENUE_LEFT,) if any(k[0] is REVENUE_LEFT for k in kinds) else (LEFT,)
     numbers = {page.number: index for index, page in enumerate(pages)}
+    shifted = document_quirk('shifted_right_pages') is not None
     for index, page in enumerate(pages):
         places, left, width = kinds[index]
         if places is None:
@@ -236,10 +238,10 @@ def read(pages, **options):
         page.words, page.rules = changed.words, changed.rules
         kinds[index] = (places, left, width)
         # A right page scanned a little higher or lower than its left page (大田区 R6 歳入: 4pt higher) puts a 節 in
-        # the row above its 目: it is moved so that its frame's top meets the left page's.
+        # the row above its 目: it is moved so that its frame's top meets the left page's (quirk `shifted_right_pages`).
         before = numbers.get(page.number - 1)
         # (only after the 歳入's left page: an expenditure book's spreads are read as they lie)
-        if places is RIGHT and before is not None and kinds[before][0] is REVENUE_LEFT:
+        if places is RIGHT and before is not None and kinds[before][0] is REVENUE_LEFT and shifted:
             tops = frame(pages[before]), frame(page)
             shift = tops[0][0] - tops[1][0] if None not in tops else 0.0
             if SHIFT_LEAST <= abs(shift) <= SHIFT_MOST:

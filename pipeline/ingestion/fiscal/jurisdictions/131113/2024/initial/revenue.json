@@ -69,7 +69,8 @@
           "quirks": {
             "specks": true,
             "revision_history": true,
-            "rule_ink": true
+            "rule_ink": true,
+            "shifted_right_pages": true
           }
         },
         "dropped_readings": [
@@ -361,7 +362,8 @@
           "quirks": {
             "specks": true,
             "revision_history": true,
-            "rule_ink": true
+            "rule_ink": true,
+            "shifted_right_pages": true
           }
         },
         "dropped_readings": [
@@ -468,7 +470,8 @@
           "quirks": {
             "specks": true,
             "revision_history": true,
-            "rule_ink": true
+            "rule_ink": true,
+            "shifted_right_pages": true
           }
         },
         "dropped_readings": [
@@ -587,7 +590,8 @@
           "quirks": {
             "specks": true,
             "revision_history": true,
-            "rule_ink": true
+            "rule_ink": true,
+            "shifted_right_pages": true
           }
         },
         "dropped_readings": [

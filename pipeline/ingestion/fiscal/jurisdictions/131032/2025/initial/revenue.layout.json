@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "source_inconsistencies": [
+    {
+      "table_id": "general-initial-1",
+      "page": 26,
+      "axis": "科目",
+      "parent": {
+        "code": "3",
+        "name": "国庫委託金"
+      },
+      "printed": 10338,
+      "children_sum": 9835,
+      "difference": -503,
+      "basis": "一般会計の歳入は2冊に分けて印字し、冊は項の途中でも切れる。1冊目（general-initial-1）の最後の頁までに印字した「3 国庫委託金」の目の本年度の和は 9,835 千円で、印字 10,338 千円との差 503 千円は、2冊目（general-initial-2）の頭に印字した「3 衛生費委託金」の本年度 503 千円と一致する。冊の境目による不足で、印字値は書き換えない。"
+    },
+    {
+      "table_id": "general-initial-1",
+      "page": 26,
+      "axis": "科目",
+      "parent": {
+        "code": "3",
+        "name": "国庫委託金"
+      },
+      "printed": 10078,
+      "children_sum": 9576,
+      "difference": -502,
+      "basis": "一般会計の歳入は2冊に分けて印字し、冊は項の途中でも切れる。1冊目（general-initial-1）の最後の頁までに印字した「3 国庫委託金」の目の前年度の和は 9,576 千円で、印字 10,078 千円との差 502 千円は、2冊目（general-initial-2）の頭に印字した「3 衛生費委託金」の前年度 502 千円と一致する。冊の境目による不足で、印字値は書き換えない。"
+    },
+    {
+      "table_id": "general-initial-1",
+      "page": 26,
+      "axis": "科目",
+      "parent": {
+        "code": "3",
+        "name": "国庫委託金"
+      },
+      "printed": 260,
+      "children_sum": 259,
+      "difference": -1,
+      "basis": "一般会計の歳入は2冊に分けて印字し、冊は項の途中でも切れる。1冊目（general-initial-1）の最後の頁までに印字した「3 国庫委託金」の目の比較の和は 259 千円で、印字 260 千円との差 1 千円は、2冊目（general-initial-2）の頭に印字した「3 衛生費委託金」の比較 1 千円と一致する。冊の境目による不足で、印字値は書き換えない。"
+    }
+  ]
+}
