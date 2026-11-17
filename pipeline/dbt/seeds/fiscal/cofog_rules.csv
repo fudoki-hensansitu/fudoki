@@ -132,6 +132,7 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 102,akishima-kyoiku-yochien,132071,一般会計,,,教育総務費,,幼稚園費,eq,,assigned,09.1,retained,目,,昭島市 款10 項1 のうち幼稚園。COFOG 09.1 就学前教育及び初等教育。⚠️ 他の3自治体は幼稚園費が項として立っているが、昭島市は教育総務費の目にある,false
 103,akishima-kyoiku-gakko,132071,一般会計,,,教育総務費,,,eq,,assigned,09.8,retained,項,,昭島市 款10 項1 の残り。COFOG 09.8 他に分類されない教育,false
 104,akishima-kyoiku-shoto,132071,一般会計,,,小学校費,,,eq,,assigned,09.1,retained,項,,昭島市 款10 項2。COFOG 09.1 就学前教育及び初等教育,false
+111,akishima-nakagami-kita,132071,,地域整備,,,,道路・公園等整備事業費,eq,,assigned,06.2,retained,目,,昭島市 中神駅北側地域整備事業特別会計の目「道路・公園等整備事業費」。駅周辺の地域整備で、一般会計の中神駅北側地域整備費（都市計画費の残り）と同じく COFOG 06.2 コミュニティの開発。,false
 105,akishima-kyoiku-chuto,132071,一般会計,,,中学校費,,,eq,,assigned,09.2,retained,項,,昭島市 款10 項3。COFOG 09.2 中等教育,false
 106,akishima-shakaikyoiku-bunka,132071,一般会計,,,社会教育費,,図書館費|市民会館費|公民館費|文化財保護費,eq,,assigned,08.2,retained,目,,昭島市 款10 項4 のうち図書館・市民会館・公民館・文化財。COFOG 08.2 文化サービス,false
 107,akishima-shakaikyoiku-other,132071,一般会計,,,社会教育費,,,eq,,assigned,09.5,retained,項,,昭島市 款10 項4 の残り（社会教育総務費・青少年育成費・社会教育施設管理費）。COFOG 09.5 水準を特定できない教育,false
