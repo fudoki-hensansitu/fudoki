@@ -1,6 +1,6 @@
 /* ホームのうちのまちの札（レジに見立てる）と、その下端の差し出し口から出てくるレシート。
  * 紙は札のすぐ下に敷き、差し出し口の線から下だけを見せる（.rc-feed が切り口）。紙は高さを伸ばして末端（合計・QR）から見せ、刷り直すときは切らずに続けて刷り、
- * 押し出された前の紙は立体（receipt.tsx の Ribbon）で垂らして床に積む */
+ * 押し出された前の紙は立体（receipt.tsx の Ribbon）で垂らし、下で折り返してレシートの裏を上へ戻す */
 .rc-feed {
   position: relative;
   /* 上端を札の差し出し口の溝の中心に重ねる（.rm-slot の bottom + 高さの半分） */
@@ -52,6 +52,9 @@
   flex-direction: column;
   justify-content: flex-end;
   overflow: hidden;
+  /* 折り返して戻る前の紙（.rc-ribbon）は、今のレシートの裏を通る */
+  position: relative;
+  z-index: 1;
 }
 /* 押し出された前の紙（receipt.tsx の Ribbon）。立体は紙の左右に余白を持たせて、.rc-print の上端から敷く */
 .rc-ribbon {

@@ -1,10 +1,10 @@
 // ホームのうちのまちの札。緑の札で予算と1人あたりの額を順に数え上げ、札の下端の差し出し口から分野ごとの1人あたりのレシートを刷り出す。
-// 年度を替えて刷り直すときは、紙を切らずに続けて刷る。前の紙は新しい紙に押し出されて垂れ、床で折り重なって積もる（1本の続いた紙）。
+// 年度を替えて刷り直すときは、紙を切らずに続けて刷る。前の紙は新しい紙に押し出されて垂れ、下で奥へ折り返してレシートの裏を上へ戻る（キャタピラーのような1本の続いた紙）。
 // 札そのものをレジに見立て、平らな描き方に揃える。押し出された前の紙だけを立体にする（ribbon3d.ts）。
 // 1人あたりは予算を人口で割った額（払った税金の額ではない）。分野の行の和が合計に合うよう、大きい端数から1円ずつ足して丸める
 import * as React from 'react'
 import { encode } from 'uqr'
-import { ArrowRightIcon, CheckIcon, LinkIcon, XLogoIcon } from '@phosphor-icons/react'
+import { CheckIcon, LinkIcon, XLogoIcon } from '@phosphor-icons/react'
 import { Link } from '../nav/link'
 import { cn } from '@/lib/utils'
 import { titleVariants } from '@/components/ui/title'
@@ -20,26 +20,56 @@ const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-r
 
 /** delay の後に 0 から to まで数え上げる。reduced-motion では最初から to。
  * to が変わったら（年度の切り替え）描く前に 0 へ戻し、前の年度の額を新しい年度の見出しで見せない */
+/** 数え上げ。下の桁から1桁ずつ回して止め、次の桁へ繰り上がる（動くのはいつも1桁だけ）。返すのは、止まった下の桁の数と、回っている桁の今の数字 */
 function useCountUp(to: number, delay = 0) {
-  const [n, setN] = React.useState(() => (reduced() ? to : 0))
+  const digits = String(Math.max(0, to)).length
+  const done = { settled: digits, spin: -1 }
+  const [state, setState] = React.useState(() => (reduced() ? done : { settled: 0, spin: 0 }))
   const [from, setFrom] = React.useState(to)
   if (from !== to) {
     setFrom(to)
-    setN(reduced() ? to : 0)
+    setState(reduced() ? done : { settled: 0, spin: 0 })
   }
   React.useEffect(() => {
-    if (reduced()) return setN(to)
+    if (reduced()) return setState(done)
     let raf = 0
     const t0 = performance.now() + delay
     const step = (t: number) => {
       const p = Math.max(0, Math.min(1, (t - t0) / COUNT_MS))
-      setN(Math.round(to * (1 - Math.pow(1 - p, 3))))
+      const at = p * digits
+      const settled = Math.min(digits, Math.floor(at))
+      // 回っている桁は 0 から2周して、止まる数字に落ち着く
+      const spin = settled < digits ? Math.floor((at - settled) * 20) % 10 : -1
+      setState((s) => (s.settled === settled && s.spin === spin ? s : { settled, spin }))
       if (p < 1) raf = requestAnimationFrame(step)
     }
     raf = requestAnimationFrame(step)
     return () => cancelAnimationFrame(raf)
   }, [to])
-  return n
+  return { to, ...state }
+}
+
+/** 数え上げの途中の金額。まだ回っていない上の桁は場所だけ取って隠す（数字が横へずれないように） */
+function Counting({ c }: { c: ReturnType<typeof useCountUp> }) {
+  const text = c.to.toLocaleString('ja-JP')
+  let k = -1
+  const chars = [...text].reverse().map((ch, i) => {
+    if (ch < '0' || ch > '9') return { ch, at: k + 0.5, i }
+    k++
+    return { ch: k === c.settled && c.spin >= 0 ? String(c.spin) : ch, at: k, i }
+  })
+  return (
+    <span className="whitespace-nowrap tabular-nums" aria-label={`${text}円`}>
+      <span aria-hidden="true">
+        {chars.reverse().map(({ ch, at, i }) => (
+          <span key={i} className={at > c.settled ? 'invisible' : undefined}>
+            {ch}
+          </span>
+        ))}
+        <small className="ml-1 text-[0.55em]">円</small>
+      </span>
+    </span>
+  )
 }
 
 /** 相対の url を、いま開いている origin に付けて外から開ける形にする */
@@ -193,12 +223,10 @@ function Strip({ mode, joined, children }: { mode: 'grow' | 'still'; joined: boo
   )
 }
 
-/** 押し出された紙を描く立体の、紙の左右の余白（床で折り重なると横に少しずれる） */
+/** 押し出された紙を描く立体の、紙の左右の余白（折り返して戻る紙は横に少しずれる） */
 const RIBBON_MARGIN = 48
-/** 新しい紙の下端から床までに、少なくとも空ける高さ */
+/** 新しい紙の末端から、前の紙が折り返す所までの高さ */
 const RIBBON_GAP = 40
-/** 押し出された紙を描く canvas を、何 px ずつまとめて伸ばすか */
-const RIBBON_GROW = 160
 /** 紙の境のミシン目の色（紙の上なので明暗で変えない） */
 // oxlint-disable-next-line design/color-literal -- canvas に描く絵の色で、receipt.css の .rc-ribbon-dom::before と同じ値にする
 const PERFORATION = 'rgba(0, 0, 0, 0.3)'
@@ -229,8 +257,8 @@ function perforated(texture: HTMLCanvasElement, height: number) {
   return c
 }
 
-/** 押し出された前の紙（新しい順）。今出ている紙の下端に続く1本の紙として、真下へ垂れて床で折り重なる立体（ribbon3d.ts）に描く。
- * 立体を描くまで（読み込み・絵を写す間）は、いちばん新しい一枚を DOM のまま同じ場所に出しておく。WebGL が使えない・絵を写せないときは、前の紙を残さない（以後も積まない） */
+/** 押し出された前の紙（新しい順）。今出ている紙の下端に続く1本の紙として、真下へ垂れて下で奥へ折り返し、レシートの裏を上へ戻る立体（ribbon3d.ts）に描く。
+ * 立体を描くまで（読み込み・絵を写す間）は、いちばん新しい一枚を DOM のまま同じ場所に出しておく。WebGL が使えない・絵を写せないときは、前の紙を残さない（以後も残さない） */
 function Ribbon({ papers, onHeight, onFail, children }: { papers: Older[]; onHeight: (h: number) => void; onFail: () => void; children: React.ReactNode }) {
   const wrap = React.useRef<HTMLDivElement>(null)
   const canvas = React.useRef<HTMLCanvasElement>(null)
@@ -256,13 +284,13 @@ function Ribbon({ papers, onHeight, onFail, children }: { papers: Older[]; onHei
     const taking = new Set<number>()
     void (async () => {
       try {
-        const { ribbon, pileAbove } = await import('./ribbon3d')
+        const { ribbon, TURN_R } = await import('./ribbon3d')
         if (!alive || !canvas.current) return
         stage = ribbon(canvas.current, RIBBON_MARGIN)
         if (!stage) throw new Error('WebGL が使えません')
         const print = canvas.current.parentElement!.parentElement!
-        let shown = 0
-        // 紙が動いている間だけ毎コマ進め、止まったら描くのをやめる。また動かすのは kick（紙の並び・.rc-print の大きさが変わったとき）
+        let last = ''
+        // 描き直すのは、紙の並び・差し出し口の紙の長さ・幅が変わったときだけ（kick で起こす）
         const frame = () => {
           raf = 0
           const top = list.current[0]
@@ -289,26 +317,21 @@ function Ribbon({ papers, onHeight, onFail, children }: { papers: Older[]; onHei
           const strip = print.querySelector<HTMLElement>(':scope > [data-latest]')
           const attach = strip?.offsetHeight ?? 0
           const incoming = strip ? paperHeight(strip) : (top?.height ?? 0)
-          const L = sheets.reduce((n, x) => n + x.height, 0)
-          const floor = incoming + RIBBON_GAP + pileAbove(L)
+          // 折り返すのは、新しいレシートが刷り終えた末端より少し下
+          const turn = Math.max(incoming, top?.height ?? 0) + RIBBON_GAP
           const width = print.clientWidth
-          // canvas の高さは、紙が手前へ広がって届いた所まで伸ばす（縮めると頁が揺れるので伸ばすだけ）。
-          // 高さを変えると描く場を作り直すので、毎コマ少しずつではなく、まとめて伸ばす
-          const step = (px: number) => Math.ceil(px / RIBBON_GROW) * RIBBON_GROW
-          const h = Math.max(shown, step(floor + RIBBON_GAP))
-          const { bottom, moving } = stage!.frame(sheets, attach, floor, width, width + RIBBON_MARGIN * 2, h)
-          // canvas の見た目の高さは、いま描いた高さ（h）に合わせる。もっと要るときは次のコマで伸ばして描く
-          if (canvas.current!.style.height !== `${h}px`) canvas.current!.style.height = `${h}px`
-          const next = Math.max(h, step(bottom + 8))
-          if (next !== shown) {
-            shown = next
-            height.current(next)
+          const h = Math.ceil(turn + TURN_R + 8)
+          const key = [sheets.map((x) => x.key).join(','), attach, turn, width].join(':')
+          if (key !== last) {
+            last = key
+            canvas.current!.style.height = `${h}px`
+            height.current(h)
+            stage!.draw(sheets, attach, turn, width, width + RIBBON_MARGIN * 2, h)
           }
-          if (moving || drawnRef.current !== (top?.r.id ?? null)) {
+          if (drawnRef.current !== (top?.r.id ?? null)) {
             drawnRef.current = top?.r.id ?? null
             setDrawn(drawnRef.current)
           }
-          if (moving || next > h) raf = requestAnimationFrame(frame)
         }
         kick.current = () => {
           if (alive && !raf) raf = requestAnimationFrame(frame)
@@ -351,7 +374,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
   const what = `${yearName(year)}の${settled ? '決算' : '予算'}`
   const counted = `${year}:${v.total}`
   const feed = React.useRef<HTMLDivElement>(null)
-  /** 刷った紙（いま出ている一枚）と、押し出された前の紙（新しい順。床で折り重なる） */
+  /** 刷った紙（いま出ている一枚）と、押し出された前の紙（新しい順。折り返して裏を戻る） */
   const [printed, setPrinted] = React.useState<Printed | null>(null)
   const [older, setOlder] = React.useState<Older[]>([])
   const [ribbonH, setRibbonH] = React.useState(0)
@@ -363,8 +386,8 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
     const latest = feed.current?.querySelector<HTMLElement>('[data-latest]')
     const height = latest ? paperHeight(latest) : 0
     const keep = !!pop && printed && height > 0 && !reduced() && !ribbonOff
-    // 床に積もる紙は4枚まで（それより古い紙は積もりの下で見えない）
-    setOlder(keep ? [{ r: printed, height }, ...older].slice(0, 4) : [])
+    // 前の紙は3枚まで（それより古い紙は差し出し口の奥へ戻って見えない）
+    setOlder(keep ? [{ r: printed, height }, ...older].slice(0, 3) : [])
     setPrinted(null)
   }
   const total = useCountUp(v.total)
@@ -390,7 +413,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
   }, [printed])
   // 札を外したら（まちを替える・頁を移る）写した絵を捨てる
   React.useEffect(() => () => pictures.clear(), [])
-  // 床に積もらなくなった紙の絵は捨てる
+  // 見えなくなった紙の絵は捨てる
   React.useEffect(() => {
     const live = new Set([printed?.id, ...older.map((o) => o.r.id)])
     for (const id of pictures.keys()) if (!live.has(id)) pictures.delete(id)
@@ -455,7 +478,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
             <dt className="text-[clamp(17px,4.6vw,22px)] opacity-80">{what}</dt>
             {/* oxlint-disable-next-line design/text-size, design/space-step -- うちのまちの札は画面幅に合わせて見出しと金額を伸ばす見せ場なので、段の外を許す（見出しの大きさは 2026-11-17 yuito） */}
             <dd className="mt-2 text-[clamp(28px,8vw,60px)] leading-none font-semibold">
-              <Yen n={total} />
+              <Counting c={total} />
             </dd>
           </div>
           {pop ? (
@@ -465,17 +488,11 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
             <dt className="text-[clamp(17px,4.6vw,22px)] opacity-80">1人あたりに直すと</dt>
               {/* oxlint-disable-next-line design/text-size, design/space-step -- うちのまちの札は画面幅に合わせて見出しと金額を伸ばす見せ場なので、段の外を許す（見出しの大きさは 2026-11-17 yuito） */}
             <dd className="mt-2 text-[clamp(28px,8vw,60px)] leading-none font-semibold">
-                <Yen n={per} />
+                <Counting c={per} />
               </dd>
             </div>
           ) : null}
         </dl>
-        <div className="mt-4 flex justify-end">
-          <Link href={detailHref} className="inline-flex items-center gap-2 rounded-full bg-brand-fill px-4 py-2 text-sm font-medium text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover">
-            詳細を見る
-            <ArrowRightIcon className="size-4" />
-          </Link>
-        </div>
         {/* 札の下端の差し出し口。紙はここから出る */}
         {receipt ? <div className="rm-slot" aria-hidden="true" /> : null}
       </section>
@@ -487,7 +504,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
                 {paper(printed)}
               </Strip>
             ) : null}
-            {/* 押し出された前の紙は、今の紙の下端に続いて垂れ、床で折り重なる */}
+            {/* 押し出された前の紙は、今の紙の下端に続いて垂れ、下で折り返してレシートの裏を上へ戻る */}
             {older.length ? (
               <Ribbon papers={older} onHeight={setRibbonH} onFail={() => setOlder([])}>
                 {paper(older[0]!.r)}

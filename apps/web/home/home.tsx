@@ -127,6 +127,7 @@ function YearSwitch({ c, onBrand }: { c: Ctx; onBrand?: boolean }) {
 /** うちのまちの札（レシートの機械）。予算と1人あたりを数え上げ、分野ごとの1人あたりのレシートを出す */
 function Dashboard({ c }: { c: Ctx }) {
   const { v, d, year, town } = c
+  const detailHref = c.year === c.years.at(-1) ? c.town.path : flowHref(c)
   return (
     <ReceiptMachine
       name={town.name}
@@ -134,7 +135,7 @@ function Dashboard({ c }: { c: Ctx }) {
       year={year}
       pop={d.pop ?? null}
       base={c.base}
-      detailHref={c.year === c.years.at(-1) ? c.town.path : flowHref(c)}
+      detailHref={detailHref}
       head={
         <div className="flex items-start gap-4">
           <Emblem code={town.code} name={town.name} className="size-14 rounded-2xl border-0 p-2" />
@@ -142,8 +143,14 @@ function Dashboard({ c }: { c: Ctx }) {
             <Title size="h1" as="h2">{town.name}</Title>
             <p className="mt-1 truncate text-sm opacity-80">{c.vision}</p>
           </div>
-          {/* 年度は数字の頭に効くので上に、頁へ進む導線は数字を読んだあとの下に置く */}
-          <YearSwitch c={c} onBrand />
+          {/* 年度と、そのまちの頁へ進む導線は、見出しの右にまとめて置く */}
+          <div className="flex shrink-0 flex-col items-end gap-2">
+            <YearSwitch c={c} onBrand />
+            <Link href={detailHref} className="inline-flex items-center gap-2 rounded-full bg-brand-fill px-4 py-2 text-sm font-medium text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover">
+              詳細を見る
+              <ArrowRightIcon className="size-4" />
+            </Link>
+          </div>
         </div>
       }
     />
