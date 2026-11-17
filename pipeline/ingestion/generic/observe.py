@@ -182,10 +182,19 @@ def covered_by_notes(page, items: list[Word]) -> list[Word]:
     return [placed.get(index, word) for index, word in enumerate(items) if index not in dropped]
 
 
+FIGURE = re.compile(r'[\d,，.．△▲+＋\-－−‐―ー%％()（）円千万百億]*')  # an amount, a nil mark, a ratio or a unit
+COPIED_TEXT_SHARE = .1  # a hidden copy repeats the names too (a third or more of the pairs in the measured documents)
+
+
 def drop_hidden_copies(pdf: Path, number: int, width: float, items: list[Word]) -> list[Word]:
     """Some documents print every word twice, the second copy a fixed distance to the side and not visible
     (a layer the page's clip hides): Poppler reads both. A page where a good share of the words have a twin at one
-    common distance is rendered, and in each half of the page the words of the side that shows no ink are dropped."""
+    common distance is rendered, and in each half of the page the words of the side that shows no ink are dropped.
+
+    A copy of every word repeats the names and headings as well as the figures. Twins that are all figures are
+    neighbouring amount columns printing the same amount on many rows (a 調定額 and the 収入済額 equal to it, 0 in
+    every column of a row): both show ink, and dropping one side would drop printed amounts. A page of real copies
+    that this keeps reads every amount twice, which the save gate's sum checks stop; a dropped amount passes them."""
     by_place: dict[tuple, list[int]] = {}
     for index, word in enumerate(items):
         by_place.setdefault((word.text, round(word.y0)), []).append(index)
@@ -207,6 +216,8 @@ def drop_hidden_copies(pdf: Path, number: int, width: float, items: list[Word]) 
             for b in members:
                 if abs(items[b].x0 - items[a].x0 - shift) < .6 and abs(items[b].y0 - items[a].y0) < .3:
                     pairs.append((a, b))
+    if sum(not FIGURE.fullmatch(items[a].text) for a, _ in pairs) < COPIED_TEXT_SHARE * len(pairs):
+        return items
     import numpy as np
     from PIL import Image
     with tempfile.TemporaryDirectory() as directory:
