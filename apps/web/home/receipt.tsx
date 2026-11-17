@@ -75,7 +75,9 @@ function Share({ title, file }: { title: string; file: string }) {
     const a = document.createElement('a')
     a.href = URL.createObjectURL(png)
     a.download = file
+    document.body.appendChild(a)
     a.click()
+    a.remove()
     setTimeout(() => URL.revokeObjectURL(a.href), 1000)
     setDone(true)
     clearTimeout(timer.current)
