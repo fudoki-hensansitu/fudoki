@@ -1,0 +1,364 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "133086",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "85e47f8e62e0c5e8773e06dd99dc29bbc7b051eb82920f9b21833de1bb614a3d"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "nhi-revenue",
+        "pages": [
+          [
+            9,
+            12
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／区分／節": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "事業": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "row_gaps": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "amounts": "next_row",
+              "fourth_level_axis": "事業"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-revenue-ocr-1",
+          "origin_sha256": "85e47f8e62e0c5e8773e06dd99dc29bbc7b051eb82920f9b21833de1bb614a3d",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              9,
+              10,
+              11,
+              12
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "3cbb9674785fd3bd918066ba25035bb9120526dea6b0210218e11234d1531a27",
+          "bytes": 1640386
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "f3a41b0dd89b771a940841d1b82535169b620e7d512042687d3195b358b6fa52"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-revenue",
+        "pages": [
+          [
+            8,
+            10
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／区分／節": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "事業": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "row_gaps": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "amounts": "next_row",
+              "fourth_level_axis": "事業"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-revenue-ocr-1",
+          "origin_sha256": "f3a41b0dd89b771a940841d1b82535169b620e7d512042687d3195b358b6fa52",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "dc2c6ea76787c180c4001edb5cf5bc92f3c7025450520c73fdd4338373d69e25",
+          "bytes": 1328213
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "91a36f3033c31d68e7ef867096aef8b90817794aeca971fd614256e3367e4939"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-revenue",
+        "pages": [
+          [
+            10,
+            15
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／区分／節": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "事業": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "row_gaps": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "amounts": "next_row",
+              "fourth_level_axis": "事業"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-revenue-ocr-1",
+          "origin_sha256": "91a36f3033c31d68e7ef867096aef8b90817794aeca971fd614256e3367e4939",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "d857ca4b947f841bb2f2b847d6fb7ad66f89cc3f64a89fcca519611864900d73",
+          "bytes": 2503711
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-revenue"
+        }
+      ]
+    },
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4d5519181e05054d0ed42089f3394dafed7504b4ac28c925650067c3be9c7075"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "事業": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                },
+                "予算現額／区分／節": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "row_gaps": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "amounts": "next_row",
+              "fourth_level_axis": "事業"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            12,
+            31
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    }
+  ]
+}
