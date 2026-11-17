@@ -137,7 +137,15 @@ class Logical:
             match = TITLE.match(normalize(text(line)))
             if match:
                 found.append((match.group(1) or match.group(2), match.group(3), line))
+            elif (bare := _document_quirk('unnumbered_titles')) is not None \
+                    and (name := bare.module.kan_title(normalize(text(line)))) is not None:
+                found.append((None, name, line))  # the quirk `unnumbered_titles`: `第　款 財産収入`, a 款 the year drops
         return found
+
+
+def _document_quirk(name: str):
+    from ingestion.generic.patterns import document_quirk  # (patterns import this module)
+    return document_quirk(name)
 
 
 def _crosses(rule: Rule, y: float) -> bool:
