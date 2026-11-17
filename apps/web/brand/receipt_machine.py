@@ -2,6 +2,9 @@
 
   /Applications/Blender.app/Contents/MacOS/Blender -b --factory-startup --python apps/web/brand/receipt_machine.py -- [--render <dir>]
 
+起動中の Blender で組んで見るときは、Blender MCP の execute_blender_code からこの file を exec する。
+利用者の scene には触れず、専用の scene（receipt-machine）に組む。glb は名前が利用者の data と重ならない背景の実行で書き出す。
+
 店のレジ横にある感熱式のレシートプリンタに見える形にする（実在の製品の形やロゴはなぞらない）。
 背が低く奥行きの深い筐体で、天板の奥半分は紙のロールを収めた丸く膨らんだ蓋、手前半分は一段低い天板。
 前面の下寄りに紙の幅（DOM の .rc-print の最大幅 440）の差し出し口と刃の帯があり、紙（DOM のレシート）はそこから手前下へ出る。
@@ -77,8 +80,25 @@ def gl(x: float, y: float, z: float) -> Vector:
     return Vector((x, -z, y))
 
 
+LIVE = not bpy.app.background
+SCENE = "receipt-machine"
+TAG = "receipt_machine"
+
+
 def reset() -> None:
-    bpy.ops.wm.read_factory_settings(use_empty=True)
+    """背景で動かすときは空の状態から組む。起動中の Blender（Blender MCP から実行）では、
+    利用者の scene と object に触れず、専用の scene を作り直し、前回この script が作ったものだけを消す"""
+    if not LIVE:
+        bpy.ops.wm.read_factory_settings(use_empty=True)
+        return
+    old = bpy.data.scenes.get(SCENE)
+    for coll in (bpy.data.objects, bpy.data.meshes, bpy.data.materials):
+        for idb in [i for i in coll if i.get(TAG)]:
+            coll.remove(idb)
+    if old:
+        bpy.data.scenes.remove(old)
+    scene = bpy.data.scenes.new(SCENE)
+    bpy.context.window.scene = scene
 
 
 def srgb(hex_: str) -> tuple:
@@ -88,6 +108,7 @@ def srgb(hex_: str) -> tuple:
 
 def material(name: str, hex_: str, rough: float, metal: float = 0.0, emit: float = 0.0):
     m = bpy.data.materials.new(name)
+    m[TAG] = True
     m.use_nodes = True
     p = next(n for n in m.node_tree.nodes if n.type == "BSDF_PRINCIPLED")
     color = srgb(hex_)
@@ -123,6 +144,7 @@ def new_object(name: str, bm: bmesh.types.BMesh, mats: list) -> bpy.types.Object
     for m in mats:
         me.materials.append(MAT[m])
     ob = bpy.data.objects.new(name, me)
+    ob[TAG] = me[TAG] = True
     bpy.context.scene.collection.objects.link(ob)
     return ob
 
@@ -410,6 +432,10 @@ def render(dir_: Path) -> None:
 def main() -> None:
     argv = sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else []
     objs = build()
+    if LIVE:
+        # 起動中の Blender では見せるだけ。名前が利用者の data と重なると変わるので、glb は背景で動かして書き出す
+        print("built in scene", SCENE, [o.name for o in objs.values()])
+        return
     export(objs)
     if "--render" in argv:
         render(Path(argv[argv.index("--render") + 1]))
