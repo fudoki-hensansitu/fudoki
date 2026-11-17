@@ -6,7 +6,6 @@ import { ArrowLeftIcon, ArrowRightIcon } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import { Link } from '../nav/link'
 import { useMyTown } from '../home/towns'
-import { reiwa } from '../jurisdiction/types'
 import { QUESTIONS, questionOf, type Question } from './questions'
 import type { CompareMap, MapTown } from '../server/compare-map'
 
@@ -97,7 +96,6 @@ function Legend({ q, scale }: { q: Question; scale: Scale | null }) {
   )
 }
 
-const sourceOf = (q: Question, year: number | null) => (q.source === 'finance' ? `総務省「市町村別決算状況調」${year ? reiwa(year) : ''}（普通会計）` : `風土記 ${year ? `${reiwa(year)} ` : ''}決算（一般会計）`)
 const failedText = <p className="text-sm text-muted-foreground">今は読み込めません。少し時間をおいてやり直してください。</p>
 
 /** いちばん大きいまちと小さいまち */
@@ -114,7 +112,7 @@ export function CompareList({ map, failed }: { map: CompareMap; failed: boolean 
         <p className="mt-1 text-[15px] text-muted-foreground">まちのお金を1人あたりの金額に直すと、いろいろな見方で比べられます。いまは{map.prefecture || '東京都'}のまちから、少しずつ広げています。</p>
       </header>
       {failed ? failedText : (
-        <div className="grid grid-cols-2 gap-3 lg:grid-cols-4 lg:gap-3.5">
+        <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 lg:gap-4">
           {QUESTIONS.map((q, i) => {
             const scale = scaleOf(map.towns, q.slug)
             const { top, bottom } = extremes(map.towns, q.slug)
@@ -190,7 +188,6 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
           <div>
             <TileMap map={map} q={q} scale={scale} selected={code} onPick={pick} large />
             <Legend q={q} scale={scale} />
-            <p className="mt-2.5 text-xs text-muted-foreground">出典: {sourceOf(q, map.year)}</p>
           </div>
           {t ? (
             <aside key={t.code} aria-live="polite" className="animate-in rounded-2xl border bg-background p-[18px] fade-in slide-in-from-bottom-1 duration-200 motion-reduce:animate-none">
@@ -205,16 +202,6 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
               <p className="mt-3.5 text-[13px] text-muted-foreground">{q.short}</p>
               <Num v={t.values[q.slug] ?? null} q={q} className="text-[32px] leading-tight font-semibold text-primary" />
               {scale ? <p className="text-[13px] text-muted-foreground">都内の真ん中 <Num v={scale.median} q={q} /></p> : null}
-              <ul className="mt-3.5 border-t">
-                {QUESTIONS.filter((x) => x.slug !== slug).map((x) => (
-                  <li key={x.slug}>
-                    <Link href={hrefOf(x.slug)} className="group flex justify-between gap-2 border-b py-[7px] text-sm">
-                      <span className="text-muted-foreground group-hover:text-primary">{x.short}</span>
-                      <Num v={t.values[x.slug] ?? null} q={x} />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
             </aside>
           ) : null}
         </div>
