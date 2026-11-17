@@ -197,7 +197,9 @@ def repeated_header(page: Page, frame, header_bottom: float, body: list[tuple[in
         skip.update(i for i, _ in words)
         if number:
             above = [(i, w) for i, w in body if inside(w, *rows[number - 1])]
-            if above and TITLE.match(normalize(reading([w for _, w in above]))):
+            if above and (TITLE.match(normalize(reading([w for _, w in above])))
+                          or (document_quirk('uncoded_titles') is not None
+                              and not any(re.search(r'[0-9０-９]', w.text) for _, w in above))):
                 skip.update(i for i, _ in above)
     return skip
 
