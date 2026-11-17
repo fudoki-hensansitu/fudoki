@@ -14,7 +14,7 @@ const smooth = (a: number, b: number, x: number) => {
 /** 紙の裏の色（刷っていない面） */
 const BACK = 0xf4f1ea
 /** 巻いた紙の半径（px）。紙の幅より大きく巻く */
-const RADIUS = 110
+const RADIUS = 85
 /** 1ラジアン巻くごとに横へずれる量（px）の上限。長い紙は、巻き終えたときに横へ紙の幅の半分ほどずれる螺旋になるよう小さくする（床で場所を取りすぎない） */
 const PITCH = 45
 
@@ -117,10 +117,12 @@ export function fallPaper(texture: HTMLCanvasElement, rect: DOMRect, ms: number)
   turn(1)
   group.position.set(0, 0, 0)
   group.updateMatrixWorld(true)
-  const box = new THREE.Box3().setFromObject(group)
+  // 頂点から測る（板の箱を回した外形だと大きく出て、床から浮く）
+  const box = new THREE.Box3().setFromObject(group, true)
   const bw = box.max.x - box.min.x
   const bh = box.max.y - box.min.y
-  const room = Math.max(0, vw / 2 - bw / 2 - 8)
+  // 紙の中心は画面の端まで置いてよい（半分は画面の外に出る）。広い画面では左右に並べ、重ねるのは場所が無くなってから
+  const room = Math.max(0, vw / 2 - Math.min(bw / 2, vw / 4))
   // 床で一番低く収まる所に置く（紙の下あたりを少し好む）。山に乗るときは少し沈み込ませる（丸まった紙どうしは隙間に収まる）
   const restAt = (c: number) => st.piles.reduce((y, p) => (p.x1 > c - bw / 2 && p.x0 < c + bw / 2 ? Math.max(y, p.top - bh * 0.45) : y), -vh / 2)
   const tries = Array.from({ length: 9 }, (_, i) => (room * (i - 4)) / 4)
