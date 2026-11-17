@@ -22,9 +22,13 @@ const DRAG = 0.992
 const STIFF = 0.5
 /** 床の摩擦（床に触れた粒の、横に滑る速さの残る割合） */
 const FRICTION = 0.25
-/** 1 frame を何刻みに分けて解くか、1 刻みで鎖の長さを何回詰めるか */
+/** 1 frame を何刻みに分けて解くか、1 刻みで鎖の長さとこしを何回詰めるか（伸びは最後に上端から引き戻すので、少なくてよい） */
 const SUB = 4
-const ITER = 10
+const ITER = 6
+/** 紙どうしの押し離しを、長さを詰める何回ごとに行うか */
+const COLLIDE_EVERY = 2
+/** 押し離しで粒を升目に入れる表の大きさ（2 の冪） */
+const TABLE = 4096
 
 export type Sheet = { key: string; texture: HTMLCanvasElement; height: number }
 
@@ -195,8 +199,8 @@ export function ribbon(canvas: HTMLCanvasElement, margin: number) {
         y[i + 2] = y[i + 2]! - dy * k
         z[i + 2] = z[i + 2]! - dz * k
       }
-      // 紙が紙をすり抜けないよう、毎回押し離す
-      collide()
+      // 紙が紙をすり抜けないよう押し離す
+      if (it % COLLIDE_EVERY === COLLIDE_EVERY - 1) collide()
     }
     // 紙は伸びない。上端から順に、伸びた所だけを紙の長さへ引き戻す（反復で詰めるだけだと、長い紙は重さでばねのように伸び縮みする）。
     // 引き戻した分は前の位置も同じだけ動かし、速さは変えない
@@ -225,31 +229,31 @@ export function ribbon(canvas: HTMLCanvasElement, margin: number) {
     }
   }
 
-  /** 紙どうしが重ならないように押し離す（鎖の上で近い粒どうしは除く）。升目に分けて、近い粒だけを比べる */
+  /** 紙どうしが重ならないように押し離す（鎖の上で近い粒どうしは除く）。升目に分けて、近い粒だけを比べる。升目は決まった大きさの表に混ぜて入れ、毎回の割り当てを避ける */
+  const head = new Int32Array(TABLE)
+  let next = new Int32Array(0)
+  const hash = (cy: number, cz: number) => ((cy * 73856093) ^ (cz * 19349663)) & (TABLE - 1)
   const collide = () => {
     const n = y.length
-    const cells = new Map<number, number[]>()
-    const cell = (a: number) => Math.floor(a / THICK)
+    if (next.length < n) next = new Int32Array(n)
+    head.fill(-1)
     for (let i = 0; i < n; i++) {
-      const key = cell(y[i]!) * 65536 + cell(z[i]!)
-      const c = cells.get(key)
-      if (c) c.push(i)
-      else cells.set(key, [i])
+      const h = hash(Math.floor(y[i]! / THICK), Math.floor(z[i]! / THICK))
+      next[i] = head[h]!
+      head[h] = i
     }
     for (let i = 1; i < n; i++) {
-      const cy = cell(y[i]!)
-      const cz = cell(z[i]!)
+      const cy = Math.floor(y[i]! / THICK)
+      const cz = Math.floor(z[i]! / THICK)
       for (let a = -1; a <= 1; a++)
         for (let b = -1; b <= 1; b++) {
-          const c = cells.get((cy + a) * 65536 + cz + b)
-          if (!c) continue
-          for (const j of c) {
-            if (j <= i + 2 && j >= i - 2) continue
-            if (j < i) continue
+          for (let j = head[hash(cy + a, cz + b)]!; j !== -1; j = next[j]!) {
+            if (j <= i + 2) continue
             const dy = y[j]! - y[i]!
             const dz = z[j]! - z[i]!
-            const d = Math.hypot(dy, dz)
-            if (d >= THICK || d < 1e-6) continue
+            const d2 = dy * dy + dz * dz
+            if (d2 >= THICK * THICK || d2 < 1e-12) continue
+            const d = Math.sqrt(d2)
             const k = ((THICK - d) / d) * 0.5
             y[i] = y[i]! - dy * k
             z[i] = z[i]! - dz * k
@@ -259,6 +263,7 @@ export function ribbon(canvas: HTMLCanvasElement, margin: number) {
         }
     }
   }
+
 
   /** sheets（新しい順）を、attach から続く1本の紙として1コマ進めて描く。width は紙の幅、floor は床の高さ（どちらも .rc-print の px）。
    * 返すのは紙が画面で届く下端（canvas の高さに使う）と、まだ動いているか */
