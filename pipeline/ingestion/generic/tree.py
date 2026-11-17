@@ -2161,6 +2161,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                                             quirk(document, 'codeless_beside_repeated_code'))
             if not group.subject:
                 group_items = join_transfer_tails(group_items, layout)
+                if (between := quirk(document, 'code_between_name_lines')) is not None:
+                    group_items = between.module.join(group_items)  # a 節 name wrapped round its code (132292)
                 if (digit_set := quirk(document, 'digit_set_codes')) is not None:
                     digit_set.module.measure(group_items, digit_set.value)
             for position, item in enumerate(group_items):

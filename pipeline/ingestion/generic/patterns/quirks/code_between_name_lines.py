@@ -5,7 +5,10 @@ read as an item of its own (deeper, by where it starts) would take them.
 
 The code read with the name's second line (`株式等譲渡` / `5 所得割交付金`, 武蔵村山市 R7 決算審査意見書の款別の表, the
 code printed between the two lines and nearer the second): the first line, read as a codeless item, is put at the head
-of the coded item's name, or the item above would take it as the wrapped tail of its own name."""
+of the coded item's name, or the item above would take it as the wrapped tail of its own name.
+
+The 内訳 too (西東京市 R5〜R7 決算書の特別会計の歳入の節: `特別徴収保険料` / `1` with the amounts / `現年分`): the
+first line would be an item of its own without a code or an amount."""
 
 SCOPE = 'document'
 OPTIONS = {'const': True}
