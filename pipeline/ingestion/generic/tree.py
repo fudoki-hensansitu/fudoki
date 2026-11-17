@@ -34,7 +34,9 @@ from ingestion.generic.layout import (SIGNS, SUBJECT_LEVELS, UNIT_CELL, Band, Gl
 # A leading item number; the separator after it (`1.議会費`, `1．`) is not part of the name.
 # The line a book prints for the subjects it dropped this year, with last year's amounts (`(廃目整理)`, `(廃項整理)`).
 ABOLISHED = re.compile(r'[(（]廃([款項目節])整理[)）]')
-CODE = re.compile(r'^[(（]?([0-9０-９]{1,4})[)）]?(?:[.．](?=[^0-9０-９]|$))?(?=\D|$)')
+# A closing bracket ends the number even when the name starts with a digit (`(7)５歳児健康診査費`); without it the number
+# is followed by a non-digit, and not by a closing bracket (`(7` of `(7)５…` is not a number with the name `)５…`).
+CODE = re.compile(r'^[(（]?([0-9０-９]{1,4})(?:[)）]|(?:[.．](?=[^0-9０-９]|$))?(?=[^0-9)）]|$))')
 UNIT_NOTATION = re.compile(r'[(（]単位[:：][^()（）]*[)）]')
 BARE_CODE = re.compile(r'^[0-9０-９]{1,4}$')
 # A reading in katakana printed in brackets right after a number (`73（ナナサン）`): the number is part of a name.
@@ -337,6 +339,14 @@ def _stacked_word(glyph: Glyph) -> Glyph:
     return replace(glyph, text=bare) if bare != glyph.text and bare and is_amount(bare) else glyph
 
 
+def _prolongs_katakana(before: list[Glyph], run: list[Glyph]) -> bool:
+    """`run` is a lone `ー` set one letter space after a katakana ending `before`."""
+    if len(run) != 1 or run[0].text != 'ー' or not before or not re.search(r'[ァ-ヴ]$', before[-1].text):
+        return False
+    size = run[0].y1 - run[0].y0
+    return run[0].x0 - before[-1].x1 <= size
+
+
 def _split_code(line_text: str) -> tuple[str | None, str]:
     """A leading item number and the name. Numbers start from 1, so a leading 0 is a
     bullet drawn as a digit; bullet marks (〇) mark a level and are not part of the name."""
@@ -423,6 +433,10 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
     while len(parts) > 1 and normalize(text(parts[-1])) == '円' and is_amount(text(parts[-2])):
         parts.pop()
     money = []
+    # A prolonged sound mark after a katakana in a name spaced out to fill its column (`ナ ン バ ー`) is the name's last
+    # character, not a dash for no amount: it stands one letter space after the katakana, where an amount cell is not.
+    if len(parts) > 1 and _prolongs_katakana(parts[-2], parts[-1]):
+        parts[-2:] = [parts[-2] + parts[-1]]
     while parts and is_amount(text(parts[-1])) and len(parts) > 1:
         if not money and (listed := document_quirk('list_cut')) is not None and listed.module.cut(parts):
             break
@@ -2574,7 +2588,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             if item.group.subject:
                 if item.code is not None and item.role == 'node':
                     opening = False
-                elif opening and item.code is None and item.name and not item.amounts and item.role == 'node':
+                elif (opening and item.code is None and item.name and not item.amounts and item.role == 'node'
+                      and not prints_row_amounts(item, logical)):
                     # A continuation page opens by printing the open headings again, names only (`総務管理費` /
                     # `一般管理費`, without their codes): the open heading of that name, not a new subject.
                     # (one line each, or all in one item when the page sets them close).
@@ -3074,6 +3089,21 @@ def within_row(logical: Logical, previous: Item, item: Item) -> bool:
         return False
     top, bottom = _cell(min(beside, key=lambda b: b.x0), y)
     return item.y0 >= previous.y1 and top - .5 <= item.y0 and item.y1 <= bottom + .5
+
+
+def prints_row_amounts(item: Item, logical: Logical) -> bool:
+    """The subject's row prints amounts in the amount columns. A heading printed again at the top of a continuation page
+    prints its name only; a codeless subject of the same name with amounts of its own is a subject (a 目 the year drops,
+    `ＳＤＧｓ推進費 0 148,882` under the 項 `ＳＤＧｓ推進費`, 131237 当初予算 R5 p184)."""
+    first = item.lines[0] if item.lines else item.glyphs
+    top, bottom = min(g.y0 for g in first), max(g.y1 for g in first)
+    own = []  # the amount columns right after the subject's: a breakdown's columns further right are not its row
+    for band in sorted((b for b in logical.bands if b.x0 >= item.group.x1 - .5 and b.kind is not None), key=lambda b: b.x0):
+        if band.kind != 'amount':
+            break
+        own.append(band)
+    return any(glyph.page == item.page and top <= (glyph.y0 + glyph.y1) / 2 <= bottom and is_amount(glyph.text)
+               for band in own for glyph in band.words)
 
 
 def subject_row(item: Item, logical: Logical) -> tuple[float, float]:
