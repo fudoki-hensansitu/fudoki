@@ -1,16 +1,19 @@
 /* ホームのうちのまちの札（レジに見立てる）と、その下端の差し出し口から出てくるレシート。
- * 紙は札のすぐ下に敷き、差し出し口の線から下だけを見せる（.rc-feed が切り口）。紙は高さを伸ばして上から順に見せ、前の紙は下の端で巻き取って丸める */
+ * 紙は札のすぐ下に敷き、差し出し口の線から下だけを見せる（.rc-feed が切り口）。紙は高さを伸ばして上から順に見せ、刷り直すときは前の紙を切り離して丸まりながら落とす */
 .rc-feed {
   position: relative;
   /* 上端を札の差し出し口の溝の中心に重ねる（.rm-slot の bottom + 高さの半分） */
   margin-top: -22px;
-  overflow: hidden;
+  /* 差し出し口より上だけを切る。落ちる紙は下と横へはみ出してよいが、頁を横に送らせない */
+  clip-path: inset(0 -100vw -200vh -100vw);
+  overflow-x: clip;
   padding: 0 0 28px;
   /* 紙は差し出し口から札の手前に垂れる。差し出し口より上は切る */
   z-index: 1;
 }
 /* 紙の影。紙は下端を mask で切るので、影は外側の箱に drop-shadow で付ける */
 .rc-print {
+  position: relative;
   margin-inline: auto;
   width: min(440px, calc(100% - 40px));
   filter: drop-shadow(0 1px 1px rgba(43, 39, 35, 0.12)) drop-shadow(0 8px 16px rgba(43, 39, 35, 0.1));
@@ -38,32 +41,49 @@
   pointer-events: none;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.04) 45%, transparent);
 }
-/* 一枚の紙の入れ物（receipt.tsx の Strip）。高さを 0 から伸ばして刷り出し、前の紙は高さを 0 まで縮めて下の端へ巻き取る */
+/* 一枚の紙の入れ物（receipt.tsx の Strip）。高さを 0 から伸ばして刷り出す */
 .rc-strip {
   overflow: hidden;
 }
-/* 巻き取られる紙は、下の方から見えなくなる（紙が下へ送られて丸まりに入っていく） */
-.rc-strip-roll {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
+/* 切り離した前の紙（receipt.tsx の Fall）。差し出し口の下に重ね、帯を入れ子にして奥行きで曲げる */
+.rc-fall {
+  position: absolute;
+  inset: 0 0 auto;
+  perspective: 1400px;
+  perspective-origin: 50% 0;
+  pointer-events: none;
 }
-/* 前の紙の続きとして刷った紙は、下でつながっているのでちぎった跡を付けない */
-.rc-paper-cont {
-  -webkit-mask: none;
-  mask: none;
+.rc-fall-body {
+  transform-style: preserve-3d;
+  transform-origin: 50% 0;
 }
-/* 前に刷った紙が下の端で巻き取られて丸まったところ（筒を横から見た陰影）。高さは receipt.tsx の CURL_PX */
-.rc-curl {
-  height: 30px;
-  margin-inline: -3px;
-  border-radius: 0 0 16px 16px / 0 0 15px 15px;
-  background: linear-gradient(180deg, #e6dfd1 0%, #f8f5ee 30%, #fffdf8 45%, #e2dbcc 75%, #cfc6b4 100%);
-  box-shadow: 0 6px 10px -4px rgba(43, 39, 35, 0.25);
-  animation: rc-curl-in 3600ms cubic-bezier(0.3, 0.1, 0.45, 1) both;
+.rc-band {
+  position: absolute;
+  inset-inline: 0;
+  transform-style: preserve-3d;
+  transform-origin: 50% 0;
 }
-@keyframes rc-curl-in {
-  from { height: 0; }
+.rc-fall-body > .rc-band {
+  position: relative;
+}
+/* 表は刷った面、裏は白い紙。巻いて裏が見える帯は白く見せる */
+.rc-band-face {
+  overflow: hidden;
+  backface-visibility: hidden;
+}
+.rc-band-back {
+  position: absolute;
+  inset: 0;
+  background: #f4f1ea;
+  transform: rotateY(180deg);
+  backface-visibility: hidden;
+}
+.rc-band-dim {
+  position: absolute;
+  inset: 0;
+  background: #000;
+  opacity: 0;
+  backface-visibility: hidden;
 }
 /* 数字の札。札そのものをレジに見立て、平らなまま動かさない（数字だけが数え上がる）。下端に差し出し口（.rm-slot）を持つ */
 .rm-card {
@@ -105,9 +125,6 @@
   height: 88px;
 }
 @media (prefers-reduced-motion: reduce) {
-  .rc-curl {
-    animation: none;
-  }
   .rm-per {
     animation: none;
   }

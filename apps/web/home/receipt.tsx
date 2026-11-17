@@ -1,5 +1,5 @@
 // ホームのうちのまちの札。緑の札で予算と1人あたりの額を順に数え上げ、札の下端の差し出し口から分野ごとの1人あたりのレシートを刷り出す。
-// 年度を替えて刷り直すときは前の紙の続きとして刷り、前の紙は下の端で巻き取って丸める。
+// 年度を替えて刷り直すときは、前の紙を差し出し口で切り離して丸まりながら落とし、落ち終えてから数え直して新しい紙を刷る。
 // 札そのものをレジに見立て、立体は使わない（平らな描き方に揃える）。
 // 1人あたりは予算を人口で割った額（払った税金の額ではない）。分野の行の和が合計に合うよう、大きい端数から1円ずつ足して丸める
 import * as React from 'react'
@@ -11,7 +11,7 @@ import type { YearView } from '../jurisdiction/app/data'
 import { OTHER_FRAME } from '../jurisdiction/domains'
 import { FieldIcon } from './parts'
 import { perHeadParts } from './per-head'
-import { COUNT_MS, PRINT_MS, READ_MS, SCROLL_MS } from './motion'
+import { COUNT_MS, FALL_MS, PRINT_MS, READ_MS, SCROLL_MS } from './motion'
 import './receipt.css'
 
 const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -92,7 +92,7 @@ const PRINT_AT = COUNT_ALL_MS + READ_MS
 
 /** 段を進める。数え上げ直す（key が変わる＝年度や額が変わる）たびに count へ戻し、数え終えて読む間をおいてから print にする。
  * 見せるものは常に一つにするため、数えている間は紙を出さない。reduced-motion では最初から print */
-function usePhase(key: string) {
+function usePhase(key: string, lead: number) {
   const [phase, setPhase] = React.useState<Phase>(() => (reduced() ? 'print' : 'count'))
   const [from, setFrom] = React.useState(key)
   if (from !== key) {
@@ -101,7 +101,7 @@ function usePhase(key: string) {
   }
   React.useEffect(() => {
     if (reduced()) return setPhase('print')
-    const t = setTimeout(() => setPhase('print'), PRINT_AT)
+    const t = setTimeout(() => setPhase('print'), PRINT_AT + lead)
     return () => clearTimeout(t)
   }, [key])
   return phase
@@ -150,12 +150,11 @@ function useFollow(phase: Phase, printing: string | null, card: React.RefObject<
       if (r.bottom > vh) go(window.scrollY + Math.min(r.top - 16, r.bottom - vh + 16), SCROLL_MS, easeInOut)
     }
     if (printing && feed.current) {
-      // 紙と同じ長さ・緩急で、刷り終えたときのレシートの最後（合計・QR コード）と、その下で丸まった前の紙まで送る。
+      // 紙と同じ長さ・緩急で、刷り終えたときのレシートの最後（合計・QR コード）まで送る。
       // 紙は高さを 0 から伸ばすので、刷り終えた高さは中身の高さ（scrollHeight）から求める
       const f = feed.current
       const latest = f.querySelector<HTMLElement>('[data-latest]')
-      const curl = f.querySelector<HTMLElement>('.rc-curl') ? CURL_PX : 0
-      if (latest) go(window.scrollY + f.getBoundingClientRect().top + latest.scrollHeight + curl + FEED_PAD - vh + 16, PRINT_MS, PRINT_EASE)
+      if (latest) go(window.scrollY + f.getBoundingClientRect().top + latest.scrollHeight + FEED_PAD - vh + 16, PRINT_MS, PRINT_EASE)
     }
   }, [phase, printing, card, feed])
 }
@@ -163,27 +162,78 @@ function useFollow(phase: Phase, printing: string | null, card: React.RefObject<
 /** 紙送りの緩急（出だしと終わりだけ緩め、ほぼ一定の速さで送る）。頁送りも同じにする */
 const PRINT_EASE_CSS = 'cubic-bezier(0.3, 0.1, 0.45, 1)'
 const PRINT_EASE = (p: number) => 1 - Math.pow(1 - p, 1.6)
-/** 前の紙が巻き取られて丸まった部分の高さ（receipt.css の .rc-curl） */
-const CURL_PX = 30
 /** .rc-feed の下の余白（receipt.css） */
 const FEED_PAD = 28
 
-/** 一枚の紙。grow: 差し出し口から高さ 0 から伸びて出る（上から順に見える）。roll: 次の紙に押し出されて下の端へ送られ、高さ 0 まで巻き取られる（下の方から見えなくなる）。
- * still: 動かさない。reduced-motion では動かさずに終わりの姿にする */
-function Strip({ mode, latest, children }: { mode: 'grow' | 'roll' | 'still'; latest?: boolean; children: React.ReactNode }) {
+/** 一枚の紙。grow: 差し出し口から高さ 0 から伸びて出る（上から順に見える）。still: 動かさない。reduced-motion では動かさずに終わりの姿にする */
+function Strip({ mode, children }: { mode: 'grow' | 'still'; children: React.ReactNode }) {
   const ref = React.useRef<HTMLDivElement>(null)
   React.useLayoutEffect(() => {
     const el = ref.current
-    if (!el || mode === 'still') return
-    const h = el.scrollHeight
-    if (mode === 'roll') el.style.height = '0px'
-    if (reduced()) return
-    const a = el.animate(mode === 'grow' ? [{ height: '0px' }, { height: `${h}px` }] : [{ height: `${h}px` }, { height: '0px' }], { duration: PRINT_MS, easing: PRINT_EASE_CSS })
+    if (!el || mode === 'still' || reduced()) return
+    const a = el.animate([{ height: '0px' }, { height: `${el.scrollHeight}px` }], { duration: PRINT_MS, easing: PRINT_EASE_CSS })
     return () => a.cancel()
   }, [mode])
   return (
-    <div ref={ref} data-latest={latest ? true : undefined} className={`rc-strip ${mode === 'roll' ? 'rc-strip-roll' : ''}`}>
+    <div ref={ref} data-latest className="rc-strip">
       {children}
+    </div>
+  )
+}
+
+/** 落とす紙を横に切った帯の数。多いほど丸まりが滑らかになる */
+const FALL_BANDS = 24
+/** 帯ごとの曲がり（度）。下の端ほど強く曲げ、全体で2回りほど巻く。帯ごとに少しねじり、写真のレシートのように横へ流れる螺旋にする */
+const bend = (i: number) => 58 * Math.pow(i / FALL_BANDS, 1.4)
+const twist = (i: number) => (i % 2 ? 1.2 : 0.8) * (i / FALL_BANDS) * 4
+
+/** 切り離した前のレシート。差し出し口で切れて少し沈み、下の端から丸まりながら落ちて消える。
+ * 紙を横の帯に切り、帯を入れ子にして一つ前の帯の下端を軸に曲げる（曲がりが積み重なって、紙が巻く）。紙の裏は白い */
+function Fall({ height, children }: { height: number; children: React.ReactNode }) {
+  const root = React.useRef<HTMLDivElement>(null)
+  const h = height / FALL_BANDS
+  React.useLayoutEffect(() => {
+    const el = root.current
+    if (!el) return
+    const opts = { duration: FALL_MS, easing: 'cubic-bezier(0.45, 0, 0.75, 0.6)', fill: 'forwards' } as const
+    const anims = [
+      el.animate(
+        [
+          { transform: 'translateY(0) rotateZ(0deg)', opacity: 1 },
+          { transform: 'translateY(14px) rotateZ(0deg)', opacity: 1, offset: 0.12 },
+          { transform: 'translateY(140px) rotateZ(-4deg)', opacity: 1, offset: 0.55 },
+          { transform: 'translateY(520px) rotateZ(-10deg)', opacity: 0 },
+        ],
+        opts,
+      ),
+    ]
+    let turned = 0
+    el.querySelectorAll<HTMLElement>('[data-band]').forEach((b) => {
+      const i = Number(b.dataset.band)
+      turned += bend(i)
+      // 巻いた角度に合わせて陰を付ける（光に背を向けた帯ほど暗い）
+      const shade = (0.22 * (1 - Math.cos((turned * Math.PI) / 180))) / 2
+      anims.push(b.animate([{ transform: 'rotateX(0deg) rotateZ(0deg)' }, { transform: `rotateX(${bend(i)}deg) rotateZ(${twist(i)}deg)` }], { ...opts, easing: 'cubic-bezier(0.3, 0, 0.3, 1)', delay: (1 - i / FALL_BANDS) * FALL_MS * 0.15 }))
+      const dim = b.querySelector<HTMLElement>(':scope > .rc-band-dim')
+      if (dim) anims.push(dim.animate([{ opacity: 0 }, { opacity: shade }], { ...opts, easing: 'ease-in' }))
+    })
+    return () => anims.forEach((a) => a.cancel())
+  }, [height])
+  const band = (i: number): React.ReactNode => (
+    <div data-band={i} className="rc-band" style={{ height: h, top: i ? h : 0 }}>
+      <div className="rc-band-face" style={{ height: h }}>
+        <div style={{ marginTop: -i * h }}>{children}</div>
+      </div>
+      <div className="rc-band-back" />
+      <div className="rc-band-dim" />
+      {i < FALL_BANDS - 1 ? band(i + 1) : null}
+    </div>
+  )
+  return (
+    <div className="rc-fall" aria-hidden="true" inert>
+      <div ref={root} className="rc-fall-body">
+        {band(0)}
+      </div>
     </div>
   )
 }
@@ -194,29 +244,44 @@ type Printed = { key: string; year: number; v: YearView }
 export function ReceiptMachine({ name, v, year, pop, base, detailHref, shareOf, head }: { name: string; v: YearView; year: number; pop: number | null; base: string; detailHref: string; shareOf: (year: number) => string; head: React.ReactNode }) {
   const settled = v.word === '決算'
   const what = `${yearName(year)}の${settled ? '決算' : '予算'}`
-  const total = useCountUp(v.total)
-  const per = useCountUp(pop ? Math.round(v.total / pop) : 0, COUNT_MS)
+  const counted = `${year}:${v.total}`
+  const feed = React.useRef<HTMLDivElement>(null)
+  /** 刷った紙（いま出ている一枚）と、切り離して落としている前の紙 */
+  const [printed, setPrinted] = React.useState<Printed | null>(null)
+  const [falling, setFalling] = React.useState<{ r: Printed; height: number } | null>(null)
+  /** 数え始めるまでの間。前の紙を落とすときは落ち終えてから数える（見せるものは常に一つ） */
+  const [lead, setLead] = React.useState(0)
+  const [seen, setSeen] = React.useState(counted)
+  if (seen !== counted) {
+    // 数え直す（年度や額が変わる）ときは、出ている紙を差し出し口で切り離して落とし、新しい紙は数え終えてから一から刷る
+    setSeen(counted)
+    const height = feed.current?.querySelector<HTMLElement>('[data-latest]')?.scrollHeight ?? 0
+    const drop = printed && height > 0 && !reduced()
+    setFalling(drop ? { r: printed, height } : null)
+    setLead(drop ? FALL_MS : 0)
+    setPrinted(null)
+  }
+  React.useEffect(() => {
+    if (!falling) return
+    const t = setTimeout(() => setFalling(null), FALL_MS)
+    return () => clearTimeout(t)
+  }, [falling])
+  const total = useCountUp(v.total, lead)
+  const per = useCountUp(pop ? Math.round(v.total / pop) : 0, COUNT_MS + lead)
   const receipt = pop ? perHeadParts(v.fields, v.total, pop) : null
   const card = React.useRef<HTMLElement>(null)
-  const counted = `${year}:${v.total}`
-  const phase = usePhase(counted)
-  const feed = React.useRef<HTMLDivElement>(null)
-  /** 刷った紙を古い順に持つ。新しく数え終えるたびに足す（前の紙の続きとして刷る） */
-  const [printed, setPrinted] = React.useState<Printed[]>([])
-  const last = printed.at(-1)
+  const phase = usePhase(counted, lead)
   React.useEffect(() => {
-    if (phase === 'print' && pop && last?.key !== counted) setPrinted((p) => [...p.slice(-1), { key: counted, year, v }])
+    if (phase === 'print' && pop && printed?.key !== counted) setPrinted({ key: counted, year, v })
   }, [phase, counted])
   /** いま刷っている紙の key（刷り終えるまで）。頁送りと紙の動きに使う */
-  const printing = phase === 'print' && last?.key === counted && printed.length ? counted : null
-  /** 見せる紙。新しい紙と、その下で巻き取られていく一つ前の紙 */
-  const shown = printed.slice(-2).reverse()
+  const printing = phase === 'print' && printed?.key === counted ? counted : null
   useFollow(phase, printing, card, feed)
   /** 一枚の紙の中身 */
-  const paper = (r: Printed, cont: boolean) => {
+  const paper = (r: Printed) => {
     const { parts, sum } = perHeadParts(r.v.fields, r.v.total, pop!)
     return (
-    <div className={`rc-paper ${cont ? 'rc-paper-cont' : ''}`}>
+    <div className="rc-paper">
       <p className="text-center text-[18px] font-semibold tracking-[0.3em]">{name}</p>
       <p className="mt-1 text-center text-[13px] text-muted-foreground">
         {reiwa(r.year)} {r.v.word === '決算' ? '決算' : '当初予算'}・1人あたり
@@ -274,7 +339,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, shareOf, 
           </div>
           {pop ? (
             // 予算を数え終えてから出して数える（数え直すたびに出し直す）
-            <div key={counted} className="rm-per rm-divider pt-4 sm:pt-5">
+            <div key={counted} className="rm-per rm-divider pt-4 sm:pt-5" style={{ animationDelay: `${COUNT_MS + lead}ms` }}>
               <dt className="text-[clamp(17px,4.6vw,22px)] opacity-80">1人あたりに直すと</dt>
               <dd className="mt-1.5 text-[clamp(28px,8vw,60px)] leading-none font-semibold">
                 <Yen n={per} />
@@ -291,16 +356,20 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, shareOf, 
         {/* 札の下端の差し出し口。紙はここから出る */}
         {receipt ? <div className="rm-slot" aria-hidden="true" /> : null}
       </section>
-      {pop && shown.length ? (
+      {pop ? (
         <div ref={feed} className="rc-feed">
           <div className="rc-print">
-            {shown.map((r, i) => (
-              <Strip key={r.key} latest={i === 0} mode={i === 0 ? (r.key === printing ? 'grow' : 'still') : printing ? 'roll' : 'still'}>
-                {paper(r, i === 0 && printed.length > 1)}
+            {printed ? (
+              <Strip key={printed.key} mode={printed.key === printing ? 'grow' : 'still'}>
+                {paper(printed)}
               </Strip>
-            ))}
-            {/* 前に刷った紙は下の端で巻き取られて丸まる */}
-            {printed.length > 1 ? <div className="rc-curl" aria-hidden="true" /> : null}
+            ) : null}
+            {/* 切り離した前の紙は、丸まりながら落ちて消える */}
+            {falling ? (
+              <Fall key={falling.r.key} height={falling.height}>
+                {paper(falling.r)}
+              </Fall>
+            ) : null}
           </div>
         </div>
       ) : null}
