@@ -188,6 +188,8 @@ function Falling({ onDone, children }: { onDone: () => void; children: React.Rea
   const done = React.useRef(onDone)
   done.current = onDone
   React.useEffect(() => {
+    // three.js はサーバーの bundle に入れない（effect はサーバーでは走らないが、分岐が無いと動的 import の chunk が入る）
+    if (import.meta.env.SSR) return
     let alive = true
     let fall: { play: () => Promise<void>; dispose: () => void } | null = null
     void (async () => {
@@ -253,6 +255,11 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, shareOf, 
   React.useEffect(() => {
     if (phase === 'print' && pop && printed?.key !== counted) setPrinted({ key: counted, year, v })
   }, [phase, counted])
+  // 紙を刷ったら、切り離して落とす立体（three.js）を先に読んでおく。年度を替えた瞬間に読み込みを待たず落とし始め、数え上げと重ねない
+  React.useEffect(() => {
+    if (import.meta.env.SSR || !printed || reduced()) return
+    void import('./fall3d').catch(() => {})
+  }, [printed])
   /** いま刷っている紙の key（刷り終えるまで）。頁送りと紙の動きに使う */
   const printing = phase === 'print' && printed?.key === counted ? counted : null
   useFollow(phase, printing, card, feed)
