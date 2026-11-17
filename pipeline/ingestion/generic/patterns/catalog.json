@@ -210,6 +210,7 @@
     "office_departments": "ingestion.generic.patterns.quirks.office_departments",
     "wrapped_departments": "ingestion.generic.patterns.quirks.wrapped_departments",
     "ocr_start_jitter": "ingestion.generic.patterns.quirks.ocr_start_jitter",
+    "split_name_bands": "ingestion.generic.patterns.quirks.split_name_bands",
     "one_row_header": "ingestion.generic.patterns.quirks.one_row_header",
     "opening_bracket_ink": "ingestion.generic.patterns.quirks.opening_bracket_ink",
     "padded_runs": "ingestion.generic.patterns.quirks.padded_runs",
