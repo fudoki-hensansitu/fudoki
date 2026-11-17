@@ -2,7 +2,7 @@ name: sync-d1
 # main に入った取り込み・dbt の変更を、marts に build して本番 D1（fudoki-api）へ差分で写す（ADR 0040）。
 # publish の前に、取り込みの PR が変えた宣言を main のコードで変換し、保存の関門を通った表と受領書を R2 に置く（ingestion:store、ADR 0051）。
 # 範囲は serving/publish.py の判定（scope）で決める。push は、取り込みの宣言・選定・自治体の列を持つ seed が変わった自治体だけを流す。
-# 全自治体に効く変更（共通の seed・dbt のモデル・build のコード）は push では流さず、毎日 04:00 JST の全件か手動の実行（自治体を空にすると全件）で出す。
+# 全自治体に効く変更（共通の seed・dbt のモデル・build のコード）は push では流さず、毎日の refresh-check の後の全件（refresh-check が自治体を空にして起動する）か手動の実行で出す。
 # 事業と評価シートのつなぎは build のたびに計算する。
 on:
   push:
@@ -15,9 +15,6 @@ on:
       - uv.lock
       - pyproject.toml
       - mise.toml
-  # 毎日 04:00 JST（refresh-check の1時間後）に全件を build して同期し、push では流さない共通の変更を出す
-  schedule:
-    - cron: '0 19 * * *'
   workflow_dispatch:
     inputs:
       jurisdictions:
@@ -48,7 +45,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      # 手動の実行は自治体コード（空なら全件）、毎日の定期は全件。push は最後に成功した push の同期からの差分
+      # 手動の実行（refresh-check からの起動を含む）は自治体コード（空なら全件）。push は最後に成功した push の同期からの差分
       # （取り消された run・落ちた run の範囲も次の run が拾う）。見つからなければ全件
       - id: scope
         env:
@@ -110,9 +107,15 @@ jobs:
       # 手動の実行は R2 に置かない（置くのは merge された宣言の表だけ）。since が古くても、受領書の宣言と指紋が今と同じ表は変換し直さない（store.to_convert）
       # 落ちた管理 JSON があっても、ほかは置き終えてから job を落とす。sync はそれでも流す（下の sync の if）
       # push は宣言・選定・自治体の列を持つ seed が変わった自治体だけを流す。共通の seed・dbt のモデル・build のコードの
-      # 変更は自治体に絞れないので push では流さず、毎日 04:00 JST の全件か手動の実行（自治体を空にすると全件）で出す
+      # 変更は自治体に絞れないので push では流さず、refresh-check の後の全件か手動の実行で出す
+      - id: store
+        if: steps.scope.outputs.since != ''
+        run: bun run --cwd pipeline ingestion:store -- --since ${{ steps.scope.outputs.since }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      # 範囲の判定は保存の後に置く（判定が落ちても R2 への保存は止めない）
       - id: targets
-        if: steps.scope.outputs.args == format('--since {0}', steps.scope.outputs.since)
+        if: ${{ !cancelled() && steps.scope.outputs.args == format('--since {0}', steps.scope.outputs.since) }}
         working-directory: pipeline
         env:
           SINCE: ${{ steps.scope.outputs.since }}
@@ -122,11 +125,6 @@ jobs:
           codes=$(echo "$found" | jq -r '.jurisdictions[]')
           echo "args=$(for c in $codes; do printf -- '--jurisdiction %s ' "$c"; done)" >> "$GITHUB_OUTPUT"
           [ -n "$codes" ] || echo "none=true" >> "$GITHUB_OUTPUT"
-      - id: store
-        if: steps.scope.outputs.since != ''
-        run: bun run --cwd pipeline ingestion:store -- --since ${{ steps.scope.outputs.since }}
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       - id: observation-after
         if: ${{ !cancelled() && steps.scope.outputs.since != '' }}
         run: echo "files=$(find pipeline/.cache/generic-observation -type f -printf '%P %s\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"

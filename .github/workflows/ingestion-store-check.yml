@@ -69,7 +69,7 @@ jobs:
           key: generic-observation-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
       # PR の表はまだ R2 に無いので、上で関門を通して cache に置いた表と、その受領書から build する。
       # build するのは管理 JSON を変えた自治体だけ（PR で新しくできるのはその表だけ）。共通の変更が他の自治体に
-      # 与える影響は、変換は refresh-check、dbt は merge 後の sync-d1 が見る。D1 は指定しない（書く行数は sync-d1 が出す）
+      # 与える影響は、変換と dbt は毎日の refresh-check と、その後に起動する全件の sync-d1 が見る。D1 は指定しない（書く行数は sync-d1 が出す）
       - id: changed
         run: |
           codes=$(git diff --name-only ${{ steps.base.outputs.sha }} HEAD -- pipeline/ingestion/fiscal/jurisdictions \
