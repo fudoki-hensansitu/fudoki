@@ -160,10 +160,10 @@ function useFollow(phase: Phase, printing: string | null, card: React.RefObject<
     }
     if (printing && feed.current) {
       // 紙と同じ長さ・緩急で、刷り終えたときのレシートの最後（合計・QR コード）まで送る。
-      // 紙は高さを 0 から伸ばすので、刷り終えた高さは中身の高さ（scrollHeight）から求める
+      // 紙は高さを 0 から伸ばすので、刷り終えた高さは中身の高さ（paperHeight）から求める
       const f = feed.current
       const latest = f.querySelector<HTMLElement>('[data-latest]')
-      if (latest) go(window.scrollY + f.getBoundingClientRect().top + latest.scrollHeight + FEED_PAD - vh + 16, PRINT_MS, PRINT_EASE)
+      if (latest) go(window.scrollY + f.getBoundingClientRect().top + paperHeight(latest) + FEED_PAD - vh + 16, PRINT_MS, PRINT_EASE)
     }
   }, [phase, printing, card, feed])
 }
@@ -174,13 +174,16 @@ const PRINT_EASE = (p: number) => 1 - Math.pow(1 - p, 1.6)
 /** .rc-feed の下の余白（receipt.css） */
 const FEED_PAD = 28
 
-/** 一枚の紙。grow: 差し出し口から高さ 0 から伸びて出る（上から順に見える）。still: 動かさない。reduced-motion では動かさずに終わりの姿にする */
+/** 一枚の紙の入れ物（Strip）に入った紙の、刷り終えたときの高さ。入れ物は伸びている途中でも、中の紙はいつも全部の高さを持つ */
+const paperHeight = (strip: HTMLElement) => (strip.firstElementChild as HTMLElement | null)?.offsetHeight ?? strip.scrollHeight
+
+/** 一枚の紙。grow: 差し出し口から高さ 0 から伸びて出る（紙の末端から見え、頭のまちの名前が最後に出る）。still: 動かさない。reduced-motion では動かさずに終わりの姿にする */
 function Strip({ mode, joined, children }: { mode: 'grow' | 'still'; joined: boolean; children: React.ReactNode }) {
   const ref = React.useRef<HTMLDivElement>(null)
   React.useLayoutEffect(() => {
     const el = ref.current
     if (!el || mode === 'still' || reduced()) return
-    const a = el.animate([{ height: '0px' }, { height: `${el.scrollHeight}px` }], { duration: PRINT_MS, easing: PRINT_EASE_CSS })
+    const a = el.animate([{ height: '0px' }, { height: `${paperHeight(el)}px` }], { duration: PRINT_MS, easing: PRINT_EASE_CSS })
     return () => a.cancel()
   }, [mode])
   return (
@@ -283,7 +286,7 @@ function Ribbon({ papers, onHeight, onFail, children }: { papers: Older[]; onHei
           })
           const strip = print.querySelector<HTMLElement>(':scope > [data-latest]')
           const attach = strip?.offsetHeight ?? 0
-          const incoming = strip?.scrollHeight ?? top?.height ?? 0
+          const incoming = strip ? paperHeight(strip) : (top?.height ?? 0)
           const L = sheets.reduce((n, x) => n + x.height, 0)
           const floor = incoming + RIBBON_GAP + pileAbove(L)
           const width = print.clientWidth
@@ -353,7 +356,8 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
     // 数え直す（年度や額が変わる）ときは、出ている紙を切らずに残し、数え終えてから続けて刷る。前の紙は新しい紙に押し出される。
     // 新しい年度に紙を出せない（人口が無い）ときや reduced-motion では、前の紙を残さない
     setSeen(counted)
-    const height = feed.current?.querySelector<HTMLElement>('[data-latest]')?.scrollHeight ?? 0
+    const latest = feed.current?.querySelector<HTMLElement>('[data-latest]')
+    const height = latest ? paperHeight(latest) : 0
     const keep = !!pop && printed && height > 0 && !reduced() && !ribbonOff
     // 床に積もる紙は4枚まで（それより古い紙は積もりの下で見えない）
     setOlder(keep ? [{ r: printed, height }, ...older].slice(0, 4) : [])

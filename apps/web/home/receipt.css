@@ -46,8 +46,11 @@
   -webkit-mask: none;
   mask: none;
 }
-/* 一枚の紙の入れ物（receipt.tsx の Strip）。高さを 0 から伸ばして刷り出す */
+/* 一枚の紙の入れ物（receipt.tsx の Strip）。高さを 0 から伸ばして刷り出す。紙の末端（合計・QR）から先に出す。伸びている途中は紙の下端を入れ物の下端に揃え、頭（まちの名前）は差し出し口の中に隠れていて最後に出る */
 .rc-strip {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
   overflow: hidden;
 }
 /* 押し出された前の紙（receipt.tsx の Ribbon）。立体は紙の左右に余白を持たせて、.rc-print の上端から敷く */
