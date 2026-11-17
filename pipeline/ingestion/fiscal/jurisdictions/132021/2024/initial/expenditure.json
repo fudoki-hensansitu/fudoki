@@ -1255,6 +1255,805 @@
           "table_id": "general-initial"
         }
       ]
+    },
+    {
+      "id": "keirin-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6122cf1b057a98cef9e4ab3adff15d1eec007503808dddbcaa938d13aca65a63"
+        }
+      ],
+      "options": {
+        "account": "競輪事業特別会計",
+        "table_id": "keirin-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true
+              },
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat",
+                "quirks": {
+                  "legal_setsu_codes": true
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true,
+                  "note_kinds": {
+                    "（特定財源": "財源内訳",
+                    "(（特定財源": "財源内訳"
+                  }
+                },
+                "quirks": {
+                  "codeless_at_names": 18,
+                  "head_counts": true,
+                  "opening_bracket_ink": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "dropped_notes": true,
+            "gapped_column_rules": true,
+            "unnumbered_abolished_names": true
+          }
+        },
+        "pages": [
+          [
+            22,
+            35
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p26-r29",
+            "page": 26,
+            "observation_id": "p26:full-page:a0:result0:r29",
+            "observed": "業費24,952,37037,473,04912,520,679特定財源",
+            "reason": "物理26頁の款「2 事業費」の行。OCR が名前の続き・本年度 24,952,370・前年度 37,473,049・比較 △12,520,679・財源の見出しを1つの読み（業費24,952,37037,473,04912,520,679特定財源）にし、比較の△を落とした。原典の描画で額と△を確かめ、この読みは使わず code_readings と amount_readings で宣言する。"
+          },
+          {
+            "id": "p26-r28",
+            "page": 26,
+            "observation_id": "p26:full-page:a0:result0:r28",
+            "observed": "2事",
+            "reason": "物理26頁の款「2 事業費」の行。OCR が名前の続き・本年度 24,952,370・前年度 37,473,049・比較 △12,520,679・財源の見出しを1つの読み（業費24,952,37037,473,04912,520,679特定財源）にし、比較の△を落とした。原典の描画で額と△を確かめ、この読みは使わず code_readings と amount_readings で宣言する。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p26-r29-1",
+            "page": 26,
+            "boxes": [
+              [
+                160.0,
+                329.0,
+                206.0,
+                342.7
+              ]
+            ],
+            "amount": "24,952,370",
+            "reason": "物理26頁の款「2 事業費」の行。OCR が名前の続き・本年度 24,952,370・前年度 37,473,049・比較 △12,520,679・財源の見出しを1つの読み（業費24,952,37037,473,04912,520,679特定財源）にし、比較の△を落とした。原典の描画で額と△を確かめ、この読みは使わず code_readings と amount_readings で宣言する。"
+          },
+          {
+            "id": "p26-r29-2",
+            "page": 26,
+            "boxes": [
+              [
+                208.0,
+                329.0,
+                259.0,
+                342.7
+              ]
+            ],
+            "amount": "37,473,049",
+            "reason": "物理26頁の款「2 事業費」の行。OCR が名前の続き・本年度 24,952,370・前年度 37,473,049・比較 △12,520,679・財源の見出しを1つの読み（業費24,952,37037,473,04912,520,679特定財源）にし、比較の△を落とした。原典の描画で額と△を確かめ、この読みは使わず code_readings と amount_readings で宣言する。"
+          },
+          {
+            "id": "p26-r29-3",
+            "page": 26,
+            "boxes": [
+              [
+                262.0,
+                329.0,
+                308.0,
+                342.7
+              ]
+            ],
+            "amount": "△12,520,679",
+            "reason": "物理26頁の款「2 事業費」の行。OCR が名前の続き・本年度 24,952,370・前年度 37,473,049・比較 △12,520,679・財源の見出しを1つの読み（業費24,952,37037,473,04912,520,679特定財源）にし、比較の△を落とした。原典の描画で額と△を確かめ、この読みは使わず code_readings と amount_readings で宣言する。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "p26-jigyo",
+            "page": 26,
+            "box": [
+              77.5,
+              329.2,
+              80.5,
+              342.2
+            ],
+            "code": "2",
+            "name": "事業費",
+            "name_box": [
+              81.5,
+              329.2,
+              158.0,
+              342.2
+            ],
+            "reason": "物理26頁の款「2 事業費」の行。OCR が名前の続き・本年度 24,952,370・前年度 37,473,049・比較 △12,520,679・財源の見出しを1つの読み（業費24,952,37037,473,04912,520,679特定財源）にし、比較の△を落とした。原典の描画で額と△を確かめ、この読みは使わず code_readings と amount_readings で宣言する。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "keirin-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "keirin-initial-ocr-1",
+          "origin_sha256": "6122cf1b057a98cef9e4ab3adff15d1eec007503808dddbcaa938d13aca65a63",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "5dfbde05ed1313eccb9fed215dc035c0acb181381a581ed939e8821b84ba3adf",
+          "bytes": 1894576
+        },
+        {
+          "id": "keirin-initial-ocr-2",
+          "origin_sha256": "6122cf1b057a98cef9e4ab3adff15d1eec007503808dddbcaa938d13aca65a63",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              32,
+              33,
+              34,
+              35
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "53728c5fcb52527beb177ec6c8fbaf0da6278589fe2a5708850f10b2d44ec646",
+          "bytes": 551085
+        }
+      ]
+    },
+    {
+      "id": "kokuho-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6122cf1b057a98cef9e4ab3adff15d1eec007503808dddbcaa938d13aca65a63"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "kokuho-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true
+              },
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat",
+                "quirks": {
+                  "legal_setsu_codes": true
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true,
+                  "note_kinds": {
+                    "（特定財源": "財源内訳",
+                    "(（特定財源": "財源内訳"
+                  }
+                },
+                "quirks": {
+                  "codeless_at_names": 18,
+                  "head_counts": true,
+                  "opening_bracket_ink": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "dropped_notes": true,
+            "gapped_column_rules": true,
+            "marked_subjects": true,
+            "unnumbered_abolished_names": true
+          }
+        },
+        "pages": [
+          [
+            58,
+            71
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "p70-r30-mark",
+            "page": 70,
+            "observation_id": "p70:full-page:a0:result0:r30",
+            "observed_name": "共同事業拠出金",
+            "corrected_name": "○共同事業拠出金",
+            "reason": "物理70頁の廃止した款・項・目「共同事業拠出金」（本年度 0・前年度 1・比較 △1）。番号の代わりに ○ を印字するが、OCR は ○ を読み落とした。原典の描画で ○ を確かめ、字を戻す。"
+          },
+          {
+            "id": "p70-r34-mark",
+            "page": 70,
+            "observation_id": "p70:full-page:a0:result0:r34",
+            "observed_name": "共同事業",
+            "corrected_name": "○共同事業",
+            "reason": "物理70頁の廃止した款・項・目「共同事業拠出金」（本年度 0・前年度 1・比較 △1）。番号の代わりに ○ を印字するが、OCR は ○ を読み落とした。原典の描画で ○ を確かめ、字を戻す。"
+          },
+          {
+            "id": "p70-r39-mark",
+            "page": 70,
+            "observation_id": "p70:full-page:a0:result0:r39",
+            "observed_name": "共同事業",
+            "corrected_name": "○共同事業",
+            "reason": "物理70頁の廃止した款・項・目「共同事業拠出金」（本年度 0・前年度 1・比較 △1）。番号の代わりに ○ を印字するが、OCR は ○ を読み落とした。原典の描画で ○ を確かめ、字を戻す。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kokuho-initial-ocr-1",
+          "origin_sha256": "6122cf1b057a98cef9e4ab3adff15d1eec007503808dddbcaa938d13aca65a63",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              58,
+              59,
+              60,
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "726f00eff78188352b10c2eadac89f02bb794e88a1b01e367ac65f5837cceaa5",
+          "bytes": 2143162
+        },
+        {
+          "id": "kokuho-initial-ocr-2",
+          "origin_sha256": "6122cf1b057a98cef9e4ab3adff15d1eec007503808dddbcaa938d13aca65a63",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              68,
+              69,
+              70,
+              71
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "22adde9f6e13783ab989745f8f050cf7ab0aeffde164f4b929e0a636db937e82",
+          "bytes": 517286
+        }
+      ]
+    },
+    {
+      "id": "parking-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6122cf1b057a98cef9e4ab3adff15d1eec007503808dddbcaa938d13aca65a63"
+        }
+      ],
+      "options": {
+        "account": "駐車場事業特別会計",
+        "table_id": "parking-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true
+              },
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat",
+                "quirks": {
+                  "legal_setsu_codes": true
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true,
+                  "note_kinds": {
+                    "（特定財源": "財源内訳",
+                    "(（特定財源": "財源内訳"
+                  }
+                },
+                "quirks": {
+                  "codeless_at_names": 18,
+                  "head_counts": true,
+                  "opening_bracket_ink": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "dropped_notes": true,
+            "gapped_column_rules": true,
+            "unnumbered_abolished_names": true
+          }
+        },
+        "pages": [
+          [
+            90,
+            93
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "parking-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "parking-initial-ocr-1",
+          "origin_sha256": "6122cf1b057a98cef9e4ab3adff15d1eec007503808dddbcaa938d13aca65a63",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              90,
+              91,
+              92,
+              93
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "8021eb055be49bf8af898b55e8071f785f534fffbf7a6df89811800485f9279b",
+          "bytes": 473242
+        }
+      ]
+    },
+    {
+      "id": "kaigo-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6122cf1b057a98cef9e4ab3adff15d1eec007503808dddbcaa938d13aca65a63"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "kaigo-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true
+              },
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat",
+                "quirks": {
+                  "legal_setsu_codes": true
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true,
+                  "note_kinds": {
+                    "（特定財源": "財源内訳",
+                    "(（特定財源": "財源内訳"
+                  }
+                },
+                "quirks": {
+                  "codeless_at_names": 18,
+                  "head_counts": true,
+                  "opening_bracket_ink": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "dropped_notes": true,
+            "gapped_column_rules": true,
+            "unnumbered_abolished_names": true
+          }
+        },
+        "pages": [
+          [
+            118,
+            139
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p122-r36",
+            "page": 122,
+            "observation_id": "p122:full-page:a0:result0:r36",
+            "observed": "14,218,30013,905,922",
+            "reason": "物理122頁の款「2 保険給付費」の行。OCR が本年度 14,218,300 と前年度 13,905,922 を1つの読み（14,218,30013,905,922）にした。原典の描画で2つの額を確かめ、この読みは使わず amount_readings で宣言する。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p122-r36-1",
+            "page": 122,
+            "boxes": [
+              [
+                159.0,
+                518.3,
+                206.5,
+                527.9
+              ]
+            ],
+            "amount": "14,218,300",
+            "reason": "物理122頁の款「2 保険給付費」の行。OCR が本年度 14,218,300 と前年度 13,905,922 を1つの読み（14,218,30013,905,922）にした。原典の描画で2つの額を確かめ、この読みは使わず amount_readings で宣言する。"
+          },
+          {
+            "id": "p122-r36-2",
+            "page": 122,
+            "boxes": [
+              [
+                211.0,
+                518.3,
+                258.0,
+                527.9
+              ]
+            ],
+            "amount": "13,905,922",
+            "reason": "物理122頁の款「2 保険給付費」の行。OCR が本年度 14,218,300 と前年度 13,905,922 を1つの読み（14,218,30013,905,922）にした。原典の描画で2つの額を確かめ、この読みは使わず amount_readings で宣言する。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p136-r17-rule",
+            "page": 136,
+            "observation_id": "p136:full-page:a0:result0:r17",
+            "observed_name": "10|24積立金",
+            "corrected_name": "1024積立金",
+            "reason": "物理136頁の目「1 介護保険準備基金積立金」の節「24 積立金」の行。OCR が財源内訳の額 10 の右の縦の罫を字（|）に読み、額と節の番号・名前を1つの読みにした。原典の描画で罫であることを確かめ、字を外す。"
+          },
+          {
+            "id": "p136-r81-rule",
+            "page": 136,
+            "observation_id": "p136:full-page:a0:result0:r81",
+            "observed_name": "59,765|27繰出金",
+            "corrected_name": "59,76527繰出金",
+            "reason": "物理136頁の目「1 繰出金」の節「27 繰出金」の行。OCR が財源内訳の額 59,765 の右の縦の罫を字（|）に読み、額と節の番号・名前を1つの読みにした。原典の描画で罫であることを確かめ、字を外す。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kaigo-initial-ocr-1",
+          "origin_sha256": "6122cf1b057a98cef9e4ab3adff15d1eec007503808dddbcaa938d13aca65a63",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              118,
+              119,
+              120,
+              121,
+              122,
+              123,
+              124,
+              125,
+              126,
+              127
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "28f8e0b23af84ec2f1fedd7ed03b56b17314f157dcb5098150e10cd304596dd9",
+          "bytes": 2384023
+        },
+        {
+          "id": "kaigo-initial-ocr-2",
+          "origin_sha256": "6122cf1b057a98cef9e4ab3adff15d1eec007503808dddbcaa938d13aca65a63",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              128,
+              129,
+              130,
+              131,
+              132,
+              133,
+              134,
+              135,
+              136,
+              137
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "ffa588ddad4147f6b535fc474e7e2094b55243cab83e566aa85a30d66ac05442",
+          "bytes": 2349213
+        },
+        {
+          "id": "kaigo-initial-ocr-3",
+          "origin_sha256": "6122cf1b057a98cef9e4ab3adff15d1eec007503808dddbcaa938d13aca65a63",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              138,
+              139
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "37c9e676c4cc2de3df2f0bea7465c4e61f1b9914a5fb0c45ad0a2c744a260341",
+          "bytes": 45006
+        }
+      ]
+    },
+    {
+      "id": "kouki-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6122cf1b057a98cef9e4ab3adff15d1eec007503808dddbcaa938d13aca65a63"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業特別会計",
+        "table_id": "kouki-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true
+              },
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat",
+                "quirks": {
+                  "legal_setsu_codes": true
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true,
+                  "note_kinds": {
+                    "（特定財源": "財源内訳",
+                    "(（特定財源": "財源内訳"
+                  }
+                },
+                "quirks": {
+                  "codeless_at_names": 18,
+                  "head_counts": true,
+                  "opening_bracket_ink": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "dropped_notes": true,
+            "gapped_column_rules": true,
+            "unnumbered_abolished_names": true
+          }
+        },
+        "pages": [
+          [
+            163,
+            168
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kouki-initial-ocr-1",
+          "origin_sha256": "6122cf1b057a98cef9e4ab3adff15d1eec007503808dddbcaa938d13aca65a63",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              163,
+              164,
+              165,
+              166,
+              167,
+              168
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9a2538887c79c89eb7287d6bda4debc94d4cdb9347287e6e974ba0d44c07bbc0",
+          "bytes": 1090356
+        }
+      ]
     }
   ]
 }
