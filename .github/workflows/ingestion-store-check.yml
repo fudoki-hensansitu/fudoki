@@ -1,7 +1,7 @@
 name: ingestion-store-check
 # 取り込みの PR が変えた管理 JSON の宣言を、R2 にある出典・OCR 結果から main のコードで変換し、保存の関門を通す（ADR 0051）。
 # 通った表の受領書（pending-receipts.json）を R2 の受領書の一覧に重ね、表は手元の cache に置いて、
-# merge 後の sync-d1 と同じ範囲で dbt を build する（D1 は読まない）。宣言の欠けや読み違いで dbt の検査が落ちるのも、
+# 管理 JSON を変えた自治体だけ dbt を build する（D1 は読まない）。宣言の欠けや読み違いで dbt の検査が落ちるのも、
 # ここで merge 前に止める。R2 は読むだけ。merge 後の sync-d1 の store が同じ変換を R2 に置く。
 on:
   pull_request:
@@ -68,11 +68,16 @@ jobs:
           path: pipeline/.cache/generic-observation
           key: generic-observation-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
       # PR の表はまだ R2 に無いので、上で関門を通して cache に置いた表と、その受領書から build する。
-      # D1 は指定しない（全件の範囲だと D1 を全行読んで30分を超える。書く行数は merge 後の sync-d1 が出す）
-      - run: bun run --cwd pipeline publish -- --dry-run --since ${{ steps.base.outputs.sha }}
+      # build するのは管理 JSON を変えた自治体だけ（PR で新しくできるのはその表だけ）。共通の変更が他の自治体に
+      # 与える影響は、変換は refresh-check、dbt は merge 後の sync-d1 が見る。D1 は指定しない（書く行数は sync-d1 が出す）
+      - id: changed
+        run: |
+          codes=$(git diff --name-only ${{ steps.base.outputs.sha }} HEAD -- pipeline/ingestion/fiscal/jurisdictions \
+            | sed -nE 's#^pipeline/ingestion/fiscal/jurisdictions/([0-9]{6})/[0-9]{4}/.+\.json$#\1#p' | sort -u)
+          echo "args=$(for c in $codes; do printf -- '--jurisdiction %s ' "$c"; done)" >> "$GITHUB_OUTPUT"
+      - if: steps.changed.outputs.args != ''
+        run: bun run --cwd pipeline publish -- --dry-run ${{ steps.changed.outputs.args }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           INGESTION_PENDING_RECEIPTS: ${{ github.workspace }}/pipeline/.build/pending-receipts.json
-          # 全件の範囲（自治体の列を持たない seed を変えた PR）の build は 4GB だと int_fiscal__rows で DuckDB の上限に
-          # 当たる。sync-d1 と同じく runner（16GB）に合わせて上げる
           FUDOKI_DUCKDB_MEMORY_LIMIT: 12GB
