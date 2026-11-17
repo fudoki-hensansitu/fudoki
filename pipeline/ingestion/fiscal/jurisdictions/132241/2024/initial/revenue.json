@@ -1,0 +1,229 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132241",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "c1dcfc1d4edf44224dc3979976d80dc57243b7133db52d0f20a16537231161be"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "pages": [
+          [
+            23,
+            23
+          ],
+          [
+            28,
+            141
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_titles",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "本年度予算額本年度予算額": {
+                  "heading": "本年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e821b5892219b03311ae2aeed78b375f8ef2551efb3e7a5820087a0f8b779609"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_titles",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "本年度予算額本年度予算額": {
+                  "heading": "本年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e821b5892219b03311ae2aeed78b375f8ef2551efb3e7a5820087a0f8b779609"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_titles",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "本年度予算額本年度予算額": {
+                  "heading": "本年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e821b5892219b03311ae2aeed78b375f8ef2551efb3e7a5820087a0f8b779609"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_titles",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "本年度予算額本年度予算額": {
+                  "heading": "本年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-revenue"
+        }
+      ]
+    }
+  ]
+}
