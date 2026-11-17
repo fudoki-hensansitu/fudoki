@@ -5,9 +5,10 @@ import { PREFECTURE_MAPS } from '../jurisdiction/map.generated'
 import { jurisdictionPath } from '../jurisdiction/path'
 import { FIELD_OF_QUESTION, QUESTIONS } from '../compare/questions'
 import { loadFieldTotals, type FieldTotals } from './compare'
+import type { Population } from '../jurisdiction/types'
 import type { Env } from './env'
 import { logError } from './log'
-import { loadPopulations } from './population'
+import { readPopulations } from './population'
 
 export type MapTown = {
   code: string
@@ -20,7 +21,7 @@ export type MapTown = {
   /** 問いの slug ごとの値。無いもの（未収録）は null */
   values: Record<string, number | null>
 }
-/** partial は一部を読めなかった（D1・api の失敗）印。その頁は CDN に置かない */
+/** partial は一部を読めなかった（D1 の決算・人口、api の失敗）印。その頁は CDN に置かない */
 export type CompareMap = { prefecture: string; cols: number; rows: number; year: number | null; towns: MapTown[]; partial: boolean }
 
 const PREFECTURE = PREFECTURE_MAPS.find((m) => m.code === '13')!
@@ -77,7 +78,8 @@ export async function loadCompareMap(env: Env): Promise<CompareMap> {
   const islands = PREFECTURE.islands.map((t, i) => ({ code: t.code, name: t.name, col: i, row: PREFECTURE.rows + 1 }))
   const tiles = [...mainland, ...islands]
   const codes = tiles.map((t) => t.code)
-  const [loaded, populations] = await Promise.all([loadFinance(env, codes), loadPopulations(env, codes)])
+  const [loaded, people] = await Promise.all([loadFinance(env, codes), readPopulations(env, codes)])
+  const populations = people ?? new Map<string, Population[]>()
   const finance = loaded ?? []
   const year = finance[0]?.fiscal_year ?? null
   const { totals: fields, failed } = year ? await loadFields(env, codes, year) : { totals: new Map<string, FieldTotals>(), failed: false }
@@ -99,5 +101,5 @@ export async function loadCompareMap(env: Env): Promise<CompareMap> {
     const values = Object.fromEntries(QUESTIONS.map((q) => [q.slug, q.source === 'fiscal' ? share(totals, FIELD_OF_QUESTION[q.slug]!) : (finance[q.slug] ?? null)]))
     return { ...t, path: jurisdictionPath(t.code), pop, values }
   })
-  return { prefecture: PREFECTURE.name, cols: PREFECTURE.cols, rows: PREFECTURE.rows + (islands.length ? 2 : 0), year, towns, partial: loaded === null || failed }
+  return { prefecture: PREFECTURE.name, cols: PREFECTURE.cols, rows: PREFECTURE.rows + (islands.length ? 2 : 0), year, towns, partial: loaded === null || people === null || failed }
 }
