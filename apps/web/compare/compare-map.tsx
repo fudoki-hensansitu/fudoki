@@ -173,10 +173,14 @@ function Legend({ map, q, scale, selected, onPick }: { map: CompareMap; q: Quest
 
 const failedText = <p className="text-sm text-muted-foreground">今は読み込めません。少し時間をおいてやり直してください。</p>
 
-/** 何年度の決算の値かを、数字を載せている面に書く（頁の値はすべて同じ年度） */
-function YearNote({ year }: { year: number | null }) {
+/** 図の下に置く出典。何年度の決算の値かもここに書く（頁の値はすべて同じ年度）。q が無い一覧では両方の出典を並べる */
+function SourceNote({ year, q }: { year: number | null; q?: Question }) {
   if (year == null) return null
-  return <p className="mt-1 text-sm text-muted-foreground">値は{reiwa(year)}の決算です。</p>
+  const y = reiwa(year)
+  const finance = `総務省「市町村別決算状況調」${y}（普通会計）`
+  const fiscal = `各まちの${y}の決算（一般会計）`
+  const text = q == null ? `${finance}、${fiscal}` : q.source === 'finance' ? finance : fiscal
+  return <p className="mt-4 text-xs text-muted-foreground">出典：{text}</p>
 }
 
 /** いちばん大きいまちと小さいまち */
@@ -191,7 +195,6 @@ export function CompareList({ map, failed }: { map: CompareMap; failed: boolean 
       <header className="mb-5">
         <Title size="h1">まち比べ</Title>
         <p className="mt-1 text-sm text-muted-foreground">まちのお金を1人あたりの金額に直すと、いろいろな見方で比べられます。いまは{map.prefecture || '東京都'}のまちから、少しずつ広げています。</p>
-        <YearNote year={map.year} />
       </header>
       {failed ? failedText : (
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 lg:gap-4">
@@ -219,6 +222,7 @@ export function CompareList({ map, failed }: { map: CompareMap; failed: boolean 
           })}
         </div>
       )}
+      {failed ? null : <SourceNote year={map.year} />}
     </main>
   )
 }
@@ -256,13 +260,13 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
         <Title size="h1">{q.title}</Title>
         <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{q.note}</p>
         <p className="mt-1 text-xs leading-relaxed text-muted-foreground">※{q.caveat}</p>
-        <YearNote year={map.year} />
       </header>
       {failed ? failedText : (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
           <div>
             <TileMap map={map} q={q} scale={scale} selected={code} onPick={pick} large />
             <Legend map={map} q={q} scale={scale} selected={code} onPick={pick} />
+            <SourceNote year={map.year} q={q} />
           </div>
           {t ? (
             <aside key={t.code} aria-live="polite" className="flex animate-in flex-col rounded-2xl border bg-background p-5 fade-in slide-in-from-bottom-1 duration-200 motion-reduce:animate-none">
