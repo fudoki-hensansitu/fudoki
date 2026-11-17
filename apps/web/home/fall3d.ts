@@ -1,7 +1,10 @@
-// 刷り直すときに切り離した前のレシートを、丸まりながら落とす（receipt.tsx が初めて紙を刷った時点で先に読み込む）。
-// 紙の DOM を同じ大きさの canvas に写し（paperCanvas）、three.js の細長い板に貼って、下の端から刷った面を外にして巻き上げ、
-// 横へずれる螺旋にしながら落として消す。板は画面いっぱいの canvas（position: fixed）に、最初の姿が DOM の紙とぴったり重なるように置く
+// 刷り直すときに切り離した前のレシートを、丸まりながら床へ落として積み上げる（receipt.tsx が初めて紙を刷った時点で先に読み込む）。
+// 紙の DOM を同じ大きさの canvas に写し（snap.ts の paperCanvas）、three.js の細長い板に貼って、下の端から刷った面を外にして巻き上げ、
+// 横へずれる螺旋にしながら画面の下端（床）まで落とす。落ちた紙は消さずに床に残し、次の紙はその上に重なる。
+// 板は画面いっぱいの canvas（position: fixed）に、最初の姿が DOM の紙とぴったり重なるように置く。canvas と落ちた紙は札を外すまで（clearFloor）持つ
 import * as THREE from 'three'
+
+export { paperCanvas } from './snap'
 
 const smooth = (a: number, b: number, x: number) => {
   const t = Math.min(1, Math.max(0, (x - a) / (b - a)))
@@ -14,97 +17,17 @@ const BACK = 0xf4f1ea
 const RADIUS = 110
 const PITCH = 45
 
-/** 紙の DOM（.rc-paper）を canvas に写す。字は1字ずつ、画面と同じ書体・色・位置に書く。点線・破線・アイコン・QR も同じ位置に描く */
-export async function paperCanvas(el: HTMLElement): Promise<HTMLCanvasElement> {
-  const box = el.getBoundingClientRect()
-  const dpr = Math.min(window.devicePixelRatio || 1, 2)
-  const canvas = document.createElement('canvas')
-  canvas.width = Math.ceil(box.width * dpr)
-  canvas.height = Math.ceil(box.height * dpr)
-  const g = canvas.getContext('2d')!
-  g.scale(dpr, dpr)
-  const page = getComputedStyle(el)
-  g.fillStyle = page.backgroundColor
-  g.fillRect(0, 0, box.width, box.height)
-  // 紙の頭は差し出し口の影に入る（receipt.css の .rc-paper::before）
-  const shade = g.createLinearGradient(0, 0, 0, 40)
-  shade.addColorStop(0, 'black')
-  shade.addColorStop(0.45, 'transparent')
-  g.globalAlpha = 0.18
-  g.fillStyle = shade
-  g.fillRect(0, 0, box.width, 40)
-  g.globalAlpha = 1
-  const line = (x0: number, y: number, x1: number, color: string, dash: number[]) => {
-    g.save()
-    g.strokeStyle = color
-    g.lineWidth = 1
-    g.setLineDash(dash)
-    g.beginPath()
-    g.moveTo(x0, y + 0.5)
-    g.lineTo(x1, y + 0.5)
-    g.stroke()
-    g.restore()
-  }
-  const svgs: Promise<void>[] = []
-  const walk = (node: Node) => {
-    if (node.nodeType === Node.TEXT_NODE) {
-      const text = node.textContent ?? ''
-      const parent = node.parentElement
-      if (!parent || !text.trim()) return
-      const s = getComputedStyle(parent)
-      g.font = `${s.fontWeight} ${s.fontSize} ${s.fontFamily}`
-      g.fillStyle = s.color
-      g.textBaseline = 'middle'
-      if ('letterSpacing' in g) (g as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = '0px'
-      const range = document.createRange()
-      // 1字ずつ置く（折り返し・字間・揃えを画面のまま写す）
-      for (let i = 0; i < text.length; i++) {
-        const ch = text[i]!
-        if (!ch.trim()) continue
-        range.setStart(node, i)
-        range.setEnd(node, i + 1)
-        const r = range.getBoundingClientRect()
-        if (!r.width) continue
-        g.fillText(ch, r.left - box.left, r.top - box.top + r.height / 2)
-      }
-      return
-    }
-    if (!(node instanceof Element)) return
-    const s = getComputedStyle(node)
-    if (s.display === 'none' || s.visibility === 'hidden') return
-    const r = node.getBoundingClientRect()
-    const x = r.left - box.left
-    const y = r.top - box.top
-    if (s.borderTopStyle === 'dashed') line(x, y, x + r.width, s.borderTopColor, [3, 3])
-    if (s.borderBottomStyle === 'dotted') line(x, y + r.height - 1, x + r.width, s.borderBottomColor, [1, 2])
-    if (node instanceof SVGSVGElement) {
-      // currentColor を画面の色に置き換えて画像にする
-      const svg = node.cloneNode(true) as SVGSVGElement
-      svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
-      svg.setAttribute('width', String(r.width))
-      svg.setAttribute('height', String(r.height))
-      svg.setAttribute('color', s.color)
-      const img = new Image()
-      img.src = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg.outerHTML)}`
-      svgs.push(
-        img
-          .decode()
-          .then(() => g.drawImage(img, x, y, r.width, r.height))
-          .catch(() => {}),
-      )
-      return
-    }
-    node.childNodes.forEach(walk)
-  }
-  el.childNodes.forEach(walk)
-  await Promise.all(svgs)
-  return canvas
-}
+/** 床に落ちた紙の山（x の幅と、山の上端の y）。床は画面の下端 */
+type Pile = { x0: number; x1: number; top: number }
+/** 落とす紙を描く場。画面の大きさが変わったら作り直す（床の位置が変わるので、積んだ紙も片付ける） */
+type Stage = { canvas: HTMLCanvasElement; renderer: THREE.WebGLRenderer; scene: THREE.Scene; camera: THREE.PerspectiveCamera; vw: number; vh: number; piles: Pile[]; papers: Set<() => void> }
+let stage: Stage | null = null
 
-/** 紙を落とす。rect は紙の画面上の場所（CSS px）。最初の姿を描いてから返し、play で動かす。WebGL が使えなければ null */
-export function fallPaper(texture: HTMLCanvasElement, rect: DOMRect, ms: number): { play: () => Promise<void>; seek: (t: number) => void; dispose: () => void } | null {
+function openStage(): Stage | null {
   const vw = window.innerWidth
   const vh = window.innerHeight
+  if (stage && (stage.vw !== vw || stage.vh !== vh)) clearFloor()
+  if (stage) return stage
   const canvas = document.createElement('canvas')
   Object.assign(canvas.style, { position: 'fixed', inset: '0', width: '100vw', height: '100vh', pointerEvents: 'none', zIndex: '40' })
   let renderer: THREE.WebGLRenderer
@@ -127,6 +50,25 @@ export function fallPaper(texture: HTMLCanvasElement, rect: DOMRect, ms: number)
   const sun = new THREE.DirectionalLight(0xffffff, 0.55 * Math.PI)
   sun.position.set(0, 0.25, 1)
   scene.add(sun)
+  stage = { canvas, renderer, scene, camera, vw, vh, piles: [], papers: new Set() }
+  return stage
+}
+
+/** 床に積んだ紙と描く場を片付ける（札を外すとき・画面の大きさが変わったとき） */
+export function clearFloor() {
+  if (!stage) return
+  const s = stage
+  stage = null
+  for (const drop of [...s.papers]) drop()
+  s.renderer.dispose()
+  s.canvas.remove()
+}
+
+/** 紙を落とす。rect は紙の画面上の場所（CSS px）。最初の姿を描いてから返し、play で動かす。落ち終えた紙は床に残る。WebGL が使えなければ null */
+export function fallPaper(texture: HTMLCanvasElement, rect: DOMRect, ms: number): { play: () => Promise<void>; seek: (t: number) => void; dispose: () => void } | null {
+  const st = openStage()
+  if (!st) return null
+  const { vw, vh, scene, renderer, camera } = st
   const W = rect.width
   const H = rect.height
   const rows = Math.max(120, Math.round(H / 6))
@@ -134,14 +76,13 @@ export function fallPaper(texture: HTMLCanvasElement, rect: DOMRect, ms: number)
   const map = new THREE.CanvasTexture(texture)
   map.colorSpace = THREE.SRGBColorSpace
   map.anisotropy = renderer.capabilities.getMaxAnisotropy()
-  const frontMat = new THREE.MeshLambertMaterial({ map, side: THREE.FrontSide, transparent: true })
-  const backMat = new THREE.MeshLambertMaterial({ color: BACK, side: THREE.BackSide, transparent: true })
+  const frontMat = new THREE.MeshLambertMaterial({ map, side: THREE.FrontSide })
+  const backMat = new THREE.MeshLambertMaterial({ color: BACK, side: THREE.BackSide })
   const group = new THREE.Group()
   group.add(new THREE.Mesh(geo, frontMat), new THREE.Mesh(geo, backMat))
   // 板の原点を紙の上端の中央（切った線）に置き、そこを軸に傾ける
   geo.translate(0, -H / 2, 0)
   const top = new THREE.Vector3(rect.left + W / 2 - vw / 2, vh / 2 - rect.top, 0)
-  group.position.copy(top)
   scene.add(group)
   const pos = geo.attributes.position as THREE.BufferAttribute
   const base = Float32Array.from(pos.array as Float32Array)
@@ -167,35 +108,63 @@ export function fallPaper(texture: HTMLCanvasElement, rect: DOMRect, ms: number)
     }
     pos.needsUpdate = true
     geo.computeVertexNormals()
+    geo.computeBoundingBox()
+    geo.computeBoundingSphere()
   }
-  /** t（ms）の姿を描く。切れて少し沈み、巻きながら傾いて、下へ落ちて消える */
+  const turn = (p: number) => group.rotation.set(0.6 * smooth(0.05, 0.7, p), 0.5 * smooth(0.05, 0.8, p), -0.12 * smooth(0.1, 1, p))
+  // 落ち着く場所を先に決める。丸まりきった姿の外形を測り、紙の下あたりの床（先に落ちた紙と横が重なれば、その山の上）に置く
+  curl(1)
+  turn(1)
+  group.position.set(0, 0, 0)
+  group.updateMatrixWorld(true)
+  const box = new THREE.Box3().setFromObject(group)
+  const bw = box.max.x - box.min.x
+  const bh = box.max.y - box.min.y
+  const room = Math.max(0, vw / 2 - bw / 2 - 8)
+  const cx = Math.max(-room, Math.min(room, top.x + (Math.random() - 0.5) * vw * 0.6))
+  const x0 = cx - bw / 2
+  const x1 = cx + bw / 2
+  // 山に乗るときは少し沈み込ませる（丸まった紙どうしは隙間に収まる）
+  const rest = st.piles.reduce((y, p) => (p.x1 > x0 && p.x0 < x1 ? Math.max(y, p.top - bh * 0.3) : y), -vh / 2)
+  const pile = { x0, x1, top: rest + bh }
+  st.piles.push(pile)
+  const end = new THREE.Vector3(cx - (box.min.x + box.max.x) / 2, rest - box.min.y, 0)
+  /** t（ms）の姿を描く。切れて少し沈み、巻きながら傾いて、床へ落ちて小さく跳ねる */
   const seek = (t: number) => {
     const p = t / ms
     curl(smooth(0.02, 0.6, p))
-    const drop = Math.max(0, p - 0.08)
-    group.position.set(top.x - 30 * drop, top.y - 14 * smooth(0, 0.08, p) - 40 * drop - 700 * drop ** 3, 0)
-    group.rotation.set(0.6 * smooth(0.05, 0.7, p), 0.5 * smooth(0.05, 0.8, p), -0.12 * smooth(0.1, 1, p))
-    const o = 1 - smooth(0.75, 1, p)
-    frontMat.opacity = o
-    backMat.opacity = o
+    turn(p)
+    const q = Math.min(1, Math.max(0, (p - 0.08) / 0.92))
+    const from = top.y - 14 * smooth(0, 0.08, p)
+    // 0.86 まで重さで速くなりながら落ち、床に当たって一度だけ小さく跳ねる
+    const y = q < 0.86 ? from + (end.y - from) * (q / 0.86) ** 2 : end.y + 16 * Math.sin((Math.PI * (q - 0.86)) / 0.14)
+    group.position.set(top.x + (end.x - top.x) * smooth(0.08, 1, p), y, 0)
     renderer.render(scene, camera)
   }
   seek(0)
   let raf = 0
   let finish: (() => void) | null = null
   let gone = false
-  /** 一度だけ片付ける。動いている途中なら描くのを止め、play を終わらせる */
-  const dispose = () => {
+  /** 紙を場から外す。床に残った紙も clearFloor でここを通る */
+  const remove = () => {
     if (gone) return
     gone = true
     cancelAnimationFrame(raf)
     finish?.()
+    st.papers.delete(remove)
+    st.piles.splice(st.piles.indexOf(pile), 1)
+    scene.remove(group)
     geo.dispose()
     map.dispose()
     frontMat.dispose()
     backMat.dispose()
-    renderer.dispose()
-    canvas.remove()
+    if (stage === st) renderer.render(scene, camera)
+  }
+  st.papers.add(remove)
+  let landed = false
+  /** 落ちている途中なら止めて外す。落ち終えた紙は床に残す */
+  const dispose = () => {
+    if (!landed) remove()
   }
   const play = () =>
     new Promise<void>((done) => {
@@ -206,7 +175,11 @@ export function fallPaper(texture: HTMLCanvasElement, rect: DOMRect, ms: number)
         const t = now - t0
         seek(Math.min(t, ms))
         if (t < ms) raf = requestAnimationFrame(step)
-        else done()
+        else {
+          landed = true
+          finish = null
+          done()
+        }
       }
       raf = requestAnimationFrame(step)
     })

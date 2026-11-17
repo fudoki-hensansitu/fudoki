@@ -49,16 +49,11 @@ export default defineConfig({
       '/sitemap.xml': 3600,
       // 自治体の OG 画像（routes/jurisdictions/[code]/og.png.ts）。最新の決算の金額から描く。同じ下にある紋章の SVG（静的資産）は外す
       '/jurisdictions/*/og.png': 86400,
-      // ホームのレシートをシェアしたときの OG 画像（routes/jurisdictions/[code]/receipt.png.ts）
-      '/jurisdictions/*/receipt.png': 86400,
     },
     // ISR の key は既定で query を落とす。予算・決算のタブの頁は ?account= で流れの会計を、まち比べは ?a=&ay=&ak=&b=&by=&bk= でまちと年度・資料を分けるので key に残す
     revalidateQueryAllowlist: {
       ...Object.fromEntries(Object.values(prefectures.slugs).map((slug) => [`/${slug}/*`, ['account']])),
       '/compare': ['a', 'ay', 'ak', 'b', 'by', 'bk'],
-      // ホームはシェアされたレシート（?town=&year=）で head の OG 画像を変える
-      '/': ['town', 'year'],
-      '/jurisdictions/*/receipt.png': ['year'],
     },
   },
   // 全頁の head の既定。頁ごとの title・説明・canonical は各頁の .server.ts の head。theme-color は middleware/01.site.ts

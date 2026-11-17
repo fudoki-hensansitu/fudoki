@@ -44,24 +44,54 @@ function useCountUp(to: number, delay: number, hold: boolean) {
 /** 相対の url を、いま開いている origin に付けて外から開ける形にする */
 const absolute = (url: string) => (typeof location === 'undefined' ? url : new URL(url, location.origin).href)
 
-/** まちの頁を共有する。共有の画面が使えればそれを開き、無ければ URL をコピーして一時だけ「コピーしました」にする */
-function Share({ url, title }: { url: string; title: string }) {
+/** シェアで添えるリンク。受け取った人がホームで自分のまちを選ぶように、ホームだけにする（2026-11-17 yuito） */
+const HOME_URL = 'https://fudoki.dev/'
+
+/** このレシートを画像にして渡す。画面の紙をそのまま写し（snap.ts、紙の上のボタンは写さない）、
+ * 画像を渡せる共有の画面（スマホ）があればそれで、無ければ画像を保存する。押してから写すと共有の画面を開ける時間を過ぎることがあるので、押し始めに写し始める */
+function Share({ title, file }: { title: string; file: string }) {
+  const ref = React.useRef<HTMLButtonElement>(null)
+  const shot = React.useRef<Promise<Blob | null> | null>(null)
   const [done, setDone] = React.useState(false)
   const timer = React.useRef<ReturnType<typeof setTimeout>>(undefined)
   React.useEffect(() => () => clearTimeout(timer.current), [])
+  const take = () => {
+    const paper = ref.current?.closest<HTMLElement>('.rc-paper')
+    if (!paper) return Promise.resolve(null)
+    shot.current ??= import('./snap')
+      .then(({ paperCanvas }) => paperCanvas(paper, { scale: 3, skip: true }))
+      .then((c) => new Promise<Blob | null>((ok) => c.toBlob(ok, 'image/png')))
+      .catch(() => null)
+    return shot.current
+  }
   const onClick = async () => {
-    const href = absolute(url)
-    if (typeof navigator.share === 'function') return navigator.share({ title, url: href }).catch(() => {})
-    const ok = await navigator.clipboard.writeText(href).then(() => true, () => false)
-    if (!ok) return
+    const blob = await take()
+    shot.current = null
+    if (!blob) return
+    const png = new File([blob], file, { type: 'image/png' })
+    if (typeof navigator.canShare === 'function' && navigator.canShare({ files: [png] })) {
+      return navigator.share({ files: [png], title, text: `${title}\n${HOME_URL}` }).catch(() => {})
+    }
+    const a = document.createElement('a')
+    a.href = URL.createObjectURL(png)
+    a.download = file
+    a.click()
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000)
     setDone(true)
     clearTimeout(timer.current)
     timer.current = setTimeout(() => setDone(false), 2000)
   }
   return (
-    <button type="button" onClick={() => void onClick()} className="inline-flex items-center gap-1.5 rounded-full border border-border px-3.5 py-2 text-[13px] font-medium transition-colors hover:bg-card">
+    <button
+      ref={ref}
+      type="button"
+      data-snap="skip"
+      onPointerDown={() => void take()}
+      onClick={() => void onClick()}
+      className="inline-flex items-center gap-1.5 rounded-full border border-border px-3.5 py-2 text-[13px] font-medium transition-colors hover:bg-card"
+    >
       <ShareNetworkIcon className="size-4" />
-      {done ? 'コピーしました' : 'シェア'}
+      {done ? '保存しました' : 'シェア'}
     </button>
   )
 }
@@ -183,8 +213,11 @@ function Strip({ mode, children }: { mode: 'grow' | 'still'; children: React.Rea
   )
 }
 
+/** 床に積んだ紙を片付ける（落とす立体を読んだあとだけ入る）。札を外すときに呼ぶ */
+let sweep: (() => void) | null = null
+
 /** 切り離した前のレシート。差し出し口の下の同じ場所に置いたまま、紙を写した立体（fall3d.ts、初めて紙を刷った時点で先に読む）に差し替えて、
- * 丸まりながら落とす。立体の最初の姿が出てから DOM の紙を隠す。WebGL が使えなければ、落とさずに消す */
+ * 丸まりながら床（画面の下端）へ落とす。落ちた紙は札を外すまで床に積んでおく。立体の最初の姿が出てから DOM の紙を隠す。WebGL が使えなければ、落とさずに消す */
 function Falling({ onDone, children }: { onDone: () => void; children: React.ReactNode }) {
   const ref = React.useRef<HTMLDivElement>(null)
   const done = React.useRef(onDone)
@@ -198,7 +231,8 @@ function Falling({ onDone, children }: { onDone: () => void; children: React.Rea
       const el = ref.current?.querySelector<HTMLElement>('.rc-paper')
       try {
         if (!el) throw new Error('紙がありません')
-        const { paperCanvas, fallPaper } = await import('./fall3d')
+        const { paperCanvas, fallPaper, clearFloor } = await import('./fall3d')
+        sweep = clearFloor
         const texture = await paperCanvas(el)
         if (!alive) return
         fall = fallPaper(texture, el.getBoundingClientRect(), FALL_MS)
@@ -228,7 +262,7 @@ function Falling({ onDone, children }: { onDone: () => void; children: React.Rea
 /** 刷った一枚の紙（数え上げの key と、その年度のデータ） */
 type Printed = { key: string; year: number; v: YearView }
 
-export function ReceiptMachine({ name, v, year, pop, base, detailHref, shareOf, head }: { name: string; v: YearView; year: number; pop: number | null; base: string; detailHref: string; shareOf: (year: number) => string; head: React.ReactNode }) {
+export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: { name: string; v: YearView; year: number; pop: number | null; base: string; detailHref: string; head: React.ReactNode }) {
   const settled = v.word === '決算'
   const what = `${yearName(year)}の${settled ? '決算' : '予算'}`
   const counted = `${year}:${v.total}`
@@ -262,6 +296,8 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, shareOf, 
     if (import.meta.env.SSR || !printed || reduced()) return
     void import('./fall3d').catch(() => {})
   }, [printed])
+  // 札を外したら（まちを替えた・頁を移った）、床に積んだ紙も片付ける
+  React.useEffect(() => () => sweep?.(), [])
   /** いま刷っている紙の key（刷り終えるまで）。頁送りと紙の動きに使う */
   const printing = phase === 'print' && printed?.key === counted ? counted : null
   useFollow(phase, printing, card, feed)
@@ -305,10 +341,10 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, shareOf, 
         <span className="text-[15px]">1人あたりの合計</span>
         <Yen n={sum} className="text-[28px] font-semibold text-primary" />
       </p>
-      {/* 読み取るとまちの頁を開く QR と、このレシートを共有するボタン（ホームの ?town=&year=。開くとこのレシートを出し、OG 画像もレシートになる） */}
+      {/* 読み取るとまちの頁を開く QR と、このレシートを画像にして渡すボタン（添えるリンクはホーム） */}
       <div className="mt-5 flex items-center justify-center gap-5">
         <Qr url={detailHref} />
-        <Share url={shareOf(r.year)} title={`${name}の1人あたりのレシート（${reiwa(r.year)}）｜風土記`} />
+        <Share title={`${name}の1人あたりのレシート（${reiwa(r.year)}）｜風土記`} file={`fudoki-${name}-${r.year}.png`} />
       </div>
     </div>
     )
