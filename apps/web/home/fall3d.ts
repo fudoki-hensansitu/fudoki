@@ -102,7 +102,7 @@ export async function paperCanvas(el: HTMLElement): Promise<HTMLCanvasElement> {
 }
 
 /** 紙を落とす。rect は紙の画面上の場所（CSS px）。最初の姿を描いてから返し、play で動かす。WebGL が使えなければ null */
-export function fallPaper(texture: HTMLCanvasElement, rect: DOMRect, ms: number): { play: () => Promise<void>; dispose: () => void } | null {
+export function fallPaper(texture: HTMLCanvasElement, rect: DOMRect, ms: number): { play: () => Promise<void>; seek: (t: number) => void; dispose: () => void } | null {
   const vw = window.innerWidth
   const vh = window.innerHeight
   const canvas = document.createElement('canvas')
@@ -200,5 +200,5 @@ export function fallPaper(texture: HTMLCanvasElement, rect: DOMRect, ms: number)
       }
       requestAnimationFrame(step)
     })
-  return { play, dispose }
+  return { play, seek, dispose }
 }
