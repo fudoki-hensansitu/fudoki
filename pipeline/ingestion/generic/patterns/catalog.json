@@ -117,6 +117,7 @@
     "bracketed_numbers": "ingestion.generic.patterns.quirks.bracketed_numbers",
     "rate_tables": "ingestion.generic.patterns.quirks.rate_tables",
     "spaced_digits": "ingestion.generic.patterns.quirks.spaced_digits",
+    "spaced_ocr_codes": "ingestion.generic.patterns.quirks.spaced_ocr_codes",
     "deducted_formulas": "ingestion.generic.patterns.quirks.deducted_formulas",
     "delta_minus": "ingestion.generic.patterns.quirks.delta_minus",
     "substituted_glyphs": "ingestion.generic.patterns.quirks.substituted_glyphs",
