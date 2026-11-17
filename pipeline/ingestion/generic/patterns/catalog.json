@@ -187,6 +187,7 @@
     "zero_coded_drops": "ingestion.generic.patterns.quirks.zero_coded_drops",
     "scaled_spread_pages": "ingestion.generic.patterns.quirks.scaled_spread_pages",
     "far_shifted_spread_pages": "ingestion.generic.patterns.quirks.far_shifted_spread_pages",
+    "framed_spread_pages": "ingestion.generic.patterns.quirks.framed_spread_pages",
     "unnumbered_titles": "ingestion.generic.patterns.quirks.unnumbered_titles",
     "amount_on_funding_line": "ingestion.generic.patterns.quirks.amount_on_funding_line",
     "labelled_amount_cells": "ingestion.generic.patterns.quirks.labelled_amount_cells",
