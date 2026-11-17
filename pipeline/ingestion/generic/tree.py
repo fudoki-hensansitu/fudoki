@@ -1197,7 +1197,7 @@ def _measure(item: Item, label: list[Glyph], code: str | None, joined: bool = Fa
         item.level = item.level if item.level is not None else len(item.group.bands) - 1
         if code is None and item.group.mode == 'bands' and (at_rule := document_quirk('unnumbered_names_at_rule')) is not None:
             # A dropped subject's name without a number, set on the rule that closes its level's code column.
-            item.level = at_rule.module.level(first.x0, item.group.bands, item.level)
+            item.level = at_rule.module.level(first.x0, item.group.bands, item.level, first.y1 - first.y0)
 
 
 def join_transfer_tails(items_: list[Item], layout: dict | None) -> list[Item]:
