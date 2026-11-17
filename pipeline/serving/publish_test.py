@@ -126,6 +126,14 @@ class SeedCodesTest(unittest.TestCase):
     def test_non_code_row_is_full(self):
         self.assertIsNone(seed_codes('jurisdiction_code,name', ['+all,a']))
 
+    def test_applies_to_rows(self):
+        header = 'priority,rule_id,applies_to,match_kan,basis'
+        diff = ['+-903,a,132021,民生費,"立川市 繰出金, 07"', '-10,b,131016|132098,総務費,x']
+        self.assertEqual(seed_codes(header, diff), {'132021', '131016', '132098'})
+
+    def test_shared_rule_is_full(self):
+        self.assertIsNone(seed_codes('priority,rule_id,applies_to,match_kan', ['+-903,a,132021,民生費', '+5,c,,総務費']))
+
 
 if __name__ == '__main__':
     unittest.main()
