@@ -129,6 +129,25 @@
       "type": "string",
       "minLength": 1,
       "description": "A page without a frame whose digits are this regex (compacted text) is a divider and is skipped; any other one stops."
+    },
+    "explanation_excluded": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "reason"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "minLength": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "description": "The revenue's 計上説明 (墨田区の歳入): the basis of each 節, no breakdown of it. Every figure of the column is excluded with this kind and reason, and the reading reads the revenue."
     }
   }
 }

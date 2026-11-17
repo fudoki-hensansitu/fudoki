@@ -1,0 +1,269 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131075",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8edbc34d33d0672faad93c625e7b5d36acdc5fd54b7815a1b6e6ffe9847d06fd"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "収入率": {
+                  "kind": "ignore"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "axis_suffix"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "shared_names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "repairs": [
+            "justified_names"
+          ]
+        },
+        "excluded_boxes": [
+          {
+            "id": "p147-carryover-note",
+            "page": 147,
+            "bbox": [
+              770,
+              238,
+              842,
+              266
+            ],
+            "kind": "本文",
+            "reason": "備考欄の注記「前年度繰越事業費不用額 0円」の金額。備考の文言で、科目の金額の列ではない。"
+          }
+        ],
+        "pages": [
+          [
+            33,
+            78
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8edbc34d33d0672faad93c625e7b5d36acdc5fd54b7815a1b6e6ffe9847d06fd"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "収入率": {
+                  "kind": "ignore"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "axis_suffix"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "shared_names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "repairs": [
+            "justified_names"
+          ]
+        },
+        "pages": [
+          [
+            161,
+            171
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "care-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8edbc34d33d0672faad93c625e7b5d36acdc5fd54b7815a1b6e6ffe9847d06fd"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "care-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "収入率": {
+                  "kind": "ignore"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "axis_suffix"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "shared_names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "repairs": [
+            "justified_names"
+          ]
+        },
+        "pages": [
+          [
+            185,
+            195
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "late-elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8edbc34d33d0672faad93c625e7b5d36acdc5fd54b7815a1b6e6ffe9847d06fd"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "late-elderly-medical-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "収入率": {
+                  "kind": "ignore"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "axis_suffix"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "shared_names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "repairs": [
+            "justified_names"
+          ]
+        },
+        "pages": [
+          [
+            207,
+            212
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "late-elderly-medical-revenue"
+        }
+      ]
+    }
+  ]
+}

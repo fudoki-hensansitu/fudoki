@@ -10,6 +10,26 @@
     "table_id": {
       "type": "string",
       "pattern": "^[a-z0-9][a-z0-9_-]{0,95}$"
+    },
+    "pages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "array",
+        "prefixItems": [
+          {
+            "type": "integer",
+            "minimum": 1
+          },
+          {
+            "type": "integer",
+            "minimum": 1
+          }
+        ],
+        "minItems": 2,
+        "maxItems": 2
+      },
+      "description": "The pages read, when the selected scope also holds the summary (`1 総括`): the detail pages only."
     }
   },
   "required": [
