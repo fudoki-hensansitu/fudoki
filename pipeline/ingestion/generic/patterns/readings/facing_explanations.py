@@ -20,6 +20,11 @@ funding and 節 columns and declares the facing page's columns. The 予備費's 
 (`1議決予算額…のうち下記のとおり充当した` over `第2款総務費 151,000,000`): the lines under the declared heading are
 amount annotations (ADR 0024).
 
+A budget statement's 歳入 (131083) draws the same spread: the left page prints each 款・項・目 row's amounts and the
+節 of each 目, with no 財源内訳, and the facing page the 説明 of the 目 (its 節 told again in prose and small tables).
+The profile declares `explanation_excluded`: the reading then takes the 歳入 scope, reads the left page alone, and
+reports every word of the facing page as excluded under the profile's kind and reason.
+
 The reading builds the printed tree directly (科目・節・説明) and hands the node and amount tables with the
 digit-coverage scope to the shared checks. What it reads but does not take in (the 財源内訳, the quantities and prose
 of the explanation) is described as coverage exclusions from where it found them. The column edges, relative to the
@@ -230,6 +235,8 @@ class Reader(Reading):
         self.UNITS = profile['units']
         self.ABOLISHED = profile['abolished_mark']
         self.DIVIDER = profile['divider_text']
+        # A 歳入 statement's facing page is not taken in (131083): its words are coverage exclusions.
+        self.EXPLANATION_EXCLUDED = profile.get('explanation_excluded')
 
     # --- frames -----------------------------------------------------------------------------------------------
 
@@ -246,7 +253,7 @@ class Reader(Reading):
                         self.FUNDING, self.SETSU, self.SETSU_AMOUNT and self.SETSU_AMOUNT[1]) if r]
                     if not all(any(abs(x - x0 - e) <= EDGE for x in inner) for e in edges[:4]):
                         continue
-                elif not self.right_rules(inner, x0):
+                elif not self.EXPLANATION_EXCLUDED and not self.right_rules(inner, x0):
                     continue
                 full = sorted(r.y0 for r in page.rules if not r.vertical and r.x0 <= x0 + EDGE and r.x1 >= x0 + width - EDGE)
                 if len(full) < 3:
@@ -269,12 +276,13 @@ class Reader(Reading):
         if len(inputs) != 1:
             raise ValueError('One original makes one table')
         source = inputs[0]
-        if source['format'] != 'pdf' or source['pdf_type'] != 'text' or source['direction'] != 'expenditure':
-            raise ValueError('Expected the expenditure of a text PDF')
+        direction = 'revenue' if self.EXPLANATION_EXCLUDED else 'expenditure'
+        if source['format'] != 'pdf' or source['pdf_type'] != 'text' or source['direction'] != direction:
+            raise ValueError(f'Expected the {direction} of a text PDF')
         if sha_file(source['path']) != source['sha256']:
             raise ValueError('Original SHA differs')
         scopes = [s for s in source['scope'] if s['account'] == options['account']
-                  and s.get('direction', 'expenditure') == 'expenditure']
+                  and s.get('direction', direction) == direction]
         if len(scopes) != 1:
             raise ValueError(f'Expected one selected scope of the account {options["account"]}')
         numbers_ = [p for span in scopes[0]['pages'] for p in range(span['start'], span['end'] + 1)] \
@@ -370,6 +378,11 @@ class Reader(Reading):
                 add_amount(*args, unit)
                 printed.setdefault(args[0]['node_key'], {})[args[1]] = args[2]
             pending_left.clear()
+            if self.EXPLANATION_EXCLUDED:
+                exclude(self.EXPLANATION_EXCLUDED['kind'], self.EXPLANATION_EXCLUDED['reason'], page.number, body)
+                report['excluded explanation words'] += len(body)
+                spread = None
+                continue
             self.right_page(page, x0, body, spread, explained, add_node, grow, add_amount, exclude, unit, report, printed)
             amount_columns.setdefault(('right', '説明'), [x0 + self.AMOUNT_LEFT - 60, x0 + self.EXPLANATION_RIGHT])
             for header, x_range in self.RIGHT_COLUMNS:
@@ -383,6 +396,10 @@ class Reader(Reading):
         if not nodes or not amounts:
             raise ValueError(f'{table_id}: nothing read')
         notes = [
+            '款・項・目は左頁の科目の欄から、それぞれの行の本年度・前年度・比較の金額とともに読んだ。印字の見出し「本年度」「前年度」'
+            '「比較増(△)減」は共有辞書の「本年度予算額」「前年度予算額」「比較」とした。節は節の欄から目ごとに読んだ。',
+            '向かいの頁の説明（節の内訳を文と小さな表で言い直したもの）は取り込んでいない。',
+        ] if self.EXPLANATION_EXCLUDED else [
             '款・項・目は左頁の科目の欄から、それぞれの行の本年度・前年度・比較の金額とともに読んだ。印字の見出し「本年度」「前年度」'
             '「比較増(△)減」は共有辞書の「本年度予算額」「前年度予算額」「比較」とした。',
             '財源内訳の欄は取り込んでいない。説明は向かいの頁から、施策（4桁の番号）・事業（番号と右端の金額）・「・」の項目'

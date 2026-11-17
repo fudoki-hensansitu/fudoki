@@ -13,6 +13,7 @@
       "additionalProperties": false,
       "properties": {
         "dark": {"type": "integer", "minimum": 129, "maximum": 255},
+        "dark_pages": {"type": "object", "propertyNames": {"pattern": "^[1-9][0-9]*$"}, "additionalProperties": {"type": "integer", "minimum": 129, "maximum": 255}, "description": "A page whose rules print paler than the rest of the document takes its own gray level (physical page → level): a level the whole document takes would read the pale strokes of other pages as rules (千代田区 R5 決算の歳入 p45, its column rules at gray 223)."},
         "skewed": {"const": true, "description": "A scan set a little off level breaks each long horizontal rule into pieces a pixel row apart (国分寺市): the pieces are joined end to end before a rule's length is checked, and the words of one printed line are grouped with a wider tolerance (a line's amount at the right end sits up to 2.5pt above its name at the left)."},
         "skewed_columns": {"const": true, "description": "A scan turned enough that a column rule steps a pixel column every few points (131113 R5 決算) breaks each column rule into pieces too short for the detector over a header's short cells: the pieces of a vertical rule are joined end to end before its length is checked, as `skewed` does for the horizontal ones."},
         "spread_rows": {"const": true, "description": "Each scanned page is a spread of two pages side by side (131113 R5 決算, A3): a row rule drawn across one column group of one page (the 節 rows under 区分・金額) is kept at a third of the share of the width a row rule is kept at on a single page (120pt of a 1190pt sheet)."},
@@ -137,7 +138,8 @@
       "properties": {
         "character_map": {"type": "object", "minProperties": 1, "propertyNames": {"pattern": "^[\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\ufffd\\u3400-\\u4dbf]$"}, "additionalProperties": {"type": "string", "maxLength": 1}, "description": "Explicit Unicode mapping for broken font maps, before XML parsing and glyph reconstruction. U+FFFD is the glyph Poppler could not map (栃木県 R4 の特別会計: an invisible mark after each header word); mapped to an empty string, a character is dropped. A character of CJK Extension A (U+3400–U+4DBF) is mapped too: a font that maps digits to unrelated ideographs (131156 R5 決算書: `0`–`9` to U+3EDC–U+3EE5, `,` to U+3ED8)."},
         "form_clips": {"const": true, "description": "Text drawn inside a form has its clip in the form's space: an object whose own bounds meet it is visible."},
-        "image_rules": {"const": true, "description": "A page that draws no vector rule has its ruled grid in a background image: the rules are read from the render, as a scan's are."},
+        "image_rules": {"const": true, "description": "A page that draws no vector rule has its ruled grid in a background image, or draws it in a pale colour the vector reading takes for no ink (131164's 歳入): the rules are read from the render, as a scan's are, at the gray level `rules.dark` when it is declared."},
+        "polyline_rules": {"const": true, "description": "A frame closed by a path of straight segments instead of lines (131105's 歳入: the bottom of each page's frame): the path's horizontal and vertical segments are rules too."},
         "crop_box": {"const": true, "description": "Each page shows one half of a sheet printed two pages up through its CropBox (131211): the words and rules outside it are the other page's, observed as that page."}
       }
     },

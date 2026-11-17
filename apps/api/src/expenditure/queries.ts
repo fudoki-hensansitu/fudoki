@@ -1,11 +1,11 @@
 // 歳出の集約の問い合わせ。行と出典は1つの batch（トランザクション）で読み、同期の入れ替えをまたいで食い違わないようにする。
-import { COVERAGE_TABLE, DETAIL_TABLE, JURISDICTION_TABLE, LOCATION_SELECT_LIST, LOCATION_TABLE, ORIGIN_SELECT_LIST, ORIGIN_TABLE, SUBJECT_TABLE, toRow, type Row } from '../columns'
+import { COVERAGE_TABLE, DETAIL_TABLE, LOCATION_SELECT_LIST, LOCATION_TABLE, ORIGIN_SELECT_LIST, ORIGIN_TABLE, SUBJECT_TABLE, toRow, type Row } from '../columns'
 import { ApiError } from '../errors'
 import type { Ctx } from '../shared/context'
 import { decodeToken, nextToken } from '../shared/paging'
 import { searchRows } from '../shared/query'
 import { DEFAULT_PAGE_SIZE, type SearchInput } from '../shared/search'
-import { AMOUNT_COLUMNS, type DetailSearchOutput, type ExpenditureList, type ExpenditureListInput, type LineOutput, type SimilarInput, type SimilarList, type SubjectSearchOutput } from './model'
+import { AMOUNT_COLUMNS, type DetailSearchOutput, type ExpenditureList, type ExpenditureListInput, type LineOutput, type SubjectSearchOutput } from './model'
 
 const EXPENDITURE_ORIGIN = { table: ORIGIN_TABLE, selectList: ORIGIN_SELECT_LIST }
 
@@ -89,24 +89,5 @@ export async function listExpenditures(ctx: Ctx, input: ExpenditureListInput): P
     `c."jurisdiction_code" = json_extract(v.value, '$.jurisdiction_code') AND c."fiscal_year" = json_extract(v.value, '$.fiscal_year') AND c."document_kind" = json_extract(v.value, '$.document_kind')) ` +
     `ORDER BY c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_kind" <> '一般会計', c."account_name"`
   const { results } = await ctx.db.prepare(sql).bind(JSON.stringify(input.versions)).all<ExpenditureList['expenditures'][number]>()
-  return { expenditures: results }
-}
-
-const SHARE_COLUMNS = AMOUNT_COLUMNS.filter((c) => c !== 'total_yen')
-const shareDistance = SHARE_COLUMNS.map((c) => `abs(c."${c}" * 1.0 / c."total_yen" - me."${c}" * 1.0 / me."total_yen")`).join(' + ')
-
-/** 分野の割合が近い歳出。比べるのは同じ年度・資料区分の一般会計どうしで、D1 の中で並べて上位だけを返す */
-export async function similarExpenditures(ctx: Ctx, input: SimilarInput): Promise<SimilarList> {
-  const among = input.among ? `AND c."jurisdiction_code" IN (SELECT value FROM json_each(?))` : ''
-  const sql =
-    `WITH me AS (SELECT * FROM ${COVERAGE_TABLE} WHERE "jurisdiction_code" = ? AND "fiscal_year" = ? AND "document_kind" = ? AND "account_kind" = '一般会計' AND "total_yen" > 0 LIMIT 1) ` +
-    `SELECT c."jurisdiction_code", j."name", c."total_yen" FROM ${COVERAGE_TABLE} c ` +
-    `JOIN me ON c."fiscal_year" = me."fiscal_year" AND c."document_kind" = me."document_kind" ` +
-    `JOIN ${JURISDICTION_TABLE} j ON j."jurisdiction_code" = c."jurisdiction_code" ` +
-    `WHERE c."account_kind" = '一般会計' AND c."total_yen" > 0 AND c."jurisdiction_code" <> me."jurisdiction_code" ` +
-    `AND (substr(c."jurisdiction_code", 3, 3) = '000') = (substr(me."jurisdiction_code", 3, 3) = '000') ${among} ` +
-    `ORDER BY ${shareDistance}, c."jurisdiction_code" LIMIT ?`
-  const params: unknown[] = [input.jurisdiction_code, input.fiscal_year, input.document_kind, ...(input.among ? [JSON.stringify(input.among)] : []), input.limit]
-  const { results } = await ctx.db.prepare(sql).bind(...params).all<SimilarList['expenditures'][number]>()
   return { expenditures: results }
 }

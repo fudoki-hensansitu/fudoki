@@ -58,6 +58,7 @@ import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock } from '../ask-dock'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type Moku, type PageData, type PageFlow, type Setsu, type YearTotal, TAB_SLUGS, hasDocument, type PageTab } from '../types'
+import { Title } from '@/components/ui/title'
 import { withExtras, yearView, type AccountTotal, type Proj, type Snapshot, type YearExtras, type YearView } from './data'
 import { fieldSubjects, listKey, listPage, projectLatest, type ListPage, type ListQuery, type ProjectFull } from './api'
 import { ClientSuspense, FAILED, Resources, type Loaded } from './resource'
@@ -142,10 +143,10 @@ function Chip({ children }: { children: React.ReactNode }) {
 function SectionHead({ title, sub, children }: { title: string; sub?: string; children?: React.ReactNode }) {
   return (
     <div className="mb-3 flex items-center justify-between gap-3">
-      <h2 className="text-[17px] font-semibold">
+      <Title size="h3" as="h2">
         {title}
         {sub ? <span className="ml-2 text-xs font-normal text-muted-foreground">{sub}</span> : null}
-      </h2>
+      </Title>
       {children ? <div className="flex items-center gap-2">{children}</div> : null}
     </div>
   )
@@ -166,7 +167,7 @@ function TabHead({ title, children }: { title: string; children: React.ReactNode
   return (
     <div className="mb-5">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="text-xl font-semibold leading-snug">{title}</h2>
+        <Title size="h2">{title}</Title>
         <TabYear />
       </div>
       <p className="mt-1.5 text-[15px] leading-[1.7] text-muted-foreground">{children}</p>
@@ -466,7 +467,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
       {total ? <FieldsSection phase={phase} /> : null}
       {total ? (
         <div>
-          <h2 className="mb-2.5 text-[17px] font-semibold">お金の流れ</h2>
+          <Title size="h3" as="h2" className="mb-2.5">お金の流れ</Title>
           <p className="text-[15px] leading-[1.7] text-muted-foreground">{current?.revenue?.length ? '歳入（左）と歳出（右）が、款から項・目へとどう分かれていくかを示しています。' : '歳出が、款から項・目へとどう分かれていくかを示しています。'}会計を選ぶと、その会計の流れに切り替わります。</p>
         </div>
       ) : null}
@@ -509,10 +510,10 @@ function FieldsSection({ phase }: { phase: 'initial' | 'settlement' }) {
   })
   return (
     <section className="mb-5">
-      <h2 className="mb-2.5 text-[17px] font-semibold">
+      <Title size="h3" as="h2" className="mb-2.5">
         {phase === 'initial' ? '何に使う？' : '何に使った？'}<span className="ml-1.5 text-[13px] font-normal text-muted-foreground">歳出</span>
         <Amt yen={v.total} className="ml-2 font-medium text-primary" />
-      </h2>
+      </Title>
       <p className="mb-2.5 text-[15px] leading-[1.7] text-muted-foreground">税金を主な財源にする基本の会計（一般会計）の歳出を、使い道の分野ごとに分けています。</p>
       {/* 棒の長さは一番大きい分野を満たんにし、割合の数字は合計に対する比のまま出す */}
       <div className="grid gap-x-8 @3xl:grid-flow-col @3xl:grid-cols-2 @3xl:grid-rows-(--rows)" style={{ '--rows': `repeat(${Math.ceil(v.fields.length / 2)}, auto)` } as React.CSSProperties}>
@@ -663,7 +664,7 @@ function ProjectsTab({ filter, setFilter, fields, setFields, q, setQ }: { filter
 function DetailSection({ icon: I, title, children }: { icon: Icon; title: string; children: React.ReactNode }) {
   return (
     <section className="mt-6">
-      <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold"><I className="size-4 text-muted-foreground" aria-hidden="true" />{title}</h3>
+      <Title size="headline" as="h3" className="mb-2 flex items-center gap-1.5"><I className="size-4 text-muted-foreground" aria-hidden="true" />{title}</Title>
       {children}
     </section>
   )
@@ -672,10 +673,10 @@ function DetailSection({ icon: I, title, children }: { icon: Icon; title: string
 function ProjectTitle({ p, mark }: { p: Pick<ProjectFull, 'name'>; mark: 'new' | 'stop' | null }) {
   return (
     <>
-      <h2 className="mb-2 flex items-start gap-1.5 text-xl font-semibold leading-snug">
+      <Title size="h2" className="mb-2 flex items-start gap-1.5">
         {p.name}
         {mark === 'stop' ? <Mark kind="stop" label="やめた事業" /> : mark === 'new' ? <Mark kind="new" label="新しく始める事業" /> : null}
-      </h2>
+      </Title>
     </>
   )
 }

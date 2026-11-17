@@ -197,7 +197,9 @@ def repeated_header(page: Page, frame, header_bottom: float, body: list[tuple[in
         skip.update(i for i, _ in words)
         if number:
             above = [(i, w) for i, w in body if inside(w, *rows[number - 1])]
-            if above and TITLE.match(normalize(reading([w for _, w in above]))):
+            if above and (TITLE.match(normalize(reading([w for _, w in above])))
+                          or (document_quirk('uncoded_titles') is not None
+                              and not any(re.search(r'[0-9０-９]', w.text) for _, w in above))):
                 skip.update(i for i, _ in above)
     return skip
 
@@ -374,10 +376,14 @@ def _header_bottom(page: Page, frame, one_row: bool = False, title: bool = False
     # A rule from the frame's left edge across most of it (a free-text column at the right end may draw none).
     full = sorted(h.y0 for h in horizontals
                   if h.x0 <= x0 + reach and h.x1 >= x1 - reach and top - 1 <= h.y0 <= bottom + 1)
-    if len(full) < 2:  # most of the frame's width (a free-text column at the right end may draw no row rules)
+    # Only the frame's own top and foot are no header rule: a frame whose top rule alone reaches past the rows' left
+    # end (目黒区の決算書の歳入: the title box of an account's first page, 3pt wider than the table under it) is read
+    # by the rules that touch either end.
+    inside = lambda ys: len(ys) >= 2 and any(top + 1 < y < bottom - 1 for y in ys)
+    if not inside(full):  # most of the frame's width (a free-text column at the right end may draw no row rules)
         full = sorted(h.y0 for h in horizontals
                       if h.x0 <= x0 + reach and h.x1 - x0 >= .6 * (x1 - x0) and top - 1 <= h.y0 <= bottom + 1)
-    if len(full) < 2:  # two ruled halves of one frame (see `_frames`): the rules that touch either end
+    if not inside(full):  # two ruled halves of one frame (see `_frames`): the rules that touch either end
         full = sorted({h.y0 for h in horizontals if (h.x0 <= x0 + 3 or h.x1 >= x1 - 3) and top - 1 <= h.y0 <= bottom + 1})
     above = top + 1
     if title and (opening := [y for y in full if top + 1 < y]) and not any(

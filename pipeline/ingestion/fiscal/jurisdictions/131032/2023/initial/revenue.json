@@ -1,0 +1,711 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131032",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial-1",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "1b7e36f95bc09264057ea5094f55d1c9f6aba89e3e5a67a351f54d21cc4992f1"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-1",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（単価×件数・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true,
+            "code_after_amount": {
+              "code_digits": 1
+            },
+            "unfounded_supersessions": true
+          }
+        },
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-initial-1-ocr-1",
+          "origin_sha256": "1b7e36f95bc09264057ea5094f55d1c9f6aba89e3e5a67a351f54d21cc4992f1",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              3,
+              4,
+              5,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "bb694029424bbd5295796eb153421a8fd7bbe93859357e3ea2ce8a0964eff2bc",
+          "bytes": 1578313
+        },
+        {
+          "id": "general-initial-1-ocr-p2",
+          "origin_sha256": "1b7e36f95bc09264057ea5094f55d1c9f6aba89e3e5a67a351f54d21cc4992f1",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              2
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "97b2f4377cc5e7c8911da69684ebb6b19bfeccf577c3499a27c924ab8e36a2d3",
+          "bytes": 108301
+        },
+        {
+          "id": "general-initial-1-ocr-p6",
+          "origin_sha256": "1b7e36f95bc09264057ea5094f55d1c9f6aba89e3e5a67a351f54d21cc4992f1",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              6
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "5c07ab6c49d6598a16b0269b75c2cf45fdc98e69b79df5951f67ed08949a35d8",
+          "bytes": 377059
+        },
+        {
+          "id": "general-initial-1-ocr-2",
+          "origin_sha256": "1b7e36f95bc09264057ea5094f55d1c9f6aba89e3e5a67a351f54d21cc4992f1",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "694e2d104918e9ad9d38d9c55224f04c7cd38aca171ea490a3ad10b9f30f33fc",
+          "bytes": 2348958
+        },
+        {
+          "id": "general-initial-1-ocr-3",
+          "origin_sha256": "1b7e36f95bc09264057ea5094f55d1c9f6aba89e3e5a67a351f54d21cc4992f1",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "9925bbb78dccfb35047a17fc15090a2045ce029b2fa15939901c0666451cc904",
+          "bytes": 1432495
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-initial-1"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-2",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "8847b1a109cd3fcfef34f1f33f3e4196ccd716c77d0278eb805bae8bdcb40ee3"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-2",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（単価×件数・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true,
+            "code_after_amount": {
+              "code_digits": 1
+            },
+            "unfounded_supersessions": true
+          }
+        },
+        "partial": true,
+        "dropped_readings": [
+          {
+            "id": "p4-ink-elderly-club",
+            "page": 4,
+            "observation_id": "p4:ink-9:a9:result0:r0",
+            "observed": "71老人久ラブ助成事業補助金（保健福祉課）",
+            "reason": "墨の読み直しが、節の欄の 1 老人福祉諸費の金額 1,817 の末尾の 7 と説明の行を1行に読んだ。説明の行は別の読み直し（ink-10）が読み、金額は頁の読みの 1,817 がある。この読みを使わない。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-initial-2-ocr-1",
+          "origin_sha256": "8847b1a109cd3fcfef34f1f33f3e4196ccd716c77d0278eb805bae8bdcb40ee3",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "f34fbe7541f8886f8d4cd69e5e4d5454e953ec5237e0a697d2f57a11f522b700",
+          "bytes": 2481652
+        },
+        {
+          "id": "general-initial-2-ocr-2",
+          "origin_sha256": "8847b1a109cd3fcfef34f1f33f3e4196ccd716c77d0278eb805bae8bdcb40ee3",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "e0f03b1a813da2b19482a8428b5b1d7b2d51845f90a498df9f1b02c1eb18dbfc",
+          "bytes": 2528626
+        },
+        {
+          "id": "general-initial-2-ocr-3",
+          "origin_sha256": "8847b1a109cd3fcfef34f1f33f3e4196ccd716c77d0278eb805bae8bdcb40ee3",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "bbcc1bfd0f3a8242280b6714a9e01e120b5778024ee1c4b7c61467d13ed2f3e0",
+          "bytes": 2498600
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-initial-2"
+        }
+      ]
+    },
+    {
+      "id": "nhi-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "b66b6625385d902e86ec2dde7dbd5389122c7575fe6245417343fd0f88c7aacc"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "nhi-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（単価×件数・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true,
+            "code_after_amount": {
+              "code_digits": 1
+            },
+            "unfounded_supersessions": true
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-initial-ocr-1",
+          "origin_sha256": "b66b6625385d902e86ec2dde7dbd5389122c7575fe6245417343fd0f88c7aacc",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              3,
+              4,
+              5,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "ac2e352079a743784ce3aa5871e580c68159d845439e5e1e783f344eb150de67",
+          "bytes": 1104060
+        },
+        {
+          "id": "nhi-initial-ocr-2",
+          "origin_sha256": "b66b6625385d902e86ec2dde7dbd5389122c7575fe6245417343fd0f88c7aacc",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "bda7ab297deaa8b4f102b42e621bb3c17496876f253b648f691cad2be97507b8",
+          "bytes": 792715
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-initial"
+        }
+      ]
+    },
+    {
+      "id": "kouki-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "0720a5721dc5758d2c16cfe339a521bd8832cbb2c11d972c2a9895cd7038243c"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "kouki-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（単価×件数・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true,
+            "code_after_amount": {
+              "code_digits": 1
+            },
+            "unfounded_supersessions": true
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-initial-ocr-1",
+          "origin_sha256": "0720a5721dc5758d2c16cfe339a521bd8832cbb2c11d972c2a9895cd7038243c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              3,
+              4,
+              5,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "95ee43c138ac2dc1b78b3e6c8299c71862ba78bebc8a772050001217edae8078",
+          "bytes": 908457
+        },
+        {
+          "id": "kouki-initial-ocr-2",
+          "origin_sha256": "0720a5721dc5758d2c16cfe339a521bd8832cbb2c11d972c2a9895cd7038243c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "9fa4f2a2bae64cbb687789266df66d3d4a2cf8d9cea9e4bbdef83e0bebbfa61b",
+          "bytes": 107532
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-initial"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "5672d5c37d0b312d01a02e5ab772a2c772522269bb6748535282cab45924ecb9"
+        }
+      ],
+      "options": {
+        "account": "介護保険会計",
+        "table_id": "kaigo-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（単価×件数・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true,
+            "code_after_amount": {
+              "code_digits": 1
+            },
+            "unfounded_supersessions": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p12-misc-glued",
+            "page": 12,
+            "observation_id": "p12:full-page:a0:result0:r49",
+            "observed": "3雑入",
+            "reason": "頁の読みが目の番号 3 と名前「雑　入」を1語に読み、名前の字の箱が番号の欄の罫にかかって、番号と「雑」が落ちた。この読みを使わず、番号と名前を code_readings で補う。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "p12-misc-code",
+            "page": 12,
+            "box": [
+              129.0,
+              624.0,
+              135.0,
+              636.0
+            ],
+            "code": "3",
+            "name": "雑入",
+            "name_box": [
+              143.0,
+              623.2,
+              182.6,
+              636.8
+            ],
+            "reason": "原典の画像で、項 3 雑入の下の3つ目の目は「3 雑　入」（本年度 1・前年度 1・比較 0）。節の頁（物理13頁）の「1 雑入」はこの目の節。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-initial-ocr-1",
+          "origin_sha256": "5672d5c37d0b312d01a02e5ab772a2c772522269bb6748535282cab45924ecb9",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              3,
+              4,
+              5,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "afd459b75cfe09b048ace95605af224d4be8719b39961d97c753d7b97e186159",
+          "bytes": 1285653
+        },
+        {
+          "id": "kaigo-initial-ocr-2",
+          "origin_sha256": "5672d5c37d0b312d01a02e5ab772a2c772522269bb6748535282cab45924ecb9",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "efb1deacfb45e6329ba815444206d9e6cad640469fcd7e49ecea4058a9ac5544",
+          "bytes": 603578
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-initial"
+        }
+      ]
+    }
+  ]
+}

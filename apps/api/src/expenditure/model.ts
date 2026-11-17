@@ -274,14 +274,3 @@ export type ExpenditureListInput = z.output<typeof ExpenditureListInput>
 export const ExpenditureList = z.strictObject({ expenditures: z.array(ExpenditureTotals).describe('指定した資料の会計すべて。一般会計が先') })
 export type ExpenditureList = z.infer<typeof ExpenditureList>
 
-export const SimilarInput = Version.extend({
-  among: z.array(JurisdictionCode).min(1).max(100).optional().describe('この自治体の中から探す'),
-  limit: z.int().min(1).max(100).default(5),
-})
-export type SimilarInput = z.output<typeof SimilarInput>
-export const SimilarList = z.strictObject({
-  expenditures: z
-    .array(z.strictObject({ jurisdiction_code: z.string(), name: z.string(), total_yen: z.number() }))
-    .describe('同じ年度・資料区分の一般会計で、COFOG の大分類ごとの割合の差（の絶対値）の和が小さい順。都道府県は都道府県どうし、市区町村は市区町村どうし'),
-})
-export type SimilarList = z.infer<typeof SimilarList>

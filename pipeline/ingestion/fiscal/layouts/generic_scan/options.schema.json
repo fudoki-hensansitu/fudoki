@@ -33,12 +33,12 @@
         },
         {
           "type": "object",
-          "description": "Without the quirk `explained_projects`: the original starts inside a 目 the volume before opened (多摩市 R2 決算). The 款・項・目 and 事業 rows as in generic_text (ingestion/generic/convert.py `continue_volume`); the 項・目 the first page prints under the ones it does not print go under them.",
+          "description": "Without the quirk `explained_projects`: the original starts inside a 目 the volume before opened (多摩市 R2 決算). The 款・項・目 and 事業 rows as in generic_text (ingestion/generic/convert.py `continue_volume`); the 項・目 the first page prints under the ones it does not print go under them. Only the 款・項 when the original starts at a 目 of a 項 the volume before opened (港区 R7 歳入: the 目 goes under the 項, with no `rows`).",
           "additionalProperties": false,
           "required": ["subjects", "rows"],
           "properties": {
             "subjects": {
-              "type": "array", "minItems": 3, "maxItems": 3,
+              "type": "array", "minItems": 2, "maxItems": 3,
               "items": {
                 "type": "object", "additionalProperties": false, "required": ["code"],
                 "properties": {"code": {"type": "string", "pattern": "^[0-9]+$"}, "name": {"type": "string", "minLength": 1}}

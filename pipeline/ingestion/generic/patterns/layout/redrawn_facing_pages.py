@@ -8,7 +8,8 @@ rule is not read, and specks inside the header are read as characters, so the he
 and runs down into the first rows. The body's column rules, drawn down the whole frame, are read in place: they tell
 the left page (10 rules) from the right (4), and the header, the same height on every page, is drawn again from them
 with its headings. The scans of each year and ward are printed at their own size, so the columns' places are fractions
-of the frame's width. A page whose rules fit neither (an account's summary) is read as printed.
+of the frame's width. A page whose rules fit neither (an account's summary) is read as printed. The 歳入's left page
+(大田区 R5〜R7) has no 財源内訳: its 8 rules, a wider name column and 本年度・前年度・比較, are told from the 歳出's 10.
 
 OCR's rereading of unread ink reads a piece of a column rule as a digit (`1`, `2`, a point wide on the rule): a word of
 one or two characters whose box takes in a column's rule is the rule's (a word OCR read is cut at the rules, so a
@@ -19,20 +20,27 @@ their ink is a rule's piece (`rule_ink`), and a dash OCR read on them is theirs.
 
 The pages then go to `facing_pages`, which joins each left page with the right page after it.
 """
+import dataclasses
 import re
 
 from ingestion.generic.observe import Page, Rule, Word
+from ingestion.generic.patterns import document_quirk
 from ingestion.generic.patterns.layout import facing_pages
 from ingestion.generic.patterns.layout.redrawn_headers import frame, join_comma_groups, sides, verticals, word
 
 # The columns' rules, as fractions of the frame's width from its left side (measured on 港区・大田区 R6・R7: within .002).
 LEFT = (0, .0415, .083, .1245, .288, .4305, .5725, .7155, .858, 1)
+# The 歳入's left page has no 財源内訳: a wider name column and 本年度・前年度・比較 (大田区 R5〜R7: within .002).
+REVENUE_LEFT = (0, .041, .082, .123, .449, .6335, .817, 1)
 RIGHT = (0, .1635, .306, 1)
+LEFTS = (LEFT, REVENUE_LEFT)
 # (heading, first column, last column + 1, the headings under it in the header's lower half)
 CELLS = {LEFT: (('款', 0, 1, ()), ('項', 1, 2, ()), ('目', 2, 3, ()), ('科目', 3, 4, ()), ('本年度', 4, 5, ()), ('前年度', 5, 6, ()), ('比較', 6, 7, ()),
                 ('本年度の財源内訳', 7, 9, ('特定財源', '一般財源'))),
+         REVENUE_LEFT: (('款', 0, 1, ()), ('項', 1, 2, ()), ('目', 2, 3, ()), ('科目', 3, 4, ()), ('本年度', 4, 5, ()),
+                        ('前年度', 5, 6, ()), ('比較', 6, 7, ())),
          RIGHT: (('節', 0, 2, ('区分', '金額')), ('説明', 2, 3, ()))}
-SURE = {LEFT: 7, RIGHT: 4}  # rules read in place that tell the page without its neighbours
+SURE = {LEFT: 7, REVENUE_LEFT: 6, RIGHT: 4}  # rules read in place that tell the page without its neighbours
 HEADER, HEADER_LEAST, HEADER_MOST = .083, .03, .1  # the header's height, fractions of the frame's width
 NEAR = 4.0  # pt: a rule read this close to a column's place is that column's
 THIN, THIN_REACH = 2.0, 2.5  # pt: a mark this narrow, this far from a rule, is the rule's
@@ -40,6 +48,7 @@ PAIR, DIGIT = 8.0, 5.0  # pt: two figures, or a figure other than `1` (a rule's 
 # middle off the rule are an amount set against it (`49`, `8`)
 REVISION, BOX_MARGIN = '補正経過', 3.0  # pt: the box's rules stand this far above and below the word
 BRACKET_GAP = 8.0  # pt: a bracket stands this far from its figure
+SHIFT_LEAST, SHIFT_MOST = 1.0, 12.0  # pt: a right page this far off its left page's frame is moved to it
 OPENING, CLOSING = ('(', '(△', '（', '（△'), (')', '）')
 DASH = re.compile(r'[-‐―—ー－_]+')  # the box's rule read as a word
 FIGURE = re.compile(r'△?[0-9]{1,3}(,[0-9]{3})*')
@@ -62,23 +71,28 @@ def fit(xs: list[float], places: tuple) -> tuple[int, float, float]:
 
 def kind(page: Page) -> tuple[tuple | None, float, float]:
     xs = verticals(page)
-    scores = {places: fit(xs, places) for places in (LEFT, RIGHT)}
-    sure = [p for p in (LEFT, RIGHT) if scores[p][0] >= SURE[p]
-            and scores[p][0] / len(p) > scores[RIGHT if p is LEFT else LEFT][0] / len(RIGHT if p is LEFT else LEFT)]
+    scores = {places: fit(xs, places) for places in (*LEFTS, RIGHT)}
+    share = {p: scores[p][0] / len(p) for p in scores}
+    sure = [p for p in scores if scores[p][0] >= SURE[p] and all(share[p] > share[q] for q in scores if q is not p)]
     if sure:
         return sure[0], scores[sure[0]][1], scores[sure[0]][2]
     return None, 0.0, 0.0
+
+
+KANJI_NAME = re.compile(r'[\u4e01-\u9fff]{2}')  # (no rule reads as two kanji: a rule is read `1`, `|` or `一`)
 
 
 def rule_pieces(words: list[Word], xs: list[float], top: float, bottom: float) -> list[Word]:
     """The words that are no piece of a column rule (a word of at most two characters whose box takes in the rule; a
     bracket or a sign printed against the rule is the figure's, and so is a code whose box OCR drew past the rule in
     the left page's code columns, its middle off the rule (`1` at 48–62 beside the rule at 60.5), and an amount of one or two
-    figures set right against the rule (`49` at 191–207.1, `8` at 201–210 on 港区 R7)."""
-    codes = xs[3] if len(xs) == len(LEFT) else xs[0]  # the right side of the left page's code columns
+    figures set right against the rule (`49` at 191–207.1, `8` at 201–210 on 港区 R7). Two kanji are a name whose box OCR
+    began on the rule (`雑入` at 99.1 beside the rule at 99.5, 大田区 R6 当初予算の歳入), not a piece of it."""
+    codes = xs[3] if len(xs) != len(RIGHT) else xs[0]  # the right side of the left page's code columns
     def reach(w: Word) -> float:  # (a mark a point wide is read beside the rule as well as on it)
         return THIN_REACH if w.x1 - w.x0 <= THIN else .5
-    return [w for w in words if not (len(w.text) <= 2 and not set(w.text) & set('()（）△') and top < (w.y0 + w.y1) / 2 < bottom
+    return [w for w in words if not (len(w.text) <= 2 and not set(w.text) & set('()（）△') and not KANJI_NAME.fullmatch(w.text)
+                                     and top < (w.y0 + w.y1) / 2 < bottom
                                      and any(w.x0 - reach(w) <= x <= w.x1 + reach(w) and not (
                                          ((w.x0 + w.x1) / 2 < codes or (re.fullmatch(r'[1-9][0-9]', w.text) and w.x1 - w.x0 >= PAIR)
                                           or (re.fullmatch(r'[2-9]', w.text) and w.x1 - w.x0 >= DIGIT))
@@ -194,14 +208,18 @@ def redrawn(page: Page, places: tuple | None, left: float, width: float) -> Page
     words = [w for w in words if not (DASH.fullmatch(w.text) and any(
         b.x0 <= (w.x0 + w.x1) / 2 <= b.x1 and w.y0 - 1 <= b.y0 <= w.y1 + 1 for b in boxes))]
     rules += boxes
-    if places is LEFT:
+    if places is not RIGHT:
         words = join_wrapped_names(words, xs, rules, line)
     return Page(page.number, page.width, page.height, words, rules)
 
 
 def read(pages, **options):
     kinds = [kind(page) for page in pages]
+    # (a book whose left pages are the 歳入's: an expenditure book's left page with rules missing fits the 歳入's fewer
+    # rules as well, and stays an expenditure page)
+    lefts = (REVENUE_LEFT,) if any(k[0] is REVENUE_LEFT for k in kinds) else (LEFT,)
     numbers = {page.number: index for index, page in enumerate(pages)}
+    shifted = document_quirk('shifted_right_pages') is not None
     for index, page in enumerate(pages):
         places, left, width = kinds[index]
         if places is None:
@@ -209,12 +227,25 @@ def read(pages, **options):
             # right page.
             before = kinds[numbers[page.number - 1]][0] if page.number - 1 in numbers else None
             after = kinds[numbers[page.number + 1]][0] if page.number + 1 in numbers else None
-            places = RIGHT if before is LEFT else LEFT if after is RIGHT else None
+            xs = verticals(page)
+            places = (RIGHT if before in LEFTS else lefts[0] if after is RIGHT
+                      else None)
             if places is not None:
-                count, left, width = fit(verticals(page), places)
+                count, left, width = fit(xs, places)
                 places = places if count >= 2 else None
         changed = redrawn(page, places, left, width)
         # The observed page itself carries the redrawn header (digit coverage reads the same words).
         page.words, page.rules = changed.words, changed.rules
+        kinds[index] = (places, left, width)
+        # A right page scanned a little higher or lower than its left page (大田区 R6 歳入: 4pt higher) puts a 節 in
+        # the row above its 目: it is moved so that its frame's top meets the left page's (quirk `shifted_right_pages`).
+        before = numbers.get(page.number - 1)
+        # (only after the 歳入's left page: an expenditure book's spreads are read as they lie)
+        if places is RIGHT and before is not None and kinds[before][0] is REVENUE_LEFT and shifted:
+            tops = frame(pages[before]), frame(page)
+            shift = tops[0][0] - tops[1][0] if None not in tops else 0.0
+            if SHIFT_LEAST <= abs(shift) <= SHIFT_MOST:
+                page.words = [dataclasses.replace(w, y0=w.y0 + shift, y1=w.y1 + shift) for w in page.words]
+                page.rules = [Rule(r.x0, r.y0 + shift, r.x1, r.y1 + shift) for r in page.rules]
         pages[index] = page
     return facing_pages.read(pages, **options)

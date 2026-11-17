@@ -72,6 +72,15 @@
             6,
             125
           ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p14-speck-2",
+            "page": 14,
+            "observation_id": "p14:full-page:a0:result0:r31",
+            "observed": "2",
+            "reason": "物理14頁、目「1 配当割交付金」の枠の空いたところの墨の点（1pt 角）を OCR が「2」と読み、名前の無い目「2」になっていた。原典の描画で点だけで字が無いことを確かめ、読みを使わない。"
+          }
         ]
       },
       "ocr_inputs": [

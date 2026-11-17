@@ -1,0 +1,327 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131105",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "283dd1877fe9dd1a4cf6fcec17eb5fcd0e76f9ce21a9439458a2b156d808f345"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "header": {
+                "ignore_frame_title": true,
+                "staircase": true
+              },
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（単価×件数・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現額／継補正予算繰額": {
+                  "kind": "amount",
+                  "heading": "予算現額／補正予算額"
+                },
+                "予算現額／続継続及費び及び越繰越業事費業費繰越財源充当額": {
+                  "kind": "amount",
+                  "heading": "予算現額／継続費及び繰越事業費繰越財源充当額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "traced_glyphs": true
+          },
+          "repairs": [
+            "overprint"
+          ]
+        },
+        "pages": [
+          [
+            11,
+            43
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "283dd1877fe9dd1a4cf6fcec17eb5fcd0e76f9ce21a9439458a2b156d808f345"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "header": {
+                "ignore_frame_title": true,
+                "staircase": true
+              },
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（単価×件数・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現額／継補正予算繰額": {
+                  "kind": "amount",
+                  "heading": "予算現額／補正予算額"
+                },
+                "予算現額／続継続及費び及び越繰越業事費業費繰越財源充当額": {
+                  "kind": "amount",
+                  "heading": "予算現額／継続費及び繰越事業費繰越財源充当額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "traced_glyphs": true
+          },
+          "repairs": [
+            "overprint"
+          ]
+        },
+        "pages": [
+          [
+            146,
+            155
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "283dd1877fe9dd1a4cf6fcec17eb5fcd0e76f9ce21a9439458a2b156d808f345"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "header": {
+                "ignore_frame_title": true,
+                "staircase": true
+              },
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（単価×件数・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現額／継補正予算繰額": {
+                  "kind": "amount",
+                  "heading": "予算現額／補正予算額"
+                },
+                "予算現額／続継続及費び及び越繰越業事費業費繰越財源充当額": {
+                  "kind": "amount",
+                  "heading": "予算現額／継続費及び繰越事業費繰越財源充当額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "traced_glyphs": true
+          },
+          "repairs": [
+            "overprint"
+          ]
+        },
+        "pages": [
+          [
+            101,
+            110
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "283dd1877fe9dd1a4cf6fcec17eb5fcd0e76f9ce21a9439458a2b156d808f345"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "header": {
+                "ignore_frame_title": true,
+                "staircase": true
+              },
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（単価×件数・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現額／継補正予算繰額": {
+                  "kind": "amount",
+                  "heading": "予算現額／補正予算額"
+                },
+                "予算現額／続継続及費び及び越繰越業事費業費繰越財源充当額": {
+                  "kind": "amount",
+                  "heading": "予算現額／継続費及び繰越事業費繰越財源充当額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "traced_glyphs": true
+          },
+          "repairs": [
+            "overprint"
+          ]
+        },
+        "pages": [
+          [
+            127,
+            132
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-revenue"
+        }
+      ]
+    }
+  ]
+}
