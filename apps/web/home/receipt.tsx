@@ -1,24 +1,25 @@
 // ホームのうちのまちの札。緑の札で予算と1人あたりの額を順に数え上げ、札の下端の差し出し口から分野ごとの1人あたりのレシートを刷り出す。
-// 年度を替えて刷り直すときは、前の紙を差し出し口で切り離して丸まりながら落とし、落ち終えてから数え直して新しい紙を刷る。
-// 札そのものをレジに見立て、平らな描き方に揃える。切り離して落とす紙だけを立体にする（fall3d.ts）。
+// 年度を替えて刷り直すときは、紙を切らずに続けて刷る。前の紙は新しい紙に押し出されて垂れ、床で折り重なって積もる（1本の続いた紙）。
+// 札そのものをレジに見立て、平らな描き方に揃える。押し出された前の紙だけを立体にする（ribbon3d.ts）。
 // 1人あたりは予算を人口で割った額（払った税金の額ではない）。分野の行の和が合計に合うよう、大きい端数から1円ずつ足して丸める
 import * as React from 'react'
 import { encode } from 'uqr'
-import { ArrowRightIcon, ShareNetworkIcon } from '@phosphor-icons/react'
+import { ArrowRightIcon, CheckIcon, LinkIcon, ShareNetworkIcon, XLogoIcon } from '@phosphor-icons/react'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Link } from '../nav/link'
 import { reiwa, yearName } from '../jurisdiction/types'
 import type { YearView } from '../jurisdiction/app/data'
 import { OTHER_FRAME } from '../jurisdiction/domains'
 import { FieldIcon } from './parts'
 import { perHeadParts } from './per-head'
-import { COUNT_MS, FALL_MS, PRINT_MS, READ_MS, SCROLL_MS } from './motion'
+import { COUNT_MS, PRINT_MS, READ_MS, SCROLL_MS } from './motion'
 import './receipt.css'
 
 const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
 
 /** delay の後に 0 から to まで数え上げる。reduced-motion では最初から to。
  * to が変わったら（年度の切り替え）描く前に 0 へ戻し、前の年度の額を新しい年度の見出しで見せない */
-function useCountUp(to: number, delay: number, hold: boolean) {
+function useCountUp(to: number, delay = 0) {
   const [n, setN] = React.useState(() => (reduced() ? to : 0))
   const [from, setFrom] = React.useState(to)
   if (from !== to) {
@@ -27,7 +28,6 @@ function useCountUp(to: number, delay: number, hold: boolean) {
   }
   React.useEffect(() => {
     if (reduced()) return setN(to)
-    if (hold) return
     let raf = 0
     const t0 = performance.now() + delay
     const step = (t: number) => {
@@ -37,7 +37,7 @@ function useCountUp(to: number, delay: number, hold: boolean) {
     }
     raf = requestAnimationFrame(step)
     return () => cancelAnimationFrame(raf)
-  }, [to, hold])
+  }, [to])
   return n
 }
 
@@ -47,54 +47,34 @@ const absolute = (url: string) => (typeof location === 'undefined' ? url : new U
 /** シェアで添えるリンク。受け取った人がホームで自分のまちを選ぶように、ホームだけにする（2026-11-17 yuito） */
 const HOME_URL = 'https://fudoki.dev/'
 
-/** このレシートを画像にして渡す。画面の紙をそのまま写し（snap.ts、紙の上のボタンは写さない）、
- * 画像を渡せる共有の画面（スマホ）があればそれで、無ければ画像を保存する。押してから写すと共有の画面を開ける時間を過ぎることがあるので、押し始めに写し始める */
-function Share({ title, file }: { title: string; file: string }) {
-  const ref = React.useRef<HTMLButtonElement>(null)
-  const shot = React.useRef<Promise<Blob | null> | null>(null)
-  const [done, setDone] = React.useState(false)
+/** このレシートをシェアする。アイコンのボタンで、X に投稿するか、ホームのリンクをコピーするかを選ぶ */
+function Share({ text }: { text: string }) {
+  const [copied, setCopied] = React.useState(false)
   const timer = React.useRef<ReturnType<typeof setTimeout>>(undefined)
   React.useEffect(() => () => clearTimeout(timer.current), [])
-  const take = () => {
-    const paper = ref.current?.closest<HTMLElement>('.rc-paper')
-    if (!paper) return Promise.resolve(null)
-    shot.current ??= import('./snap')
-      .then(({ paperCanvas }) => paperCanvas(paper, { scale: 3, skip: true }))
-      .then((c) => new Promise<Blob | null>((ok) => c.toBlob(ok, 'image/png')))
-      .catch(() => null)
-    return shot.current
-  }
-  const onClick = async () => {
-    const blob = await take()
-    shot.current = null
-    if (!blob) return
-    const png = new File([blob], file, { type: 'image/png' })
-    if (typeof navigator.canShare === 'function' && navigator.canShare({ files: [png] })) {
-      return navigator.share({ files: [png], title, text: `${title}\n${HOME_URL}` }).catch(() => {})
-    }
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(png)
-    a.download = file
-    document.body.appendChild(a)
-    a.click()
-    a.remove()
-    setTimeout(() => URL.revokeObjectURL(a.href), 1000)
-    setDone(true)
+  const post = () => window.open(`https://x.com/intent/post?${new URLSearchParams({ text, url: HOME_URL })}`, '_blank', 'noopener,noreferrer')
+  const copy = async () => {
+    if (!(await navigator.clipboard.writeText(HOME_URL).then(() => true, () => false))) return
+    setCopied(true)
     clearTimeout(timer.current)
-    timer.current = setTimeout(() => setDone(false), 2000)
+    timer.current = setTimeout(() => setCopied(false), 2000)
   }
   return (
-    <button
-      ref={ref}
-      type="button"
-      data-snap="skip"
-      onPointerDown={() => void take()}
-      onClick={() => void onClick()}
-      className="inline-flex items-center gap-1.5 rounded-full border border-border px-3.5 py-2 text-[13px] font-medium transition-colors hover:bg-card"
-    >
-      <ShareNetworkIcon className="size-4" />
-      {done ? '保存しました' : 'シェア'}
-    </button>
+    <DropdownMenu>
+      <DropdownMenuTrigger aria-label={copied ? 'リンクをコピーしました' : 'シェア'} className="inline-flex size-10 items-center justify-center rounded-full border border-border transition-colors hover:bg-card">
+        {copied ? <CheckIcon className="size-5" /> : <ShareNetworkIcon className="size-5" />}
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="center" className="w-auto">
+        <DropdownMenuItem onClick={post}>
+          <XLogoIcon />
+          Xでシェア
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => void copy()}>
+          <LinkIcon />
+          リンクをコピー
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 
@@ -125,7 +105,7 @@ const PRINT_AT = COUNT_ALL_MS + READ_MS
 
 /** 段を進める。数え上げ直す（key が変わる＝年度や額が変わる）たびに count へ戻し、数え終えて読む間をおいてから print にする。
  * 見せるものは常に一つにするため、数えている間は紙を出さない。reduced-motion では最初から print */
-function usePhase(key: string, hold: boolean) {
+function usePhase(key: string) {
   const [phase, setPhase] = React.useState<Phase>(() => (reduced() ? 'print' : 'count'))
   const [from, setFrom] = React.useState(key)
   if (from !== key) {
@@ -134,10 +114,9 @@ function usePhase(key: string, hold: boolean) {
   }
   React.useEffect(() => {
     if (reduced()) return setPhase('print')
-    if (hold) return
     const t = setTimeout(() => setPhase('print'), PRINT_AT)
     return () => clearTimeout(t)
-  }, [key, hold])
+  }, [key])
   return phase
 }
 
@@ -200,7 +179,7 @@ const PRINT_EASE = (p: number) => 1 - Math.pow(1 - p, 1.6)
 const FEED_PAD = 28
 
 /** 一枚の紙。grow: 差し出し口から高さ 0 から伸びて出る（上から順に見える）。still: 動かさない。reduced-motion では動かさずに終わりの姿にする */
-function Strip({ mode, children }: { mode: 'grow' | 'still'; children: React.ReactNode }) {
+function Strip({ mode, joined, children }: { mode: 'grow' | 'still'; joined: boolean; children: React.ReactNode }) {
   const ref = React.useRef<HTMLDivElement>(null)
   React.useLayoutEffect(() => {
     const el = ref.current
@@ -209,99 +188,156 @@ function Strip({ mode, children }: { mode: 'grow' | 'still'; children: React.Rea
     return () => a.cancel()
   }, [mode])
   return (
-    <div ref={ref} data-latest className="rc-strip">
+    <div ref={ref} data-latest className={`rc-strip${joined ? ' rc-joined' : ''}`}>
       {children}
     </div>
   )
 }
 
-/** 床に積んだ紙を片付ける（落とす立体を読んだあとだけ入る）。札を外すときに呼ぶ */
-let sweep: (() => void) | null = null
+/** 押し出された紙を描く立体の、紙の左右の余白（床で折り重なると横に少しずれる） */
+const RIBBON_MARGIN = 48
+/** 新しい紙の下端から床までに、少なくとも空ける高さ */
+const RIBBON_GAP = 40
+/** 刷った紙の絵（ribbon3d.ts に貼る）。刷り終えたときに写しておき、押し出されたら使う */
+const pictures = new Map<number, HTMLCanvasElement>()
 
-/** 切り離した前のレシート。差し出し口の下の同じ場所に置いたまま、紙を写した立体（fall3d.ts、初めて紙を刷った時点で先に読む）に差し替えて、
- * 丸まりながら床（画面の下端）へ落とす。落ちた紙は札を外すまで床に積んでおく。立体の最初の姿が出てから DOM の紙を隠す。WebGL が使えなければ、落とさずに消す */
-function Falling({ onDone, children }: { onDone: () => void; children: React.ReactNode }) {
-  const ref = React.useRef<HTMLDivElement>(null)
-  const done = React.useRef(onDone)
-  done.current = onDone
+/** 紙を写す（差し出し口の影は .rc-print の上端に別に付けるので、紙には描かない） */
+const picture = async (el: HTMLElement) => (await import('./snap')).paperCanvas(el, { shade: false })
+
+/** 押し出された前の紙（新しい順）。今出ている紙の下端に続く1本の紙として、真下へ垂れて床で折り重なる立体（ribbon3d.ts）に描く。
+ * 立体を描くまで（読み込み・絵を写す間）は、いちばん新しい一枚を DOM のまま同じ場所に出しておく。WebGL が使えなければ DOM のまま出す */
+function Ribbon({ papers, onHeight, children }: { papers: Older[]; onHeight: (h: number) => void; children: React.ReactNode }) {
+  const wrap = React.useRef<HTMLDivElement>(null)
+  const canvas = React.useRef<HTMLCanvasElement>(null)
+  /** 立体に描き終えた、いちばん新しい紙の id（それまでは DOM のまま出す） */
+  const [drawn, setDrawn] = React.useState<number | null>(null)
+  const [failed, setFailed] = React.useState(false)
+  const list = React.useRef(papers)
+  list.current = papers
+  const height = React.useRef(onHeight)
+  height.current = onHeight
   React.useEffect(() => {
     // three.js はサーバーの bundle に入れない（effect はサーバーでは走らないが、分岐が無いと動的 import の chunk が入る）
     if (import.meta.env.SSR) return
     let alive = true
-    let fall: { play: () => Promise<void>; dispose: () => void } | null = null
+    let raf = 0
+    let stage: ReturnType<typeof import('./ribbon3d').ribbon> = null
+    const taking = new Set<number>()
     void (async () => {
-      const el = ref.current?.querySelector<HTMLElement>('.rc-paper')
       try {
-        if (!el) throw new Error('紙がありません')
-        const { paperCanvas, fallPaper, clearFloor } = await import('./fall3d')
-        sweep = clearFloor
-        const texture = await paperCanvas(el)
-        if (!alive) return
-        fall = fallPaper(texture, el.getBoundingClientRect(), FALL_MS)
-        if (!fall) throw new Error('WebGL が使えません')
-        ref.current!.style.visibility = 'hidden'
-        await fall.play()
+        const { ribbon, pileExtent } = await import('./ribbon3d')
+        if (!alive || !canvas.current) return
+        stage = ribbon(canvas.current, RIBBON_MARGIN)
+        if (!stage) throw new Error('WebGL が使えません')
+        const print = canvas.current.parentElement!.parentElement!
+        let last = ''
+        const frame = () => {
+          raf = requestAnimationFrame(frame)
+          const top = list.current[0]
+          // 絵の無い紙（刷り終える前に押し出された紙）は、DOM の写しから写す。写し終えるまで描かない
+          if (top && !pictures.has(top.r.id)) {
+            const el = wrap.current?.querySelector<HTMLElement>('.rc-paper')
+            if (el && !taking.has(top.r.id)) {
+              taking.add(top.r.id)
+              void picture(el).then((c) => pictures.set(top.r.id, c), () => {})
+            }
+            return
+          }
+          const sheets = list.current.flatMap((o) => {
+            const texture = pictures.get(o.r.id)
+            return texture ? [{ key: String(o.r.id), texture, height: o.height }] : []
+          })
+          const strip = print.querySelector<HTMLElement>(':scope > [data-latest]')
+          const attach = strip?.offsetHeight ?? 0
+          const incoming = strip?.scrollHeight ?? top?.height ?? 0
+          const L = sheets.reduce((n, x) => n + x.height, 0)
+          const pile = pileExtent(L)
+          const floor = incoming + RIBBON_GAP + pile.above
+          const h = Math.ceil(floor + pile.below)
+          const width = print.clientWidth
+          const key = [sheets.map((x) => x.key).join(','), attach, floor, width].join(':')
+          if (key === last) return
+          last = key
+          height.current(h)
+          canvas.current!.style.height = `${h}px`
+          stage!.draw(sheets, attach, floor, width, width + RIBBON_MARGIN * 2, h)
+          setDrawn(top?.r.id ?? null)
+        }
+        frame()
       } catch {
-        // 落とせないときは、そのまま消す
+        if (alive) setFailed(true)
       }
-      fall?.dispose()
-      fall = null
-      if (alive) done.current()
     })()
     return () => {
       alive = false
-      fall?.dispose()
-      fall = null
+      cancelAnimationFrame(raf)
+      stage?.dispose()
     }
   }, [])
+  const top = papers[0]
   return (
-    <div ref={ref} className="rc-falling" aria-hidden="true" inert>
-      {children}
+    <div ref={wrap} className="rc-ribbon" aria-hidden="true" inert>
+      <canvas ref={canvas} className="rc-ribbon-canvas" style={{ left: -RIBBON_MARGIN, width: `calc(100% + ${RIBBON_MARGIN * 2}px)` }} />
+      {/* 立体を描くまでは、いちばん新しい一枚を DOM のまま差し出し口の下に出しておく */}
+      {top && (drawn !== top.r.id || failed) ? <div className="rc-ribbon-dom">{children}</div> : null}
     </div>
   )
 }
 
+/** 押し出された前の紙と、押し出されたときの高さ */
+type Older = { r: Printed; height: number }
+
+let printedId = 0
+
 /** 刷った一枚の紙（数え上げの key と、その年度のデータ） */
-type Printed = { key: string; year: number; v: YearView }
+type Printed = { id: number; key: string; year: number; v: YearView }
 
 export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: { name: string; v: YearView; year: number; pop: number | null; base: string; detailHref: string; head: React.ReactNode }) {
   const settled = v.word === '決算'
   const what = `${yearName(year)}の${settled ? '決算' : '予算'}`
   const counted = `${year}:${v.total}`
   const feed = React.useRef<HTMLDivElement>(null)
-  /** 刷った紙（いま出ている一枚）と、切り離して落としている前の紙 */
+  /** 刷った紙（いま出ている一枚）と、押し出された前の紙（新しい順。床で折り重なる） */
   const [printed, setPrinted] = React.useState<Printed | null>(null)
-  const [falling, setFalling] = React.useState<{ r: Printed; height: number } | null>(null)
-  const fell = React.useCallback(() => setFalling(null), [])
+  const [older, setOlder] = React.useState<Older[]>([])
+  const [ribbonH, setRibbonH] = React.useState(0)
   const [seen, setSeen] = React.useState(counted)
   if (seen !== counted) {
-    // 数え直す（年度や額が変わる）ときは、出ている紙を差し出し口で切り離して落とし、新しい紙は数え終えてから一から刷る
+    // 数え直す（年度や額が変わる）ときは、出ている紙を切らずに残し、数え終えてから続けて刷る。前の紙は新しい紙に押し出される。
+    // 新しい年度に紙を出せない（人口が無い）ときや reduced-motion では、前の紙を残さない
     setSeen(counted)
     const height = feed.current?.querySelector<HTMLElement>('[data-latest]')?.scrollHeight ?? 0
-    // 新しい年度に紙を出せない（人口が無い）ときは落とさずに消す。落とす紙が描かれず、落ち終えた合図が来ないため
-    const drop = !!pop && printed && height > 0 && !reduced()
-    setFalling(drop ? { r: printed, height } : null)
+    const keep = !!pop && printed && height > 0 && !reduced()
+    // 床に積もる紙は4枚まで（それより古い紙は積もりの下で見えない）
+    setOlder(keep ? [{ r: printed, height }, ...older].slice(0, 4) : [])
     setPrinted(null)
   }
-  // 前の紙を落としている間は数えない。落ち終えた（落とせずに消した）ときから数える（見せるものは常に一つ）
-  const hold = falling != null
-  const total = useCountUp(v.total, 0, hold)
-  const per = useCountUp(pop ? Math.round(v.total / pop) : 0, COUNT_MS, hold)
+  const total = useCountUp(v.total)
+  const per = useCountUp(pop ? Math.round(v.total / pop) : 0, COUNT_MS)
   const receipt = pop ? perHeadParts(v.fields, v.total, pop) : null
   const card = React.useRef<HTMLElement>(null)
-  const phase = usePhase(counted, hold)
+  const phase = usePhase(counted)
   React.useEffect(() => {
-    if (phase === 'print' && pop && printed?.key !== counted) setPrinted({ key: counted, year, v })
+    if (phase === 'print' && pop && printed?.key !== counted) setPrinted({ id: ++printedId, key: counted, year, v })
   }, [phase, counted])
-  // 紙を刷ったら、切り離して落とす立体（three.js）を先に読んでおく。年度を替えた瞬間に読み込みを待たず落とし始め、数え上げと重ねない
-  React.useEffect(() => {
-    if (import.meta.env.SSR || !printed || reduced()) return
-    void import('./fall3d').catch(() => {})
-  }, [printed])
-  // 札を外したら（まちを替えた・頁を移った）、床に積んだ紙も片付ける
-  React.useEffect(() => () => sweep?.(), [])
   /** いま刷っている紙の key（刷り終えるまで）。頁送りと紙の動きに使う */
   const printing = phase === 'print' && printed?.key === counted ? counted : null
+  // 刷り終えたら、その紙の絵を写し、押し出す立体（three.js）を先に読んでおく。年度を替えた瞬間に読み込みを待たず続けて刷る
+  React.useEffect(() => {
+    if (import.meta.env.SSR || !printed || reduced()) return
+    void import('./ribbon3d').catch(() => {})
+    if (printing || pictures.has(printed.id)) return
+    const t = setTimeout(() => {
+      const el = feed.current?.querySelector<HTMLElement>('[data-latest] .rc-paper')
+      if (el) void picture(el).then((c) => pictures.set(printed.id, c), () => {})
+    }, PRINT_MS + 100)
+    return () => clearTimeout(t)
+  }, [printed, printing])
+  // 床に積もらなくなった紙の絵は捨てる
+  React.useEffect(() => {
+    const live = new Set([printed?.id, ...older.map((o) => o.r.id)])
+    for (const id of pictures.keys()) if (!live.has(id)) pictures.delete(id)
+  }, [printed, older])
   useFollow(phase, printing, card, feed)
   /** 一枚の紙の中身 */
   const paper = (r: Printed) => {
@@ -343,10 +379,10 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
         <span className="text-[15px]">1人あたりの合計</span>
         <Yen n={sum} className="text-[28px] font-semibold text-primary" />
       </p>
-      {/* 読み取るとまちの頁を開く QR と、このレシートを画像にして渡すボタン（添えるリンクはホーム） */}
+      {/* 読み取るとまちの頁を開く QR と、このレシートをシェアするボタン（X かリンクのコピー。リンクはホーム） */}
       <div className="mt-5 flex items-center justify-center gap-5">
         <Qr url={detailHref} />
-        <Share title={`${name}の1人あたりのレシート（${reiwa(r.year)}）｜風土記`} file={`fudoki-${name}-${r.year}.png`} />
+        <Share text={`${name}の1人あたりのレシート（${reiwa(r.year)}）｜風土記`} />
       </div>
     </div>
     )
@@ -365,7 +401,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
           </div>
           {pop ? (
             // 予算を数え終えてから出して数える（数え直すたびに出し直す）
-            <div key={counted} className="rm-per rm-divider pt-4 sm:pt-5" style={{ animationDelay: `${COUNT_MS}ms`, animationPlayState: hold ? 'paused' : undefined }}>
+            <div key={counted} className="rm-per rm-divider pt-4 sm:pt-5" style={{ animationDelay: `${COUNT_MS}ms` }}>
               <dt className="text-[clamp(17px,4.6vw,22px)] opacity-80">1人あたりに直すと</dt>
               <dd className="mt-1.5 text-[clamp(28px,8vw,60px)] leading-none font-semibold">
                 <Yen n={per} />
@@ -383,18 +419,18 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
         {receipt ? <div className="rm-slot" aria-hidden="true" /> : null}
       </section>
       {pop ? (
-        <div ref={feed} className="rc-feed" style={falling && !printed ? { minHeight: falling.height } : undefined}>
+        <div ref={feed} className="rc-feed" style={older.length ? { minHeight: Math.max(ribbonH, older[0]!.height) } : undefined}>
           <div className="rc-print">
             {printed ? (
-              <Strip key={printed.key} mode={printed.key === printing ? 'grow' : 'still'}>
+              <Strip key={printed.id} mode={printed.key === printing ? 'grow' : 'still'} joined={older.length > 0}>
                 {paper(printed)}
               </Strip>
             ) : null}
-            {/* 切り離した前の紙は、丸まりながら落ちて消える */}
-            {falling ? (
-              <Falling key={falling.r.key} onDone={fell}>
-                {paper(falling.r)}
-              </Falling>
+            {/* 押し出された前の紙は、今の紙の下端に続いて垂れ、床で折り重なる */}
+            {older.length ? (
+              <Ribbon papers={older} onHeight={setRibbonH}>
+                {paper(older[0]!.r)}
+              </Ribbon>
             ) : null}
           </div>
         </div>

@@ -1,8 +1,7 @@
-// 紙の DOM（.rc-paper）を canvas に写す。切り離して落とす紙（fall3d.ts）の絵と、シェアで渡すレシートの画像（receipt.tsx の Share）に使う。
-// three.js を読まずに使えるよう、落とす処理とは別の module にしている
+// 紙の DOM（.rc-paper）を canvas に写す。押し出された前のレシートを続いた1本の紙として描く立体（ribbon3d.ts）の絵に使う
 
-/** 紙の DOM（.rc-paper）を canvas に写す。scale は 1 CSS px あたりの画素（既定は画面の倍率、2 まで）。skip なら紙の上のボタンを写さない。字は1字ずつ、画面と同じ書体・色・位置に書く。点線・破線・アイコン・QR も同じ位置に描く */
-export async function paperCanvas(el: HTMLElement, { scale, skip = false }: { scale?: number; skip?: boolean } = {}): Promise<HTMLCanvasElement> {
+/** 紙の DOM（.rc-paper）を canvas に写す。scale は 1 CSS px あたりの画素（既定は画面の倍率、2 まで）。shade なら紙の頭に差し出し口の影を描く。字は1字ずつ、画面と同じ書体・色・位置に書く。点線・破線・アイコン・QR も同じ位置に描く */
+export async function paperCanvas(el: HTMLElement, { scale, shade = true }: { scale?: number; shade?: boolean } = {}): Promise<HTMLCanvasElement> {
   const box = el.getBoundingClientRect()
   const dpr = scale ?? Math.min(window.devicePixelRatio || 1, 2)
   const canvas = document.createElement('canvas')
@@ -14,13 +13,15 @@ export async function paperCanvas(el: HTMLElement, { scale, skip = false }: { sc
   g.fillStyle = page.backgroundColor
   g.fillRect(0, 0, box.width, box.height)
   // 紙の頭は差し出し口の影に入る（receipt.css の .rc-paper::before）
-  const shade = g.createLinearGradient(0, 0, 0, 40)
-  shade.addColorStop(0, 'black')
-  shade.addColorStop(0.45, 'transparent')
-  g.globalAlpha = 0.18
-  g.fillStyle = shade
-  g.fillRect(0, 0, box.width, 40)
-  g.globalAlpha = 1
+  if (shade) {
+    const fade = g.createLinearGradient(0, 0, 0, 40)
+    fade.addColorStop(0, 'black')
+    fade.addColorStop(0.45, 'transparent')
+    g.globalAlpha = 0.18
+    g.fillStyle = fade
+    g.fillRect(0, 0, box.width, 40)
+    g.globalAlpha = 1
+  }
   const line = (x0: number, y: number, x1: number, color: string, dash: number[]) => {
     g.save()
     g.strokeStyle = color
@@ -59,8 +60,6 @@ export async function paperCanvas(el: HTMLElement, { scale, skip = false }: { sc
     if (!(node instanceof Element)) return
     const s = getComputedStyle(node)
     if (s.display === 'none' || s.visibility === 'hidden') return
-    // 画像にして渡すときは、紙の上のボタン（data-snap="skip"）を写さない
-    if (skip && node instanceof HTMLElement && node.dataset.snap === 'skip') return
     const r = node.getBoundingClientRect()
     const x = r.left - box.left
     const y = r.top - box.top

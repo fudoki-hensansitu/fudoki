@@ -1,5 +1,6 @@
 /* ホームのうちのまちの札（レジに見立てる）と、その下端の差し出し口から出てくるレシート。
- * 紙は札のすぐ下に敷き、差し出し口の線から下だけを見せる（.rc-feed が切り口）。紙は高さを伸ばして上から順に見せ、刷り直すときは前の紙を切り離して丸まりながら落とす */
+ * 紙は札のすぐ下に敷き、差し出し口の線から下だけを見せる（.rc-feed が切り口）。紙は高さを伸ばして上から順に見せ、刷り直すときは切らずに続けて刷り、
+ * 押し出された前の紙は立体（receipt.tsx の Ribbon）で垂らして床に積む */
 .rc-feed {
   position: relative;
   /* 上端を札の差し出し口の溝の中心に重ねる（.rm-slot の bottom + 高さの半分） */
@@ -30,21 +31,36 @@
   -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 8px) no-repeat, conic-gradient(from -45deg at bottom, transparent 90deg, #000 0) bottom / 14px 8px repeat-x;
   mask: linear-gradient(#000 0 0) top / 100% calc(100% - 8px) no-repeat, conic-gradient(from -45deg at bottom, transparent 90deg, #000 0) bottom / 14px 8px repeat-x;
 }
-/* 紙の頭は差し出し口の影に入る */
-.rc-paper::before {
+/* 差し出し口の影。紙の頭はここを通るので、紙ではなく差し出し口の下に付ける（続けて刷った紙が下へ送られても、影は口に残る） */
+.rc-print::after {
   content: '';
   position: absolute;
   inset: 0 0 auto;
   height: 40px;
   pointer-events: none;
+  z-index: 1;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.04) 45%, transparent);
+}
+/* 下に前の紙が続いているときは、今の紙の下端をちぎらない（1本の続いた紙） */
+.rc-joined .rc-paper {
+  -webkit-mask: none;
+  mask: none;
 }
 /* 一枚の紙の入れ物（receipt.tsx の Strip）。高さを 0 から伸ばして刷り出す */
 .rc-strip {
   overflow: hidden;
 }
-/* 切り離した前の紙（receipt.tsx の Falling）。立体に差し替えるまで、差し出し口の下の同じ場所に置いておく */
-.rc-falling {
+/* 押し出された前の紙（receipt.tsx の Ribbon）。立体は紙の左右に余白を持たせて、.rc-print の上端から敷く */
+.rc-ribbon {
+  position: absolute;
+  inset: 0 0 auto;
+}
+.rc-ribbon-canvas {
+  position: absolute;
+  top: 0;
+}
+/* 立体を描くまで、いちばん新しい前の紙を DOM のまま同じ場所に出す */
+.rc-ribbon-dom {
   position: absolute;
   inset: 0 0 auto;
 }

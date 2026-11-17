@@ -9,5 +9,3 @@ export const READ_MS = 900
 export const PRINT_MS = 3600
 /** 札を画面に入れるために頁を送る */
 export const SCROLL_MS = 1400
-/** 刷り直すとき、前のレシートを差し出し口で切り離し、丸まりながら床へ落として積む。落ち終えてから数え直す */
-export const FALL_MS = 1800
