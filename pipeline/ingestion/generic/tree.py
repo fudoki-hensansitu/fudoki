@@ -2218,6 +2218,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                                  and not abolished.module.same_row(logical, previous, item, _cell))
                         and previous.role == item.role == 'node' and item.code is None and item.name
                         and not item.amounts and not ABOLISHED.fullmatch(item.name)
+                        # (a title with no number is a title of its own: `unnumbered_titles`)
+                        and not (item.level == -1 and document_quirk('unnumbered_titles') is not None)
                         # (a line that opens with a bracket starts an item of its own: `bracketed_subjects`)
                         and not (bracketed is not None and item.lines and bracketed.module.marked(item.lines[0]))
                         # (a name wrapped so that its amount is printed on the last line, none on the code's line: `1 居宅サービス` / `事業費 3,596,885`)

@@ -33,6 +33,7 @@
 - 科目の欄: 深い欄の罫をまたぐ名前（`names_in_own_column`。武蔵野・多摩）
 - 続きの頁: 開いている節の番号だけの刷り直し（`repeated_code_at_top`）と、無くした項の番号 `0`（`zero_coded_drops`。どちらも狛江の歳入）
 - 見開きの右頁の大きなずれ: 行の罫が 8pt を超えて下に刷られた右頁（`far_shifted_spread_pages`。清瀬の歳入）
+- 番号の無い題字: 無くした項の題字（`unnumbered_titles`。東久留米の歳入）
 - スキャンの枠と見出し: 数 pt ずらして積んだ表（`stacked_tables_apart`。国分寺・中央・台東・小笠原）、見開きの左右の頁ごとに積んだ表（`spread_stacked_tables`。小金井）、傾いたスキャンの短く読んだ罫（`skewed_frames`）、一部だけ読んだ欄の見出し（`partial_headings`）、罫と見出しのインク（`rule_ink`）、しみ（`specks`）、括弧の読み違いの語（`bracket_marks`）、読み落とした名前の字の幅（`lost_name_characters`。以上国分寺）、罫が余白だけを切る金額（`padded_runs`。調布）
 
 `partial_headings` は既定に入っていたため、選ばない区（千代田・中野・葛飾・八王子など）の欄の見出しを取り違えて表を止めていた。10 か所以上の自治体で効く判定（年齢の「1歳6箇月」・単位だけの行・罫の切れ端をつなぐ・見出しの1字の読み違いなど）は本体に残す。
