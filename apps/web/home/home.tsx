@@ -15,6 +15,7 @@ import { reiwa, yearName } from '../jurisdiction/types'
 import { ReceiptMachine } from './receipt'
 import { useMyTown, type Town } from './towns'
 import { OtherTowns, AskTown, Intro } from './onboarding'
+import { Title } from '@/components/ui/title'
 
 export interface Featured {
   code: string
@@ -138,7 +139,7 @@ function Dashboard({ c }: { c: Ctx }) {
         <div className="flex items-start gap-4">
           <Emblem code={town.code} name={town.name} className="size-14 rounded-2xl border-0 p-2" />
           <div className="min-w-0 flex-1">
-            <h2 className="text-2xl font-semibold sm:text-[28px]">{town.name}</h2>
+            <Title size="h1" as="h2">{town.name}</Title>
             <p className="mt-0.5 truncate text-sm opacity-80">{c.vision}</p>
           </div>
           {/* 年度は数字の頭に効くので上に、頁へ進む導線は数字を読んだあとの下に置く */}
@@ -176,7 +177,7 @@ function FeaturedTowns({ featured, listed }: { featured: Featured[]; listed: boo
   if (!items.length && !listed) return null
   return (
     <section className="mt-10" aria-labelledby="featured-towns">
-      <h2 id="featured-towns" className="mb-3 text-[17px] font-semibold">他のまちを見る</h2>
+      <Title size="h3" as="h2" id="featured-towns" className="mb-3">他のまちを見る</Title>
       {/* 住んでいるまちは変えずに、そのまちの頁を開く（緑の札の「住んでいるまちを選ぶ」とは別の、地のままの検索欄） */}
       <OtherTowns className="mb-3" />
       <ul className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">

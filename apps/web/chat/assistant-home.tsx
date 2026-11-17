@@ -4,6 +4,7 @@ import { ChartBarIcon, ScalesIcon } from '@phosphor-icons/react'
 import { Mark } from '../nav/site-nav'
 import { StartForm } from './start-form'
 import { myTownContext } from '../home/towns'
+import { Title } from '@/components/ui/title'
 
 /** 入力欄の placeholder に打っては消して見せる問いの例。収録のある自治体で答えられるものにする */
 const TYPED_EXAMPLES = [
@@ -61,9 +62,9 @@ export function AssistantHome({ sitekey }: { sitekey: string }) {
       <div className="flex size-20 items-center justify-center rounded-full bg-accent">
         <Mark className="size-10 text-primary" />
       </div>
-      <h1 className="mt-6 mb-8 text-center text-2xl leading-[1.4] font-semibold tracking-[0.02em] sm:text-[32px]">
+      <Title size="h1" className="mt-6 mb-8 text-center">
         まちの何が知りたいですか？
-      </h1>
+      </Title>
       <div className="w-full">
         <StartForm
           sitekey={sitekey}

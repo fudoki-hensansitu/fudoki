@@ -4,6 +4,7 @@ import * as React from 'react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
 import { reiwa, type LocalFinance } from '../types'
 import { Amt, yenParts } from './amount'
+import { Title } from '@/components/ui/title'
 
 const YEARS = 5
 const r = (y: number) => `R${y - 2018}`
@@ -18,10 +19,10 @@ export function Tag({ children }: { children: React.ReactNode }) {
 function Head({ title, term, tag }: { title: string; term?: string; tag: React.ReactNode }) {
   return (
     <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-      <h2 className="text-[17px] font-semibold">
+      <Title size="h3" as="h2">
         {title}
         {term ? <span className="ml-1.5 text-[13px] font-normal text-muted-foreground">{term}</span> : null}
-      </h2>
+      </Title>
       {tag}
     </div>
   )
