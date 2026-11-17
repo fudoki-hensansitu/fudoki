@@ -1,21 +1,32 @@
 // ホームのうちのまちの札を、three.js で立体のレシートの機械として描き、平らな札から機械になる動きと、紙を送る動きを付ける。
-// 数字・ボタンは DOM の前面（body）に重ねたまま、ここは本体の形と光と動きだけを描く。
+// 形は Blender で組んだ model（public/home/receipt-machine.glb、組み方は brand/receipt_machine.py）。数字・ボタンは DOM の前面（body）に重ねたまま、
+// ここは本体の形と光と動きだけを描く。
+// model は基準の大きさ（幅 600・前面の高さ 420・奥行き 165）で組んであり、中心の帯（|x|<200・|y|<110）より外の頂点を平行に動かして、
+// DOM の前面の大きさに伸ばす（9 分割。角の丸み・窓の縁・足は形を保つ）。差し出し口だけは紙の幅に合わせて横に一様に縮める。
 // 本体は正面から見る正射影で、群れ（rig）を手前へ θ だけ倒して天板を見せる。前面の投影の高さ（H·cosθ）が DOM の前面の高さに、
-// 天板の投影の高さ（D·sinθ）が DOM の天板（.rm-top、--rm-top）の高さに一致するよう、毎フレーム合わせる。
+// 天板の投影の高さ（D·sinθ）が DOM の天板の場所（.rm-top、--rm-top）の高さに一致するよう、毎フレーム合わせる。
 // 動きは AnimationClip で持ち、AnimationMixer で進める。動いている間だけ毎フレーム描き、止まっているときは大きさが変わったときだけ描く
 import * as THREE from 'three'
-import { RoundedBoxGeometry } from 'three/examples/jsm/geometries/RoundedBoxGeometry.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
 import { MORPH_MS, PRINT_MS } from './motion'
 
-/** 天板の見える高さ（px）。立体になり切ったときの値 */
-export const TOP = 40
-/** 立体になり切ったときに倒す角度 */
-const THETA = (14 * Math.PI) / 180
-/** 縁の切れを防ぐ余白（px） */
-const PAD = 12
-/** 角の丸み（px）。平らな札（DOM）の角と同じ */
-const RADIUS = 24
+const MODEL_URL = '/home/receipt-machine.glb'
+/** model の基準の大きさ（brand/receipt_machine.py の W・H・D） */
+const W0 = 600
+const H0 = 420
+const D0 = 165
+/** 伸ばす帯の半幅。この内側には頂点が無い */
+const BAND_X = 200
+const BAND_Y = 110
+/** 差し出し口の溝の幅（紙の最大幅と同じ） */
+const SLOT_W = 440
+/** 立体になり切ったときに倒す角度。天板（紙の蓋）がよく見えるよう、やや上から見下ろす */
+const THETA = (22 * Math.PI) / 180
+/** 立体になり切ったときの天板の見える高さ（px） */
+const TOP = D0 * Math.sin(THETA)
+/** 縁・足の切れを防ぐ余白（px） */
+const PAD = 14
 /** 平らな札のときの奥行きの倍率（0 だと面が潰れて描けない） */
 const FLAT_DEPTH = 0.02
 
@@ -36,17 +47,23 @@ const morphClip = () =>
   new THREE.AnimationClip('morph', MORPH_S, [
     eased('.scale[z]', FLAT_DEPTH, 1, 0, MORPH_S * 0.8),
     eased('.rotation[x]', 0, THETA, MORPH_S * 0.1, MORPH_S * 0.9),
-    eased('deck.position[y]', -14, 0, MORPH_S * 0.6, MORPH_S * 0.4),
+    eased('deck.position[y]', -12, 0, MORPH_S * 0.6, MORPH_S * 0.4),
   ])
 
 /** 紙送り。ボタンが沈んで戻り、刷っている間は灯がゆっくり明滅し、刷り終えたら灯ったままにする */
 const printClip = () => {
   const blink = [0, 0.14, 0.31, 0.47, 0.64, 0.81, 1].map((f) => f * PRINT_S)
   return new THREE.AnimationClip('print', PRINT_S, [
-    new THREE.NumberKeyframeTrack('btn.position[y]', [0, 0.25, 0.7], [2, -3, 2]),
-    new THREE.NumberKeyframeTrack('lamp.material.emissiveIntensity', blink, [0.2, 1.6, 0.6, 1.6, 0.6, 1.6, 1.2]),
+    new THREE.NumberKeyframeTrack('btn.position[y]', [0, 0.25, 0.7], [0, -4, 0]),
+    new THREE.NumberKeyframeTrack('lamp.material.emissiveIntensity', blink, [0.15, 1.4, 0.4, 1.4, 0.4, 1.4, 1]),
   ])
 }
+
+/** 基準の座標 v を、中心の帯より外だけ平行に動かす（帯の内側に頂点は無い） */
+const stretch = (v: number, band: number, d: number) => (v > band ? v + d : v < -band ? v - d : v * ((band + d) / band))
+
+/** 頂点を伸ばして使う mesh。base は基準の大きさの座標（rig の座標で、mesh の変換を焼き込んだもの） */
+type Stretchy = { mesh: THREE.Mesh; base: Float32Array; kind: 'nine' | 'slot' }
 
 export type Machine = {
   /** 平らな札から機械になる。instant なら動かさずに終わりの姿にする */
@@ -56,9 +73,11 @@ export type Machine = {
   stop(): void
 }
 
-/** host に canvas を置き、body（DOM の前面）の大きさに合わせて描く。描けなければ null（CSS の本体のまま）。
+/** host に canvas を置き、body（DOM の前面）の大きさに合わせて描く。描けない・model を読めなければ null（CSS の本体のまま）。
  * 途中で WebGL のコンテキストを失ったら lost を呼ぶ（呼ばれた側が後始末して CSS の本体へ戻す） */
-export function mountMachine(host: HTMLElement, body: HTMLElement, lost: () => void): Machine | null {
+export async function mountMachine(host: HTMLElement, body: HTMLElement, lost: () => void): Promise<Machine | null> {
+  const gltf = await new GLTFLoader().loadAsync(MODEL_URL).catch(() => null)
+  if (!gltf || !host.isConnected) return null
   let renderer: THREE.WebGLRenderer
   try {
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
@@ -77,52 +96,100 @@ export function mountMachine(host: HTMLElement, body: HTMLElement, lost: () => v
   const pmrem = new THREE.PMREMGenerator(renderer)
   const env = pmrem.fromScene(new RoomEnvironment(), 0.04).texture
   scene.environment = env
-  scene.environmentIntensity = 0.55
-  // 色は DESIGN.md の token（--brand・--brand-fill-hover）を読む
+  // 艶を抑えた樹脂に見せるため、映り込みは弱く、光は左上から柔らかく
+  scene.environmentIntensity = 0.35
+  const white = new THREE.Color(1, 1, 1)
+  const key = new THREE.DirectionalLight(white, 1.3)
+  key.position.set(-0.5, 1, 0.8)
+  scene.add(key, new THREE.HemisphereLight(white, white.clone().multiplyScalar(0.4), 0.6))
+
+  // 色は DESIGN.md の token（--brand・--page）から作り、model の material に名前で当てる
   const css = getComputedStyle(host)
   const token = (name: string) => new THREE.Color(css.getPropertyValue(name).trim())
-  const white = new THREE.Color(1, 1, 1)
-  const key = new THREE.DirectionalLight(white, 1.6)
-  key.position.set(-0.6, 1, 0.9)
-  scene.add(key, new THREE.AmbientLight(white, 0.25))
-
   const brand = token('--brand')
-  const glow = brand.clone().lerp(white, 0.6)
-  const shell = new THREE.MeshPhysicalMaterial({ color: brand, roughness: 0.42, clearcoat: 0.55, clearcoatRoughness: 0.3 })
-  // 前面は光を受けない札の色そのものにし、平らな札（DOM）と継ぎ目なく入れ替える
-  const face = new THREE.MeshBasicMaterial({ color: brand, toneMapped: false })
-  const knob = new THREE.MeshPhysicalMaterial({ color: token('--brand-fill-hover'), roughness: 0.35, clearcoat: 0.4 })
-  const led = new THREE.MeshStandardMaterial({ color: glow, emissive: glow, emissiveIntensity: 0.2 })
+  const black = new THREE.Color(0, 0, 0)
+  const look: Record<string, { color: THREE.Color; roughness: number; emissive?: THREE.Color }> = {
+    shell: { color: brand, roughness: 0.82 },
+    panel: { color: brand.clone().lerp(black, 0.45), roughness: 0.9 },
+    cover: { color: brand.clone().lerp(white, 0.07), roughness: 0.78 },
+    knob: { color: token('--page'), roughness: 0.7 },
+    led: { color: brand.clone().lerp(white, 0.6), roughness: 0.5, emissive: brand.clone().lerp(white, 0.6) },
+    slot: { color: brand.clone().lerp(black, 0.8), roughness: 0.95 },
+    rubber: { color: brand.clone().lerp(black, 0.75), roughness: 0.95 },
+  }
+  const materials = new Set<THREE.Material>()
+  const geometries = new Set<THREE.BufferGeometry>()
+  gltf.scene.updateMatrixWorld(true)
+  const meshes: THREE.Mesh[] = []
+  gltf.scene.traverse((o) => {
+    if ((o as THREE.Mesh).isMesh) meshes.push(o as THREE.Mesh)
+  })
+  // 部品の名前（body・cover・feet・slot・btn・lamp）で、mesh がどの部品の下にあるかを引く
+  const partOf = (m: THREE.Object3D) => {
+    for (let o: THREE.Object3D | null = m; o; o = o.parent) if (['body', 'cover', 'feet', 'slot', 'btn', 'lamp'].includes(o.name)) return o.name
+    return m.name.replace(/_\d+$/, '')
+  }
 
-  // BoxGeometry の面の順は +x, -x, +y, -y, +z（前面）, -z
-  const box = new THREE.Mesh(new THREE.BufferGeometry(), [shell, shell, shell, shell, face, shell])
-  // 天板の上の部品。anchor は天板の高さに置き、deck はせり上がる動き、btn・lamp は紙送りの動きを持つ
+  const rig = new THREE.Group()
+  const stretchy: Stretchy[] = []
+  // 天板の上の部品。anchor は天板の高さ、deck はせり上がる動き、btn・lamp は紙送りの動きを持つ
   const anchor = new THREE.Group()
   const deck = new THREE.Group()
   deck.name = 'deck'
-  const btn = new THREE.Mesh(new THREE.CylinderGeometry(15, 16, 8, 40), knob)
-  btn.name = 'btn'
-  btn.position.y = 2
-  const lamp = new THREE.Mesh(new THREE.SphereGeometry(4.5, 20, 12), led)
-  lamp.name = 'lamp'
-  lamp.position.y = 1
-  deck.position.y = -14
-  deck.add(btn, lamp)
+  deck.position.y = -12
   anchor.add(deck)
-  const rig = new THREE.Group()
+  rig.add(anchor)
+  /** btn・lamp の基準の据わる点（x・z）。y は天板の高さ（anchor）に置く */
+  const seats: { holder: THREE.Group; x: number; z: number }[] = []
+
+  for (const mesh of meshes) {
+    const part = partOf(mesh)
+    const mats = (Array.isArray(mesh.material) ? mesh.material : [mesh.material]) as THREE.MeshStandardMaterial[]
+    for (const m of mats) {
+      const l = look[m.name]
+      if (l) {
+        m.color.copy(l.color)
+        m.roughness = l.roughness
+        m.metalness = 0
+        if (l.emissive) m.emissive.copy(l.emissive)
+      }
+      materials.add(m)
+    }
+    geometries.add(mesh.geometry)
+    if (part === 'btn' || part === 'lamp') {
+      // 据わる点を holder に、mesh の基準の位置からの差は mesh に残す（動きは mesh の y と灯の明るさ）
+      const at = new THREE.Vector3().setFromMatrixPosition(mesh.matrixWorld)
+      const holder = new THREE.Group()
+      const geo = mesh.geometry.clone()
+      geometries.add(geo)
+      geo.applyMatrix4(new THREE.Matrix4().extractRotation(mesh.matrixWorld))
+      const m = new THREE.Mesh(geo, mesh.material)
+      m.name = part
+      holder.add(m)
+      holder.position.y = at.y - H0 / 2
+      seats.push({ holder, x: at.x, z: at.z })
+      deck.add(holder)
+      continue
+    }
+    // 頂点を rig の座標へ焼き込み、伸ばすときの基準として持つ
+    const geo = mesh.geometry.clone()
+    geometries.add(geo)
+    geo.applyMatrix4(mesh.matrixWorld)
+    const m = new THREE.Mesh(geo, mesh.material)
+    rig.add(m)
+    stretchy.push({ mesh: m, base: Float32Array.from(geo.getAttribute('position').array as ArrayLike<number>), kind: part === 'slot' ? 'slot' : 'nine' })
+  }
   rig.scale.z = FLAT_DEPTH
-  rig.add(box, anchor)
   scene.add(rig)
   const camera = new THREE.OrthographicCamera()
   const mixer = new THREE.AnimationMixer(rig)
   const timer = new THREE.Timer()
   timer.connect(document)
 
-  // 本体の大きさ（立体になり切ったときの寸法）。w・h は DOM の前面の幅と高さ
+  // w・h は DOM の前面の幅と高さ、H は立体になり切ったときの前面の高さ
   let w = 0
   let h = 0
   let H = 0
-  let D = 0
 
   /** 立体の度合い（rig の倒れと奥行き）に、前面の高さ・天板の高さ・canvas の位置を合わせて描く */
   const render = () => {
@@ -130,12 +197,34 @@ export function mountMachine(host: HTMLElement, body: HTMLElement, lost: () => v
     const theta = rig.rotation.x
     // 前面の投影を h に保つ
     rig.scale.y = h / Math.cos(theta) / H
-    const top = D * rig.scale.z * Math.sin(theta)
+    const t = D0 * rig.scale.z * Math.sin(theta)
     // 前面の下端を canvas の下の余白の上に揃える
-    rig.position.y = (top - TOP) / 2
-    canvas.style.top = `${top - TOP - PAD}px`
-    host.style.setProperty('--rm-top', `${top}px`)
+    rig.position.y = (t - TOP) / 2
+    canvas.style.top = `${t - TOP - PAD}px`
+    host.style.setProperty('--rm-top', `${t}px`)
     renderer.render(scene, camera)
+  }
+
+  /** model を前面の大きさへ伸ばす */
+  const fit = () => {
+    const dx = w / 2 - W0 / 2
+    const dy = H / 2 - H0 / 2
+    // 紙（.rc-print）の幅に差し出し口を合わせる
+    const slot = Math.min(1, Math.min(SLOT_W, w - 40) / SLOT_W)
+    for (const s of stretchy) {
+      const pos = s.mesh.geometry.getAttribute('position') as THREE.BufferAttribute
+      const a = pos.array as Float32Array
+      for (let i = 0; i < a.length; i += 3) {
+        const x = s.base[i]!
+        const y = s.base[i + 1]!
+        a[i] = s.kind === 'slot' ? x * slot : stretch(x, BAND_X, dx)
+        a[i + 1] = s.kind === 'slot' ? y - dy : stretch(y, BAND_Y, dy)
+      }
+      pos.needsUpdate = true
+      s.mesh.geometry.computeBoundingSphere()
+    }
+    anchor.position.y = H / 2
+    for (const s of seats) s.holder.position.set(stretch(s.x, BAND_X, dx), s.holder.position.y, s.z)
   }
 
   const layout = () => {
@@ -145,13 +234,7 @@ export function mountMachine(host: HTMLElement, body: HTMLElement, lost: () => v
     w = nw
     h = nh
     H = h / Math.cos(THETA)
-    D = TOP / Math.sin(THETA)
-    box.geometry.dispose()
-    box.geometry = new RoundedBoxGeometry(w, H, D, 8, RADIUS)
-    anchor.position.set(0, H / 2, 0)
-    // 天板の右奥に、紙送りのボタンと通電の灯
-    btn.position.set(w / 2 - 54, btn.position.y, -D * 0.08)
-    lamp.position.set(w / 2 - 96, lamp.position.y, -D * 0.08)
+    fit()
     const half = h / 2 + TOP / 2
     camera.left = -w / 2 - PAD
     camera.right = w / 2 + PAD
@@ -163,6 +246,7 @@ export function mountMachine(host: HTMLElement, body: HTMLElement, lost: () => v
     camera.lookAt(0, 0, 0)
     camera.updateProjectionMatrix()
     renderer.setSize(w + PAD * 2, h + TOP + PAD * 2, false)
+    canvas.style.left = `${-PAD}px`
     canvas.style.width = `${w + PAD * 2}px`
     canvas.style.height = `${h + TOP + PAD * 2}px`
     render()
@@ -188,13 +272,12 @@ export function mountMachine(host: HTMLElement, body: HTMLElement, lost: () => v
     action.setLoop(THREE.LoopOnce, 1)
     action.clampWhenFinished = true
     action.play()
+    running++
     if (instant) {
-      // 終わりまで一度に進めて、その姿で止める（finished は数えない）
-      running++
+      // 終わりまで一度に進めて、その姿で止める（finished で数え戻す）
       mixer.update(clip.duration + 0.01)
       return
     }
-    running++
     if (running === 1) {
       timer.reset()
       renderer.setAnimationLoop(loop)
@@ -217,10 +300,8 @@ export function mountMachine(host: HTMLElement, body: HTMLElement, lost: () => v
       mixer.uncacheRoot(rig)
       timer.dispose()
       host.style.removeProperty('--rm-top')
-      box.geometry.dispose()
-      btn.geometry.dispose()
-      lamp.geometry.dispose()
-      for (const m of [shell, face, knob, led]) m.dispose()
+      for (const g of geometries) g.dispose()
+      for (const m of materials) m.dispose()
       env.dispose()
       pmrem.dispose()
       renderer.dispose()

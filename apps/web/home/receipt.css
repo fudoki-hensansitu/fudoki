@@ -47,20 +47,20 @@
   from { clip-path: inset(0 -24px 100% -24px); transform: translateY(-8px); }
   to { clip-path: inset(0 -24px -40px -24px); transform: none; }
 }
-/* three.js の本体（machine3d.ts）。天板の上端から前面の下端までを覆い、DOM の前面の後ろに敷く。
- * 平らな札のときから canvas が札を描き（前面は札と同じ色）、立体になる動きも canvas が持つ。top は machine3d.ts が毎フレーム合わせる */
+/* three.js の本体（machine3d.ts、形は Blender の model）。天板の上端から前面の下端までを覆い、DOM の前面の後ろに敷く。
+ * 平らな札のあいだは DOM の札を見せ、立体になる動きの出だしで canvas に入れ替える。位置と大きさは machine3d.ts が毎フレーム合わせる */
 .rm > canvas {
   position: absolute;
-  top: -52px;
-  left: -12px;
   z-index: 0;
   pointer-events: none;
+  opacity: 0;
   /* 床への影は、立体になるのに合わせてゆっくり落とす */
   filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
-  transition: filter 2200ms cubic-bezier(0.65, 0, 0.35, 1);
+  transition: opacity 700ms ease-out, filter 2200ms cubic-bezier(0.65, 0, 0.35, 1);
 }
 .rm:not([data-phase='flat']) > canvas {
-  filter: drop-shadow(0 16px 16px rgba(0, 0, 0, 0.28));
+  opacity: 1;
+  filter: drop-shadow(0 14px 14px rgba(0, 0, 0, 0.22));
 }
 /* 段ごとの見た目。flat は今までどおりの平らな緑の札で、立体の部品（天板・表示窓の彫り・差し出し口・キーの厚み）は出さない */
 .rm[data-phase='flat'] .rm-top {
@@ -92,16 +92,37 @@
 .rm[data-phase='flat'] .rm-key {
   box-shadow: none;
 }
-/* three.js で描けたら、CSS の本体と天板を消して canvas に任せる。天板の場所の高さは canvas の天板に合わせる（--rm-top） */
+/* three.js で描けたら、CSS の天板・差し出し口は出さず canvas に任せる。天板の場所の高さは canvas の天板に合わせる（--rm-top） */
 .rm[data-gl] .rm-top {
   opacity: 0;
   height: var(--rm-top, 0px);
   transition: none;
 }
-.rm[data-gl] .rm-body,
-.rm[data-gl][data-phase='flat'] .rm-body {
+.rm[data-gl] .rm-slot {
+  display: none;
+}
+/* 立体になったら、DOM の前面は透かして model の筐体と表示窓を見せる。数字は model の表示窓に、名前の行は窓の上に、
+ * 「詳細を見る」は窓の下端より上に収まるよう、前面の余白を model の窓（天板から 86・下端から 88）に合わせる */
+.rm[data-gl]:not([data-phase='flat']) .rm-body {
   background: transparent;
   box-shadow: none;
+  padding-top: 20px;
+  padding-bottom: 100px;
+}
+.rm[data-gl] .rm-body {
+  transition: background-color 700ms ease-out, box-shadow 700ms ease-out, padding 2200ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+.rm[data-gl]:not([data-phase='flat']) .rm-display {
+  background-color: transparent;
+  box-shadow: none;
+  margin-inline: 14px;
+}
+.rm[data-gl] .rm-display::after {
+  display: none;
+}
+/* 紙は model の差し出し口（前面の下端から 26 の高さ）から出す */
+.rm[data-gl] .rc-feed {
+  margin-top: -25px;
 }
 /* 機械の天板。手前の辺を軸に奥へ倒す（perspective で奥ほど狭くなる） */
 .rm-top {
@@ -132,7 +153,7 @@
   border-radius: 18px;
   background-color: #1c3b2d;
   /* 表示窓は、機械になる動きの後半でゆっくり彫り込まれる */
-  transition: background-color 1400ms cubic-bezier(0.65, 0, 0.35, 1) 600ms, box-shadow 1400ms cubic-bezier(0.65, 0, 0.35, 1) 600ms, padding 1400ms cubic-bezier(0.65, 0, 0.35, 1) 600ms;
+  transition: background-color 1400ms cubic-bezier(0.65, 0, 0.35, 1) 600ms, box-shadow 1400ms cubic-bezier(0.65, 0, 0.35, 1) 600ms, padding 1400ms cubic-bezier(0.65, 0, 0.35, 1) 600ms, margin 2200ms cubic-bezier(0.65, 0, 0.35, 1);
   box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 -1px 0 rgba(255, 255, 255, 0.08), 0 1px 0 rgba(255, 255, 255, 0.14);
   overflow: hidden;
 }

@@ -139,14 +139,16 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
     let alive = true
     // サーバーの bundle に three.js を入れない（import.meta.env.SSR はビルド時に定数になり、この import ごと消える）
     if (import.meta.env.SSR) return
-    void import('./machine3d').then(({ mountMachine }) => {
+    void import('./machine3d').then(async ({ mountMachine }) => {
       if (!alive || !machine.current || !front.current) return
-      m = mountMachine(machine.current, front.current, () => {
+      const mounted = await mountMachine(machine.current, front.current, () => {
         // コンテキストを失ったら canvas を外し、CSS の本体へ戻す
         m?.stop()
         m = null
         setGl(null)
       })
+      if (!alive) return mounted?.stop()
+      m = mounted
       setGl(m)
     }).catch(() => {})
     return () => {
