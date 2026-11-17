@@ -1382,7 +1382,7 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
         u['kind'] == 'unread ink in amount column'
         and any(page == u['page'] and box[0] <= (u['box'][0] + u['box'][2]) / 2 <= box[2]
                 and box[1] <= (u['box'][1] + u['box'][3]) / 2 <= box[3] for page, box in declared))]
-    # Ink the rendered page shows to be only pieces of the column rules (`rule_pieces`: 小金井市 R2 決算 p1, a cell
+    # Ink the rendered page shows to be only pieces of the column rules (`rule_pieces`: 多摩市 R2 決算 p1, a cell
     # whose ink area runs from one rule to the next, past what the quirk `rule_ink` takes for a rule's piece) is no
     # figure. A declaration names the unread box exactly, and one that names none stops the conversion.
     pieces_ = [(r['page'], r['box']) for r in options.get('rule_pieces', ())]
