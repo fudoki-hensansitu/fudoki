@@ -1,0 +1,330 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132071",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e9379e9b6d49619e42da7bf1e5f5db409651be5b11beb6b9ea7e866d927a06ea"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true,
+            "shifted_hidden_copies": {
+              "reach": [
+                2,
+                4
+              ],
+              "reason": "歳入の物理37頁（地方特例交付金ほか）は文字層の全ての行に、2.8pt 左へずれた印字されない写しを持つ。写しは字の幅より近く、印字の字と重なる。"
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kokuho-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e9379e9b6d49619e42da7bf1e5f5db409651be5b11beb6b9ea7e866d927a06ea"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "kokuho-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e9379e9b6d49619e42da7bf1e5f5db409651be5b11beb6b9ea7e866d927a06ea"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kouki-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e9379e9b6d49619e42da7bf1e5f5db409651be5b11beb6b9ea7e866d927a06ea"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kukaku-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e9379e9b6d49619e42da7bf1e5f5db409651be5b11beb6b9ea7e866d927a06ea"
+        }
+      ],
+      "options": {
+        "account": "中神土地区画整理事業特別会計",
+        "table_id": "kukaku-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kukaku-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kitagawa-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e9379e9b6d49619e42da7bf1e5f5db409651be5b11beb6b9ea7e866d927a06ea"
+        }
+      ],
+      "options": {
+        "account": "中神駅北側地域整備事業特別会計",
+        "table_id": "kitagawa-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kitagawa-revenue"
+        }
+      ]
+    }
+  ]
+}

@@ -85,6 +85,505 @@
           "table_id": "general-initial"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "c36445cedcaa9b7a8bbef162429b577319f1bae75417b9727fcf95ec5a01d3aa"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "text_layer": {
+                "crop_box": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "repeated_breakdown_cells": true,
+            "unnumbered_names_at_rule": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "0bda6fb2ef5ce838d965fb30dbfa0412b9010694fdb7b9acf2dc5589237085eb"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "text_layer": {
+                "crop_box": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "repeated_breakdown_cells": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "329117028284bc9d98236946cbc5cc39f017e763c4285e6aaf91b3b1b13676ef"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "text_layer": {
+                "crop_box": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "repeated_breakdown_cells": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "tokura-property-ward-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "9c56712fbd7e3a4f7b95b20c175b8e2b723eb6bb50e5e5f0d41223846085a857"
+        }
+      ],
+      "options": {
+        "account": "戸倉財産区特別会計",
+        "table_id": "tokura-property-ward-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "text_layer": {
+                "crop_box": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "repeated_breakdown_cells": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "tokura-property-ward-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "tv-reception-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "aeca00746315a5e24f91fde9f67bc9d0a667add37bfc40a09af7e5666fb4f752"
+        }
+      ],
+      "options": {
+        "account": "テレビ共同受信事業特別会計",
+        "table_id": "tv-reception-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "text_layer": {
+                "crop_box": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "repeated_breakdown_cells": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "tv-reception-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "land-readjustment-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d19c9a4e73822c9e7bf8788f965482795426452e760ba0bd3a3b382194ee164b"
+        }
+      ],
+      "options": {
+        "account": "秋多都市計画事業武蔵引田駅北口土地区画整理事業特別会計",
+        "table_id": "land-readjustment-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "text_layer": {
+                "crop_box": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "repeated_breakdown_cells": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-readjustment-expenditure"
+        }
+      ]
     }
   ]
 }

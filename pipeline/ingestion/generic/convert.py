@@ -518,6 +518,8 @@ def _build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
     built.notes.extend({'kind': 'name correction', 'text': text} for text in correct_names(built.nodes, by_node))
     built.notes.extend({'kind': 'name correction', 'text': f'{rule["page"]}頁 {rule["observed_name"]}→{rule["corrected_name"]}'}
                        for rule in options.get('name_corrections', ()) if 'observation_id' in rule)
+    built.notes.extend({'kind': 'parent correction', 'text': text}
+                       for text in correct_parents(built.nodes, options.get('parent_corrections')))
     if options.get('continued_rows'):
         built.notes.append({'kind': 'continued rows', 'text': continue_volume(built.nodes, options['continued_rows'])})
     all_nodes = [*built.nodes, *nodes]
@@ -645,6 +647,25 @@ def correct_names(nodes: list[dict], rules: list[dict] | None) -> list[str]:
             found[0]['code_text'] = rule['corrected_code']
         code = rule['corrected_code'] if 'corrected_code' in rule else rule.get('code')
         notes.append(f'{rule.get("code") or ""}{rule["observed_name"]}→{code or ""}{rule["corrected_name"]}')
+    return notes
+
+
+def correct_parents(nodes: list[dict], rules: list[dict] | None) -> list[str]:
+    """Items the reading put under the wrong parent because the original prints them out of line with it
+    (`parent_corrections`, each checked on the rendered page): 武蔵村山市の歳入 R6 prints the 節 of a 目 on the right
+    page of a spread 15pt higher than the 目 on the left page, at the height of the 目 above. A rule names the item and
+    its parent by page, code and name; each must find exactly one node, or the conversion stops."""
+    notes = []
+    for rule in rules or ():
+        def one(page, code, name, what):
+            found = [n for n in nodes if n['physical_page'] == page and n['code_text'] == code and n['name_text'] == name]
+            if len(found) != 1:
+                raise ValueError(f'A parent correction must find one {what}: {rule["id"]} ({len(found)})')
+            return found[0]
+        child = one(rule['page'], rule['code'], rule['name'], 'item')
+        parent = one(rule['parent_page'], rule['parent_code'], rule['parent_name'], 'parent')
+        child['parent_node_key'] = parent['node_key']
+        notes.append(f'{rule["page"]}頁 {rule["code"] or ""}{rule["name"]}→{rule["parent_code"] or ""}{rule["parent_name"]}の下')
     return notes
 
 

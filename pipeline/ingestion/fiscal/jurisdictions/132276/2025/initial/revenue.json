@@ -1,0 +1,385 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132276",
+    "fiscal_year": 2025,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3d6f8b89eee95dd22ba6acd5d6129b5d473378995030b8933e77f56eeb650aa8"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "carried_names": true,
+                "title_amount": "本年度予算額"
+              },
+              "text_layer": {
+                "crop_box": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "pages": [
+          [
+            18,
+            19
+          ],
+          [
+            22,
+            67
+          ]
+        ],
+        "excluded_boxes": [
+          {
+            "id": "p66-revenue-total",
+            "page": 66,
+            "bbox": [
+              40,
+              52,
+              560,
+              142
+            ],
+            "kind": "総括",
+            "reason": "明細の最後の頁の「歳入合計」の表。題字を枠の外に印字し、行に名前が無いので合計の行と読めない。款の和と比べる統制値で、総括の頁の歳入合計と同じ額。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b2a5fac1fcecba9ebdd14d42b3e676232adbd02e64fda38b9ceda31900c42280"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "carried_names": true,
+                "title_amount": "本年度予算額"
+              },
+              "text_layer": {
+                "crop_box": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "pages": [
+          [
+            7,
+            7
+          ],
+          [
+            10,
+            15
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "37baacba4b444620402609068ba8cf0e766670bbe9fd76ab510fba16dd4bba0b"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "elderly-medical-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "carried_names": true,
+                "title_amount": "本年度予算額"
+              },
+              "text_layer": {
+                "crop_box": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "pages": [
+          [
+            7,
+            7
+          ],
+          [
+            10,
+            15
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-revenue"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "34a3479086ab66a50053060cb4c215b357af562ca7cfd18cc6987a479072194b"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "long-term-care-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "carried_names": true,
+                "title_amount": "本年度予算額"
+              },
+              "text_layer": {
+                "crop_box": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "pages": [
+          [
+            9,
+            9
+          ],
+          [
+            12,
+            19
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-revenue"
+        }
+      ]
+    },
+    {
+      "id": "land-readjustment-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8978776cab43cae649facee953761647daa6fd25d20bd4441fddd20bcad97cb2"
+        }
+      ],
+      "options": {
+        "account": "羽村市福生都市計画事業羽村駅西口土地区画整理事業会計",
+        "table_id": "land-readjustment-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "carried_names": true,
+                "title_amount": "本年度予算額"
+              },
+              "text_layer": {
+                "crop_box": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "pages": [
+          [
+            7,
+            7
+          ],
+          [
+            10,
+            13
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-readjustment-revenue"
+        }
+      ]
+    }
+  ]
+}

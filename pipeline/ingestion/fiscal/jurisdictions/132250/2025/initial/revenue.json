@@ -1,0 +1,356 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132250",
+    "fiscal_year": 2025,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "73bcf4b4414a7068ae6b282b600386ccd4ab66541107e523a3fec7501ea8c86c"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "構成比／本年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "歳出総括の頁（款別の本年度・前年度予算額・財源内訳と構成比）の構成比の欄を取り込まない。百分率で金額ではないため。総括の頁は歳出合計の印字のために読む。"
+                  }
+                },
+                "構成比／前年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "歳出総括の頁（款別の本年度・前年度予算額・財源内訳と構成比）の構成比の欄を取り込まない。百分率で金額ではないため。総括の頁は歳出合計の印字のために読む。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "codeless_beside_repeated_code": true,
+            "repeated_heading_owns_nothing": true,
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "unnumbered_names_at_rule": true,
+            "unnumbered_titles": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "11662b7c5c0415d61296fca3dec1348acb9b2e14862fca675409536aba86f2e8"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "構成比／本年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "歳出総括の頁（款別の本年度・前年度予算額・財源内訳と構成比）の構成比の欄を取り込まない。百分率で金額ではないため。総括の頁は歳出合計の印字のために読む。"
+                  }
+                },
+                "構成比／前年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "歳出総括の頁（款別の本年度・前年度予算額・財源内訳と構成比）の構成比の欄を取り込まない。百分率で金額ではないため。総括の頁は歳出合計の印字のために読む。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "codeless_beside_repeated_code": true,
+            "repeated_heading_owns_nothing": true,
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "unnumbered_names_at_rule": true,
+            "unnumbered_titles": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "land-readjustment-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "11662b7c5c0415d61296fca3dec1348acb9b2e14862fca675409536aba86f2e8"
+        }
+      ],
+      "options": {
+        "account": "土地区画整理事業特別会計",
+        "table_id": "land-readjustment-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "構成比／本年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "歳出総括の頁（款別の本年度・前年度予算額・財源内訳と構成比）の構成比の欄を取り込まない。百分率で金額ではないため。総括の頁は歳出合計の印字のために読む。"
+                  }
+                },
+                "構成比／前年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "歳出総括の頁（款別の本年度・前年度予算額・財源内訳と構成比）の構成比の欄を取り込まない。百分率で金額ではないため。総括の頁は歳出合計の印字のために読む。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "codeless_beside_repeated_code": true,
+            "repeated_heading_owns_nothing": true,
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "unnumbered_names_at_rule": true,
+            "unnumbered_titles": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-readjustment-revenue"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "11662b7c5c0415d61296fca3dec1348acb9b2e14862fca675409536aba86f2e8"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "構成比／本年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "歳出総括の頁（款別の本年度・前年度予算額・財源内訳と構成比）の構成比の欄を取り込まない。百分率で金額ではないため。総括の頁は歳出合計の印字のために読む。"
+                  }
+                },
+                "構成比／前年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "歳出総括の頁（款別の本年度・前年度予算額・財源内訳と構成比）の構成比の欄を取り込まない。百分率で金額ではないため。総括の頁は歳出合計の印字のために読む。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "codeless_beside_repeated_code": true,
+            "repeated_heading_owns_nothing": true,
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "unnumbered_names_at_rule": true,
+            "unnumbered_titles": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "11662b7c5c0415d61296fca3dec1348acb9b2e14862fca675409536aba86f2e8"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "構成比／本年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "歳出総括の頁（款別の本年度・前年度予算額・財源内訳と構成比）の構成比の欄を取り込まない。百分率で金額ではないため。総括の頁は歳出合計の印字のために読む。"
+                  }
+                },
+                "構成比／前年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "歳出総括の頁（款別の本年度・前年度予算額・財源内訳と構成比）の構成比の欄を取り込まない。百分率で金額ではないため。総括の頁は歳出合計の印字のために読む。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "codeless_beside_repeated_code": true,
+            "repeated_heading_owns_nothing": true,
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "unnumbered_names_at_rule": true,
+            "unnumbered_titles": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-revenue"
+        }
+      ]
+    }
+  ]
+}
