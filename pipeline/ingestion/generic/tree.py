@@ -36,7 +36,8 @@ from ingestion.generic.layout import (SIGNS, SUBJECT_LEVELS, UNIT_CELL, Band, Gl
 ABOLISHED = re.compile(r'[(（]廃([款項目節])整理[)）]')
 # A closing bracket ends the number even when the name starts with a digit (`(7)５歳児健康診査費`); without it the number
 # is followed by a non-digit, and not by a closing bracket (`(7` of `(7)５…` is not a number with the name `)５…`).
-CODE = re.compile(r'^[(（]?([0-9０-９]{1,4})(?:[)）]|(?:[.．](?=[^0-9０-９]|$))?(?=[^0-9)）]|$))')
+# A separator after the closing bracket is not part of the name either (`(1).光熱水費`, 131041 R8).
+CODE = re.compile(r'^[(（]?([0-9０-９]{1,4})(?:[)）](?:[.．](?=[^0-9０-９]|$))?|(?:[.．](?=[^0-9０-９]|$))?(?=[^0-9)）]|$))')
 UNIT_NOTATION = re.compile(r'[(（]単位[:：][^()（）]*[)）]')
 BARE_CODE = re.compile(r'^[0-9０-９]{1,4}$')
 # A reading in katakana printed in brackets right after a number (`73（ナナサン）`): the number is part of a name.
@@ -3162,6 +3163,9 @@ def within_row(logical: Logical, previous: Item, item: Item) -> bool:
     return item.y0 >= previous.y1 and top - .5 <= item.y0 and item.y1 <= bottom + .5
 
 
+LABELLED = re.compile(r'[一-龥ぁ-んァ-ヶ]')  # a word in an amount cell (units aside)
+
+
 def prints_row_amounts(item: Item, logical: Logical) -> bool:
     """The subject's row prints amounts in the amount columns. A heading printed again at the top of a continuation page
     prints its name only; a codeless subject of the same name with amounts of its own is a subject (a 目 the year drops,
@@ -3173,8 +3177,14 @@ def prints_row_amounts(item: Item, logical: Logical) -> bool:
         if band.kind != 'amount':
             break
         own.append(band)
-    return any(glyph.page == item.page and top <= (glyph.y0 + glyph.y1) / 2 <= bottom and is_amount(glyph.text)
-               for band in own for glyph in band.words)
+    row = [glyph for band in own for glyph in band.words
+           if glyph.page == item.page and top <= (glyph.y0 + glyph.y1) / 2 <= bottom]
+    # An amount labelled in its cell (`計 442,770,000` over `当初予算額` and `補正予算額`) heads the stack of the subject
+    # printed under the heading: the heading printed again at the top of the page shares that row (`営業費用` over
+    # `3 管理費（総係費）`, 132063 決算 R5 p196).
+    if any(LABELLED.search(re.sub(r'[円千万億]', '', normalize(glyph.text))) for glyph in row):
+        return False
+    return any(is_amount(glyph.text) for glyph in row)
 
 
 def subject_row(item: Item, logical: Logical) -> tuple[float, float]:
