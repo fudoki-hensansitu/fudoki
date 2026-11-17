@@ -8,6 +8,8 @@
 
 題字の金額は印字された見出しを持たないので、題字の右に金額が並ぶ書式では、最初の金額が属する見出しを設定で
 宣言する（`header.title_amount`）。宣言が無ければ題字の金額は読まず、題字の段は子の和で確かめない。
+題字が本年度・前年度・比較の金額を並べる書式（杉並区の歳入）は、見出しを金額の順に並べて宣言し（`title_amount` に配列）、
+題字の金額をすべて読む。
 題字の金額は、その款・項の表の始まり（項の最初の目が `1`）と終わり（項の `計` の行）が読む範囲に収まるときだけ読む。
 分冊の境で款が2冊にまたがると（文京区は冊の末尾に次の款の最初の見開きを載せる）、どちらの冊にも款・項の一部の目しか
 無く、題字の金額は冊の目の和と比べられない。その題字は項目として残し、金額は読まない（`complete_titles`）。
@@ -132,8 +134,9 @@ def title(name: list[Glyph]) -> tuple[str, str, str] | None:
     return None
 
 
-def titles(logical: layout.Logical, heading: str | None) -> list[tuple[str, str, str, list[Glyph], tuple | None]]:
-    """The 款・項 titles above the frame, top to bottom: level, code, name, name glyphs and (heading, amount glyphs)."""
+def titles(logical: layout.Logical, heading: str | list[str] | None) -> list[tuple[str, str, str, list[Glyph], tuple | list | None]]:
+    """The 款・項 titles above the frame, top to bottom: level, code, name, name glyphs and (heading, amount glyphs)
+    (a list of them when the headings are declared as a list)."""
     found = []
     # `outside` holds each page's own coordinates: the lines of a spread are read page by page.
     pages = sorted({g.page for g in logical.outside})
@@ -149,7 +152,10 @@ def titles(logical: layout.Logical, heading: str | None) -> list[tuple[str, str,
             if found_title is None:
                 continue
             level, code, label = found_title
-            amount = (heading, amounts[0]) if amounts and heading else None
+            if isinstance(heading, list):  # the headings of the amounts in the order printed (杉並区の歳入)
+                amount = list(zip(heading, amounts)) or None
+            else:
+                amount = (heading, amounts[0]) if amounts and heading else None
             found.append((level, code, label, name, amount))
     return found
 

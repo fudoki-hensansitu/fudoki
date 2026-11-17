@@ -308,6 +308,8 @@ def _frames(page: Page, spread: dict | None = None,
             continue
         bottom = max([h.y0 for h in spanning] + [r.y1 for r in edges_drawn])
         top = min([h.y0 for h in spanning] + [r.y0 for r in edges_drawn])
+        if (unruled := document_quirk('unruled_frame_top')) is not None:
+            top = unruled.module.top(page, frame, top)
         if (skewed := document_quirk('skewed_frames')) is not None:
             bottom = skewed.module.bottom(page, frame, middle, horizontals, bottom)
             top = skewed.module.top(page, frame, middle, horizontals, top)

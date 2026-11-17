@@ -636,10 +636,13 @@ def repair(pdf_path: Path | None, pages: list[Page], repairs: frozenset = frozen
             report.invisible_error = f'{type(error).__name__}: {error}'
             report.hidden_glyphs = report.hidden_rules = 0
     minus = document_quirk('delta_minus')
+    marks = document_quirk('substituted_glyphs')
     strokes = document_quirk('glyph_strokes')
     for page in pages:
         if minus is not None:
             minus.module.replace(page)
+        if marks is not None:
+            marks.module.replace(page)
         if strokes is not None:
             strokes.module.drop(page)
         repair_positions(page, report, 'split_at_rules' in repairs)
