@@ -657,12 +657,14 @@ def correct_parents(nodes: list[dict], rules: list[dict] | None) -> list[str]:
     its parent by page, code and name; each must find exactly one node, or the conversion stops."""
     notes = []
     for rule in rules or ():
-        def one(page, code, name, what):
-            found = [n for n in nodes if n['physical_page'] == page and n['code_text'] == code and n['name_text'] == name]
+        def one(page, code, name, what, axis=None):
+            # (`axis` tells a 目 from the 節 under it that prints the same code and name, 東京都 R7 と場会計 p93)
+            found = [n for n in nodes if n['physical_page'] == page and n['code_text'] == code and n['name_text'] == name
+                     and (axis is None or n['axis_header'] == axis)]
             if len(found) != 1:
                 raise ValueError(f'A parent correction must find one {what}: {rule["id"]} ({len(found)})')
             return found[0]
-        child = one(rule['page'], rule['code'], rule['name'], 'item')
+        child = one(rule['page'], rule['code'], rule['name'], 'item', rule.get('axis'))
         parent = one(rule['parent_page'], rule['parent_code'], rule['parent_name'], 'parent')
         child['parent_node_key'] = parent['node_key']
         notes.append(f'{rule["page"]}頁 {rule["code"] or ""}{rule["name"]}→{rule["parent_code"] or ""}{rule["parent_name"]}の下')
