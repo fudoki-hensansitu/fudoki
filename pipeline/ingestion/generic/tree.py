@@ -2107,6 +2107,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     repeated_codes: list = []
     # A 目 the year drops, printed in brackets with no code, is a subject of its own, never the open one printed again.
     bracketed = quirk(document, 'bracketed_subjects')
+    # So is one marked `○` (`marked_subjects`): `○衛生費都負担金` is no misread of the open `1 民生費都負担金` (132055 R5).
+    marked_subjects = quirk(document, 'marked_subjects')
     # `repeated_heading_owns_nothing`: a heading the page prints again takes no amount of the line it is on.
     owners = ('node', 'total') if quirk(document, 'repeated_heading_owns_nothing') is not None else ('node', 'repeat', 'total')
     for logical in logicals:
@@ -2700,7 +2702,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     # as its 款 is no repeat of it.)
                     previous = next((s for s in stack if s.level == item.level), None)
                 if previous is not None and repeats(previous, item, logical.ocr) and not (
-                        item.code is None and item.lines and bracketed is not None and bracketed.module.marked(item.lines[0])):
+                        item.code is None and item.lines and any(q is not None and q.module.marked(item.lines[0])
+                                                                 for q in (bracketed, marked_subjects))):
                     item.key = previous.key  # a repeated subject heading on a continuation page
                     item.role = 'repeat'
                     shown = next((g for g in item.glyphs[:3] if CODE.match(normalize(g.text))), None)
