@@ -2590,6 +2590,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         fresh = True  # no subject has begun on this page yet (the headings printed again are no new subject)
         page_axes: set[str] = set()  # the breakdown axes with an item on this page so far (`repeated_at_top`)
         digit_set = quirk(document, 'digit_set_codes')
+        joined = quirk(document, 'joined_repeated_codes')
         codeless_items = document_quirk('codeless_column_items')
         for _, _, item in events:
             if not item.group.subject and item.role in ('node', 'note') and row is not None \
@@ -2642,6 +2643,12 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                               'amounts': [text(r) for _, r in item.amounts]})
                 continue
             if item.group.subject:
+                if (fresh and joined is not None and item.role == 'node' and item.code is not None and not item.name
+                        and not item.amounts and (again := joined.module.repeated(stack, item)) is not None):
+                    # The open headings' codes printed again, joined into one code (`joined_repeated_codes`).
+                    item.key, item.role = again.key, 'repeat'
+                    repeated_codes.extend(g for g in item.glyphs if re.search(r'[0-9０-９]', g.text))
+                    continue
                 if item.code is not None and item.role == 'node':
                     opening = False
                 elif (opening and item.code is None and item.name and not item.amounts and item.role == 'node'

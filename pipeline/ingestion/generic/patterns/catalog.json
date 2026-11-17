@@ -158,6 +158,7 @@
     "glued_number_stops": "ingestion.generic.patterns.quirks.glued_number_stops",
     "flush_right_numbers": "ingestion.generic.patterns.quirks.flush_right_numbers",
     "repeated_at_top": "ingestion.generic.patterns.quirks.repeated_at_top",
+    "joined_repeated_codes": "ingestion.generic.patterns.quirks.joined_repeated_codes",
     "repeated_code_at_top": "ingestion.generic.patterns.quirks.repeated_code_at_top",
     "glued_numbers": "ingestion.generic.patterns.quirks.glued_numbers",
     "glued_subject_codes": "ingestion.generic.patterns.quirks.glued_subject_codes",
