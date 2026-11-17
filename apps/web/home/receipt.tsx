@@ -181,7 +181,7 @@ function Strip({ mode, children }: { mode: 'grow' | 'still'; children: React.Rea
   )
 }
 
-/** 切り離した前のレシート。差し出し口の下の同じ場所に置いたまま、紙を写した立体（fall3d.ts、切るときだけ読む）に差し替えて、
+/** 切り離した前のレシート。差し出し口の下の同じ場所に置いたまま、紙を写した立体（fall3d.ts、初めて紙を刷った時点で先に読む）に差し替えて、
  * 丸まりながら落とす。立体の最初の姿が出てから DOM の紙を隠す。WebGL が使えなければ、落とさずに消す */
 function Falling({ onDone, children }: { onDone: () => void; children: React.ReactNode }) {
   const ref = React.useRef<HTMLDivElement>(null)
