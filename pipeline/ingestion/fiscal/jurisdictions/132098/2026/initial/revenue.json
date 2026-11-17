@@ -1,0 +1,366 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132098",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "f9e99acf44bde0c045f1d5a8ded72b318ee7a8461e01de0efaed231ee74e750e"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "歳入総括の頁（款別の本年度・前年度・比較と構成比）の構成比の欄を取り込まない。百分率で金額ではないため。総括の頁は歳入合計の印字のために読む。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の内容と所管課の名前・金額で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "f9e99acf44bde0c045f1d5a8ded72b318ee7a8461e01de0efaed231ee74e750e"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "歳入総括の頁（款別の本年度・前年度・比較と構成比）の構成比の欄を取り込まない。百分率で金額ではないため。総括の頁は歳入合計の印字のために読む。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の内容と所管課の名前・金額で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "f9e99acf44bde0c045f1d5a8ded72b318ee7a8461e01de0efaed231ee74e750e"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "long-term-care-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "歳入総括の頁（款別の本年度・前年度・比較と構成比）の構成比の欄を取り込まない。百分率で金額ではないため。総括の頁は歳入合計の印字のために読む。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の内容と所管課の名前・金額で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "f9e99acf44bde0c045f1d5a8ded72b318ee7a8461e01de0efaed231ee74e750e"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業会計",
+        "table_id": "elderly-medical-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "歳入総括の頁（款別の本年度・前年度・比較と構成比）の構成比の欄を取り込まない。百分率で金額ではないため。総括の頁は歳入合計の印字のために読む。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の内容と所管課の名前・金額で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-revenue"
+        }
+      ]
+    },
+    {
+      "id": "land-readjustment-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "f9e99acf44bde0c045f1d5a8ded72b318ee7a8461e01de0efaed231ee74e750e"
+        }
+      ],
+      "options": {
+        "account": "鶴川駅南土地区画整理事業会計",
+        "table_id": "land-readjustment-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "歳入総括の頁（款別の本年度・前年度・比較と構成比）の構成比の欄を取り込まない。百分率で金額ではないため。総括の頁は歳入合計の印字のために読む。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の内容と所管課の名前・金額で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-readjustment-revenue"
+        }
+      ]
+    }
+  ]
+}
