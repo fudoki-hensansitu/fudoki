@@ -46,7 +46,7 @@ const popText = (n: number | null) => (n ? `人口 ${(n / 1e4).toFixed(1)}万人
 /** タイル地図。large は名前を書いて押せる地図、そうでなければ一覧のカードの小さな地図（押せない） */
 function TileMap({ map, q, scale, selected, onPick, large }: { map: CompareMap; q: Question; scale: Scale | null; selected?: string | null; onPick?: (code: string) => void; large?: boolean }) {
   return (
-    <div className={cn('grid', large ? 'gap-0.5 sm:gap-[3px]' : 'gap-0.5')} style={{ gridTemplateColumns: `repeat(${map.cols}, minmax(0, 1fr))` }}>
+    <div className={cn('grid', large ? 'gap-0.5 sm:gap-1' : 'gap-0.5')} style={{ gridTemplateColumns: `repeat(${map.cols}, minmax(0, 1fr))` }}>
       {map.towns.map((t) => {
         const v = t.values[q.slug] ?? null
         const step = scale ? scale.step(v) : -1
@@ -65,11 +65,9 @@ function TileMap({ map, q, scale, selected, onPick, large }: { map: CompareMap; 
         )
         if (!large) return <span key={t.code} className={tile} style={style} />
         return (
-          <button key={t.code} type="button" onClick={() => onPick?.(t.code)} aria-label={`${t.name} ${plain(v, q)}`} aria-pressed={selected === t.code} className={cn(tile, 'cursor-pointer active:scale-95 sm:hover:scale-110')} style={style}>
-            <span className="max-w-full overflow-hidden text-center text-[9px] leading-none font-medium tracking-[-0.04em] break-keep sm:text-[11px] sm:tracking-normal">
-              <span className="sm:hidden">{shortName(t.name).slice(0, 2)}</span>
-              <span className="hidden sm:inline">{shortName(t.name)}</span>
-            </span>
+          <button key={t.code} type="button" onClick={() => onPick?.(t.code)} aria-label={`${t.name} ${plain(v, q)}`} aria-pressed={selected === t.code} className={cn(tile, 'cursor-pointer outline-offset-1 hover:outline-1 hover:outline-foreground/40 active:scale-95')} style={style}>
+            {/* 狭い幅ではタイルが小さく名前が読めないので塗りだけにし、名前は札で出す */}
+            <span className="hidden max-w-full overflow-hidden text-center text-[11px] leading-none font-medium break-keep sm:inline">{shortName(t.name)}</span>
           </button>
         )
       })}
@@ -79,7 +77,7 @@ function TileMap({ map, q, scale, selected, onPick, large }: { map: CompareMap; 
 
 function Legend({ q, scale }: { q: Question; scale: Scale | null }) {
   return (
-    <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-[13px] text-muted-foreground">
+    <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-muted-foreground">
       {scale ? (
         <span className="flex items-center gap-2">
           <span className="flex gap-0.5">
@@ -88,7 +86,7 @@ function Legend({ q, scale }: { q: Question; scale: Scale | null }) {
           <Num v={scale.min} q={q} />〜<Num v={scale.max} q={q} />
         </span>
       ) : null}
-      <span className="flex items-center gap-1.5">
+      <span className="flex items-center gap-2">
         <span className="h-2.5 w-3.5 rounded-[2px]" style={{ background: fillOf(-1) }} />
         未収録
       </span>
@@ -120,12 +118,12 @@ export function CompareList({ map, failed }: { map: CompareMap; failed: boolean 
               <Link
                 key={q.slug}
                 href={`/compare/${q.slug}`}
-                className="flex animate-in flex-col gap-2.5 rounded-xl border bg-background p-3 fill-mode-both fade-in slide-in-from-bottom-1.5 duration-300 transition-colors hover:border-primary hover:bg-card active:scale-[0.985] motion-reduce:animate-none"
+                className="flex animate-in flex-col gap-3 rounded-xl border bg-background p-4 fill-mode-both fade-in slide-in-from-bottom-1.5 duration-300 transition-[background-color,transform] hover:bg-card active:scale-[0.985] motion-reduce:animate-none"
                 style={{ animationDelay: `${Math.min(i, 8) * 30}ms` }}
               >
                 <h2 className="min-h-[2.9em] text-[15px] leading-[1.45] font-medium">{q.title}</h2>
                 <TileMap map={map} q={q} scale={scale} />
-                <p className="flex flex-col gap-0.5 text-xs text-muted-foreground">
+                <p className="flex flex-col gap-1 text-xs text-muted-foreground">
                   {top ? <span>最多 <b className="font-medium text-foreground">{top.name}</b> <Num v={top.values[q.slug]!} q={q} /></span> : null}
                   {bottom ? <span>最小 <b className="font-medium text-foreground">{bottom.name}</b> <Num v={bottom.values[q.slug]!} q={q} /></span> : null}
                 </p>
@@ -190,16 +188,16 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
             <Legend q={q} scale={scale} />
           </div>
           {t ? (
-            <aside key={t.code} aria-live="polite" className="animate-in rounded-2xl border bg-background p-[18px] fade-in slide-in-from-bottom-1 duration-200 motion-reduce:animate-none">
+            <aside key={t.code} aria-live="polite" className="animate-in rounded-2xl border bg-background p-5 fade-in slide-in-from-bottom-1 duration-200 motion-reduce:animate-none">
               <p className="flex items-baseline gap-2 text-lg font-semibold">
                 {t.name}
                 <small className="text-xs font-normal text-muted-foreground">{popText(t.pop)}</small>
               </p>
-              <Link href={t.path} className="mt-0.5 inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-2 hover:underline">
+              <Link href={t.path} className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-2 hover:underline">
                 {t.name}の頁を開く
                 <ArrowRightIcon className="size-3.5" aria-hidden="true" />
               </Link>
-              <p className="mt-3.5 text-[13px] text-muted-foreground">{q.short}</p>
+              <p className="mt-4 text-[13px] text-muted-foreground">{q.short}</p>
               <Num v={t.values[q.slug] ?? null} q={q} className="text-[32px] leading-tight font-semibold text-primary" />
               {scale ? <p className="text-[13px] text-muted-foreground">都内の真ん中 <Num v={scale.median} q={q} /></p> : null}
             </aside>
@@ -208,13 +206,13 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
       )}
       <nav aria-label="ほかの問い" className="mt-10 border-t pt-6">
         <h2 className="mb-3 text-sm font-semibold text-muted-foreground">ほかの問い</h2>
-        <div className="flex flex-wrap gap-1.5">
+        <div className="flex flex-wrap gap-2">
           {QUESTIONS.map((x) => (
             <Link
               key={x.slug}
               href={hrefOf(x.slug)}
               aria-current={x.slug === slug ? 'page' : undefined}
-              className="inline-flex h-[34px] shrink-0 items-center rounded-full border bg-background px-3.5 text-sm font-medium transition-colors hover:bg-card aria-[current=page]:border-primary aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground"
+              className="inline-flex h-9 shrink-0 items-center rounded-full border bg-background px-3.5 text-sm font-medium transition-colors hover:bg-card aria-[current=page]:border-primary aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground"
             >
               {x.short}
             </Link>
