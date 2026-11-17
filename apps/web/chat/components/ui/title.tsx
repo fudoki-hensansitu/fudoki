@@ -7,9 +7,9 @@ import { cn } from "@/lib/utils"
 const titleVariants = cva("font-semibold", {
   variants: {
     size: {
-      h1: "text-[26px] leading-[1.35] tracking-[0.02em] sm:text-[32px]",
-      h2: "text-xl leading-snug",
-      h3: "text-[17px] leading-snug",
+      h1: "text-[28px] leading-[1.35] tracking-[0.02em] sm:text-[32px]",
+      h2: "text-2xl leading-snug",
+      h3: "text-xl leading-snug",
       headline: "text-base",
     },
   },
