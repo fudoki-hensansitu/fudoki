@@ -15,6 +15,7 @@ SCOPE = 'document'
 OPTIONS = {'type': 'object', 'additionalProperties': False, 'required': ['columns'],
            'properties': {'columns': {'type': 'integer', 'minimum': 1}}}
 WIDE = 50  # pt: the subject column (codes and names) is wider than one code column
+HEAD_ROW = 20  # pt: the column headings (`款項`, `目`) print within one heading row
 HEADINGS = {'款', '項', '目', '款項', '款項目', '科目'}
 
 AMOUNT = re.compile(r'△?[0-9]{1,3}(,[0-9]{3})+|0')
@@ -32,7 +33,9 @@ def dropped(words: list, detected, value: dict) -> list:
     heads = [w for w in words if w.x1 <= edge + 1 and normalize(w.text) in HEADINGS]
     if not heads:
         return words
-    top = max(w.y1 for w in heads)
+    # (the heading row at the frame's top: a lone `目` OCR splits off a name lower down is no heading)
+    first_row = min(w.y0 for w in heads) + HEAD_ROW
+    top = max(w.y1 for w in heads if w.y0 <= first_row)
     amounts = [w.y0 for w in words if edge < w.x0 and w.x1 <= after + 1
                and w.y0 > top and AMOUNT.fullmatch(normalize(w.text))]
     first = min(amounts, default=detected.height)
