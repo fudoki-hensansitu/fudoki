@@ -195,7 +195,7 @@ export function CompareList({ map, failed }: { map: CompareMap; failed: boolean 
                 className="flex animate-in flex-col gap-3 rounded-xl border bg-background p-4 fill-mode-both fade-in slide-in-from-bottom-1.5 duration-300 transition-[background-color,transform] hover:bg-card active:scale-[0.985] motion-reduce:animate-none"
                 style={{ animationDelay: `${Math.min(i, 8) * 30}ms` }}
               >
-                <h2 className="min-h-[2.9em] text-[15px] leading-[1.45] font-medium">{q.title}</h2>
+                <h2 className="min-h-[2.8em] text-[17px] leading-[1.4] font-semibold">{q.title}</h2>
                 <TileMap map={map} q={q} scale={scale} />
                 <p className="flex flex-col gap-1 text-xs text-muted-foreground">
                   {top ? <span>最多 <b className="font-medium text-foreground">{top.name}</b> <Num v={top.values[q.slug]!} q={q} /></span> : null}
