@@ -87,7 +87,7 @@ class Reader(Reading):
                                 if self.is_detail_amount(c, kan_funds) for s in AMOUNT_POSITION_SUFFIXES]
 
     def detail_columns(self, funds):
-        """明細表の列。funds は款見出しの資金分解5名。既定は一般会計と同一の並び。"""
+        """明細表の列。funds は款見出しの資金分解（1〜5名）。既定は一般会計と同一の並び。"""
         fund_cols = ['款_' + n for n in funds]
         if fund_cols == ['款_国庫支出金', '款_都支出金', '款_市債', '款_その他', '款_一般財源']:
             return [c for c in self.DETAIL_COLUMNS]
@@ -196,6 +196,20 @@ class Reader(Reading):
         edges = [w['xMax'] for w in words if self.AMOUNT_FULL.match(w['text'])
                  and self.AMOUNT_BAND[0] <= w['xMax'] <= self.AMOUNT_BAND[1] + 8]
         return max(edges) if edges else None
+
+    def kan_name_side(self, item, page, y):
+        """款見出しの番号の行のすぐ上・下に、款名の欄（左端115pt未満）だけ印字された名称の断片。"""
+        if item is None or item[0] != page:
+            return ''
+        words = item[1]
+        if abs(words[0]['yMin'] - y) > 20 or self.KAN_TITLE_MARK.search(self.squashed(words)):
+            return ''
+        left = [w for w in words if w['xMin'] < 115]
+        if not left or any(w['xMax'] > 250 for w in left) or any(
+                self.is_amount(w['text']) or self.KOU_HEADING.match(w['text']) or self.MARKER_ITEM.match(w['text'])
+                or self.PAREN.match(w['text']) or self.PREV.match(w['text']) for w in left):
+            return ''
+        return ''.join(w['text'] for w in left)
 
     def position(self, page, words):
         return {'物理頁': page, '上端': min(w['yMin'] for w in words),
@@ -688,8 +702,9 @@ class Reader(Reading):
             raise ValueError('This measured layout is Hachioji text settlement expenditure only')
         account = options.get('account', '一般会計')
         funds = options.get('fund_columns') or [n for n in self.DEFAULT_FUNDS]
-        if len(funds) != 5 or any(not isinstance(n, str) or not n for n in funds):
-            raise ValueError('fund_columns must be 5 printed fund names')
+        # 款集計の財源の升は会計ごとに印字が違い、1〜5つ（母子・父子福祉資金は3、駐車場事業は1）。
+        if not 1 <= len(funds) <= 5 or any(not isinstance(n, str) or not n for n in funds):
+            raise ValueError('fund_columns must be 1 to 5 printed fund names')
         stat_titles = options.get('stat_titles') or []
         if any(not isinstance(t, str) or not t for t in stat_titles):
             raise ValueError('stat_titles must be non-empty strings')
@@ -730,8 +745,10 @@ class Reader(Reading):
             # 行は1行ずつ処理する。款見出しの保留を解除するとき、保留行を元の順序で
             # Stream の先頭へ戻して通常経路を通し直す（不発時の出力は従来と同一）。
             stream = deque((page, line) for line in self.lines(words))
+            last = None
             while stream:
                 page, line = stream.popleft()
+                before, last = last, (page, line)
                 y = line[0]['yMin']
                 flat = self.squashed(line)
                 if y > self.FOOTER_TOP:
@@ -800,7 +817,10 @@ class Reader(Reading):
                             if w['text'] == '主':
                                 break
                             name += w['text']
-                        b.kan = {'番号': head[0]['text'], '名称': name or self.text_of(head[1:]),
+                        # 款名が番号の行の上下に割れる会計（`土地開発 / 1 / 事業費`、`母子・父子 / 1 福祉資金貸付 / 事業費`）。
+                        name = (self.kan_name_side(before, page, y) + (name or self.text_of(head[1:]) or '')
+                                + self.kan_name_side(stream[0] if stream else None, page, y))
+                        b.kan = {'番号': head[0]['text'], '名称': name,
                                  **{k: None for k in kan_keys}, **self.position(page, head),
                                  **self.node_x(head)}
                         b.kou = b.moku = None
@@ -815,20 +835,21 @@ class Reader(Reading):
                 if label_state == 'kan_amounts' and b.kan_amount_cells and not all(
                         self.is_amount(w['text']) or w['text'].endswith(('%', '％')) for w in line):
                     # 金額の無い升は何も印字しない（2023年度の介護・後期高齢者の款集計は保険料・都支出金が空）。集計行が
-                    # 終わっていれば、決算額の右端から執行率の右端までを7等分した升へ、右端が最も近い升に割り当てる。
+                    # 終わっていれば、決算額の右端から執行率の右端までを升の数で等分した升へ、右端が最も近い升に割り当てる。
                     cells = sorted(b.kan_amount_cells, key=lambda c: c[0])
-                    if len(cells) < 7 and cells[-1][1].endswith(('%', '％')) and not cells[0][1].endswith(('%', '％')):
+                    width = len(kan_keys)
+                    if len(cells) < width and cells[-1][1].endswith(('%', '％')) and not cells[0][1].endswith(('%', '％')):
                         left, right = cells[0][0], cells[-1][0]
-                        slots = [left + (right - left) * n / 6 for n in range(7)]
+                        slots = [left + (right - left) * n / (width - 1) for n in range(width)]
                         taken = {}
                         for cell in cells:
-                            slot = min(range(7), key=lambda n: abs(slots[n] - cell[0]))
+                            slot = min(range(width), key=lambda n: abs(slots[n] - cell[0]))
                             if slot in taken:
                                 raise ValueError(f'款集計の金額セルが同じ升に入る（{page}頁）: {[t for _, t, _, _ in cells]}')
                             taken[slot] = cell
-                        b.kan_amount_cells = [taken.get(n, (slots[n], '', page, None)) for n in range(7)]
+                        b.kan_amount_cells = [taken.get(n, (slots[n], '', page, None)) for n in range(width)]
                     else:
-                        raise ValueError(f'款集計の金額セルが7に満たない（{page}頁）: {[t for _, t, _, _ in cells]}')
+                        raise ValueError(f'款集計の金額セルが{width}に満たない（{page}頁）: {[t for _, t, _, _ in cells]}')
                     ordered = b.kan_amount_cells
                     vals = dict(zip(kan_keys, [t or None for _, t, _, _ in ordered]))
                     owners = {k: [w] for k, (_, _, _, w) in zip(kan_keys, ordered) if w is not None}
@@ -846,9 +867,9 @@ class Reader(Reading):
                     # 頁途中の款見出しではy jitterで行が割れるためxMax順で復元する。
                     # 単一行では従来の印字順と同一になる。
                     b.kan_amount_cells.extend((w['xMax'], w['text'], page, w) for w in line)
-                    if len(b.kan_amount_cells) > 7:
-                        raise ValueError(f'款集計の金額セルが7超（{page}頁）: {[t for _, t, _, _ in b.kan_amount_cells]}')
-                    if len(b.kan_amount_cells) == 7:
+                    if len(b.kan_amount_cells) > len(kan_keys):
+                        raise ValueError(f'款集計の金額セルが{len(kan_keys)}超（{page}頁）: {[t for _, t, _, _ in b.kan_amount_cells]}')
+                    if len(b.kan_amount_cells) == len(kan_keys):
                         ordered = sorted(b.kan_amount_cells, key=lambda c: c[0])
                         vals = dict(zip(kan_keys, [t for _, t, _, _ in ordered]))
                         owners = {k: [w] for k, (_, _, _, w) in zip(kan_keys, ordered)}
@@ -1082,9 +1103,9 @@ class Reader(Reading):
                 '網羅検査の対象は処理した頁の文字層であり、採用表以外の事業説明・財源内訳・'
                 '内表・注記の数字は件数と例を報告する。')
         if funds != self.DEFAULT_FUNDS:
-            note += ('款の資金分解5列は原典款見出しの印字どおり（' + '・'.join(funds) + '）で、'
+            note += (f'款の資金分解{len(funds)}列は原典款見出しの印字どおり（' + '・'.join(funds) + '）で、'
                      '一般会計の分解（国庫支出金・都支出金・市債・その他・一般財源）とは列名が異なる。'
-                     '決算額・執行率と合わせた7列が款集計行に対応する。')
+                     f'決算額・執行率と合わせた{len(funds) + 2}列が款集計行に対応する。')
         if stat_titles:
             note += ('宣言された統計表（' + '・'.join(stat_titles) + '）の (n) 行は表断片として '
                      'annex へ送り、属する事業行を葉とする。')

@@ -347,6 +347,7 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 981,kind-fallback-redevelopment,,,市街地再開発,,,,,,,assigned,06.2,retained,目,,市街地再開発の事業会計を地域開発 06.2 に分類する（例: 281000 市街地再開発事業費）。,false
 982,kind-fallback-debt,,,公債費,,,,,,,assigned,01.7,retained,目,,公債費の特別会計で元金・利子以外の目（公債諸費など発行・償還の事務）を公債取引 01.7 に分類する（keyword-debt-cost と同じ。例: 281000 公債費）。元金は先の規則が対象外にする。,false
 983,kind-fallback-tv-reception,,,テレビ共同受信,,,,,,,unclassifiable,,retained,目,,テレビ共同受信施設の整備・管理は放送の受信環境の維持であり COFOG 08.3 放送・出版に当たるが、マスタ（packages/fiscal/cofog-master.ts）は 08.3 を持たない。捨てずに分類不能として残す。,false
+984,kind-fallback-salary-utility,,,給与及び公共料金,,,,,,,unclassifiable,,retained,目,,各会計の職員の給与と公共料金を一括して支払う特別会計（132012 八王子市の給与及び公共料金特別会計）。どの会計のどの事業の給与・料金かは目の名前で分からず、機能を決められない。捨てずに分類不能として残す。,false
 1326,vocab-funeral-hall,,一般会計,,,,,聖苑,contains,,assigned,06.2,retained,目,,聖苑（火葬場・葬祭場）の運営を霊園・斎場の規則と同じく地域アメニティに寄せる。境界の判断のため暫定とする。,true
 1327,keyword-health-medical,,一般会計,,衛生費,,,保健医療,contains,,assigned,07,retained,目,,衛生費に属する保健医療を保健に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
 1328,keyword-school-management-general,,一般会計,,教育費,学校教育費,,学校管理,contains,,assigned,09,retained,目,,学校教育費に属する学校管理は学校段階を名称から分けられないため COFOG 09 教育の division 止まりで暫定とする。,true

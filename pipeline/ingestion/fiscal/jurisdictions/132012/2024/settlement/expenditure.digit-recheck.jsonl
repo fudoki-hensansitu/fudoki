@@ -1,9 +1,20 @@
 {"criteria": {"false": "取り込むべきでない数字。例: 款・項・目・節・事業の番号、頁番号、年月日・年度・議決の号数（令和8年第6号）、住所の番地、人数・件数・回数・面積などの数量、率（％）、本文や注記の中の数字、「第10節へ同項同目第8節から流用 12,846」のような流用・充用の注記の金額。", "true": "表の項目（科目・事業）の金額として取り込むべき値。例: 予算額、補正額、決算額、支出済額、不用額、事業費、国・県支出金など、表の金額の欄に印字された円の金額（0 や 1,234,000 のような値も含む）。"}, "instructions": "日本の自治体の決算書（歳出）のある頁から、数字を1つ取り出した。文脈は `items.{id}` にある（同じ行の語を左から並べた文、列の見出し、上下の行）。取り出した数字 `items.{id}.対象の数字`（同じ行では【】で示す）は、表の項目の金額として取り込むべき値か。", "kind": "digit-recheck", "model": "jev-1.13.0", "threshold": 0.7, "version": 1}
+{"fp":"3aa4d84ca588a6c050a478ae6d457241","p":0.05,"t":"boshi-detail"}
 {"fp":"128cb8b26e47f73c8615841f7e5c7459","p":0.06,"t":"kaigo-detail"}
 {"fp":"2da494528c527b4ca13814378c593996","p":0.06,"t":"kaigo-detail"}
 {"fp":"36fc495d2e6a1682fd583045e983a404","p":0.06,"t":"kaigo-detail"}
 {"fp":"bf4f6ea7a2ef55112f6a5705f6aa15cd","p":0.06,"t":"kaigo-detail"}
 {"fp":"c7147cf64d973368b2009de534c4f16a","p":0.08,"t":"kaigo-detail"}
+{"fp":"1c23d007a7e456ebec86c6c02c27aa7a","p":0.05,"t":"kokuho-detail"}
+{"fp":"23c34b8bc8a530a656d8139c7be676d9","p":0.06,"t":"kokuho-detail"}
+{"fp":"297f701f2cb9096c233b57089e47ae32","p":0.07,"t":"kokuho-detail"}
+{"fp":"4bf474f8556de735c6e9857b0915c1b2","p":0.06,"t":"kokuho-detail"}
+{"fp":"53e234378720a3897047855215fcc7a1","p":0.06,"t":"kokuho-detail"}
+{"fp":"65365f873b4be9e33ec6480a0d940305","p":0.06,"t":"kokuho-detail"}
+{"fp":"6d1251032e84dc786abafa799dedc843","p":0.08,"t":"kokuho-detail"}
+{"fp":"a6e3ef95c82f8a4e08a4fbe279b20d43","p":0.07,"t":"kokuho-detail"}
+{"fp":"bab87b4f1cf2acaf0a3feae1772b0264","p":0.06,"t":"kokuho-detail"}
+{"fp":"c324d0e860600425d279416abc1fb25e","p":0.09,"t":"kokuho-detail"}
 {"fp":"33b664d960e3158f69d3f867309587aa","p":0.05,"t":"kouki-detail"}
 {"fp":"78757db93ca8c2f8e26c3005c8fd5b82","p":0.06,"t":"kouki-detail"}
 {"fp":"7ed4e4173ddc35787c20d8968c31814e","p":0.06,"t":"kouki-detail"}
@@ -11,3 +22,7 @@
 {"fp":"c64b0381278a9b0199a51e0e12f33b5d","p":0.07,"t":"kouki-detail"}
 {"fp":"d3ac9eaba29af659d1847caa9e2f8a71","p":0.05,"t":"kouki-detail"}
 {"fp":"fb671c5735315dd47d50b7c64ec1814d","p":0.06,"t":"kouki-detail"}
+{"fp":"4c2d702275b7e40e2d39ac5975a5cc01","p":0.06,"t":"parking-detail"}
+{"fp":"e270f11aeee994a279e36ca6f5ca55dd","p":0.06,"t":"parking-detail"}
+{"fp":"951577032b319b45c40b010e982af17c","p":0.06,"t":"tochi-detail"}
+{"fp":"d0a0c9a317bf48567a3d776734d64691","p":0.06,"t":"tochi-detail"}

@@ -416,7 +416,8 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
             migrated = node_tables.migrate_rows(rows, metadata or {})
         except ValueError:
             migrated = None
-        checked = tree_checks.check_tree(migrated.nodes, migrated.amounts, document['target']['document_kind']) if migrated else {'passed': False}
+        checked = tree_checks.check_tree(migrated.nodes, migrated.amounts, document['target']['document_kind'],
+                                         source_inconsistencies.declared_for(document, ident)) if migrated else {'passed': False}
         if (migrated is None or not migrated.nodes or not migrated.amounts or migrated.issues or migrated.unread_amount_count
                 or migrated.unresolved_parent_count or not checked['passed']):
             tables.append(unchanged_legacy_receipt(stored_document(), conversion, ident, file,
