@@ -332,12 +332,15 @@ def note_breakdown(items: list['Item'], subject_starts: tuple[float, ...] = (), 
 def _stacked_word(glyph: Glyph) -> Glyph:
     """A word of a column of stacked lines (`columns.<見出し>.lines`): the closing bracket of `(1,532)` read on the
     figure (`90)`) is no digit, and `A` read for the `△` before a figure is its sign (国分寺市). A line printed whole
-    in its brackets (`(746,216)`, `<182,525>`, 八王子市) is its figure."""
+    in its brackets (`(746,216)`, `<182,525>`, 八王子市) is its figure, and a sign set apart in them (`<△` `26,775>`,
+    八王子市の歳入) is the sign the next figure joins."""
     if glyph.text == 'A':
         return replace(glyph, text='△')
     bare = glyph.text.rstrip(')）')
     if not (bare and is_amount(bare)):
         bare = glyph.text.strip('()（）<>＜＞')
+    if bare in ('△', '▲') and bare != glyph.text:  # the sign set apart from its figure inside the brackets (`<△ 26,775>`)
+        return replace(glyph, text=bare)
     return replace(glyph, text=bare) if bare != glyph.text and bare and is_amount(bare) else glyph
 
 
@@ -2721,7 +2724,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 mode = detail if isinstance(detail, str) else detail.get(item.group.axis)
                 if mode is None:
                     if strict:
-                        raise ValueError(f"PDF workflow has no breakdown pattern for axis: {item.group.axis}")
+                        raise ValueError(f"PDF workflow has no breakdown pattern for axis: {item.group.axis} (page {item.page}: {item.name})")
                     mode = "indent"
                 depth = readings[mode].depth(item, depth, shapes.setdefault(item.group.axis, []),
                                              branch.get(item.group.axis, []), anchors.setdefault(item.group.axis, {}),
