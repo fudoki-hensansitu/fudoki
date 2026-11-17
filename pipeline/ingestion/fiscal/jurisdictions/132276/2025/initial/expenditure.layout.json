@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "source_inconsistencies": [
+    {
+      "table_id": "long-term-care-expenditure",
+      "page": 21,
+      "axis": "説明",
+      "parent": {
+        "code": "13",
+        "name": "使用料及び賃借料"
+      },
+      "printed": 26,
+      "children_sum": 0,
+      "difference": -26,
+      "basis": "事業「0400300 地域包括支援センター事務に要する経費」の節「13 使用料及び賃借料」は 26 千円で、その下の細節「03 複写機使用料」の金額を次の行に 0 と印字している（21頁の説明の最下段）。出典の印字どおりで、印字値は書き換えない。"
+    }
+  ]
+}

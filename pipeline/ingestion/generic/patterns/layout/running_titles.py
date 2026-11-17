@@ -131,6 +131,8 @@ def title(name: list[Glyph]) -> tuple[str, str, str] | None:
     match = SUFFIXED.match(value)
     if match:
         return match.group(2), match.group(1), match.group(3)
+    if (bare := document_quirk('unnumbered_titles')) is not None:
+        return bare.module.title(value)
     return None
 
 

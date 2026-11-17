@@ -34,7 +34,9 @@ from ingestion.generic.layout import (SIGNS, SUBJECT_LEVELS, UNIT_CELL, Band, Gl
 # A leading item number; the separator after it (`1.議会費`, `1．`) is not part of the name.
 # The line a book prints for the subjects it dropped this year, with last year's amounts (`(廃目整理)`, `(廃項整理)`).
 ABOLISHED = re.compile(r'[(（]廃([款項目節])整理[)）]')
-CODE = re.compile(r'^[(（]?([0-9０-９]{1,4})[)）]?(?:[.．](?=[^0-9０-９]|$))?(?=\D|$)')
+# A closing bracket ends the number even when the name starts with a digit (`(7)５歳児健康診査費`); without it the number
+# is followed by a non-digit, and not by a closing bracket (`(7` of `(7)５…` is not a number with the name `)５…`).
+CODE = re.compile(r'^[(（]?([0-9０-９]{1,4})(?:[)）]|(?:[.．](?=[^0-9０-９]|$))?(?=[^0-9)）]|$))')
 UNIT_NOTATION = re.compile(r'[(（]単位[:：][^()（）]*[)）]')
 BARE_CODE = re.compile(r'^[0-9０-９]{1,4}$')
 # A reading in katakana printed in brackets right after a number (`73（ナナサン）`): the number is part of a name.
@@ -337,6 +339,18 @@ def _stacked_word(glyph: Glyph) -> Glyph:
     return replace(glyph, text=bare) if bare != glyph.text and bare and is_amount(bare) else glyph
 
 
+def _prolongs_katakana(before: list[Glyph], run: list[Glyph]) -> bool:
+    """`run` is a lone `ー` set one letter space after a katakana ending `before`."""
+    if len(run) != 1 or run[0].text != 'ー' or not before or not re.search(r'[ァ-ヴ]$', before[-1].text):
+        return False
+    size = run[0].y1 - run[0].y0
+    if run[0].x0 - before[-1].x1 <= size:
+        return True
+    # A name spaced out letter by letter (`シ ル バ ー`, 132195 R2 決算): the mark keeps the letters' pitch.
+    pitch = before[-1].x0 - before[-2].x0 if len(before) > 1 and len(before[-2].text) == 1 else None
+    return pitch is not None and abs(run[0].x0 - before[-1].x0 - pitch) <= 1
+
+
 def _split_code(line_text: str) -> tuple[str | None, str]:
     """A leading item number and the name. Numbers start from 1, so a leading 0 is a
     bullet drawn as a digit; bullet marks (〇) mark a level and are not part of the name."""
@@ -423,6 +437,10 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
     while len(parts) > 1 and normalize(text(parts[-1])) == '円' and is_amount(text(parts[-2])):
         parts.pop()
     money = []
+    # A prolonged sound mark after a katakana in a name spaced out to fill its column (`ナ ン バ ー`) is the name's last
+    # character, not a dash for no amount: it stands one letter space after the katakana, where an amount cell is not.
+    if len(parts) > 1 and _prolongs_katakana([g for part in parts[:-1] for g in part], parts[-1]):
+        parts[-2:] = [parts[-2] + parts[-1]]
     while parts and is_amount(text(parts[-1])) and len(parts) > 1:
         if not money and (listed := document_quirk('list_cut')) is not None and listed.module.cut(parts):
             break
@@ -436,6 +454,9 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
             and wide.module.in_name([text(run) for run in money]):
         parts.extend(money)  # the quirk `wide_digits_in_names`: `…議案第３１` / `号、…`, a word of the text
         money = []
+    if money and parts and (vowel := document_quirk('halfwidth_long_vowel')) is not None \
+            and vowel.module.in_name(text(parts[-1]), text(money[0])):
+        parts.append(money.pop(0))  # the quirk `halfwidth_long_vowel`: `ｾ ﾝ ﾀ ｰ`, the mark ends the name
     # Full-width digits without a comma before a half-width grouped amount are part of the name (`…東京２０２４ 1,619,271`).
     while len(money) > 1 and WIDE_DIGITS.fullmatch(text(money[0])) and GROUPED.fullmatch(normalize(text(money[-1]))) \
             and not WIDE_DIGITS.search(text(money[-1])):
@@ -1517,7 +1538,14 @@ def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int
           roles: tuple[str, ...] = ('node', 'repeat', 'total'), *, ocr: bool = False, next_row: bool = False,
           name_line: dict | None = None) -> Item | None:
     """`_owner`, but a heading the page prints again (`営業費用`) does not take the amounts of the line it is on when
-    the row it opens is the next item of its ruled cell (`5 減価償却費`, whose `計` is printed beside the heading)."""
+    the row it opens is the next item of its ruled cell (`5 減価償却費`, whose `計` is printed beside the heading).
+
+    A right page whose rows lie off the left page's (`Band.lift`, quirk `far_shifted_spread_pages`) is read with its
+    amount and rules moved onto the left page's rows."""
+    if band.lift:
+        amount = [replace(g, y0=g.y0 + band.lift, y1=g.y1 + band.lift) for g in amount]
+        band = replace(band, rows=[r + band.lift for r in band.rows], body_top=band.body_top + band.lift,
+                       body_bottom=band.body_bottom + band.lift, lift=0.0)
     item = _owner(amount, band, ordered, found, roles, ocr=ocr, next_row=next_row, name_line=name_line)
     if item is None or item.role != 'repeat' or not band.rows:
         return item  # a column without rules draws no cell: the heading stays the owner
@@ -2212,6 +2240,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                                  and not abolished.module.same_row(logical, previous, item, _cell))
                         and previous.role == item.role == 'node' and item.code is None and item.name
                         and not item.amounts and not ABOLISHED.fullmatch(item.name)
+                        # (a title with no number is a title of its own: `unnumbered_titles`)
+                        and not (item.level == -1 and document_quirk('unnumbered_titles') is not None)
                         # (a line that opens with a bracket starts an item of its own: `bracketed_subjects`)
                         and not (bracketed is not None and item.lines and bracketed.module.marked(item.lines[0]))
                         # (a name wrapped so that its amount is printed on the last line, none on the code's line: `1 居宅サービス` / `事業費 3,596,885`)
@@ -2352,6 +2382,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 first = mine.pop(0)
                 previous.lines += first.lines
                 previous.amounts += first.amounts
+                if previous.role == 'note' and not reads_as_note(previous.name):
+                    # A name that ended its page without an amount was held as a note; with its amount it is an item
+                    # (`大崎ゆうゆうプラザ太陽光発電設備新設工事監理委託` / `418,000` over the page, 131091 決算 R7 p6・p8).
+                    previous.role = 'node'
             elif (previous is not None and mine
                   and (((over := quirk((layout or {}).get(group.axis), 'names_over_pages')) is not None
                         and over.module.runs_on(previous, mine[0]))
@@ -2575,7 +2609,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             if item.group.subject:
                 if item.code is not None and item.role == 'node':
                     opening = False
-                elif opening and item.code is None and item.name and not item.amounts and item.role == 'node':
+                elif (opening and item.code is None and item.name and not item.amounts and item.role == 'node'
+                      and not prints_row_amounts(item, logical)):
                     # A continuation page opens by printing the open headings again, names only (`総務管理費` /
                     # `一般管理費`, without their codes): the open heading of that name, not a new subject.
                     # (one line each, or all in one item when the page sets them close).
@@ -3075,6 +3110,21 @@ def within_row(logical: Logical, previous: Item, item: Item) -> bool:
         return False
     top, bottom = _cell(min(beside, key=lambda b: b.x0), y)
     return item.y0 >= previous.y1 and top - .5 <= item.y0 and item.y1 <= bottom + .5
+
+
+def prints_row_amounts(item: Item, logical: Logical) -> bool:
+    """The subject's row prints amounts in the amount columns. A heading printed again at the top of a continuation page
+    prints its name only; a codeless subject of the same name with amounts of its own is a subject (a 目 the year drops,
+    `ＳＤＧｓ推進費 0 148,882` under the 項 `ＳＤＧｓ推進費`, 131237 当初予算 R5 p184)."""
+    first = item.lines[0] if item.lines else item.glyphs
+    top, bottom = min(g.y0 for g in first), max(g.y1 for g in first)
+    own = []  # the amount columns right after the subject's: a breakdown's columns further right are not its row
+    for band in sorted((b for b in logical.bands if b.x0 >= item.group.x1 - .5 and b.kind is not None), key=lambda b: b.x0):
+        if band.kind != 'amount':
+            break
+        own.append(band)
+    return any(glyph.page == item.page and top <= (glyph.y0 + glyph.y1) / 2 <= bottom and is_amount(glyph.text)
+               for band in own for glyph in band.words)
 
 
 def subject_row(item: Item, logical: Logical) -> tuple[float, float]:

@@ -1,0 +1,91 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132195",
+    "fiscal_year": 2021,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "0023f7ba5a65095b52f1d7988585a8838f412af15dc3d35b939d2b15a605eb69"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "主管課": {
+                  "kind": "ignore"
+                },
+                "事業説明": {
+                  "kind": "ignore"
+                },
+                "財源内訳／特定財源": {
+                  "kind": "amount",
+                  "inline": true
+                },
+                "金額": {
+                  "heading": "決算額"
+                },
+                "節／金額": {
+                  "heading": "決算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "事業名": {
+                "pattern": "indent",
+                "quirks": {
+                  "rows": true,
+                  "rows_from": {
+                    "name": "主管課",
+                    "amount": "決算額"
+                  }
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              },
+              "節説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true,
+                  "bare_amounts": true
+                },
+                "quirks": {
+                  "sum_levels": true
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules",
+            "stacked_rows"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    }
+  ]
+}
