@@ -2469,6 +2469,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 kept.append(c)
                 centres.append(sum(c) / len(c))
         levels[axis] = sorted(sum(c) / len(c) for c in kept)
+    if (jitter := document_quirk('ocr_start_jitter')) is not None:
+        levels = {axis: jitter.module.merge(centres) for axis, centres in levels.items()}
     if mixed_document(logicals):
         for axis, centres in ((a, c) for a, c in levels.items() if a in printed):
             snap_ocr_levels([i for l, ordered, found in all_items if l.ocr for g in ordered if not g.subject and g.axis == axis
