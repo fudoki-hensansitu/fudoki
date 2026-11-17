@@ -1354,13 +1354,15 @@ def subject_items(group: Group, marked=None, dropped=None) -> list[Item]:
             in_column[band].append((cell, index))
     claimed: dict[tuple, tuple[tuple, int]] = {}
     own_column = document_quirk('names_in_own_column')
+    nearest = document_quirk('nearest_subject_code')
     for cell, (tokens, names) in parsed.items():
         for position, piece in enumerate(names):
             column = band_index(piece[0])
             span = _cell(group.bands[column], centre(piece))
             found = [(c, i) for c, i in in_column[column]
                      if _cell(group.bands[column], centre(parsed[c][0][i][1])) == span]
-            if len(found) == 1 and (found[0][0] == cell or own_column is not None):
+            if len(found) == 1 and (found[0][0] == cell or own_column is not None) \
+                    and not (nearest is not None and nearest.module.owner(tokens, piece, centre) is not None):
                 claimed[cell, position] = found[0]
     for (cell, position), owner_token in claimed.items():
         extra[owner_token].append(parsed[cell][1][position])
@@ -1400,6 +1402,8 @@ def subject_items(group: Group, marked=None, dropped=None) -> list[Item]:
                 continue
             same = [i for i, (band, _) in enumerate(tokens) if band == band_index(piece[0])]
             owner_of[position] = same[0] if len(same) == 1 else deepest_token
+            if nearest is not None and (found := nearest.module.owner(tokens, piece, centre)) is not None:
+                owner_of[position] = found
         for index, (band, piece) in enumerate(tokens):
             code, name = _split_code(normalize(text(piece)))
             own = [piece]

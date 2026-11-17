@@ -107,14 +107,14 @@ def _split(word: Word, cuts: list[float]) -> list[Word]:
         # as read (`17,585,227,000` boxed 3pt past its cell's right rule, 281000; `0532,413,000` and
         # `130,577,0001,156,707,000` are cut).
         return [word]
+    after = document_quirk('code_after_amount') if len(inside) == 1 else None
     if (NUMBER.fullmatch(_text(word.text)) and len(_text(word.text)) >= 3
             and all(word.x1 - x < width for x in inside)):
         # Nor does a rule within a character of a number's end: the box runs past its cell's right rule
         # (`448` of `134,271 448`, `296` 3pt past it, 281000), and no whole digit fits in that sliver. The box
         # still ends at the rule, as a cut keeping every character gives it (`422` 1pt past it, 132152).
         return [word] if _amount(word.text) else [Word(word.text, word.x0, word.y0, min(inside), word.y1)]
-    if len(inside) == 1 and (after := document_quirk('code_after_amount')) is not None \
-            and after.module.overrun(_text(word.text), word.x1 - inside[0], width):
+    if after is not None and after.module.overrun(_text(word.text), word.x1 - inside[0], width):
         return [Word(word.text, word.x0, word.y0, inside[0], word.y1)]
     # Two grouped amounts run together across one rule (`△77,756,000103,232,000`, 132276): the groups of three say
     # where the first ends. A share by width can be a digit off, and a sign makes the left part wider than it reads.
@@ -123,8 +123,7 @@ def _split(word: Word, cuts: list[float]) -> list[Word]:
     if len(together) == len(inside) and ''.join(together) == joined and len(inside) > 1 \
             and (padded := document_quirk('padded_runs')) is not None:
         inside = padded.module.inside(word, inside, width)
-    if len(inside) == 1 and (after := document_quirk('code_after_amount')) is not None \
-            and (cut := after.module.pieces(joined)) is not None:
+    if after is not None and (cut := after.module.pieces(joined, after.value)) is not None:
         return [Word(cut[0], word.x0, word.y0, inside[0], word.y1), Word(cut[1], inside[0], word.y0, word.x1, word.y1)]
     if len(together) == len(inside) + 1 and ''.join(together) == joined:
         edges = [word.x0, *inside, word.x1]
@@ -418,10 +417,18 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
                           > (o['bbox_pdf_pt'][2] - o['bbox_pdf_pt'][0]) * (o['bbox_pdf_pt'][3] - o['bbox_pdf_pt'][1])
                           for other, full in marks)}
     gone |= fragments
+    if (after := document_quirk('code_after_amount')) is not None:
+        trimmed = after.module.read_twice([o for _, o in readings if o['id'] not in gone], cuts)
+        gone |= {o['id'] for region in observation_page['regions'] for o in region['observations']
+                 if o.get('parent_id') in trimmed}
+    else:
+        trimmed = {}
     words: list[Word] = []
     for region in observation_page['regions']:
         items = [o for o in region['observations'] if o['id'] not in gone
                  and o.get('parent_id') not in fragments and o['bbox_pdf_pt'] and o['raw_text'].strip()]
+        items = [{**o, 'raw_text': trimmed[o['id']][0], 'bbox_pdf_pt': trimmed[o['id']][1]} if o['id'] in trimmed else o
+                 for o in items]
         corrected_regions = set()
         corrected_word_parents = set()
         if corrections:
