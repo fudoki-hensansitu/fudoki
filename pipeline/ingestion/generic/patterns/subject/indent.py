@@ -61,12 +61,17 @@ def alignment(all_items, codes_right, glued=None):
         gap = max(common) - min(common) if common else 0
         if common and 3 < gap and (gap <= 6.5 or abs(gap - digit) <= .6):
             right_set.add(level)
-    return one_width, codes_set_right, right_set
+    # A scan (every page OCR) reads a staircase by its columns; a text document's few OCR pages read it as its text
+    # pages do, from where the codes start, or one level starts at two values (132080 決算 R6 p382, 項 at the 款's).
+    scan = all(logical.ocr for logical, _, _ in all_items)
+    return one_width, codes_set_right, right_set, scan
 
 
 def align(logical, group, kept, alignment):
-    one_width, codes_set_right, right_set = alignment
+    one_width, codes_set_right, right_set, scan = alignment
     run_into = document_quirk('code_run_into_name')
+    across = document_quirk('codes_across_level_rules')  # codes that run past their level's box
+    marked = document_quirk('codes_before_marks')  # codes moved left by the mark of a dropped subject
     glued = document_quirk('glued_subject_codes')
     digits_of = glued.module.digits if glued is not None else (lambda glyph: glyph.text)
     # Join at the name's position before learning subject levels from the code's start.
@@ -80,8 +85,8 @@ def align(logical, group, kept, alignment):
         lead = (coded or item.glyphs[0]) if glued is not None else item.glyphs[0]
         band = group.bands[item.level] if 0 <= item.level < len(group.bands) else None
         narrow = len(group.bands) >= 3 and all(b.x1 - b.x0 < 20 for b in group.bands[:-1])
-        staircase = band is not None and item.code is not None and narrow and item.level in right_set
-        if staircase and logical.ocr:
+        staircase = band is not None and item.code is not None and narrow and item.level in right_set and across is None
+        if staircase and logical.ocr and scan:
             # A staircase of narrow level columns with the codes set right: the column is the level, not where the
             # digits start (`5` and `10` of one 目 start 5pt apart). On a scan this holds whether OCR reads the code as
             # a word of its own (`1` `一般管理費`) or glued to the name (`2秘書事務費`, 瑞穂町 R5 決算).
@@ -93,6 +98,10 @@ def align(logical, group, kept, alignment):
             item.indent += one_width if 2 in (len(item.code), len(digits_of(lead))) else 0
         elif staircase:
             item.indent = band.x0
+        if across is not None:
+            across.module.align(item, across.value)
+        if marked is not None:
+            marked.module.align(item, marked.value)
 
 
 def learn_levels(all_items, codeless=None, stray=None):
