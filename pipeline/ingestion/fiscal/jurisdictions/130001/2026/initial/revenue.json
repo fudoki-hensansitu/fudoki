@@ -1,0 +1,1862 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "130001",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_revenue_header",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "計上説明（区分・課税基本・税率・調定見込額・収入歩合・収入見込額、補助率など）は節の下の徴収区分や算定の基で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true
+              },
+              "rules": {
+                "dark": 160
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "dropped_notes": true,
+            "bracketed_subjects": true
+          }
+        },
+        "pages": [
+          [
+            12,
+            110
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p105-ink-reread",
+            "page": 105,
+            "observation_id": "p105:ink-4:a4:result0:r0",
+            "observed": "24港",
+            "reason": "物理105頁の節の金額「87,884」の右上を墨として読み直した読みで、原画のこの位置には数字の「24」は無い（金額の数字と説明の「港湾局」の字の墨を繋げて読んだ）。この読みは使わない。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-ocr-1",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9d91cc8c2b83bae329ac2e7eee33d15ca1268882903a86c3bc9679937fb756e4",
+          "bytes": 3325597
+        },
+        {
+          "id": "general-revenue-ocr-2",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c11a17fa12111f5533c4306cea663f180e8be57bdf89c1e61b31400f1863f5a6",
+          "bytes": 2611190
+        },
+        {
+          "id": "general-revenue-ocr-3",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "80d0f59250527cfd669d212ff9bd6ddf22991d8a950d3f70de8c80b50d946a51",
+          "bytes": 4373079
+        },
+        {
+          "id": "general-revenue-ocr-4",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "383271714f924835721b2348a103efa9feda2a42661c2391bae3a00d9603962c",
+          "bytes": 4768572
+        },
+        {
+          "id": "general-revenue-ocr-5",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "bf6f66d3af8260c23ce8f7ed57ce394ecb1536aa4ea265cb287fb8ac77240231",
+          "bytes": 4016605
+        },
+        {
+          "id": "general-revenue-ocr-6",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70,
+              71
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "72e9b01c2e1bdf6f5966f8f322bd3d00ce5d8d6e92a4478a2250630b5da52468",
+          "bytes": 3643099
+        },
+        {
+          "id": "general-revenue-ocr-7",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              72,
+              73,
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80,
+              81
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "953aceeb9655403ff948cdf0e9b2862f5b17d7ffc1ac6be8ae3fe180d15f62d6",
+          "bytes": 2662931
+        },
+        {
+          "id": "general-revenue-ocr-8",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              82,
+              83,
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90,
+              91
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "486aa253ccff53ff97aba9fb1ed505b76672613bd9ecbe3048c49c7f772e293b",
+          "bytes": 2412555
+        },
+        {
+          "id": "general-revenue-ocr-9",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              92,
+              93,
+              94,
+              95,
+              96,
+              97,
+              98,
+              99,
+              100,
+              101
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "65596a0aee679be6fb5cd40cfcb9c08c06d5aa699bad7aef61bb00bccbc6598e",
+          "bytes": 3292414
+        },
+        {
+          "id": "general-revenue-ocr-10",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              102,
+              103,
+              104,
+              105,
+              106,
+              107,
+              108,
+              109,
+              110
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "79822fc672512aa8e087bb4a82ea451fccc6ecd8a332ca0f6d1e3257a74f1047",
+          "bytes": 2527907
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "ward-fiscal-adjustment",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "特別区財政調整会計",
+        "table_id": "ward-fiscal-adjustment-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_revenue_header",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "計上説明（区分・課税基本・税率・調定見込額・収入歩合・収入見込額、補助率など）は節の下の徴収区分や算定の基で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true
+              },
+              "rules": {
+                "dark": 160
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "dropped_notes": true,
+            "bracketed_subjects": true
+          }
+        },
+        "pages": [
+          [
+            5,
+            5
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "ward-fiscal-adjustment-revenue-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              5
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "f65f2165e8f016b60ac5f2a924a360c2a463d744c38cf4d366fa6b6b176cedd1",
+          "bytes": 195313
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "ward-fiscal-adjustment-revenue"
+        }
+      ]
+    },
+    {
+      "id": "local-consumption-tax-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "地方消費税清算会計",
+        "table_id": "local-consumption-tax-settlement-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_revenue_header",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "計上説明（区分・課税基本・税率・調定見込額・収入歩合・収入見込額、補助率など）は節の下の徴収区分や算定の基で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true
+              },
+              "rules": {
+                "dark": 160
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "dropped_notes": true,
+            "bracketed_subjects": true
+          }
+        },
+        "pages": [
+          [
+            9,
+            9
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "local-consumption-tax-settlement-revenue-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              9
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9abbffb8fa7a1b59841d35f7cfa3146a0e64d81ece0027aedc3f53b85ca45f7c",
+          "bytes": 278663
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "local-consumption-tax-settlement-revenue"
+        }
+      ]
+    },
+    {
+      "id": "ogasawara-reconstruction-fund",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "小笠原諸島生活再建資金会計",
+        "table_id": "ogasawara-reconstruction-fund-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_revenue_header",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "計上説明（区分・課税基本・税率・調定見込額・収入歩合・収入見込額、補助率など）は節の下の徴収区分や算定の基で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true
+              },
+              "rules": {
+                "dark": 160
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "dropped_notes": true,
+            "bracketed_subjects": true
+          }
+        },
+        "pages": [
+          [
+            14,
+            14
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "ogasawara-reconstruction-fund-revenue-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              14
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a31e0ade2697e9e04247cf2a46ff3cd9ce22c998e5f7a3a166786559b3e55592",
+          "bytes": 219848
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "ogasawara-reconstruction-fund-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_revenue_header",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "計上説明（区分・課税基本・税率・調定見込額・収入歩合・収入見込額、補助率など）は節の下の徴収区分や算定の基で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true
+              },
+              "rules": {
+                "dark": 160
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "dropped_notes": true,
+            "bracketed_subjects": true
+          }
+        },
+        "pages": [
+          [
+            18,
+            21
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-revenue-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              18,
+              19,
+              20,
+              21
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "8bd14f76ba8f5a282d6fca52353be3b492e47e7441132cafd98071ac4db5feb3",
+          "bytes": 1174406
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "single-parent-welfare-loan",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "母子父子福祉貸付資金会計",
+        "table_id": "single-parent-welfare-loan-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_revenue_header",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "計上説明（区分・課税基本・税率・調定見込額・収入歩合・収入見込額、補助率など）は節の下の徴収区分や算定の基で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true
+              },
+              "rules": {
+                "dark": 160
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "dropped_notes": true,
+            "bracketed_subjects": true
+          }
+        },
+        "pages": [
+          [
+            35,
+            36
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "single-parent-welfare-loan-revenue-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              35,
+              36
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "39d59806e6f4b874d94b06476d0d885c56d4b8586a2cd286b8bceca437113a91",
+          "bytes": 370456
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "single-parent-welfare-loan-revenue"
+        }
+      ]
+    },
+    {
+      "id": "disability-support-pension",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "心身障害者扶養年金会計",
+        "table_id": "disability-support-pension-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_revenue_header",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "計上説明（区分・課税基本・税率・調定見込額・収入歩合・収入見込額、補助率など）は節の下の徴収区分や算定の基で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true
+              },
+              "rules": {
+                "dark": 160
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "dropped_notes": true,
+            "bracketed_subjects": true
+          }
+        },
+        "pages": [
+          [
+            42,
+            42
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "disability-support-pension-revenue-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              42
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "503466f1aa68ce6f0014936a6680dc4c3c55da5a8ca46281a026bc2a9e25fdb2",
+          "bytes": 252261
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "disability-support-pension-revenue"
+        }
+      ]
+    },
+    {
+      "id": "metropolitan-hospital-loan",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "地方独立行政法人東京都立病院機構貸付等事業会計",
+        "table_id": "metropolitan-hospital-loan-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_revenue_header",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "計上説明（区分・課税基本・税率・調定見込額・収入歩合・収入見込額、補助率など）は節の下の徴収区分や算定の基で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true
+              },
+              "rules": {
+                "dark": 160
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "dropped_notes": true,
+            "bracketed_subjects": true
+          }
+        },
+        "pages": [
+          [
+            46,
+            46
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "metropolitan-hospital-loan-revenue-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              46
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "4db2549df850cda8f0ea2734ddfe62466fb205c28178ada36cf88fc155bdb3eb",
+          "bytes": 292469
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "metropolitan-hospital-loan-revenue"
+        }
+      ]
+    },
+    {
+      "id": "sme-equipment-fund",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "中小企業設備導入等資金会計",
+        "table_id": "sme-equipment-fund-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_revenue_header",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "計上説明（区分・課税基本・税率・調定見込額・収入歩合・収入見込額、補助率など）は節の下の徴収区分や算定の基で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true
+              },
+              "rules": {
+                "dark": 160
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "dropped_notes": true,
+            "bracketed_subjects": true
+          }
+        },
+        "pages": [
+          [
+            58,
+            58
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "sme-equipment-fund-revenue-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              58
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c9461bc1fcf0489c5b0136522a27313ef2834e5099eeed596280676e3f98ec56",
+          "bytes": 278199
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "sme-equipment-fund-revenue"
+        }
+      ]
+    },
+    {
+      "id": "forestry-improvement-fund",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "林業・木材産業改善資金助成会計",
+        "table_id": "forestry-improvement-fund-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_revenue_header",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "計上説明（区分・課税基本・税率・調定見込額・収入歩合・収入見込額、補助率など）は節の下の徴収区分や算定の基で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true
+              },
+              "rules": {
+                "dark": 160
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "dropped_notes": true,
+            "bracketed_subjects": true
+          }
+        },
+        "pages": [
+          [
+            64,
+            64
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "forestry-improvement-fund-revenue-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              64
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "fc4a18e8c90e8bbcecebf7e2f091829358644a5d8f6d3a976d44d932bb02bba3",
+          "bytes": 241956
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "forestry-improvement-fund-revenue"
+        }
+      ]
+    },
+    {
+      "id": "coastal-fishery-improvement-fund",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "沿岸漁業改善資金助成会計",
+        "table_id": "coastal-fishery-improvement-fund-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_revenue_header",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "計上説明（区分・課税基本・税率・調定見込額・収入歩合・収入見込額、補助率など）は節の下の徴収区分や算定の基で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true
+              },
+              "rules": {
+                "dark": 160
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "dropped_notes": true,
+            "bracketed_subjects": true
+          }
+        },
+        "pages": [
+          [
+            68,
+            68
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "coastal-fishery-improvement-fund-revenue-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              68
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "965f37dfb91e8ca9656a31c0f111ad44b033774bdd86c0d827aa8b282b06c811",
+          "bytes": 244674
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "coastal-fishery-improvement-fund-revenue"
+        }
+      ]
+    },
+    {
+      "id": "slaughterhouse",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "と場会計",
+        "table_id": "slaughterhouse-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_revenue_header",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "計上説明（区分・課税基本・税率・調定見込額・収入歩合・収入見込額、補助率など）は節の下の徴収区分や算定の基で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true
+              },
+              "rules": {
+                "dark": 160
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "dropped_notes": true,
+            "bracketed_subjects": true
+          }
+        },
+        "pages": [
+          [
+            72,
+            73
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "slaughterhouse-revenue-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              72,
+              73
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "852e5c38fce7ad55f85b0315979fe2fe25797863be37a868f2ab6fc271e14f76",
+          "bytes": 409065
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "slaughterhouse-revenue"
+        }
+      ]
+    },
+    {
+      "id": "metropolitan-housing",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "都営住宅等事業会計",
+        "table_id": "metropolitan-housing-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_revenue_header",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "計上説明（区分・課税基本・税率・調定見込額・収入歩合・収入見込額、補助率など）は節の下の徴収区分や算定の基で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true
+              },
+              "rules": {
+                "dark": 160
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "dropped_notes": true,
+            "bracketed_subjects": true
+          }
+        },
+        "pages": [
+          [
+            87,
+            90
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "metropolitan-housing-revenue-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              87,
+              88,
+              89,
+              90
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "849c4207b1757ccd94fd0c0e8fd2028126c9edf040b3c08d3163df473a5eed1c",
+          "bytes": 1245185
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "metropolitan-housing-revenue"
+        }
+      ]
+    },
+    {
+      "id": "metropolitan-housing-deposit",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "都営住宅等保証金会計",
+        "table_id": "metropolitan-housing-deposit-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_revenue_header",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "計上説明（区分・課税基本・税率・調定見込額・収入歩合・収入見込額、補助率など）は節の下の徴収区分や算定の基で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true
+              },
+              "rules": {
+                "dark": 160
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "dropped_notes": true,
+            "bracketed_subjects": true
+          }
+        },
+        "pages": [
+          [
+            107,
+            108
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "metropolitan-housing-deposit-revenue-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              107,
+              108
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "133d865450eddf13bad5e0090d90736624799fa26f2857f736f2f400c8229fc3",
+          "bytes": 583096
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "metropolitan-housing-deposit-revenue"
+        }
+      ]
+    },
+    {
+      "id": "urban-development-fund",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "都市開発資金会計",
+        "table_id": "urban-development-fund-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_revenue_header",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "計上説明（区分・課税基本・税率・調定見込額・収入歩合・収入見込額、補助率など）は節の下の徴収区分や算定の基で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true
+              },
+              "rules": {
+                "dark": 160
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "dropped_notes": true,
+            "bracketed_subjects": true
+          }
+        },
+        "pages": [
+          [
+            114,
+            115
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "urban-development-fund-revenue-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              114,
+              115
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6e16f9397bfe8a8c8c81540e0cde4d832fa2afb5bc906a67a732fcc0dcb5e34e",
+          "bytes": 354783
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "urban-development-fund-revenue"
+        }
+      ]
+    },
+    {
+      "id": "land-acquisition",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "用地会計",
+        "table_id": "land-acquisition-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_revenue_header",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "計上説明（区分・課税基本・税率・調定見込額・収入歩合・収入見込額、補助率など）は節の下の徴収区分や算定の基で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true
+              },
+              "rules": {
+                "dark": 160
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "dropped_notes": true,
+            "bracketed_subjects": true
+          }
+        },
+        "pages": [
+          [
+            121,
+            122
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "land-acquisition-revenue-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              121,
+              122
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6d56569b7984ead83a9c39909e2d23bd42db36c27108691472e90f56c750f502",
+          "bytes": 382382
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "land-acquisition-revenue"
+        }
+      ]
+    },
+    {
+      "id": "public-debt",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "公債費会計",
+        "table_id": "public-debt-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_revenue_header",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "計上説明（区分・課税基本・税率・調定見込額・収入歩合・収入見込額、補助率など）は節の下の徴収区分や算定の基で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true
+              },
+              "rules": {
+                "dark": 160
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "dropped_notes": true,
+            "bracketed_subjects": true
+          }
+        },
+        "pages": [
+          [
+            129,
+            130
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "public-debt-revenue-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              129,
+              130
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "34634f3d31718372d77a92d1bdb91a2eaf2bf2723306e1d2e98b26cfb2ab762d",
+          "bytes": 585659
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "public-debt-revenue"
+        }
+      ]
+    },
+    {
+      "id": "waterfront-infrastructure",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "臨海都市基盤整備事業会計",
+        "table_id": "waterfront-infrastructure-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_revenue_header",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "計上説明（区分・課税基本・税率・調定見込額・収入歩合・収入見込額、補助率など）は節の下の徴収区分や算定の基で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true
+              },
+              "rules": {
+                "dark": 160
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "dropped_notes": true,
+            "bracketed_subjects": true
+          }
+        },
+        "pages": [
+          [
+            137,
+            138
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "waterfront-infrastructure-revenue-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              137,
+              138
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "b000a26ea9f2fc1f0b58774afef691494e8aa3efcdeb2514728bfd9b1eb18287",
+          "bytes": 328905
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "waterfront-infrastructure-revenue"
+        }
+      ]
+    },
+    {
+      "id": "industrial-water-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "工業用水道事業清算会計",
+        "table_id": "industrial-water-settlement-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_revenue_header",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "計上説明（区分・課税基本・税率・調定見込額・収入歩合・収入見込額、補助率など）は節の下の徴収区分や算定の基で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true
+              },
+              "rules": {
+                "dark": 160
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "dropped_notes": true,
+            "bracketed_subjects": true
+          }
+        },
+        "pages": [
+          [
+            150,
+            151
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "industrial-water-settlement-revenue-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              150,
+              151
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "812f8b49d3a64f817a007d9fbd0fe409dadfdd040a8ef83939b8fcdf4d7a85f8",
+          "bytes": 354637
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "industrial-water-settlement-revenue"
+        }
+      ]
+    }
+  ]
+}

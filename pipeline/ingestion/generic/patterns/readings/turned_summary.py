@@ -19,6 +19,8 @@ What the profile declares (measured on the page, in the upright frame):
   identities (総額 = 左の内訳の和). A row with a blank part is not compared; every other mismatch stops.
 
 Each 款 row is one node (axis 区分, level 款). Only what is printed is kept: a blank cell has no amount row.
+A row numbered in brackets under a 款 (`(1) 普通交付税` under `12. 地方交付税`, 大島町の当初予算資料「一般会計歳入」)
+is a 項 of that 款; the tree check sums them into it.
 """
 from __future__ import annotations
 
@@ -38,6 +40,7 @@ from shared.amount import number
 
 AMOUNT = re.compile(r'△?(?:0|[1-9][0-9]{0,2}(?:,[0-9]{3})*)')
 CODE = re.compile(r'^([0-9０-９]+)[．.]')
+SUB = re.compile(r'^[(（]([0-9０-９]+)[)）]')
 DASH = re.compile(r'[-－−‐]')
 ROW_GAP = 3.0  # points: the words of one printed row start within this of each other (upright y)
 
@@ -114,8 +117,8 @@ class Reader(Reading):
         if len(inputs) != 1:
             raise ValueError('A turned summary is read from one original')
         source = inputs[0]
-        if source['format'] != 'pdf' or source['pdf_type'] != 'text' or source['direction'] != 'expenditure':
-            raise ValueError('A turned summary reads a text PDF of expenditure')
+        if source['format'] != 'pdf' or source['pdf_type'] != 'text' or source['direction'] not in ('expenditure', 'revenue'):
+            raise ValueError('A turned summary reads a text PDF of expenditure or revenue')
         if sha_file(source['path']) != source['sha256']:
             raise ValueError('Original SHA differs')
         profile = self.profile
@@ -178,12 +181,30 @@ class Reader(Reading):
                 raise ValueError(f'Prints outside the declared columns: {where} {left}')
             return label_words, values
 
-        nodes, amounts, kan, label_ids = [], [], [], set()
+        nodes, amounts, kan, kan_keys, label_ids = [], [], [], [], set()
         heading = lambda column: column.get('heading') or '／'.join(s['text'] for s in column['header'])
         for row in rows:
             label_words, values = cells(row, f'row at y\'={row[0]["up"][1]:.1f}')
             label_ids.update(id(w) for w in label_words)
             printed = self.read(label_words)
+            sub = SUB.match(self.key(printed))
+            if sub and kan:
+                name = self.key(printed)[sub.end():]
+                if not name:
+                    raise ValueError(f'A 項 row without its printed name: {printed!r}')
+                x0, y0, x1, y1 = self.box(label_words)
+                node_key = 'n-' + hashlib.sha256(f'{page}:{x0:.2f}:{y0:.2f}:{label["header"]}'.encode()).hexdigest()[:24]
+                nodes.append({'node_key': node_key, 'parent_node_key': kan_keys[-1], 'axis_header': label['header'],
+                              'depth': 2, 'level_header': '項', 'code_text': sub.group(1), 'name_text': name,
+                              'physical_page': page, 'x0': x0, 'y0': y0, 'x1': x1, 'y1': y1})
+                for index, word in values.items():
+                    if profile['columns'][index]['kind'] != 'amount':
+                        continue
+                    bx0, by0, bx1, by1 = word['box']
+                    amounts.append({'node_key': node_key, 'header_path': heading(profile['columns'][index]),
+                                    'amount_text': word['text'], 'unit_text': unit, 'physical_page': page,
+                                    'x0': bx0, 'y0': by0, 'x1': bx1, 'y1': by1})
+                continue
             found = CODE.match(self.key(printed)) or DASH.match(self.key(printed))
             if not found:
                 raise ValueError(f'A 款 row without its printed number: {printed!r}')
@@ -200,6 +221,7 @@ class Reader(Reading):
                           'level_header': '款', 'code_text': code, 'name_text': name, 'physical_page': page,
                           'x0': x0, 'y0': y0, 'x1': x1, 'y1': y1})
             kan.append((name, values))
+            kan_keys.append(node_key)
             for index, word in values.items():
                 if profile['columns'][index]['kind'] != 'amount':
                     continue
@@ -271,7 +293,9 @@ class Reader(Reading):
             (f'物理{page}頁の表（{profile["title"]}）は頁に90°回して組まれているので、語の位置を表の向きに回して行と欄を読んだ（読み方 turned_summary、位置は表示頁の座標のまま）。'
              if profile.get('turned', True) else
              f'物理{page}頁の表（{profile["title"]}）は頁ごと回してあり、文字層が表の向きのままなので、その座標で行と欄を読んだ（読み方 turned_summary の turned: false）。'),
-            f'款の行 {len(nodes)} 行を、区分の欄の印字のとおり款として置いた。項・目は印字されていない。',
+            (f'款の行 {len(kan)} 行を、区分の欄の印字のとおり款として置いた。項・目は印字されていない。'
+             if len(kan) == len(nodes) else
+             f'款の行 {len(kan)} 行を款、その下に括弧の番号で印字した行 {len(nodes) - len(kan)} 行を項として置いた。目は印字されていない。'),
             f'金額の単位は印字の「{profile["unit"]["printed"]}」。金額の欄 {len(amount_columns) + len(breakdowns)} 欄すべてで款の和と印字の「{profile["total_row"]["label"]}」が一致。'
             f'行の内訳（総額＝左の内訳の和など）を {compared} 行で照合して一致'
             + (f'（空欄を含む {len(skipped)} 行は照合していない: {"・".join(skipped)}）' if skipped else '') + '。',

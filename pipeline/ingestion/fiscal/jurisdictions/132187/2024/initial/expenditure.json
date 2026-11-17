@@ -102,6 +102,317 @@
           "table_id": "general-initial"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6c28c16c069c660880ae926371539bd0e074010a655fa94f3133f0179e4cb227"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "facing_pages",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "name_tails_over_pages": true
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "amount_brackets": true,
+                  "yen_marked": true,
+                  "yen_notes": true
+                },
+                "quirks": {
+                  "headings": true,
+                  "column_edge": true
+                }
+              }
+            }
+          },
+          "repairs": [
+            "em_boxes",
+            "line_clips",
+            "spaced_codes"
+          ]
+        },
+        "pages": [
+          [
+            21,
+            58
+          ]
+        ],
+        "excluded_boxes": [
+          {
+            "id": "p56-reserve-amount",
+            "page": 56,
+            "bbox": [
+              178,
+              212,
+              216,
+              228
+            ],
+            "kind": "親の繰り返し",
+            "reason": "予備費の節の欄の金額。予備費は節の区分を印字せず金額だけを印字し、その額は目（予備費）の額と同じ。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6c28c16c069c660880ae926371539bd0e074010a655fa94f3133f0179e4cb227"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "facing_pages",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "name_tails_over_pages": true
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "amount_brackets": true,
+                  "yen_marked": true,
+                  "yen_notes": true
+                },
+                "quirks": {
+                  "headings": true,
+                  "column_edge": true
+                }
+              }
+            }
+          },
+          "repairs": [
+            "em_boxes",
+            "line_clips",
+            "spaced_codes"
+          ],
+          "quirks": {
+            "spaced_ocr_codes": true
+          }
+        },
+        "pages": [
+          [
+            91,
+            122
+          ]
+        ],
+        "excluded_boxes": [
+          {
+            "id": "p122-reserve-amount",
+            "page": 122,
+            "bbox": [
+              178,
+              212,
+              216,
+              228
+            ],
+            "kind": "親の繰り返し",
+            "reason": "予備費の節の欄の金額。予備費は節の区分を印字せず金額だけを印字し、その額は目（予備費）の額と同じ。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-initial-ocr-1",
+          "origin_sha256": "6c28c16c069c660880ae926371539bd0e074010a655fa94f3133f0179e4cb227",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              111,
+              112
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "bd1bc369faaf218061e22b592048d820859bab2af93c1d64ef94a137a6aacd1e",
+          "bytes": 311597
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6c28c16c069c660880ae926371539bd0e074010a655fa94f3133f0179e4cb227"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "facing_pages",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "name_tails_over_pages": true
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "amount_brackets": true,
+                  "yen_marked": true,
+                  "yen_notes": true
+                },
+                "quirks": {
+                  "headings": true,
+                  "column_edge": true
+                }
+              }
+            }
+          },
+          "repairs": [
+            "em_boxes",
+            "line_clips",
+            "spaced_codes"
+          ]
+        },
+        "pages": [
+          [
+            153,
+            168
+          ]
+        ],
+        "excluded_boxes": [
+          {
+            "id": "p168-reserve-amount",
+            "page": 168,
+            "bbox": [
+              178,
+              212,
+              216,
+              228
+            ],
+            "kind": "親の繰り返し",
+            "reason": "予備費の節の欄の金額。予備費は節の区分を印字せず金額だけを印字し、その額は目（予備費）の額と同じ。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
     }
   ]
 }

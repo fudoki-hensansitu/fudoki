@@ -197,7 +197,9 @@ def repeated_header(page: Page, frame, header_bottom: float, body: list[tuple[in
         skip.update(i for i, _ in words)
         if number:
             above = [(i, w) for i, w in body if inside(w, *rows[number - 1])]
-            if above and TITLE.match(normalize(reading([w for _, w in above]))):
+            if above and (TITLE.match(normalize(reading([w for _, w in above])))
+                          or (document_quirk('uncoded_titles') is not None
+                              and not any(re.search(r'[0-9０-９]', w.text) for _, w in above))):
                 skip.update(i for i, _ in above)
     return skip
 
@@ -744,6 +746,8 @@ def same_rows(left: Page, right: Page, far_shift: float | None = None) -> bool:
         return False
     shorter, longer = (a, b) if len(a) <= len(b) else (b, a)
     if (scaled := document_quirk('scaled_spread_pages')) is not None and scaled.module.matches(shorter, longer) / len(shorter) >= SPREAD_ROW_MATCH:
+        return True
+    if (framed := document_quirk('framed_spread_pages')) is not None and framed.module.matches(a, b):
         return True
     if (drifting := document_quirk('drifting_spread_rows')) is not None:
         return drifting.module.matches(shorter, longer) / len(shorter) >= SPREAD_ROW_MATCH

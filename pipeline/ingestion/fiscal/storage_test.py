@@ -15,6 +15,8 @@ class FetchTest(unittest.TestCase):
     def setUp(self):
         self.root = Path(self.enterContext(tempfile.TemporaryDirectory()))
         self.enterContext(patch.object(storage, 'OBJECTS', self.root))
+        # These tests fake cf; keep get off the S3 path even when a Cloudflare token is in the environment.
+        self.enterContext(patch('ingestion.r2.s3_keys', return_value=None))
         self.body = b'current table'
         self.reference = {'key': 'fiscal/ingestion/131041/t.parquet', 'sha256': hashlib.sha256(self.body).hexdigest(),
                           'bytes': len(self.body)}

@@ -810,6 +810,253 @@
           "table_id": "general-expenditure-detail"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現／区分": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "予算現／継続費及び繰越事業費繰越財源充当額": {
+                  "kind": "amount"
+                },
+                "予算現／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-settlement"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-settlement-ocr-1",
+          "origin_sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              88,
+              89,
+              90,
+              91
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "82f80142415ca628e40af24b5a408850496e8525cc71da9ae85932a76086d568",
+          "bytes": 2435382
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現／区分": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "予算現／継続費及び繰越事業費繰越財源充当額": {
+                  "kind": "amount"
+                },
+                "予算現／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        },
+        "name_readings": [
+          {
+            "id": "p110-13-name",
+            "page": 110,
+            "box": [
+              345.0,
+              174.0,
+              385.0,
+              187.0
+            ],
+            "name": "使用料及び賃借料",
+            "reason": "物理110頁の目「2 認定調査費」の節「13 使用料及び賃借料」。名称を2行に折り返して印字し、OCR が番号 13 だけを読んで名称を読み落とした。名称の位置で読み直す。原画で確かめた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-settlement"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-settlement-ocr-1",
+          "origin_sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              109,
+              110,
+              111,
+              112,
+              113,
+              114,
+              115,
+              116
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c78deda8a09f837d5ef17837ea0b7114d9dc3f7923e81e963b67ee525b877dd0",
+          "bytes": 4645888
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現／区分": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "予算現／継続費及び繰越事業費繰越財源充当額": {
+                  "kind": "amount"
+                },
+                "予算現／予備費支出及び流用増減": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-settlement"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-settlement-ocr-1",
+          "origin_sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              131,
+              132
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "4a506968c5c16a792c2678f94d2626de4ede8f78fa7ce73cc26b1670577a3044",
+          "bytes": 1201488
+        }
+      ]
     }
   ]
 }
