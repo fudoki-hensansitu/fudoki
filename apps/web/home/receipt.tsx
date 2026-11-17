@@ -3,7 +3,7 @@
 // 1人あたりは予算を人口で割った額（払った税金の額ではない）。分野の行の和が合計に合うよう、大きい端数から1円ずつ足して丸める
 import * as React from 'react'
 import { encode } from 'uqr'
-import { ArrowRightIcon } from '@phosphor-icons/react'
+import { ArrowRightIcon, ShareNetworkIcon } from '@phosphor-icons/react'
 import { Link } from '../nav/link'
 import { reiwa, yearName } from '../jurisdiction/types'
 import type { YearView } from '../jurisdiction/app/data'
@@ -38,9 +38,34 @@ function useCountUp(to: number, delay = 0) {
   return n
 }
 
+/** 相対の url を、いま開いている origin に付けて外から開ける形にする */
+const absolute = (url: string) => (typeof location === 'undefined' ? url : new URL(url, location.origin).href)
+
+/** まちの頁を共有する。共有の画面が使えればそれを開き、無ければ URL をコピーして一時だけ「コピーしました」にする */
+function Share({ url, title }: { url: string; title: string }) {
+  const [done, setDone] = React.useState(false)
+  const timer = React.useRef<ReturnType<typeof setTimeout>>(undefined)
+  React.useEffect(() => () => clearTimeout(timer.current), [])
+  const onClick = async () => {
+    const href = absolute(url)
+    if (typeof navigator.share === 'function') return navigator.share({ title, url: href }).catch(() => {})
+    const ok = await navigator.clipboard.writeText(href).then(() => true, () => false)
+    if (!ok) return
+    setDone(true)
+    clearTimeout(timer.current)
+    timer.current = setTimeout(() => setDone(false), 2000)
+  }
+  return (
+    <button type="button" onClick={() => void onClick()} className="inline-flex items-center gap-1.5 rounded-full border border-border px-3.5 py-2 text-[13px] font-medium transition-colors hover:bg-card">
+      <ShareNetworkIcon className="size-4" />
+      {done ? 'コピーしました' : 'シェア'}
+    </button>
+  )
+}
+
 /** url の QR コード（紙の上なので、明暗で変えない色で描く）。相対の url はいま開いている origin に付けて読めるようにする */
 function Qr({ url }: { url: string }) {
-  const href = typeof location === 'undefined' ? url : new URL(url, location.origin).href
+  const href = absolute(url)
   const { data, size } = React.useMemo(() => encode(href, { border: 0 }), [href])
   const d = data.flatMap((row, y) => row.map((on, x) => (on ? `M${x} ${y}h1v1h-1z` : ''))).join('')
   return (
@@ -226,8 +251,11 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
               <span className="text-[15px]">1人あたりの合計</span>
               <Yen n={receipt.sum} className="text-[28px] font-semibold text-primary" />
             </p>
-            {/* 読み取るとまちの頁を開く */}
-            <Qr url={detailHref} />
+            {/* 読み取るとまちの頁を開く QR と、同じ頁を共有するボタン */}
+            <div className="mt-5 flex items-center justify-center gap-5">
+              <Qr url={detailHref} />
+              <Share url={detailHref} title={`${name}の1人あたりのレシート｜風土記`} />
+            </div>
           </div>
           </div>
         </div>

@@ -85,7 +85,6 @@
   display: block;
   width: 88px;
   height: 88px;
-  margin: 18px auto 0;
 }
 @media (prefers-reduced-motion: reduce) {
   .rc-print.rc-run {
