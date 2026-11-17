@@ -12,7 +12,6 @@ import { Emblem } from './town-picker'
 import type { MapEntry } from '../jurisdiction/index-table'
 import { yearView, type Snapshot, type YearView } from '../jurisdiction/app/data'
 import { reiwa, yearName } from '../jurisdiction/types'
-import { Amt, FieldIcon, perHeadText } from './parts'
 import { ReceiptMachine } from './receipt'
 import { useMyTown, type Town } from './towns'
 import { OtherTowns, AskTown, Intro } from './onboarding'
@@ -80,7 +79,6 @@ function buildCtx(town: Town, d: Snapshot, year: number, setYear: (y: number) =>
 }
 
 const flowHref = (c: Ctx) => `${c.base}/${c.v.word === '決算' ? 'settlement' : 'budget'}`
-const pct = (yen: number, total: number) => `${((yen / total) * 100).toFixed(1)}%`
 
 /**
  * 年度の切り替え。名前は自治体の頁と同じく今年度・昨年度…で呼び、新しい年度から並べる。
