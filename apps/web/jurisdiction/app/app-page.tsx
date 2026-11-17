@@ -887,7 +887,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   const setFilter = (f: string) => React.startTransition(() => setFilterState(f))
   const [query, setQueryState] = React.useState('')
   const setQuery = (x: string) => React.startTransition(() => setQueryState(x))
-  // 事業の絞り込み（?filter=・?field=・探す語の ?q=）は URL に持つ。ホームのはじめにやることやまとめの札から開いた状態で来られ、
+  // 事業の絞り込み（?filter=・?field=・探す語の ?q=）は URL に持つ。ホームやまとめの札から開いた状態で来られ、
   // 事業の頁を開いて戻ったときも URL から戻せる。まとめ（/tokyo/nakano）と事業のタブ（/2024/projects）は頁が別で、移ると画面を作り直すので、go も URL で渡す
   // 頁を移る途中は URL がまだ前の頁のままなので、移り終えてから読む
   const idle = navigation.state === 'idle'
