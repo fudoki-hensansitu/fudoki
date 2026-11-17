@@ -58,9 +58,6 @@ jobs:
       - run: bun run --cwd pipeline ingestion:bundle restore tables
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          # R2 を読むときは S3 互換の API を使う（ingestion/r2.py。無ければ cf）
-          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
       # Page words read from the PDFs: the slow part of a cold run. A new key each run keeps the cache fresh.
       # The words depend on the Poppler pinned in mise.toml but are cached without its version
       # (ingestion/lib/poppler.py), so the key carries mise.toml and a Poppler change starts empty.
@@ -77,9 +74,6 @@ jobs:
           # Reads R2; an accepted table is uploaded at its content-sha key (no stored table is overwritten).
           # The receipts are written by the write job below.
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          # R2 を読むときは S3 互換の API を使う（ingestion/r2.py。無ければ cf）
-          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
       - if: always()
         uses: actions/cache/save@v6
         with:
@@ -157,9 +151,6 @@ jobs:
           echo "jurisdictions=$(echo "$result" | jq -r '.accepted_jurisdictions | join(" ")')" >> "$GITHUB_OUTPUT"
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          # R2 を読むときは S3 互換の API を使う（ingestion/r2.py。無ければ cf）
-          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
-          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
       # 毎日の定期は全件を同期する（push では流さない共通の変更を出す。置き直した自治体もこれに含まれる）。
       # 手動の実行は置き直した自治体だけを同期する
       - if: ${{ !cancelled() && (github.event_name == 'schedule' || steps.apply.outputs.jurisdictions != '') }}
