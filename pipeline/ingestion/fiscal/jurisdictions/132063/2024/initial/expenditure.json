@@ -75,6 +75,469 @@
           "table_id": "general-initial"
         }
       ]
+    },
+    {
+      "id": "kokuho-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "c4f7498d29834d47cc9bda22b08483b47f8a52867089ef08971013d2f390017d"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "kokuho-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "施策番号": {
+                  "kind": "ignore"
+                },
+                "比較額(増減率%)": {
+                  "kind": "ignore"
+                },
+                "財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。目の行の財源額の下に「(内訳)」として財源の種類（国庫支出金・諸収入等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。目の行の財源額の下に「(内訳)」として財源の種類（国庫支出金・諸収入等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "codeless_name_levels": true,
+            "codes_across_level_rules": 2.5,
+            "digit_set_codes": 4.4
+          }
+        },
+        "pages": [
+          [
+            9,
+            13
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p10-repeated-heading",
+            "page": 10,
+            "observation_id": "p10:full-page:a0:result0:r22",
+            "observed": "療養諸費",
+            "reason": "物理10頁の科目の欄の頭に、前の頁から続く項（療養諸費）の名前だけを番号なしで印字し直している。スキャンの読みでは字下げが款の位置に寄り、款として読むと続く目の親が抜ける。印字し直した名前の読みは使わない。"
+          },
+          {
+            "id": "p11-repeated-heading",
+            "page": 11,
+            "observation_id": "p11:full-page:a0:result0:r23",
+            "observed": "移送費",
+            "reason": "物理11頁の科目の欄の頭に、前の頁から続く項（移送費）の名前だけを番号なしで印字し直している。スキャンの読みでは字下げが款の位置に寄り、款として読むと続く目の親が抜ける。印字し直した名前の読みは使わない。"
+          },
+          {
+            "id": "p12-repeated-heading",
+            "page": 12,
+            "observation_id": "p12:full-page:a0:result0:r22",
+            "observed": "医療給付費分",
+            "reason": "物理12頁の科目の欄の頭に、前の頁から続く項（医療給付費分）の名前だけを番号なしで印字し直している。スキャンの読みでは字下げが款の位置に寄り、款として読むと続く目の親が抜ける。印字し直した名前の読みは使わない。"
+          },
+          {
+            "id": "p13-kyodo-kan-0",
+            "page": 13,
+            "observation_id": "p13:full-page:a0:result0:r132",
+            "observed": "共同事業拠出金",
+            "reason": "物理13頁の末尾の款・項・目「共同事業拠出金」「共同事業拠出金」「共同事業事務費拠出金」は本年度に廃止され、番号を印字せず名前だけを印字する。スキャンの読みでは名前の始まりが番号の位置より右にあり、款が項に、項が目に読まれて段が抜ける。原典の画像で段を確かめ、各段の番号の位置で名前を読み直す。"
+          },
+          {
+            "id": "p13-kyodo-kou-0",
+            "page": 13,
+            "observation_id": "p13:full-page:a0:result0:r139",
+            "observed": "共同事業拠出金",
+            "reason": "物理13頁の末尾の款・項・目「共同事業拠出金」「共同事業拠出金」「共同事業事務費拠出金」は本年度に廃止され、番号を印字せず名前だけを印字する。スキャンの読みでは名前の始まりが番号の位置より右にあり、款が項に、項が目に読まれて段が抜ける。原典の画像で段を確かめ、各段の番号の位置で名前を読み直す。"
+          },
+          {
+            "id": "p13-kyodo-moku-0",
+            "page": 13,
+            "observation_id": "p13:full-page:a0:result0:r146",
+            "observed": "共同事業事務費拠出金",
+            "reason": "物理13頁の末尾の款・項・目「共同事業拠出金」「共同事業拠出金」「共同事業事務費拠出金」は本年度に廃止され、番号を印字せず名前だけを印字する。スキャンの読みでは名前の始まりが番号の位置より右にあり、款が項に、項が目に読まれて段が抜ける。原典の画像で段を確かめ、各段の番号の位置で名前を読み直す。"
+          }
+        ],
+        "name_readings": [
+          {
+            "id": "p13-kyodo-kan",
+            "page": 13,
+            "box": [
+              16.0,
+              368.6,
+              82.1,
+              376.7
+            ],
+            "name": "共同事業拠出金",
+            "reason": "物理13頁の末尾の款・項・目「共同事業拠出金」「共同事業拠出金」「共同事業事務費拠出金」は本年度に廃止され、番号を印字せず名前だけを印字する。スキャンの読みでは名前の始まりが番号の位置より右にあり、款が項に、項が目に読まれて段が抜ける。原典の画像で段を確かめ、各段の番号の位置で名前を読み直す。"
+          },
+          {
+            "id": "p13-kyodo-kou",
+            "page": 13,
+            "box": [
+              22.0,
+              386.8,
+              77.5,
+              394.2
+            ],
+            "name": "共同事業拠出金",
+            "reason": "物理13頁の末尾の款・項・目「共同事業拠出金」「共同事業拠出金」「共同事業事務費拠出金」は本年度に廃止され、番号を印字せず名前だけを印字する。スキャンの読みでは名前の始まりが番号の位置より右にあり、款が項に、項が目に読まれて段が抜ける。原典の画像で段を確かめ、各段の番号の位置で名前を読み直す。"
+          },
+          {
+            "id": "p13-kyodo-moku",
+            "page": 13,
+            "box": [
+              27.0,
+              405.5,
+              105.6,
+              412.7
+            ],
+            "name": "共同事業事務費拠出金",
+            "reason": "物理13頁の末尾の款・項・目「共同事業拠出金」「共同事業拠出金」「共同事業事務費拠出金」は本年度に廃止され、番号を印字せず名前だけを印字する。スキャンの読みでは名前の始まりが番号の位置より右にあり、款が項に、項が目に読まれて段が抜ける。原典の画像で段を確かめ、各段の番号の位置で名前を読み直す。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kokuho-initial-ocr-1",
+          "origin_sha256": "c4f7498d29834d47cc9bda22b08483b47f8a52867089ef08971013d2f390017d",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "a74390d4b88e6313e3fa72dcdeb28b030f4911b0c13f8f27251b411f8e8bb06f",
+          "bytes": 2701778
+        }
+      ]
+    },
+    {
+      "id": "kouki-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "56ff00fcf86e7ed26dfcbca41181894d860cad1680f15213c05243667f28411e"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "施策番号": {
+                  "kind": "ignore"
+                },
+                "比較額(増減率%)": {
+                  "kind": "ignore"
+                },
+                "財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。目の行の財源額の下に「(内訳)」として財源の種類（国庫支出金・諸収入等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。目の行の財源額の下に「(内訳)」として財源の種類（国庫支出金・諸収入等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "codeless_name_levels": true,
+            "codes_across_level_rules": 2.5,
+            "digit_set_codes": 4.4
+          }
+        },
+        "pages": [
+          [
+            8,
+            9
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kouki-initial-ocr-1",
+          "origin_sha256": "56ff00fcf86e7ed26dfcbca41181894d860cad1680f15213c05243667f28411e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              8,
+              9
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "a91ace7919e29a31212349969b84b95ab0b7bec637bf068869f8b00dc7ddba97",
+          "bytes": 972442
+        }
+      ]
+    },
+    {
+      "id": "kaigo-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "13fa623b909ca2fce0163ccd65f87f2ebad3774aa3807f39647bc1fcdd88f2fe"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "施策番号": {
+                  "kind": "ignore"
+                },
+                "比較額(増減率%)": {
+                  "kind": "ignore"
+                },
+                "財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。目の行の財源額の下に「(内訳)」として財源の種類（国庫支出金・諸収入等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。目の行の財源額の下に「(内訳)」として財源の種類（国庫支出金・諸収入等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "codeless_name_levels": true,
+            "codes_across_level_rules": 2.5,
+            "digit_set_codes": 4.4
+          }
+        },
+        "pages": [
+          [
+            10,
+            14
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kaigo-initial-ocr-1",
+          "origin_sha256": "13fa623b909ca2fce0163ccd65f87f2ebad3774aa3807f39647bc1fcdd88f2fe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              10,
+              11,
+              12,
+              13,
+              14
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "aa01a201a3b3649ba6ffcd4e0f247ed0dcab95e11a01c13aac02fc570e32fe14",
+          "bytes": 2539841
+        }
+      ]
+    },
+    {
+      "id": "kouyouchi-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "8af773e7cebde58e8b79887041992f20c164b62f7dab4251af10195e7edcbd01"
+        }
+      ],
+      "options": {
+        "account": "公共用地特別会計",
+        "table_id": "kouyouchi-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "施策番号": {
+                  "kind": "ignore"
+                },
+                "比較額(増減率%)": {
+                  "kind": "ignore"
+                },
+                "財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。目の行の財源額の下に「(内訳)」として財源の種類（国庫支出金・諸収入等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。目の行の財源額の下に「(内訳)」として財源の種類（国庫支出金・諸収入等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "codeless_name_levels": true,
+            "codes_across_level_rules": 2.5,
+            "digit_set_codes": 4.4
+          }
+        },
+        "pages": [
+          [
+            9,
+            9
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouyouchi-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kouyouchi-initial-ocr-1",
+          "origin_sha256": "8af773e7cebde58e8b79887041992f20c164b62f7dab4251af10195e7edcbd01",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              9
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "5ca2924ea972bd04b6180613fed65456ef3d51bca97e9f14ccbe0ab180e8b2ce",
+          "bytes": 424571
+        }
+      ]
     }
   ]
 }
