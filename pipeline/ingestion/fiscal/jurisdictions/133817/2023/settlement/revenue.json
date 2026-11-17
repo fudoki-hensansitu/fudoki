@@ -1,0 +1,36 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "133817",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "45362946b4a1284647438757438b9c98e936f647bc1d6b1e440cc8622a8100f3"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "reading": {
+            "pattern": "purpose_summary",
+            "profile": "fiscal/jurisdictions/133817/layouts/revenue-summary.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    }
+  ]
+}
