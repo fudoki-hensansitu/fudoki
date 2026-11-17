@@ -8,6 +8,8 @@ import { Link } from '../nav/link'
 import { Button } from '@/components/ui/button'
 import { QUESTIONS, questionOf, type Question } from './questions'
 import type { CompareMap, MapTown } from '../server/compare-map'
+import { Title } from '@/components/ui/title'
+import { Card, CardTitle } from '@/components/ui/card'
 
 const STEPS = 5
 // 濃淡の段ごとの地（DESIGN.md の --shade-1〜5）と、その上の文字の色。未収録は斜線（--shade-none）にして 0 と分ける
@@ -180,7 +182,7 @@ export function CompareList({ map, failed }: { map: CompareMap; failed: boolean 
   return (
     <main className="mx-auto w-full max-w-6xl px-4 pt-10 pb-28 sm:px-8 sm:pt-14">
       <header className="mb-5">
-        <h1 className="text-[26px] leading-[1.35] font-semibold tracking-[0.02em]">まち比べ</h1>
+        <Title size="h1">まち比べ</Title>
         <p className="mt-1 text-[15px] text-muted-foreground">まちのお金を1人あたりの金額に直すと、いろいろな見方で比べられます。いまは{map.prefecture || '東京都'}のまちから、少しずつ広げています。</p>
       </header>
       {failed ? failedText : (
@@ -192,16 +194,18 @@ export function CompareList({ map, failed }: { map: CompareMap; failed: boolean 
               <Link
                 key={q.slug}
                 href={`/compare/${q.slug}`}
-                className="flex animate-in flex-col gap-3 rounded-xl border bg-background p-4 fill-mode-both fade-in slide-in-from-bottom-1.5 duration-300 transition-[background-color,transform] hover:bg-card active:scale-[0.985] motion-reduce:animate-none"
+                className="group/link block animate-in rounded-xl fill-mode-both fade-in slide-in-from-bottom-1.5 duration-300 transition-transform active:scale-[0.985] motion-reduce:animate-none"
                 style={{ animationDelay: `${Math.min(i, 8) * 30}ms` }}
               >
-                <h2 className="min-h-[2.8em] text-[17px] leading-[1.4] font-semibold">{q.title}</h2>
+                <Card className="h-full gap-3 bg-background px-4 py-4 transition-colors group-hover/link:bg-card">
+                <CardTitle className="min-h-[2.8em] leading-[1.4]">{q.title}</CardTitle>
                 <TileMap map={map} q={q} scale={scale} />
                 <p className="flex flex-col gap-1 text-xs text-muted-foreground">
                   {top ? <span>最多 <b className="font-medium text-foreground">{top.name}</b> <Num v={top.values[q.slug]!} q={q} /></span> : null}
                   {bottom ? <span>最小 <b className="font-medium text-foreground">{bottom.name}</b> <Num v={bottom.values[q.slug]!} q={q} /></span> : null}
                 </p>
                 <p className="mt-auto text-[11px] leading-relaxed text-muted-foreground">※{q.caveat}</p>
+                </Card>
               </Link>
             )
           })}
@@ -241,7 +245,7 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
         まち比べ
       </Link>
       <header className="mb-4">
-        <h1 className="text-[26px] leading-[1.35] font-semibold sm:text-[30px]">{q.title}</h1>
+        <Title size="h1">{q.title}</Title>
         <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{q.note}</p>
       </header>
       {failed ? failedText : (
@@ -268,7 +272,7 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
         </div>
       )}
       <nav aria-label="ほかの問い" className="mt-10 border-t pt-6">
-        <h2 className="mb-3 text-sm font-semibold text-muted-foreground">ほかの問い</h2>
+        <Title size="headline" as="h2" className="mb-3 text-muted-foreground">ほかの問い</Title>
         <div className="flex flex-wrap gap-2">
           {QUESTIONS.map((x) => (
             <Link

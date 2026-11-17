@@ -12,6 +12,7 @@ import { townOf } from './towns'
 import { withCheckDigit } from '../jurisdiction/code'
 import type { MapEntry } from '../jurisdiction/index-table'
 import './onboarding.css'
+import { Title } from '@/components/ui/title'
 
 type Locate = { busy?: boolean; error?: string; denied?: boolean; hit?: MapEntry }
 
@@ -31,7 +32,7 @@ export function AskTown({ listed, onPick }: { listed: boolean; onPick: (e: MapEn
   }
   return (
     <section className={'ob-rise rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7'}>
-      <h2 className="mb-4 text-[20px] leading-snug font-semibold sm:text-[24px]">住んでいるまちを選ぶ</h2>
+      <Title size="h2" className="mb-4">住んでいるまちを選ぶ</Title>
       {/* 一覧を読めなかったときに「未収録」と誤って伝えないよう、検索と現在地を出さない */}
       {listed ? (
         <>
@@ -141,7 +142,7 @@ export function Intro({ mode }: { mode: 'full' | 'compact' | 'hidden' }) {
     <header className={shown ? cn('mb-7 sm:mb-8', mode === 'full' && 'ob-rise') : 'sr-only'}>
       <div className="flex items-center gap-3 sm:gap-4">
         {shown ? <Mark className="size-9 shrink-0 text-primary sm:size-11" /> : null}
-        <h1 className="text-[26px] leading-[1.35] font-semibold tracking-[0.02em] sm:text-[32px]">{title}</h1>
+        <Title size="h1">{title}</Title>
       </div>
       <p className="mt-2 text-[15px] text-muted-foreground">{lead}</p>
     </header>
