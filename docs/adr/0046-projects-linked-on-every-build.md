@@ -1,6 +1,6 @@
 # ADR 0046: 事業は全自治体で build のたびにつなぐ
 
-状態: 採用（2026-11-15）。[集約ごとの作り直し](../prd/aggregate-api/dd.md) の「事業を作る」で、script が判断して seed `project_line` に書き、対象の自治体を seed `project_jurisdiction` に並べていたのを置き換える。
+状態: 採用（2026-11-15）。決定3（事業ID の鍵）は [ADR 0052](0052-project-id-without-year.md) で置き換えた（2026-11-17）。[集約ごとの作り直し](../prd/aggregate-api/dd.md) の「事業を作る」で、script が判断して seed `project_line` に書き、対象の自治体を seed `project_jurisdiction` に並べていたのを置き換える。
 
 1. 事業は、内訳の分け方を「事業」と宣言した行（`fiscal_detail_breakdown`）がある自治体すべてで作る。自治体を選ぶ入口（opt-in）は持たない。
 2. 事業の行のつなぎ（[ドメインモデル](../prd/jurisdiction-page-data/project-domain-model.md) の「事業を作る」の手順1〜3）は、dbt の Python model `int_project__line_ids` が build のたびに計算する。規則は `pipeline/ingestion/project/link_projects.py` に置き、結果を seed に書かない。
@@ -17,5 +17,5 @@
 ## Consequences
 
 - 取り込みを足すと事業が自動でできる。事業のつなぎの規則を変えると、全自治体の事業が次の build で変わる。
-- 前の年度を取り込むと、つながった事業の ID が変わる。D1 の差分同期では、その事業の行が消えて新しい行が書かれる。
+- 前の年度を取り込むと、つながった事業の ID が変わる。D1 の差分同期では、その事業の行が消えて新しい行が書かれる（ADR 0052 で、年度を鍵から外して直した）。
 - `project` と `project_year` を作り直すたびに約34万件・約74万行を計算する（全自治体の build で数十秒）。

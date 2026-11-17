@@ -18,7 +18,7 @@ dbt の `int_project__line_ids`（Python model）が、build のたびに `int_p
 事業ID は事業の最初の年度の行の、年度と資料（当初予算・決算）を除いた鍵（自治体・会計・款・項・目・比べる名前の並び）の sha256。
 過去の年度を取り込んで最初の年度が前に延びても、その年度の行が同じ科目・名前なら ID は変わらない（年度を鍵に入れると、
 過去の年度を足すたびに以降の年度の事業が全部別の ID になり、D1 の事業の表が丸ごと書き直しになった）。同じ鍵の別の事業
-（一度終わって同じ名前で始めた事業、同じ年度に同じ並びが2つある行）は、後から現れたほうに始めた年度を足して分ける。
+（一度終わって同じ名前で始めた事業、同じ年度に同じ並びが2つある行）は、後から現れたほう（同じ年度なら当初予算の行を持つほう、印字の順で後のほう）に始めた年度を足して分ける。
 """
 from __future__ import annotations
 
@@ -209,7 +209,8 @@ def assign(years_by_year: dict[int, list[Year]]) -> None:
     taken: set[str] = set()
     for fiscal_year in sorted(years_by_year):
         used: set[str] = set()
-        for y in years_by_year[fiscal_year]:
+        # 同じ鍵の事業のどちらが無印の ID を取るかを行の並びに左右させない（int_project__lines に ORDER BY は無い）
+        for y in sorted(years_by_year[fiscal_year], key=lambda y: (y.initial is None, y.line.print_order, y.line.detail_id)):
             if y.previous and y.previous.project_id and y.previous.project_id not in used:
                 y.project_id, y.method = y.previous.project_id, 'continued'
             else:
