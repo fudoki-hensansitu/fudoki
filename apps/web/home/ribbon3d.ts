@@ -14,12 +14,12 @@ const COS = Math.cos(TILT)
 /** 粒の間隔（px）。細かいほど曲がりがなめらか */
 const STEP = 6
 /** 紙どうしが近づける距離（重なった紙の厚み）。粒の間隔の半分より大きくして、紙が紙をすり抜けないようにする */
-const THICK = 5
+const THICK = 6
 /** 重さ（px/s²）と、空気の抵抗（1 刻みごとに残る速さの割合） */
 const GRAVITY = 2600
 const DRAG = 0.992
 /** 紙のこし（曲がりを戻す強さ、0〜1） */
-const STIFF = 0.22
+const STIFF = 0.5
 /** 床の摩擦（床に触れた粒の、横に滑る速さの残る割合） */
 const FRICTION = 0.25
 /** 1 frame を何刻みに分けて解くか、1 刻みで鎖の長さを何回詰めるか */
@@ -180,12 +180,14 @@ export function ribbon(canvas: HTMLCanvasElement, margin: number) {
           z[i + 1] = z[i + 1]! - dz * k * 0.5
         }
       }
-      // こし: 一つ飛ばしの粒どうしを、まっすぐな長さへ少し戻す
+      // こし: 一つ飛ばしの粒どうしが近づく（紙が曲がる）のを、まっすぐな長さへ少し戻す。伸ばす向きには引かない
       for (let i = 0; i < n - 2; i++) {
         const dy = y[i + 2]! - y[i]!
         const dz = z[i + 2]! - z[i]!
         const d = Math.hypot(dy, dz) || 1e-6
-        const k = ((d - rest[i]! - rest[i + 1]!) / d) * STIFF * 0.5
+        const r = rest[i]! + rest[i + 1]!
+        if (d >= r) continue
+        const k = ((d - r) / d) * STIFF * 0.5
         if (i > 0) {
           y[i] = y[i]! + dy * k
           z[i] = z[i]! + dz * k
@@ -193,8 +195,9 @@ export function ribbon(canvas: HTMLCanvasElement, margin: number) {
         y[i + 2] = y[i + 2]! - dy * k
         z[i + 2] = z[i + 2]! - dz * k
       }
+      // 紙が紙をすり抜けないよう、毎回押し離す
+      collide()
     }
-    collide()
     // 床と、差し出し口の面
     for (let i = 1; i < n; i++) {
       if (z[i]! < 0) {
