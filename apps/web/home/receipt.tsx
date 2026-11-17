@@ -297,17 +297,18 @@ function Ribbon({ papers, onHeight, onFail, children }: { papers: Older[]; onHei
           const step = (px: number) => Math.ceil(px / RIBBON_GROW) * RIBBON_GROW
           const h = Math.max(shown, step(floor + RIBBON_GAP))
           const { bottom, moving } = stage!.frame(sheets, attach, floor, width, width + RIBBON_MARGIN * 2, h)
+          // canvas の見た目の高さは、いま描いた高さ（h）に合わせる。もっと要るときは次のコマで伸ばして描く
+          if (canvas.current!.style.height !== `${h}px`) canvas.current!.style.height = `${h}px`
           const next = Math.max(h, step(bottom + 8))
           if (next !== shown) {
             shown = next
             height.current(next)
-            canvas.current!.style.height = `${next}px`
           }
           if (moving || drawnRef.current !== (top?.r.id ?? null)) {
             drawnRef.current = top?.r.id ?? null
             setDrawn(drawnRef.current)
           }
-          if (moving) raf = requestAnimationFrame(frame)
+          if (moving || next > h) raf = requestAnimationFrame(frame)
         }
         kick.current = () => {
           if (alive && !raf) raf = requestAnimationFrame(frame)
