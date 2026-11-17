@@ -65,7 +65,7 @@ function TileMap({ map, q, scale, selected, onPick, large }: { map: CompareMap; 
         )
         if (!large) return <span key={t.code} className={tile} style={style} />
         return (
-          <button key={t.code} type="button" onClick={() => onPick?.(t.code)} aria-label={`${t.name} ${plain(v, q)}`} aria-pressed={selected === t.code} className={cn(tile, 'cursor-pointer outline-offset-1 hover:outline-1 hover:outline-foreground/40 active:scale-95')} style={style}>
+          <button key={t.code} type="button" onClick={() => onPick?.(t.code)} aria-label={`${t.name} ${plain(v, q)}`} aria-pressed={selected === t.code} className={cn(tile, 'cursor-pointer outline-offset-1 hover:outline-1 hover:outline-muted-foreground active:scale-95')} style={style}>
             {/* 狭い幅ではタイルが小さく名前が読めないので塗りだけにし、名前は札で出す */}
             <span className="hidden max-w-full overflow-hidden text-center text-[11px] leading-none font-medium break-keep sm:inline">{shortName(t.name)}</span>
           </button>
