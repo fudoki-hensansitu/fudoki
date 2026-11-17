@@ -264,9 +264,10 @@ RATE_TAG = re.compile(r'[0-9]+/[0-9]+')
 # Every parenthesised remark at the end of a name (`委託料（…へ流用△280,000）（…から流用1,815,000）`).
 PAREN_TAIL = re.compile(r'(?:[(（][^()（）]*[)）])+$')
 # A number printed against a counter word (`110番`, `3歳児`, `3階`, `2025年`, `2人目加算`) is a count in a name.
+# `年金` is no counter: `02年金給付保険金等収入` is 節 02 (東京都 R7 当初予算の歳入 p107).
 # An item number glued to a year it is followed by (`42025年…`: 4 and 2025年).
 YEAR_LED = re.compile(r'^([0-9]{1,2})(?:19|20)[0-9]{2}年')
-COUNTED = re.compile(r'^[0-9０-９]+(?:番(?!号)|歳|階|年|か月|ヶ月|箇所|世帯|人目|ミリ|キロ|メートル|インチ|時間(?!外))')
+COUNTED = re.compile(r'^[0-9０-９]+(?:番(?!号)|歳|階|年(?!金)|か月|ヶ月|箇所|世帯|人目|ミリ|キロ|メートル|インチ|時間(?!外))')
 # A line that is only a number and its counter (`１９０人` under `在宅療養者等歯科訪問健診`) is a count, not an item.
 ONLY_COUNT = re.compile(r'^[0-9]+(?:人|件|回|台|日|校|園|館|名|戸|か所|箇所)$')
 GROUPED = re.compile(r'[△▲]?[0-9]{1,3}(?:,[0-9]{3})+')
@@ -825,9 +826,13 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         roles = {i: kept[id(entry)] for i, entry in enumerate(entries) if id(entry) in kept}
         roles.update({i: 'note' for i in tabled_notes})
 
+    flush = quirk(settings, 'flush_right_numbers')
+
     def measure(item, label, code) -> None:
         _measure(item, label, code, ocr or joined_codes, stops)
         if numbers is not None and code is not None and (start := numbers.module.name_start(label, numbers.value)) is not None:
+            item.indent = start
+        if flush is not None and code is not None and (start := flush.module.name_start(label)) is not None:
             item.indent = start
     kind_names = quirk(settings, 'names_end_with_kind_words')
     remainder = quirk(settings, 'bracketed_remainder')
@@ -855,6 +860,10 @@ def items(group: Group, header: str, margins: set[int] | None = None,
                     entries[index] = (label, money, digits[:cut], raw[cut:])
                     code = digits[:cut]
                     break
+        if (code is None and run and (int(run.group()) == 1 or previous_code is not None and int(run.group()) == previous_code + 1)
+                and COUNTED.match(raw) and document_quirk('next_number_counts') is not None):
+            entries[index] = (label, money, run.group(), raw[len(run.group()):])  # the quirk `next_number_counts`
+            code = run.group()
         if (code is not None and label and (previous_code is None or int(code) != previous_code + 1)
                 and (ONLY_COUNT.match(raw)
                      or any((counts := document_quirk(name)) is not None and counts.module.counted(normalize(label[0].text), raw)
@@ -2476,6 +2485,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 kept.append(c)
                 centres.append(sum(c) / len(c))
         levels[axis] = sorted(sum(c) / len(c) for c in kept)
+    if (jitter := document_quirk('ocr_start_jitter')) is not None:
+        levels = {axis: jitter.module.merge(centres) for axis, centres in levels.items()}
     if mixed_document(logicals):
         for axis, centres in ((a, c) for a, c in levels.items() if a in printed):
             snap_ocr_levels([i for l, ordered, found in all_items if l.ocr for g in ordered if not g.subject and g.axis == axis

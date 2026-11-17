@@ -263,7 +263,9 @@ def _frames(page: Page, spread: dict | None = None,
     for r in page.rules:
         if r.vertical:
             drawn[round(r.x0, 1)] += r.y1 - r.y0
-    xs = {x for x, length in drawn.items() if length > 40}
+    # 40pt drawn as 39.96 (小平市 R7 決算 p46: a table of one row under the header, the 節 column's edge from the
+    # 節 heading's rule to the foot) is 40pt: the length is measured in floats.
+    xs = {x for x, length in drawn.items() if length > 39.9}
     if spread is not None:
         # Only the declared spread's gutter: never split a column at an
         # interior row endpoint. The nearest repeated edge on each side bounds it.
@@ -499,6 +501,9 @@ def page_bands(page: Page, spread: dict | None = None,
             used.add(index)
             cells[left, right, upper, lower].append(word)
         header_cells = sorted(((key, normalize(reading(ws))) for key, ws in cells.items()), key=lambda c: c[0][2])
+        if document_quirk('unruled_stacked_headings') is not None:  # (cells at one rule stack as printed, top first)
+            tops = {key: min(w.y0 for w in ws) for key, ws in cells.items()}
+            header_cells = sorted(header_cells, key=lambda c: (c[0][2], tops[c[0]]))
         if staircase:
             levels = (header or {})['staircase']
             header_cells = level_cells(header_cells, edges, levels if isinstance(levels, str) else '款項目')
@@ -849,6 +854,8 @@ def classify(per_page: list[tuple[Page, list[Band], list[Word]]], columns: dict 
             band.kind = setting.get('kind', band.kind)
             if setting.get('heading'):  # the column's meaning, declared where the print only says `金額`
                 band.header = band.header[:-1] + (setting['heading'],)
+            if setting.get('within'):  # the heading over this column printed on the other page of the spread only
+                band.header = (setting['within'],) + band.header
             if setting.get('inline'):
                 band.inline, band.inline_free = True, True
             if band.kind == 'ignore':  # a column that is no part of the table (a policy number printed beside it)

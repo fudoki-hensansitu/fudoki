@@ -194,6 +194,8 @@ def _paddle_pieces(line: dict, children: list[Word], corrected: bool, cuts: list
             # and the first digits of the next cell's (`0005` = `000` + `5` of `…,051,000` | `5,918,437,000`, 281000).
             width = (child.x1 - child.x0) / len(child.text)
             edge = child.x0 + 3 * width
+            if (ends := document_quirk('grouped_ends_at_rule')) is not None:
+                edge = ends.module.edge(edge, crossing)
             ordered.append(Word(child.text[:3], child.x0, child.y0, edge, child.y1))
             child = Word(child.text[3:], edge, child.y0, child.x1, child.y1)
         elif (re.fullmatch(r'0[0-9]+', child.text) and crossing
@@ -390,6 +392,8 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
     rules += [Rule(r.start, r.position, r.end, r.position) for r in detected.horizontal]
     cuts = sorted(r.position for r in detected.vertical)
     gone = superseded(observation_page)
+    if (strips := document_quirk('strip_rereads')) is not None:
+        gone |= strips.module.rereads(observation_page, gone)
     if (rule_pieces := document_quirk('rule_pieces_as_digits')) is not None:
         gone |= rule_pieces.module.pieces(observation_page, cuts)
     # Adjacent OCR tiles can both read a comma's descender. Keep its complete number;
@@ -458,8 +462,12 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
                 whole = _text(item['raw_text'])
                 reach = 0
                 if item.get('attempt_id') and pieces is not None:
+                    children = pieces
                     pieces = _paddle_pieces(item, pieces, item['id'] in corrected_word_parents, cuts)
                     reach = PADDLE_REACH if pieces else 0
+                    if pieces is None and (padded := document_quirk('padded_number_boxes')) is not None \
+                            and (word := padded.module.inside(item, children, cuts)) is not None:
+                        pieces = [word]
                 if (pieces and item['id'] not in corrected_word_parents and NUMBER.fullmatch(whole)
                         and whole != _text(''.join(p.text for p in pieces))
                         and not any(item['bbox_pdf_pt'][0] + 1 < x < item['bbox_pdf_pt'][2] - 1 for x in cuts)):
@@ -480,6 +488,8 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
         words = nested.module.snap(words, detected.vertical)
     if (repeats := document_quirk('bracketed_repeats')) is not None:
         words = repeats.module.dropped(words, detected)
+    if (unbracketed := document_quirk('unbracketed_repeats')) is not None:
+        words = unbracketed.module.dropped(words, detected, unbracketed.value)
     if (marks := document_quirk('unread_marks')) is not None:
         words = marks.module.marked(words, pdf, number, cuts)
     return Page(number, detected.width, detected.height, drop_covered_digits(words), rules)
@@ -681,7 +691,8 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
           header: dict | None = None, code_corrections: list[dict] | None = None,
           header_readings: list[dict] | None = None, rule_dark: int = pdf_rules.DARK, rule_hook=None,
           keep_marks: bool = False, row_gaps: bool = False, short_columns: bool = False,
-          skewed: bool = False, row_columns: bool = False) -> list[Page]:
+          skewed: bool = False, row_columns: bool = False, skewed_columns: bool = False,
+          spread_rows: bool = False) -> list[Page]:
     """`rule_hook(PageRules) -> PageRules` completes the rules read from a rendered page before the words are cut at
     them; `keep_marks` keeps the bullet that starts a line in its first word (both for a text document's OCR pages, `mixed.py`)."""
     every = bool((header or {}).get('agree_all_frames'))
@@ -694,7 +705,12 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
 
     @cache
     def detected(number):
-        found = (rules or {}).get(number) or pdf_rules.detect(pdf, number, dark=rule_dark, skewed=skewed)
+        found = (rules or {}).get(number) or (
+            vector.module.detected(pdf, number) if (vector := document_quirk('vector_rules')) is not None
+            else pdf_rules.detect(pdf, number, dark=rule_dark, skewed=skewed,
+                                  skewed_columns=skewed_columns, spread_rows=spread_rows))
+        if (edges := document_quirk('page_edge_rules')) is not None:
+            found = edges.module.dropped(found)
         if (dotted := document_quirk('dotted_column_rules')) is not None:
             found = dotted.module.added(pdf, found, rule_dark)
         found = short_rows(pdf, found, rule_dark,
@@ -1204,6 +1220,8 @@ def declared_unread(built, logicals_: list, columns: dict | None, observation: d
                 for logical in logicals_ for b in logical.bands if b.page == page_['page_number'] for g in b.words)
             ink = document_quirk('rule_ink')
             ruled = ink is not None and ink.module.ruled(box, page_, logicals_)
+            slash = document_quirk('slashed_cells')
+            ruled = ruled or (slash is not None and slash.module.slashed(box, page_, logicals_))
             if not unit and not bracket and not ruled and any(b.page == page_['page_number'] and b.kind == 'amount'
                                 and b.x0 - b.offset < cx < b.x1 - b.offset and b.body_top < cy < b.body_bottom
                                 for logical in logicals_ for b in logical.bands):
@@ -1266,7 +1284,9 @@ def read_pages(source: dict, options: dict, settings: dict | None, selected: lis
                     keep_marks=keep_marks, row_gaps=bool(((settings or {}).get('rules') or {}).get('row_gaps')),
                     short_columns=bool(((settings or {}).get('rules') or {}).get('short_columns')),
                     skewed=bool(((settings or {}).get('rules') or {}).get('skewed')),
-                    row_columns=bool(((settings or {}).get('rules') or {}).get('row_columns')))
+                    row_columns=bool(((settings or {}).get('rules') or {}).get('row_columns')),
+                    skewed_columns=bool(((settings or {}).get('rules') or {}).get('skewed_columns')),
+                    spread_rows=bool(((settings or {}).get('rules') or {}).get('spread_rows')))
     if (specks := document_quirk('specks')) is not None:
         printed = specks.module.drop(printed)
     printed = add_code_readings(printed, options.get('code_readings'))
@@ -1294,7 +1314,7 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
 def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict | None = None):
     from ingestion.generic.runtime import page_titles
     from ingestion.generic.workflow import build_reading, effective_settings
-    from ingestion.generic.convert import Table, canonical_headings, correct_names, excluded_regions, fine_sections, scope_pages, split_notes
+    from ingestion.generic.convert import Table, canonical_headings, correct_names, correct_parents, excluded_regions, fine_sections, scope_pages, split_notes
     from ingestion.generic.repair import Report
     from ingestion.generic.units import check as check_units
     from ingestion.lib.node_tables import coverage_regions
@@ -1410,6 +1430,8 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
     # A misread annotation (`教育センタ一費へ流用`, 131164 R5) is put right like a node.
     built.notes.extend({'kind': 'name correction', 'text': text} for text in correct_names([*built.nodes, *notes], by_node))
     built.notes.extend({'kind': 'variant characters', 'text': text} for text in variants)
+    built.notes.extend({'kind': 'parent correction', 'text': text}
+                       for text in correct_parents(built.nodes, options.get('parent_corrections')))
     nodes = [*built.nodes, *notes]
     amounts, headings = canonical_headings([*kept, *amounts], nodes, kind, header)
     fine_sections(nodes)

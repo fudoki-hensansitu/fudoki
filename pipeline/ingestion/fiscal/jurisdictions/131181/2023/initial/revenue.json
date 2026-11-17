@@ -1,0 +1,635 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131181",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "4c9acb0656fecf257da02f5d42210afb610dabc16248e46e852afcbaea4e6970"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "staircase_codes",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・見込額など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "next_number_counts": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "auto-p16-full-page-a0-result0-r26",
+            "page": 16,
+            "observation_id": "p16:full-page:a0:result0:r26",
+            "observed_name": "自動車重量讓与稅",
+            "corrected_name": "自動車重量讓与税",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p16-full-page-a0-result0-r31",
+            "page": 16,
+            "observation_id": "p16:full-page:a0:result0:r31",
+            "observed_name": "自動車重量讓与稅",
+            "corrected_name": "自動車重量讓与税",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p16-full-page-a0-result0-r36",
+            "page": 16,
+            "observation_id": "p16:full-page:a0:result0:r36",
+            "observed_name": "地方揮発油讓与稅",
+            "corrected_name": "地方揮発油讓与税",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p21-full-page-a0-result0-r32",
+            "page": 21,
+            "observation_id": "p21:full-page:a0:result0:r32",
+            "observed_name": "1 男女平等推進センタ一使用料",
+            "corrected_name": "1 男女平等推進センター使用料",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p23-full-page-a0-result0-r8",
+            "page": 23,
+            "observation_id": "p23:full-page:a0:result0:r8",
+            "observed_name": "1 老人センタ一使用料",
+            "corrected_name": "1 老人センター使用料",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p23-full-page-a0-result0-r9",
+            "page": 23,
+            "observation_id": "p23:full-page:a0:result0:r9",
+            "observed_name": "一使用料",
+            "corrected_name": "ー使用料",
+            "reason": "原典の画像では前の行の末尾のカタカナに続く長音「ー」で行が始まる。Paddle は「ー」を漢字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p25-full-page-a0-result0-r34",
+            "page": 25,
+            "observation_id": "p25:full-page:a0:result0:r34",
+            "observed_name": "1 閱覧手数料",
+            "corrected_name": "1 閲覧手数料",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p25-full-page-a0-result0-r36",
+            "page": 25,
+            "observation_id": "p25:full-page:a0:result0:r36",
+            "observed_name": "1 閱覧手数料",
+            "corrected_name": "1 閲覧手数料",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p37-full-page-a0-result0-r8",
+            "page": 37,
+            "observation_id": "p37:full-page:a0:result0:r8",
+            "observed_name": "1 個人番号力一ド交付事務費補助金",
+            "corrected_name": "1 個人番号カード交付事務費補助金",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p45-full-page-a0-result0-r16",
+            "page": 45,
+            "observation_id": "p45:full-page:a0:result0:r16",
+            "observed_name": "タ一利用支",
+            "corrected_name": "ター利用支",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "man-p45-full-page-a0-result0-r39",
+            "page": 45,
+            "observation_id": "p45:full-page:a0:result0:r39",
+            "observed_name": "費(障害分",
+            "corrected_name": "費(障害分)",
+            "reason": "原典の画像では閉じ括弧「)」が次の行に単独で印字されている。Paddle はその「)」を読まなかった。"
+          },
+          {
+            "id": "auto-p45-full-page-a0-result0-r42",
+            "page": 45,
+            "observation_id": "p45:full-page:a0:result0:r42",
+            "observed_name": "1 都市型軽費老人ホ一ム整備費補助",
+            "corrected_name": "1 都市型軽費老人ホーム整備費補助",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p49-full-page-a0-result0-r65",
+            "page": 49,
+            "observation_id": "p49:full-page:a0:result0:r65",
+            "observed_name": "1 商店街チヤ",
+            "corrected_name": "1 商店街チャ",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p53-full-page-a0-result0-r64",
+            "page": 53,
+            "observation_id": "p53:full-page:a0:result0:r64",
+            "observed_name": "ヤルワーカ",
+            "corrected_name": "ャルワーカ",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p53-full-page-a0-result0-r65",
+            "page": 53,
+            "observation_id": "p53:full-page:a0:result0:r65",
+            "observed_name": "一活用事業",
+            "corrected_name": "ー活用事業",
+            "reason": "原典の画像では前の行の末尾のカタカナに続く長音「ー」で行が始まる。Paddle は「ー」を漢字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p57-full-page-a0-result0-r66",
+            "page": 57,
+            "observation_id": "p57:full-page:a0:result0:r66",
+            "observed_name": "ヤラクター",
+            "corrected_name": "ャラクター",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p57-full-page-a0-result0-r69",
+            "page": 57,
+            "observation_id": "p57:full-page:a0:result0:r69",
+            "observed_name": "1 土地壳払代",
+            "corrected_name": "1 土地売払代",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p65-full-page-a0-result0-r25",
+            "page": 65,
+            "observation_id": "p65:full-page:a0:result0:r25",
+            "observed_name": "1日暮里サニ一ホール駐車場",
+            "corrected_name": "1日暮里サニーホール駐車場",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p65-full-page-a0-result0-r64",
+            "page": 65,
+            "observation_id": "p65:full-page:a0:result0:r64",
+            "observed_name": "報広告揭載",
+            "corrected_name": "報広告掲載",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p65-full-page-a0-result0-r85",
+            "page": 65,
+            "observation_id": "p65:full-page:a0:result0:r85",
+            "observed_name": "イ助成事業",
+            "corrected_name": "ィ助成事業",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p67-full-page-a0-result0-r8",
+            "page": 67,
+            "observation_id": "p67:full-page:a0:result0:r8",
+            "observed_name": "1 荒川区公式ホームページ広告揭載料",
+            "corrected_name": "1 荒川区公式ホームページ広告掲載料",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p67-full-page-a0-result0-r25",
+            "page": 67,
+            "observation_id": "p67:full-page:a0:result0:r25",
+            "observed_name": "利帳広告揭",
+            "corrected_name": "利帳広告掲",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-revenue-ocr-1",
+          "origin_sha256": "4c9acb0656fecf257da02f5d42210afb610dabc16248e46e852afcbaea4e6970",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23
+            ]
+          },
+          "sha256": "c38fb3438a25aff24eddf7b73a6921175bcc20ec760a032c04d9b138db524530",
+          "bytes": 2173265
+        },
+        {
+          "id": "general-initial-revenue-ocr-2",
+          "origin_sha256": "4c9acb0656fecf257da02f5d42210afb610dabc16248e46e852afcbaea4e6970",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33
+            ]
+          },
+          "sha256": "703154f63d0f60e1d91e5bc69675cee097454881e30d0a5432e7bb14195ae4bd",
+          "bytes": 1924611
+        },
+        {
+          "id": "general-initial-revenue-ocr-3",
+          "origin_sha256": "4c9acb0656fecf257da02f5d42210afb610dabc16248e46e852afcbaea4e6970",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43
+            ]
+          },
+          "sha256": "b98e073e7eb5149c9df6c3eafb9ddb1e1067f69b116e0dae6cccf76da046278c",
+          "bytes": 1868090
+        },
+        {
+          "id": "general-initial-revenue-ocr-4",
+          "origin_sha256": "4c9acb0656fecf257da02f5d42210afb610dabc16248e46e852afcbaea4e6970",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53
+            ]
+          },
+          "sha256": "1c074c142253fd4bf860a6ea089012b5daf83654bbbcb1eb6582fe96574103f0",
+          "bytes": 1697915
+        },
+        {
+          "id": "general-initial-revenue-ocr-5",
+          "origin_sha256": "4c9acb0656fecf257da02f5d42210afb610dabc16248e46e852afcbaea4e6970",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63
+            ]
+          },
+          "sha256": "f294aab3d5379ce1318575a3a5deec92d41c0b39515d6791742e1a21ca1ae653",
+          "bytes": 2043478
+        },
+        {
+          "id": "general-initial-revenue-ocr-6",
+          "origin_sha256": "4c9acb0656fecf257da02f5d42210afb610dabc16248e46e852afcbaea4e6970",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              64,
+              65,
+              66,
+              67
+            ]
+          },
+          "sha256": "69dd756ed130ee5150454d7fcaab7de0ea6a63aac602a2b134448b1f04adb421",
+          "bytes": 489588
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "4c9acb0656fecf257da02f5d42210afb610dabc16248e46e852afcbaea4e6970"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "staircase_codes",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・見込額など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "next_number_counts": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-initial-revenue-ocr-1",
+          "origin_sha256": "4c9acb0656fecf257da02f5d42210afb610dabc16248e46e852afcbaea4e6970",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              260,
+              261,
+              262,
+              263,
+              264,
+              265
+            ]
+          },
+          "sha256": "42de3293732afa98b1a426ddd75ddbc6bf33b3ae1f64a607d5578556f8747914",
+          "bytes": 1167580
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "4c9acb0656fecf257da02f5d42210afb610dabc16248e46e852afcbaea4e6970"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "staircase_codes",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・見込額など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "next_number_counts": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-initial-revenue-ocr-1",
+          "origin_sha256": "4c9acb0656fecf257da02f5d42210afb610dabc16248e46e852afcbaea4e6970",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              324,
+              325,
+              326,
+              327,
+              328,
+              329
+            ]
+          },
+          "sha256": "1b0800c572858db62a385bef7df0ad2fada8d7ef8611b88623c58d72fcd1c50b",
+          "bytes": 910731
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "4c9acb0656fecf257da02f5d42210afb610dabc16248e46e852afcbaea4e6970"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "care-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "staircase_codes",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・見込額など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "next_number_counts": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "care-initial-revenue-ocr-1",
+          "origin_sha256": "4c9acb0656fecf257da02f5d42210afb610dabc16248e46e852afcbaea4e6970",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              362,
+              363,
+              364,
+              365,
+              366,
+              367,
+              368,
+              369
+            ]
+          },
+          "sha256": "852a85a4256eb7f417d595aa2b9b0f38533d4385c4a904cb7c55d5cd217a19ea",
+          "bytes": 1580008
+        }
+      ]
+    }
+  ]
+}

@@ -11,6 +11,10 @@ The reading builds the printed tree directly (科目・節・説明 and the 債�
 the node and amount tables with the digit-coverage scope to the shared checks. What it reads but does not take in
 (the 財源内訳 blocks, the quantity tables and the prose of the explanation, the titles a page repeats) is described as
 coverage exclusions from where it found them. Column edges, the item markers and the words of a note are the profile's.
+
+The revenue prints the same frame (墨田区の歳入: 目・本年度・前年度・比較, 節, 計上説明). Its 計上説明 is the basis of each 節
+(rates, counts, the 調定見込額), no breakdown of it: a profile with `explanation_excluded` reads the 款・項・目・節 and
+excludes every figure of the column with the profile's kind and reason.
 """
 from __future__ import annotations
 
@@ -83,6 +87,24 @@ def repeats(text, name):
     return bool(bare) and (bare in name)
 
 
+def split_tabs(word):
+    """A word the text layer runs across columns through tabs (`金）\t\t\t\t17事`: the end of a 目 name repeated in
+    parentheses, then a 節 code and the head of its name, 墨田区の歳入): its first piece starts where the word does and its
+    last piece ends where the word does; the pieces between are dropped (they are the explanation's prose). A word
+    with tabs on one side only (`\t\t\t\t11後期高齢者…`) stands at the other. A word with tabs is taller than its
+    characters (18pt over 13.4pt glyphs): a full-width character is .7 of its height."""
+    pieces = [piece for piece in re.split(r'\t+', word.text.strip()) if piece]
+    if '\t' not in word.text or not pieces:
+        return [trimmed(word)] if word.text.strip() else []
+    width = lambda text: sum(.7 * (word.y1 - word.y0) * (.5 if ord(c) < 128 else 1.0) for c in text)
+    first, last = pieces[0], pieces[-1]
+    head = Word(first, word.x0, word.y0, min(word.x1, word.x0 + width(first)), word.y1)
+    tail = Word(last, max(word.x0, word.x1 - width(last)), word.y0, word.x1, word.y1)
+    if len(pieces) == 1:  # tabs on one side only: the characters stand at the other
+        return [tail if word.text.startswith('\t') else head]
+    return [head, tail]
+
+
 def trimmed(word):
     """A word the text layer opens with tabs (`\\t\\t\\t\\t13使用料及び` from the 目 column to the 節 column):
     its box starts where its printed characters do, estimated from the line height (full-width) and half for ASCII."""
@@ -122,14 +144,18 @@ def split_word(word, texts, cut=None):
 def unglue(words, edge):
     """Words that run two printed things together are split. A comparison amount that runs into the 節 number printed
     right of it (`△9…11需` over the edge of the two columns); an amount's leader dots that run into the next amount
-    (`464…12,`)."""
+    (`464…12,`) or into a code (`…16…`)."""
     result = []
     for word in words:
         found = GLUED_AT_EDGE.match(word.text) if word.x0 < edge < word.x1 else None
         if found:
             result += split_word(word, [found.group(1), found.group(2)], edge)
             continue
-        parts = AFTER_LEADER.findall(word.text) if '…' in word.text.rstrip('…') else []
+        lead = re.match(r'…+', word.text)
+        rest = word.text[lead.end():] if lead else word.text
+        parts = AFTER_LEADER.findall(rest) if '…' in word.text.rstrip('…') else []
+        if lead and rest:   # the leader dots of the column on the left run into a 節 code (`…16…`, 2023年度の歳入)
+            parts = [lead.group(0), *parts]
         if len(parts) > 1 and ''.join(parts) == word.text:
             result += split_word(word, parts)
         else:
@@ -191,6 +217,7 @@ class Reader(Reading):
         self.NOTE_KINDS = profile['note_kinds']
         self.TOTAL = profile['total_label']
         self.FRAME = (self.SUBJECT[0], self.EXPLANATION[1])
+        self.EXPLANATION_EXCLUDED = profile.get('explanation_excluded')
 
     # The frame of a page: its rules across the whole width, the first and the last.
     def frame(self, page):
@@ -261,17 +288,19 @@ class Reader(Reading):
         if len(inputs) != 1:
             raise ValueError('One original makes one table')
         source = inputs[0]
-        if source['format'] != 'pdf' or source['pdf_type'] != 'text' or source['direction'] != 'expenditure':
-            raise ValueError('Expected the expenditure of a text PDF')
+        direction = 'revenue' if self.EXPLANATION_EXCLUDED else 'expenditure'
+        if source['format'] != 'pdf' or source['pdf_type'] != 'text' or source['direction'] != direction:
+            raise ValueError(f'Expected the {direction} of a text PDF')
         if sha_file(source['path']) != source['sha256']:
             raise ValueError('Original SHA differs')
         scopes = [s for s in source['scope'] if s['account'] == options['account']
-                  and s.get('direction', 'expenditure') == 'expenditure']
+                  and s.get('direction', direction) == direction]
         if len(scopes) != 1:
             raise ValueError(f'Expected one selected scope of the account {options["account"]}')
         scope = scopes[0]
-        numbers_ = [p for first, last in scope['pages'] for p in range(first, last + 1)]
-        observed = [Page(p.number, p.width, p.height, [trimmed(w) for w in p.words if w.text.strip()], p.rules)
+        numbers_ = [p for first, last in (options.get('pages') or scope['pages'])
+                    for p in range(first, last + 1)]
+        observed = [Page(p.number, p.width, p.height, [piece for w in p.words for piece in split_tabs(w)], p.rules)
                     for p in observe(Path(source['path']), numbers_)]
         folder = Path(destination)
         table_id = options['table_id']
@@ -368,6 +397,8 @@ class Reader(Reading):
                 follows = starts and last_line is not None and y - last_line <= 10
                 if text.strip('()').rstrip('.…') == self.TOTAL:   # the 計 row may print leader dots (`計…`)
                     total_y = y
+                elif not text.strip('.…'):
+                    continue   # the leader dots of a 目 that runs on (2023年度の歳入: `（民生費負担金）…` / `…`)
                 elif not starts and continuing is not None and not found and repeats(text, continuing['name_text']):
                     # The name of the 目 that runs on, printed again (`（議会費）`, `住民基本台帳…` / `事務費`).
                     report['repeated 目 names'] += 1
@@ -409,7 +440,9 @@ class Reader(Reading):
                         add_amount(target, header, value, run, page.number, unit)
             # 節 column.
             setsu_starts = []
-            setsu_lines = centered_codes(lines([w for w in body if inside(w, self.SETSU)], SUBJECT_LINE, apart=True))
+            # (A word of leader dots alone is the column on the left running on: `…` before `16…`.)
+            setsu_lines = centered_codes(lines([w for w in body if inside(w, self.SETSU) and w.text.strip('…')],
+                                               SUBJECT_LINE, apart=True))
             for line in setsu_lines:
                 text = compact(''.join(w.text for w in line))
                 if not text.strip('.…'):
@@ -440,6 +473,10 @@ class Reader(Reading):
                     add_amount(found[-1], header, value, run, page.number, unit)
             # 計上説明: the 財源内訳 bands, then the explanation lines.
             right = [w for w in body if inside(w, self.EXPLANATION)]
+            if self.EXPLANATION_EXCLUDED:
+                exclude(self.EXPLANATION_EXCLUDED['kind'], self.EXPLANATION_EXCLUDED['reason'], page.number, right)
+                report['excluded explanation words'] += len(right)
+                continue
             bands = self.funding_bands(page, body_top, bottom)
             in_band = lambda w: any(upper < (w.y0 + w.y1) / 2 < lower for upper, lower in bands)
             funding = [w for w in right if in_band(w)]
