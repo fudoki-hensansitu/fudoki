@@ -153,8 +153,12 @@ def seed_codes(header: str, diff: list[str]) -> set[str] | None:
 
 
 def classify(paths: list[str], seed: Callable[[str], set[str] | None], build: set[str]) -> dict:
-    """変わった path から範囲を決める。自治体に絞れると分かるもの以外の入力は全件に倒す。build は build_modules()。"""
+    """変わった path から範囲を決める。自治体に絞れると分かるもの以外の入力は全件に倒す。build は build_modules()。
+
+    全件のときも、自治体に絞れた変更の自治体を jurisdictions に持つ（sync-d1 の push はそれだけを流す）。
+    """
     jurisdictions: set[str] = set()
+    full = None
     for path in paths:
         if not any(p.match(path) for p in INPUTS) or any(p.search(path) for p in IGNORED):
             continue
@@ -167,8 +171,11 @@ def classify(paths: list[str], seed: Callable[[str], set[str] | None], build: se
             continue
         codes = seed(path) if SEEDS.match(path) else None
         if codes is None:
-            return {'mode': 'full', 'jurisdictions': [], 'reason': path}
+            full = full or path
+            continue
         jurisdictions |= codes
+    if full:
+        return {'mode': 'full', 'jurisdictions': sorted(jurisdictions), 'reason': full}
     if not jurisdictions:
         return {'mode': 'none', 'jurisdictions': []}
     return {'mode': 'jurisdictions', 'jurisdictions': sorted(jurisdictions)}
@@ -223,7 +230,7 @@ def main() -> None:
     print(json.dumps(found, ensure_ascii=False), flush=True)
     if found['mode'] == 'none':
         return
-    scoped = [a for code in found['jurisdictions'] for a in ('--jurisdiction', code)]
+    scoped = [a for code in found['jurisdictions'] for a in ('--jurisdiction', code)] if found['mode'] == 'jurisdictions' else []
     dirty = bool(git('status', '--porcelain', '--', *RELATIONS).strip())
     try:
         run('uv', 'run', 'python', 'dbt/scripts/prepare.py', '--build', '--remote', *scoped)

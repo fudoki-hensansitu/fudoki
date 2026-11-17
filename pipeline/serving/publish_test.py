@@ -64,6 +64,12 @@ class ClassifyTest(unittest.TestCase):
             'pipeline/verify/boundaries.ts',
         ), {'mode': 'none', 'jurisdictions': []})
 
+    def test_full_keeps_the_scoped_jurisdictions(self):
+        self.assertEqual(scope(
+            'pipeline/ingestion/fiscal/jurisdictions/131016/2024/settlement/expenditure.json',
+            'pipeline/dbt/seeds/cofog/cofog_master.csv',
+        ), {'mode': 'full', 'jurisdictions': ['131016'], 'reason': 'pipeline/dbt/seeds/cofog/cofog_master.csv'})
+
     def test_unknown_input_falls_to_full(self):
         self.assertEqual(scope('pipeline/something_new/thing.py')['mode'], 'full')
 

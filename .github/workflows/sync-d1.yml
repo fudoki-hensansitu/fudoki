@@ -1,8 +1,9 @@
 name: sync-d1
 # main に入った取り込み・dbt の変更を、marts に build して本番 D1（fudoki-api）へ差分で写す（ADR 0040）。
 # publish の前に、取り込みの PR が変えた宣言を main のコードで変換し、保存の関門を通った表と受領書を R2 に置く（ingestion:store、ADR 0051）。
-# 範囲は serving/publish.py（bun run --cwd pipeline publish）が差分から決める。取り込みの宣言・選定・自治体の列を持つ seed だけならその自治体だけ、
-# 全自治体に効く変更なら全件。事業と評価シートのつなぎは build のたびに計算する。
+# 範囲は serving/publish.py の判定（scope）で決める。push は、取り込みの宣言・選定・自治体の列を持つ seed が変わった自治体だけを流す。
+# 全自治体に効く変更（共通の seed・dbt のモデル・build のコード）は push では流さず、週1の全件か手動の実行（自治体を空にすると全件）で出す。
+# 事業と評価シートのつなぎは build のたびに計算する。
 on:
   push:
     branches: [main]
@@ -40,7 +41,8 @@ jobs:
       group: ingestion-store
       cancel-in-progress: false
     outputs:
-      args: ${{ steps.scope.outputs.args }}
+      args: ${{ steps.targets.outputs.args || steps.scope.outputs.args }}
+      none: ${{ steps.targets.outputs.none }}
       store: ${{ steps.store.outcome }}
     steps:
       - uses: actions/checkout@v7
@@ -107,6 +109,19 @@ jobs:
         run: mise install conda:mupdf@1.28.6
       # 手動の実行は R2 に置かない（置くのは merge された宣言の表だけ）。since が古くても、受領書の宣言と指紋が今と同じ表は変換し直さない（store.to_convert）
       # 落ちた管理 JSON があっても、ほかは置き終えてから job を落とす。sync はそれでも流す（下の sync の if）
+      # push は宣言・選定・自治体の列を持つ seed が変わった自治体だけを流す。共通の seed・dbt のモデル・build のコードの
+      # 変更は自治体に絞れないので push では流さず、週1の全件（--all --verify-all）か手動の実行（自治体を空にすると全件）で出す
+      - id: targets
+        if: steps.scope.outputs.args == format('--since {0}', steps.scope.outputs.since)
+        working-directory: pipeline
+        env:
+          SINCE: ${{ steps.scope.outputs.since }}
+        run: |
+          found=$(uv run python -c 'import json, os; from serving.publish import scope; print(json.dumps(scope(os.environ["SINCE"], "HEAD"), ensure_ascii=False))')
+          echo "$found"
+          codes=$(echo "$found" | jq -r '.jurisdictions[]')
+          echo "args=$(for c in $codes; do printf -- '--jurisdiction %s ' "$c"; done)" >> "$GITHUB_OUTPUT"
+          [ -n "$codes" ] || echo "none=true" >> "$GITHUB_OUTPUT"
       - id: store
         if: steps.scope.outputs.since != ''
         run: bun run --cwd pipeline ingestion:store -- --since ${{ steps.scope.outputs.since }}
@@ -138,7 +153,7 @@ jobs:
     needs: store
     # 保存（ingestion:store）が一部の管理 JSON で落ちても、ほかの自治体の同期は止めない。保存されなかった新しい資料は
     # build から外れ（prepare の not_stored）、run は赤いままなので範囲の起点は進まず、直した後の run が拾い直す
-    if: ${{ !cancelled() && (needs.store.result == 'success' || needs.store.outputs.store == 'failure') }}
+    if: ${{ !cancelled() && needs.store.outputs.none != 'true' && (needs.store.result == 'success' || needs.store.outputs.store == 'failure') }}
     runs-on: ubuntu-latest
     timeout-minutes: 180
     # serving:sync は同時に2つ流せない（`<表>__new` が衝突する）。前の同期を止めず、順に流す。
