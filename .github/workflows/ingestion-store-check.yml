@@ -50,17 +50,6 @@ jobs:
           path: pipeline/.cache/generic-observation
           key: generic-observation-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
           restore-keys: generic-observation-${{ hashFiles('mise.toml') }}-
-      - name: debug observation (temporary)
-        run: |
-          f=pipeline/.cache/generic-observation/e6e180e8e6e3694286097838107775025096830b33fb0b41c6213ec6a06fad4e-b5cae459b902e6eb-5f442649.json
-          ls -la "$f" || exit 0
-          python3 -c "
-          import json,hashlib,sys
-          d=json.load(open(sys.argv[1]))
-          for p in d['observed']:
-              print(p['number'], hashlib.sha256(json.dumps(p,sort_keys=True).encode()).hexdigest()[:12], len(p['words']), len(p.get('rules',[])))
-              if p['number']==66: print(json.dumps(p['rules'])); print(json.dumps([w for w in p['words'] if 280<w[2]<330]))
-          " "$f"
       - id: observation-before
         run: echo "files=$(find pipeline/.cache/generic-observation -type f -printf '%P %s\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
       - id: base

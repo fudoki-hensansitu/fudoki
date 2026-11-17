@@ -434,14 +434,6 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
                           | {k: node.get(k) for k in ('physical_page', 'code_text', 'name_text')}
                           for r in checked.get('results', []) if r['status'] == '不一致'
                           for node in [next((n for n in built.nodes if n['node_key'] == r['parent_node_key']), {})]]
-            import sys as _dbg_sys  # temporary
-            for r in checked.get('results', []):
-                if r['status'] == '不一致':
-                    kids = [n for n in built.nodes if n.get('parent_node_key') == r['parent_node_key']]
-                    print('DBG children', [(n.get('code_text'), n.get('name_text'), n.get('axis_header'), n.get('physical_page'),
-                                            [(a.get('header_path'), a.get('amount_text')) for a in built.amounts if a['node_key'] == n['node_key']])
-                                           for n in kids], file=_dbg_sys.stderr)
-                    print('DBG file', file, conversion['id'], file=_dbg_sys.stderr)
             raise ValueError(f'Table failed the tree check: {ident}: {checked["counts"]}; '
                              f'{len(checked["issues"])} issues: {checked["issues"][:5]}; mismatched: {mismatched[:5]}')
         completed_by_id[ident] = []
