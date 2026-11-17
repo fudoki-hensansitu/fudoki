@@ -12,8 +12,8 @@ from __future__ import annotations
 import datetime
 import hashlib
 import hmac
+import http.client
 import os
-import shutil
 import subprocess
 import sys
 import time
@@ -58,25 +58,36 @@ def s3_get(command: list[str], key: str, bucket: str, stdout: IO[bytes] | int | 
     path = '/' + urllib.parse.quote(f'{bucket}/{key}', safe='/-_.~')
     for wait in (*WAITS, None):
         request = urllib.request.Request(f'https://{host}{path}', headers=signed_headers(host, path))
+        status, body = None, bytearray()
         try:
             with urllib.request.urlopen(request, timeout=300) as response:
-                if stdout is None:
-                    return subprocess.CompletedProcess(command, 0, response.read(), b'')
-                if stdout != subprocess.DEVNULL:
-                    shutil.copyfileobj(response, stdout)
-                    stdout.flush()
-                return subprocess.CompletedProcess(command, 0, None, b'')
-        except (urllib.error.HTTPError, urllib.error.URLError, TimeoutError) as error:
+                length = response.headers.get('Content-Length')
+                received = 0
+                while chunk := response.read(1 << 20):
+                    received += len(chunk)
+                    # A write to the file fails on its own (not retried); only the network is retried.
+                    if stdout is None:
+                        body += chunk
+                    elif stdout != subprocess.DEVNULL:
+                        stdout.write(chunk)
+                if length is not None and received != int(length):
+                    raise http.client.IncompleteRead(b'', int(length) - received)
+            if stdout is None:
+                return subprocess.CompletedProcess(command, 0, bytes(body), b'')
+            if stdout != subprocess.DEVNULL:
+                stdout.flush()
+            return subprocess.CompletedProcess(command, 0, None, b'')
+        except (urllib.error.URLError, http.client.HTTPException, ConnectionError, TimeoutError) as error:
             status = getattr(error, 'code', None)
             if status == 404:
                 stderr = f'The specified object does not exist: {bucket}/{key}\n'.encode()
             else:
-                stderr = f'R2 S3 GET failed ({status or error}): {bucket}/{key}\n'.encode()
+                stderr = f'R2 S3 GET failed ({status or error!r}): {bucket}/{key}\n'.encode()
             if wait is None or (status is not None and status != 429 and status < 500):
                 if not quiet:
                     print(stderr.decode(), end='', file=sys.stderr, flush=True)
                 raise subprocess.CalledProcessError(1, command, None, stderr) from error
-            print(f'R2 S3 GET failed ({status or error}); retrying in {wait}s: {key}', file=sys.stderr, flush=True)
+            print(f'R2 S3 GET failed ({status or error!r}); retrying in {wait}s: {key}', file=sys.stderr, flush=True)
             time.sleep(wait)
             if hasattr(stdout, 'truncate'):
                 stdout.seek(0)
