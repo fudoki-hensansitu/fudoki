@@ -72,6 +72,7 @@ class Band:
     kind: str | None = None  # 'amount' | 'label' | None (empty)
     spans: list[tuple[float, float, str]] = field(default_factory=list)  # header cells over the band
     offset: float = 0.0  # how far a spread's right page was moved to the right
+    lift: float = 0.0  # what moves a spread's right page's rows onto the left page's (quirk `far_shifted_spread_pages`)
     top: float | None = None  # top of the ruled frame (the header cells sit between it and `body_top`)
     left_rules: list[tuple[float, float]] = field(default_factory=list)  # (top, bottom) of each rule drawn on its left edge
     unit_mark: str | None = None  # a header cell that only names the unit (`円`), kept apart from the heading
@@ -136,7 +137,15 @@ class Logical:
             match = TITLE.match(normalize(text(line)))
             if match:
                 found.append((match.group(1) or match.group(2), match.group(3), line))
+            elif (bare := _document_quirk('unnumbered_titles')) is not None \
+                    and (name := bare.module.kan_title(normalize(text(line)))) is not None:
+                found.append((None, name, line))  # the quirk `unnumbered_titles`: `第　款 財産収入`, a 款 the year drops
         return found
+
+
+def _document_quirk(name: str):
+    from ingestion.generic.patterns import document_quirk  # (patterns import this module)
+    return document_quirk(name)
 
 
 def _crosses(rule: Rule, y: float) -> bool:
@@ -308,6 +317,8 @@ def _frames(page: Page, spread: dict | None = None,
             continue
         bottom = max([h.y0 for h in spanning] + [r.y1 for r in edges_drawn])
         top = min([h.y0 for h in spanning] + [r.y0 for r in edges_drawn])
+        if (unruled := document_quirk('unruled_frame_top')) is not None:
+            top = unruled.module.top(page, frame, top)
         if (skewed := document_quirk('skewed_frames')) is not None:
             bottom = skewed.module.bottom(page, frame, middle, horizontals, bottom)
             top = skewed.module.top(page, frame, middle, horizontals, top)
@@ -720,7 +731,7 @@ def _subject(band: Band) -> bool:
     return bool(band.header) and (band.header[-1] in SUBJECT_LEVELS or '科目' in band.header[0])
 
 
-def same_rows(left: Page, right: Page) -> bool:
+def same_rows(left: Page, right: Page, far_shift: float | None = None) -> bool:
     """Whether two pages print the same rows, i.e. are the halves of one spread."""
     rows = lambda page: sorted({round(r.y0, 1) for r in page.rules if not r.vertical and r.x1 - r.x0 > 50})
     a, b = rows(left), rows(right)
@@ -731,9 +742,15 @@ def same_rows(left: Page, right: Page) -> bool:
         return True
     if (drifting := document_quirk('drifting_spread_rows')) is not None:
         return drifting.module.matches(shorter, longer) / len(shorter) >= SPREAD_ROW_MATCH
-    shifts = {round(y - x, 1) for x in shorter for y in longer if abs(y - x) <= SPREAD_MAX_SHIFT} or {0.0}
-    found = max(sum(1 for x in shorter if any(abs(x + shift - y) <= 1.0 for y in longer)) for shift in shifts)
+    found, _ = _row_shift(shorter, longer, SPREAD_MAX_SHIFT if far_shift is None else far_shift)
     return found / len(shorter) >= SPREAD_ROW_MATCH
+
+
+def _row_shift(shorter: list[float], longer: list[float], reach: float) -> tuple[int, float]:
+    """The rules of `shorter` found on `longer` within 1pt after the vertical shift (up to `reach`) that lines up
+    the most, and that shift."""
+    shifts = {round(y - x, 1) for x in shorter for y in longer if abs(y - x) <= reach} or {0.0}
+    return max((sum(1 for x in shorter if any(abs(x + shift - y) <= 1.0 for y in longer)), shift) for shift in sorted(shifts))
 
 
 @lru_cache(maxsize=1)
@@ -865,6 +882,8 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
     classify(per_page, columns, ocr_pages)
     result: list[Logical] = []
     observed = {page.number: page for page, _, _ in per_page}
+    far = document_quirk('far_shifted_spread_pages')
+    far_reach = far.module.MAX_SHIFT if far is not None else None
     for page, bands, outside in per_page:
         unit = None
         for line in lines([Glyph(w.text, w.x0, w.y0, w.x1, w.y1, page.number, 0) for w in outside]):
@@ -885,8 +904,15 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
         continues = first.kind == 'amount' or (not any(_subject(b) for b in bands) and bool(result)
                                                and any(_subject(b) for b in result[-1].bands))
         if (continues and result and len(result[-1].pages) == 1
-                and previous_page is not None and same_rows(previous_page, page)):
+                and previous_page is not None and same_rows(previous_page, page, far_reach)):
             previous = result[-1]
+            if far_reach is not None:
+                # The quirk `far_shifted_spread_pages`: how far the right page's rows lie off the left page's, for
+                # `tree.owner` to find an amount's row on the left page (the words keep their printed place).
+                rows = lambda p: sorted({round(r.y0, 1) for r in p.rules if not r.vertical and r.x1 - r.x0 > 50})
+                _, lift = _row_shift(rows(page), rows(previous_page), far_reach)
+                for band in bands:
+                    band.lift = lift
             offset = max(b.x1 for b in previous.bands) + 10 - leftmost.x0
             for band in bands:
                 band.x0 += offset; band.x1 += offset; band.offset = offset

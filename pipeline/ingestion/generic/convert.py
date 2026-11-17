@@ -238,6 +238,7 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
             if band.kind == 'label' and RATIO_HEADER.search(''.join(band.header)) and band.x0 - band.offset < band.x1 - band.offset:
                 regions.append({'kind': '数量表', 'reason': '比率の欄（見出しが割合・率）。金額の欄ではない。',
                                 'pages': [[band.page, band.page]], 'x_range': [band.x0 - band.offset, band.x1 - band.offset]})
+    regions += joined_columns(regions)
     regions += [{'kind': '本文', 'reason': '表の一部でない欄（設定で読まないと宣言した列。施策番号など）。金額ではない。',
                  'pages': [[band.page, band.page]], 'x_range': [band.x0 - band.offset, band.x1 - band.offset]}
                 for logical in logicals for band in logical.bands if band.ignored]
@@ -287,6 +288,28 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
     regions += [{'kind': '総括', 'reason': '合計の行。款の和には入れない統制値。見開きでは見出しの語が反対の頁にある。',
                  'page': note['page'], 'bbox': list(note['box'])} for note in totals]
     return regions
+
+
+def joined_columns(regions: list[dict]) -> list[dict]:
+    """A declared column that inner rules cut into several bands (清瀬市の歳入の説明: the boxes of 調定見込額 and
+    収入歩合 drawn in it, its amounts set across their rules), joined back into one x range per run of side-by-side
+    bands of the same kind and reason: a word that straddles an inner rule is the column's too (a straddling word
+    stays in scope for each band alone)."""
+    by_page = defaultdict(list)
+    for region in regions:
+        if 'x_range' in region and len(region.get('pages', [])) == 1 and region['pages'][0][0] == region['pages'][0][1]:
+            by_page[(region['pages'][0][0], region['kind'], region['reason'])].append(region['x_range'])
+    joined = []
+    for (page, kind, reason), ranges in by_page.items():
+        runs: list[list[float]] = []
+        for left, right in sorted(ranges):
+            if runs and left - runs[-1][1] <= .5:
+                runs[-1][1] = max(runs[-1][1], right)
+            else:
+                runs.append([left, right])
+        joined += [{'kind': kind, 'reason': reason, 'pages': [[page, page]], 'x_range': run}
+                   for run in runs if sum(1 for r in ranges if run[0] <= r[0] and r[1] <= run[1]) > 1]
+    return joined
 
 
 def funding_words(observed) -> list[tuple]:
@@ -495,6 +518,8 @@ def _build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
     built.notes.extend({'kind': 'name correction', 'text': text} for text in correct_names(built.nodes, by_node))
     built.notes.extend({'kind': 'name correction', 'text': f'{rule["page"]}頁 {rule["observed_name"]}→{rule["corrected_name"]}'}
                        for rule in options.get('name_corrections', ()) if 'observation_id' in rule)
+    built.notes.extend({'kind': 'parent correction', 'text': text}
+                       for text in correct_parents(built.nodes, options.get('parent_corrections')))
     if options.get('continued_rows'):
         built.notes.append({'kind': 'continued rows', 'text': continue_volume(built.nodes, options['continued_rows'])})
     all_nodes = [*built.nodes, *nodes]
@@ -622,6 +647,25 @@ def correct_names(nodes: list[dict], rules: list[dict] | None) -> list[str]:
             found[0]['code_text'] = rule['corrected_code']
         code = rule['corrected_code'] if 'corrected_code' in rule else rule.get('code')
         notes.append(f'{rule.get("code") or ""}{rule["observed_name"]}→{code or ""}{rule["corrected_name"]}')
+    return notes
+
+
+def correct_parents(nodes: list[dict], rules: list[dict] | None) -> list[str]:
+    """Items the reading put under the wrong parent because the original prints them out of line with it
+    (`parent_corrections`, each checked on the rendered page): 武蔵村山市の歳入 R6 prints the 節 of a 目 on the right
+    page of a spread 15pt higher than the 目 on the left page, at the height of the 目 above. A rule names the item and
+    its parent by page, code and name; each must find exactly one node, or the conversion stops."""
+    notes = []
+    for rule in rules or ():
+        def one(page, code, name, what):
+            found = [n for n in nodes if n['physical_page'] == page and n['code_text'] == code and n['name_text'] == name]
+            if len(found) != 1:
+                raise ValueError(f'A parent correction must find one {what}: {rule["id"]} ({len(found)})')
+            return found[0]
+        child = one(rule['page'], rule['code'], rule['name'], 'item')
+        parent = one(rule['parent_page'], rule['parent_code'], rule['parent_name'], 'parent')
+        child['parent_node_key'] = parent['node_key']
+        notes.append(f'{rule["page"]}頁 {rule["code"] or ""}{rule["name"]}→{rule["parent_code"] or ""}{rule["parent_name"]}の下')
     return notes
 
 

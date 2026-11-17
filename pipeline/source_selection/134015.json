@@ -24,6 +24,16 @@
               "scope": [
                 {
                   "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 15,
+                      "end": 42
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -40,6 +50,16 @@
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 16
+                    }
+                  ]
+                },
                 {
                   "account": "介護保険特別会計",
                   "direction": "expenditure",
@@ -76,6 +96,16 @@
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 15
+                    }
+                  ]
+                },
                 {
                   "account": "国民健康保険特別会計",
                   "direction": "expenditure",
@@ -234,6 +264,16 @@
               "scope": [
                 {
                   "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 12,
+                      "end": 53
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -250,6 +290,16 @@
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 17
+                    }
+                  ]
+                },
                 {
                   "account": "介護保険特別会計",
                   "direction": "expenditure",
@@ -817,6 +867,16 @@
               "scope": [
                 {
                   "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 14,
+                      "end": 48
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -833,6 +893,16 @@
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 17
+                    }
+                  ]
+                },
                 {
                   "account": "介護保険特別会計",
                   "direction": "expenditure",
@@ -1027,6 +1097,16 @@
               "scope": [
                 {
                   "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 15,
+                      "end": 43
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -1043,6 +1123,16 @@
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 15
+                    }
+                  ]
+                },
                 {
                   "account": "介護保険特別会計",
                   "direction": "expenditure",
@@ -1079,6 +1169,16 @@
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 14
+                    }
+                  ]
+                },
                 {
                   "account": "国民健康保険特別会計",
                   "direction": "expenditure",
@@ -1237,6 +1337,16 @@
               "scope": [
                 {
                   "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 12,
+                      "end": 39
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -1253,6 +1363,16 @@
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 16
+                    }
+                  ]
+                },
                 {
                   "account": "介護保険特別会計",
                   "direction": "expenditure",
@@ -1289,6 +1409,16 @@
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 16
+                    }
+                  ]
+                },
                 {
                   "account": "国民健康保険特別会計",
                   "direction": "expenditure",
@@ -1447,6 +1577,16 @@
               "scope": [
                 {
                   "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 14,
+                      "end": 39
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -1463,6 +1603,16 @@
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 16
+                    }
+                  ]
+                },
                 {
                   "account": "介護保険特別会計",
                   "direction": "expenditure",
@@ -1499,6 +1649,16 @@
               "format": "pdf",
               "pdf_type": "scan",
               "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 16
+                    }
+                  ]
+                },
                 {
                   "account": "国民健康保険特別会計",
                   "direction": "expenditure",
@@ -1657,6 +1817,16 @@
               "scope": [
                 {
                   "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 14,
+                      "end": 48
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -1673,6 +1843,16 @@
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 17
+                    }
+                  ]
+                },
                 {
                   "account": "介護保険特別会計",
                   "direction": "expenditure",

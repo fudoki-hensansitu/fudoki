@@ -1,5 +1,5 @@
 // ホーム（/）。住んでいるまちのダッシュボード（総額・何に使っている・始めた事業・やめた事業・事業評価）と、ほかのまちを見る検索。
-// 住んでいるまちを決めていないときは、はじめての流れ（onboarding.tsx: まちを選ぶ → 要点 → チェックリスト）を出す。うちのまちは1つで、ブラウザ（localStorage）にだけ置く
+// 住んでいるまちを決めていないときは、住んでいるまちを選ぶ欄（onboarding.tsx）を出し、選んだ時点でそのまちに決めてダッシュボードを出す。うちのまちは1つで、ブラウザ（localStorage）にだけ置く
 // データは自治体の頁と同じ1年度の分（server/app-data.ts）を /api/jurisdictions/:code で読み、yearView で年度ごとに見る
 import * as React from 'react'
 import { ArrowRightIcon, ArrowSquareOutIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon } from '@phosphor-icons/react'
@@ -14,9 +14,8 @@ import { GRADES, yearView, type Snapshot, type YearView } from '../jurisdiction/
 import { NewIcon, StopIcon } from '../jurisdiction/fresh-icons'
 import { reiwa, yearName } from '../jurisdiction/types'
 import { Amt, FieldIcon, perHeadText } from './parts'
-import { compareHref } from '../compare/compare'
 import { useMyTown, type Town } from './towns'
-import { OtherTowns, Checklist, Empty, Intro, Steps, onboarded, startChecklist, type CheckItem } from './onboarding'
+import { OtherTowns, AskTown, Intro } from './onboarding'
 
 export interface Featured {
   code: string
@@ -269,93 +268,13 @@ function Loading() {
 }
 
 /** うちのまちのデータが揃うまでの出し分け。揃ったら children に渡す */
-function WithCtx({ town, vision, snap, loading, children }: { town: Town; vision?: string; snap: ReturnType<typeof useSnapshot>; loading?: React.ReactNode; children: (c: Ctx) => React.ReactNode }) {
+function WithCtx({ town, vision, snap, children }: { town: Town; vision?: string; snap: ReturnType<typeof useSnapshot>; children: (c: Ctx) => React.ReactNode }) {
   const { d, failed, year, setYear } = snap
   if (failed) return <p className="text-sm text-muted-foreground">今はこのまちのデータを読み込めません。少し時間をおいて開き直してください。</p>
-  if (!d || year == null) return <>{loading ?? <Loading />}</>
+  if (!d || year == null) return <Loading />
   if (!d.years[String(year)]) return <p className="text-sm text-muted-foreground">このまちの予算・決算は、まだ収録していません。</p>
   return <>{children(buildCtx(town, d, year, setYear, vision))}</>
 }
-
-/** はじめての流れの2歩目: 選んだまちの要点を一枚で見せる。「このまちにする」で決める */
-function Reveal({ c, onOpen, onBack }: { c: Ctx; onOpen: () => void; onBack: () => void }) {
-  const { town, d, v, year } = c
-  const top = v.fields[0]
-  const rows: [string, React.ReactNode][] = [
-    [`${yearName(year)}の${v.word === '決算' ? '決算' : '当初予算'}`, <Amt key="t" yen={v.total} className="text-[28px] font-semibold sm:text-[32px]" />],
-    ...(d.pop ? ([['1人あたり', <span key="p" className="text-[20px] font-semibold">{perHeadText(v.total, d.pop)}</span>]] as [string, React.ReactNode][]) : []),
-    ...(top
-      ? ([
-          [
-            'いちばん多い分野',
-            <span key="f" className="flex items-center gap-1.5 text-[18px] font-medium">
-              <FieldIcon id={top.id} className="size-5 text-muted-foreground" />
-              {top.name}
-              <span className="text-[13px] font-normal text-muted-foreground tabular-nums">{pct(top.yen, v.total)}</span>
-            </span>,
-          ],
-        ] as [string, React.ReactNode][])
-      : []),
-  ]
-  return (
-    <RevealFrame town={town} onOpen={onOpen} onBack={onBack}>
-      {rows.map(([k, val], i) => (
-        <div key={k} className="ob-fade flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-3 first:pt-1" style={{ '--d': `${0.12 + i * 0.12}s` } as React.CSSProperties}>
-          <dt className="text-[14px] text-muted-foreground">{k}</dt>
-          <dd>{val}</dd>
-        </div>
-      ))}
-    </RevealFrame>
-  )
-}
-
-/** Reveal の読み込み中。まち・ボタンは選んだ時点で決まっているので先に出し、数字の行だけを同じ高さの skeleton にする */
-function RevealLoading({ town, onOpen, onBack }: { town: Town; onOpen: () => void; onBack: () => void }) {
-  return (
-    <RevealFrame town={town} onOpen={onOpen} onBack={onBack} busy>
-      {/* 行の高さは読み込んだあとの文字の行の高さに合わせ（preview で測った値）、札の高さを跳ばさない */}
-      {[{ box: 'h-12 sm:h-[54px]', bar: 'h-8 w-36' }, { box: 'h-[34px]', bar: 'h-6 w-24' }, { box: 'h-8', bar: 'h-6 w-40' }].map((x, i) => (
-        <div key={i} className="flex items-center justify-between gap-x-4 py-3 first:pt-1">
-          <dt><Skeleton className="h-4 w-24" /></dt>
-          <dd className={cn('flex items-center', x.box)}><Skeleton className={x.bar} /></dd>
-        </div>
-      ))}
-    </RevealFrame>
-  )
-}
-
-function RevealFrame({ town, onOpen, onBack, busy, children }: { town: Town; onOpen: () => void; onBack: () => void; busy?: boolean; children: React.ReactNode }) {
-  return (
-    <section className="ob-swap rounded-[24px] border bg-background p-5 sm:p-7" aria-busy={busy || undefined}>
-      <Steps at={2} of={2} />
-      <div className="flex items-center gap-3">
-        <Emblem code={town.code} name={town.name} className="size-11 rounded-xl p-1.5" />
-        <h2 className="text-[22px] font-semibold">{town.name}</h2>
-      </div>
-      <dl className="mt-2 divide-y">{children}</dl>
-      {/* 1歩目の「現在地から選ぶ」と同じく、決めるボタンは右に置く（PC で左右に跳ばない）。スマホは幅いっぱいにして、選び直すは下 */}
-      <div className="mt-5 flex flex-col-reverse items-stretch gap-3 sm:flex-row sm:items-center sm:justify-end">
-        <button type="button" onClick={onBack} className="py-1 text-[13px] text-muted-foreground hover:text-foreground">
-          違うまちを選ぶ
-        </button>
-        <button type="button" onClick={onOpen} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-[14px] font-medium text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none">
-          このまちにする
-          <ArrowRightIcon className="size-4" />
-        </button>
-      </div>
-      <p className="mt-3 text-[12px] text-muted-foreground sm:text-right">次に開いたときも、このまちから始まります。あとから変えられます。</p>
-    </section>
-  )
-}
-
-/** チェックリストの残りの項目。まちの頁・比べる・アシスタントへ */
-const checkItems = (c: Ctx): CheckItem[] => [
-  { key: 'flow', label: 'お金の使い道を見る', href: flowHref(c) },
-  { key: 'projects', label: '新しく始めた事業を見る', href: `${c.base}/projects?filter=new` },
-  { key: 'compare', label: 'ほかのまちと比べる', href: compareHref(c.town.code) },
-  { key: 'assistant', label: 'アシスタントに質問', href: '/assistant' },
-]
-
 
 /** まちを選ぶ前のホームで、緑の札の下に置く。他のまちを名前で探す欄と、見本のまち（事業評価か都市像のあるまち）を都市像と並べて開けるようにする。住んでいるまちは変えない */
 function FeaturedTowns({ featured, listed }: { featured: Featured[]; listed: boolean }) {
@@ -421,51 +340,17 @@ function Footer() {
 
 export function Home({ listed, featured }: HomeProps) {
   const { ready, town, set } = useMyTown()
-  // はじめての流れで選んだまち。要点を見せてから「このまちにする」で決める
-  const [pending, setPending] = React.useState<Town | null>(null)
-  const shown = town ?? pending
-  const snap = useSnapshot(ready && shown ? shown.code : null)
-  const vision = shown ? featured.find((f) => f.code === shown.code)?.vision : undefined
-  const open = () => {
-    if (!pending) return
-    startChecklist()
-    set(pending)
-    setPending(null)
-  }
-  // 住んでいるまちを外す（選び直す）。前にはじめての流れを通った人は、選んだらそのままダッシュボードに戻す
+  const snap = useSnapshot(ready && town ? town.code : null)
+  const vision = town ? featured.find((f) => f.code === town.code)?.vision : undefined
+  // 住んでいるまちを外す（選び直す）
   const reset = () => set(null)
-  const again = ready && !town && onboarded()
   let body: React.ReactNode
   if (!ready) body = <Loading />
-  else if (!town)
-    body = (
-      <Empty
-        listed={listed}
-        again={again}
-        onPick={(e) => (again ? set(toTown(e)) : setPending(toTown(e)))}
-        reveal={
-          pending ? (
-            <>
-              <WithCtx town={pending} vision={vision} snap={snap} loading={<RevealLoading town={pending} onOpen={open} onBack={() => setPending(null)} />}>
-                {(c) => <Reveal c={c} onOpen={open} onBack={() => setPending(null)} />}
-              </WithCtx>
-              {/* 失敗・年度なしでは Reveal が出ないので、選び直す導線をここに残す（読み込み中は RevealLoading が持つ） */}
-              {!snap.failed && (!snap.d || snap.year == null || snap.d.years[String(snap.year)]) ? null : (
-                <button type="button" onClick={() => setPending(null)} className="mt-3 text-[13px] text-muted-foreground hover:text-foreground">
-                  違うまちを選ぶ
-                </button>
-              )}
-            </>
-          ) : null
-        }
-      />
-    )
+  // 選んだ時点でそのまちに決める（要点を見せてから決めさせない、2026-11-17 yuito）
+  else if (!town) body = <AskTown listed={listed} onPick={(e) => set(toTown(e))} />
   else {
-    // はじめにやることを頭に出すため、まちのデータが読めたら先に組む
-    const ctx = snap.d && snap.year != null && snap.d.years[String(snap.year)] ? buildCtx(town!, snap.d, snap.year, snap.setYear, vision) : null
     body = (
       <>
-        {ctx ? <Checklist items={checkItems(ctx)} /> : null}
         {/* ほかのまちを見る導線。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
         <OtherTowns className="mb-3" />
         {/* リセットはまちの札の右上に添える（住んでいるまちを選び直す） */}
@@ -480,7 +365,7 @@ export function Home({ listed, featured }: HomeProps) {
       </>
     )
   }
-  const featuredTowns = ready && !town && !pending ? <FeaturedTowns featured={featured} listed={listed} /> : null
+  const featuredTowns = ready && !town ? <FeaturedTowns featured={featured} listed={listed} /> : null
   return (
     <main className="mx-auto flex min-h-[calc(100svh-56px)] w-full max-w-4xl flex-col px-4 pt-10 pb-28 sm:px-8 sm:pt-14 md:min-h-svh md:pb-10">
       <Intro mode={!ready ? 'hidden' : town ? 'compact' : 'full'} />

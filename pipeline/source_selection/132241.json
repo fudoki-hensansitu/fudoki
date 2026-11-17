@@ -2979,11 +2979,29 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/897/06ippan.pdf",
+              "sha256": "c1dcfc1d4edf44224dc3979976d80dc57243b7133db52d0f20a16537231161be",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 23,
+                      "end": 141
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "選定: r6ippannkaikeisaisyutu.csv（多摩市オープンデータ頁掲載の当初予算CSV）。文字コードCP932でデコードしDictReaderで列と値を対応付け、会計名称・科目名・当初予算額を確認。款・項・目（・細目）の実名称と金額を持ち対象を満たすため選定。\n選定: r6ippannkaikeisainyuu.csv（多摩市オープンデータ頁掲載の当初予算CSV）。文字コードCP932でデコードしDictReaderで列と値を対応付け、会計名称・科目名・当初予算額を確認。款・項・目（・細目）の実名称と金額を持ち対象を満たすため選定。\n選定: 令和6年度特別会計・下水道事業会計予算書（市公式予算書掲載の単一文字PDF）。総目次で下水道事業会計が一冊内の独立した第○号議案＋予算説明＋事項別明細書として収録されることを確認。物理頁169-197が下水道事業会計の範囲で歳入歳出予算表・総括・歳出明細（給与費明細・債務負担行為調書含む）を対象にした。一般会計分は別冊のため本対象は特別会計側の8対象と同一出典を共有。",
+      "reason": "選定: r6ippannkaikeisaisyutu.csv（多摩市オープンデータ頁掲載の当初予算CSV）。文字コードCP932でデコードしDictReaderで列と値を対応付け、会計名称・科目名・当初予算額を確認。款・項・目（・細目）の実名称と金額を持ち対象を満たすため選定。\n選定: r6ippannkaikeisainyuu.csv（多摩市オープンデータ頁掲載の当初予算CSV）。文字コードCP932でデコードしDictReaderで列と値を対応付け、会計名称・科目名・当初予算額を確認。款・項・目（・細目）の実名称と金額を持ち対象を満たすため選定。\n選定: 令和6年度特別会計・下水道事業会計予算書（市公式予算書掲載の単一文字PDF）。総目次で下水道事業会計が一冊内の独立した第○号議案＋予算説明＋事項別明細書として収録されることを確認。物理頁169-197が下水道事業会計の範囲で歳入歳出予算表・総括・歳出明細（給与費明細・債務負担行為調書含む）を対象にした。一般会計分は別冊のため本対象は特別会計側の8対象と同一出典を共有。 2026-11-17 歳入を追加: 一般会計の歳入は公式CSV（r6ippannkaikeisainyuu.csv）のほか、予算書の頁に掲載の令和6年度一般会計予算書（06ippan.pdf、文字PDF）の歳入歳出予算事項別明細書（総括の歳入 物理23頁、歳入の明細 物理28-141頁、款・項・目・節と本年度・前年度・比較、説明、単位千円）を歳入の範囲として選定に足した。CSV の歳入は書式ごとの staging がまだ無いため、令和8年度と同じ様式の予算書から取り込む。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -3003,9 +3021,14 @@
             "key": "fiscal/source-selection/132241/2024/initial-3.pdf",
             "sha256": "e821b5892219b03311ae2aeed78b375f8ef2551efb3e7a5820087a0f8b779609",
             "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/897/06tokkai.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2024/initial-4.pdf",
+            "sha256": "c1dcfc1d4edf44224dc3979976d80dc57243b7133db52d0f20a16537231161be",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/897/06ippan.pdf"
           }
         ],
-        "archived_at": "2026-10-07T09:25:22.524Z"
+        "archived_at": "2026-11-17T03:36:50.189Z"
       }
     },
     {
@@ -4333,11 +4356,29 @@
                   "direction": "expenditure"
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/897/07ippan-1.pdf",
+              "sha256": "74ebc9a52a54c08e42be30d774a26a2c44bf360e41beef7517b0a17c9f2059b7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 23,
+                      "end": 143
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "選定: r7ippannkaikeisaisyutu.csv（多摩市オープンデータ頁掲載の当初予算CSV）。文字コードCP932でデコードしDictReaderで列と値を対応付け、会計名称・科目名・当初予算額を確認。款・項・目（・細目）の実名称と金額を持ち対象を満たすため選定。\n選定: r7ippannkaikeisainyuu.csv（多摩市オープンデータ頁掲載の当初予算CSV）。文字コードCP932でデコードしDictReaderで列と値を対応付け、会計名称・科目名・当初予算額を確認。款・項・目（・細目）の実名称と金額を持ち対象を満たすため選定。\n選定: 令和7年度特別会計・下水道事業会計予算書（市公式予算書掲載の単一文字PDF）。総目次で下水道事業会計が一冊内の独立した第○号議案＋予算説明＋事項別明細書として収録されることを確認。物理頁167-195が下水道事業会計の範囲で歳入歳出予算表・総括・歳出明細（給与費明細・債務負担行為調書含む）を対象にした。一般会計分は別冊のため本対象は特別会計側の8対象と同一出典を共有。",
+      "reason": "選定: r7ippannkaikeisaisyutu.csv（多摩市オープンデータ頁掲載の当初予算CSV）。文字コードCP932でデコードしDictReaderで列と値を対応付け、会計名称・科目名・当初予算額を確認。款・項・目（・細目）の実名称と金額を持ち対象を満たすため選定。\n選定: r7ippannkaikeisainyuu.csv（多摩市オープンデータ頁掲載の当初予算CSV）。文字コードCP932でデコードしDictReaderで列と値を対応付け、会計名称・科目名・当初予算額を確認。款・項・目（・細目）の実名称と金額を持ち対象を満たすため選定。\n選定: 令和7年度特別会計・下水道事業会計予算書（市公式予算書掲載の単一文字PDF）。総目次で下水道事業会計が一冊内の独立した第○号議案＋予算説明＋事項別明細書として収録されることを確認。物理頁167-195が下水道事業会計の範囲で歳入歳出予算表・総括・歳出明細（給与費明細・債務負担行為調書含む）を対象にした。一般会計分は別冊のため本対象は特別会計側の8対象と同一出典を共有。 2026-11-17 歳入を追加: 一般会計の歳入は公式CSV（r7ippannkaikeisainyuu.csv）のほか、予算書の頁に掲載の令和7年度一般会計予算書（07ippan-1.pdf、文字PDF）の歳入歳出予算事項別明細書（総括の歳入 物理23頁、歳入の明細 物理28-143頁、款・項・目・節と本年度・前年度・比較、説明、単位千円）を歳入の範囲として選定に足した。CSV の歳入は書式ごとの staging がまだ無いため、令和8年度と同じ様式の予算書から取り込む。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -4357,9 +4398,14 @@
             "key": "fiscal/source-selection/132241/2025/initial-3.csv",
             "sha256": "d8364d50219eddbe3faea25ef2e9cff8ab86f09ba40a7e0c22a20164c632bb86",
             "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/885/r7ippannkaikeisaisyutu.csv"
+          },
+          {
+            "key": "fiscal/source-selection/132241/2025/initial-4.pdf",
+            "sha256": "74ebc9a52a54c08e42be30d774a26a2c44bf360e41beef7517b0a17c9f2059b7",
+            "final_url": "https://www.city.tama.lg.jp/_res/projects/default_project/_page_/001/004/897/07ippan-1.pdf"
           }
         ],
-        "archived_at": "2026-10-07T09:26:11.648Z"
+        "archived_at": "2026-11-17T03:37:00.155Z"
       }
     },
     {
