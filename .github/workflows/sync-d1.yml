@@ -2,7 +2,7 @@ name: sync-d1
 # main に入った取り込み・dbt の変更を、marts に build して本番 D1（fudoki-api）へ差分で写す（ADR 0040）。
 # publish の前に、取り込みの PR が変えた宣言を main のコードで変換し、保存の関門を通った表と受領書を R2 に置く（ingestion:store、ADR 0051）。
 # 範囲は serving/publish.py の判定（scope）で決める。push は、取り込みの宣言・選定・自治体の列を持つ seed が変わった自治体だけを流す。
-# 全自治体に効く変更（共通の seed・dbt のモデル・build のコード）は push では流さず、週1の全件か手動の実行（自治体を空にすると全件）で出す。
+# 全自治体に効く変更（共通の seed・dbt のモデル・build のコード）は push では流さず、毎日 04:00 JST の全件か手動の実行（自治体を空にすると全件）で出す。
 # 事業と評価シートのつなぎは build のたびに計算する。
 on:
   push:
@@ -15,8 +15,10 @@ on:
       - uv.lock
       - pyproject.toml
       - mise.toml
-  # 週に1回、写しがあっても D1 を全行読んで比べ、写しと D1 のずれ（手での書き込みなど）を直す（月曜 04:00 JST）
+  # 毎日 04:00 JST（refresh-check の1時間後）に全件を build して同期し、push では流さない共通の変更を出す。
+  # 月曜だけは写しがあっても D1 を全行読んで比べ、写しと D1 のずれ（手での書き込みなど）を直す（--verify-all）
   schedule:
+    - cron: '0 19 * * 1-6'
     - cron: '0 19 * * 0'
   workflow_dispatch:
     inputs:
@@ -110,7 +112,7 @@ jobs:
       # 手動の実行は R2 に置かない（置くのは merge された宣言の表だけ）。since が古くても、受領書の宣言と指紋が今と同じ表は変換し直さない（store.to_convert）
       # 落ちた管理 JSON があっても、ほかは置き終えてから job を落とす。sync はそれでも流す（下の sync の if）
       # push は宣言・選定・自治体の列を持つ seed が変わった自治体だけを流す。共通の seed・dbt のモデル・build のコードの
-      # 変更は自治体に絞れないので push では流さず、週1の全件（--all --verify-all）か手動の実行（自治体を空にすると全件）で出す
+      # 変更は自治体に絞れないので push では流さず、毎日 04:00 JST の全件か手動の実行（自治体を空にすると全件）で出す
       - id: targets
         if: steps.scope.outputs.args == format('--since {0}', steps.scope.outputs.since)
         working-directory: pipeline
@@ -195,7 +197,7 @@ jobs:
         run: echo "sha=$(sha256sum "$RUNNER_TEMP/d1-snapshot/snapshot.duckdb" 2>/dev/null | cut -c1-64)" >> "$GITHUB_OUTPUT"
       - run: >-
           bun run --cwd pipeline publish -- --database-id b9b6f209-083e-45b3-a896-1014a17a15f9 ${{ needs.store.outputs.args }}
-          --snapshot "$RUNNER_TEMP/d1-snapshot/snapshot.duckdb" ${{ github.event_name == 'schedule' && '--verify-all' || '' }}
+          --snapshot "$RUNNER_TEMP/d1-snapshot/snapshot.duckdb" ${{ github.event.schedule == '0 19 * * 0' && '--verify-all' || '' }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           # 全件の build は 4GB だと int_fiscal__rows で DuckDB の上限に当たる。public repo の runner は 16GB
