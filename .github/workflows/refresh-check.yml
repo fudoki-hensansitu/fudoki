@@ -6,6 +6,8 @@ name: refresh-check
 # the long comparison does not. On another branch the run only compares.
 # A table that differs is reported; a manual run on main with `accept` stores it as re-converted and syncs
 # its jurisdictions to D1 (no Git change brings them to the build).
+# The daily run on main ends by starting a full sync-d1 (no jurisdictions). It publishes the shared changes
+# (common seeds, dbt models, build code) that a push to main does not sync (ADR 0040).
 on:
   schedule:
     # Every day at 18:00 UTC (03:00 JST the next day), so a shared-code change that altered a table
@@ -149,9 +151,11 @@ jobs:
           echo "jurisdictions=$(echo "$result" | jq -r '.accepted_jurisdictions | join(" ")')" >> "$GITHUB_OUTPUT"
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      - if: steps.apply.outputs.jurisdictions != ''
-        name: 置き直した自治体を D1 へ同期する
+      # 毎日の定期は全件を同期する（push では流さない共通の変更を出す。置き直した自治体もこれに含まれる）。
+      # 手動の実行は置き直した自治体だけを同期する
+      - if: ${{ !cancelled() && (github.event_name == 'schedule' || steps.apply.outputs.jurisdictions != '') }}
+        name: D1 へ同期する
         env:
           GH_TOKEN: ${{ github.token }}
-          CODES: ${{ steps.apply.outputs.jurisdictions }}
+          CODES: ${{ github.event_name != 'schedule' && steps.apply.outputs.jurisdictions || '' }}
         run: gh workflow run sync-d1.yml --ref main -f jurisdictions="$CODES"

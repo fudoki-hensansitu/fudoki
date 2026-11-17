@@ -264,9 +264,10 @@ RATE_TAG = re.compile(r'[0-9]+/[0-9]+')
 # Every parenthesised remark at the end of a name (`委託料（…へ流用△280,000）（…から流用1,815,000）`).
 PAREN_TAIL = re.compile(r'(?:[(（][^()（）]*[)）])+$')
 # A number printed against a counter word (`110番`, `3歳児`, `3階`, `2025年`, `2人目加算`) is a count in a name.
+# `年金` is no counter: `02年金給付保険金等収入` is 節 02 (東京都 R7 当初予算の歳入 p107).
 # An item number glued to a year it is followed by (`42025年…`: 4 and 2025年).
 YEAR_LED = re.compile(r'^([0-9]{1,2})(?:19|20)[0-9]{2}年')
-COUNTED = re.compile(r'^[0-9０-９]+(?:番(?!号)|歳|階|年|か月|ヶ月|箇所|世帯|人目|ミリ|キロ|メートル|インチ|時間(?!外))')
+COUNTED = re.compile(r'^[0-9０-９]+(?:番(?!号)|歳|階|年(?!金)|か月|ヶ月|箇所|世帯|人目|ミリ|キロ|メートル|インチ|時間(?!外))')
 # A line that is only a number and its counter (`１９０人` under `在宅療養者等歯科訪問健診`) is a count, not an item.
 ONLY_COUNT = re.compile(r'^[0-9]+(?:人|件|回|台|日|校|園|館|名|戸|か所|箇所)$')
 GROUPED = re.compile(r'[△▲]?[0-9]{1,3}(?:,[0-9]{3})+')
@@ -859,6 +860,10 @@ def items(group: Group, header: str, margins: set[int] | None = None,
                     entries[index] = (label, money, digits[:cut], raw[cut:])
                     code = digits[:cut]
                     break
+        if (code is None and run and (int(run.group()) == 1 or previous_code is not None and int(run.group()) == previous_code + 1)
+                and COUNTED.match(raw) and document_quirk('next_number_counts') is not None):
+            entries[index] = (label, money, run.group(), raw[len(run.group()):])  # the quirk `next_number_counts`
+            code = run.group()
         if (code is not None and label and (previous_code is None or int(code) != previous_code + 1)
                 and (ONLY_COUNT.match(raw)
                      or any((counts := document_quirk(name)) is not None and counts.module.counted(normalize(label[0].text), raw)
@@ -1974,6 +1979,12 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
         if (aligned := quirk(settings, 'codeless_at_names')) is not None:
             item.name_aligned = float(aligned.value)
         previous = result[-1] if result else None
+        if previous and (over := quirk(settings, 'name_over_code_line')) is not None and over.module.heads(previous, item, column_amount_items):
+            item.name = previous.name + item.name
+            item.lines = item.lines + previous.lines  # the code's line stays first
+            item.indent = previous.indent  # the name's start: the code's line holds no name to measure it by
+            result[-1] = item
+            continue
         if (previous and previous.role == 'annotation' and not previous.amounts and item.page == previous.page
                 and (opened := ''.join(normalize(text(line)) for line in previous.lines)).startswith(('(', '（'))
                 and len(re.findall(r'[(（]', opened)) > len(re.findall(r'[)）]', opened))
@@ -2169,6 +2180,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 group_items = join_transfer_tails(group_items, layout)
                 if (between := quirk(document, 'code_between_name_lines')) is not None:
                     group_items = between.module.join(group_items)  # a 節 name wrapped round its code (132292)
+                if (centered := quirk((layout or {}).get(group.axis), 'centered_codes')) is not None:
+                    group_items = centered.module.regroup(group_items)
                 if (digit_set := quirk(document, 'digit_set_codes')) is not None:
                     digit_set.module.measure(group_items, digit_set.value)
             for position, item in enumerate(group_items):
@@ -2480,6 +2493,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 kept.append(c)
                 centres.append(sum(c) / len(c))
         levels[axis] = sorted(sum(c) / len(c) for c in kept)
+    if (jitter := document_quirk('ocr_start_jitter')) is not None:
+        levels = {axis: jitter.module.merge(centres) for axis, centres in levels.items()}
     if mixed_document(logicals):
         for axis, centres in ((a, c) for a, c in levels.items() if a in printed):
             snap_ocr_levels([i for l, ordered, found in all_items if l.ocr for g in ordered if not g.subject and g.axis == axis

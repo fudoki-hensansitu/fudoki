@@ -263,7 +263,9 @@ def _frames(page: Page, spread: dict | None = None,
     for r in page.rules:
         if r.vertical:
             drawn[round(r.x0, 1)] += r.y1 - r.y0
-    xs = {x for x, length in drawn.items() if length > 40}
+    # 40pt drawn as 39.96 (小平市 R7 決算 p46: a table of one row under the header, the 節 column's edge from the
+    # 節 heading's rule to the foot) is 40pt: the length is measured in floats.
+    xs = {x for x, length in drawn.items() if length > 39.9}
     if spread is not None:
         # Only the declared spread's gutter: never split a column at an
         # interior row endpoint. The nearest repeated edge on each side bounds it.
@@ -743,6 +745,8 @@ def same_rows(left: Page, right: Page, far_shift: float | None = None) -> bool:
     shorter, longer = (a, b) if len(a) <= len(b) else (b, a)
     if (scaled := document_quirk('scaled_spread_pages')) is not None and scaled.module.matches(shorter, longer) / len(shorter) >= SPREAD_ROW_MATCH:
         return True
+    if (framed := document_quirk('framed_spread_pages')) is not None and framed.module.matches(a, b):
+        return True
     if (drifting := document_quirk('drifting_spread_rows')) is not None:
         return drifting.module.matches(shorter, longer) / len(shorter) >= SPREAD_ROW_MATCH
     found, _ = _row_shift(shorter, longer, SPREAD_MAX_SHIFT if far_shift is None else far_shift)
@@ -852,6 +856,8 @@ def classify(per_page: list[tuple[Page, list[Band], list[Word]]], columns: dict 
             band.kind = setting.get('kind', band.kind)
             if setting.get('heading'):  # the column's meaning, declared where the print only says `金額`
                 band.header = band.header[:-1] + (setting['heading'],)
+            if setting.get('within'):  # the heading over this column printed on the other page of the spread only
+                band.header = (setting['within'],) + band.header
             if setting.get('inline'):
                 band.inline, band.inline_free = True, True
             if band.kind == 'ignore':  # a column that is no part of the table (a policy number printed beside it)

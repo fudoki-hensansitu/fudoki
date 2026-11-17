@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "source_inconsistencies": [
+    {
+      "table_id": "general-revenue",
+      "page": 17,
+      "axis": "節",
+      "parent": {
+        "code": "2",
+        "name": "衛生費負担金"
+      },
+      "printed": 4172,
+      "children_sum": 0,
+      "difference": -4172,
+      "basis": "目「衛生費負担金」の収入未済額（Ｈ＝Ｅ－Ｆ－Ｇ＋還付未済額）の印字値 4,172 円は備考の還付未済額 4,172 円（3件）を含むが、その下の節「保健衛生費負担金」の収入未済額は 0 と印字され、還付未済額を節に載せていない。印字値は書き換えない。"
+    }
+  ]
+}

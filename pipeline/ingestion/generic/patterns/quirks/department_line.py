@@ -13,7 +13,8 @@ SCOPE = 'axis'
 OPTIONS = {'const': True}
 
 # The department's own name may wrap before its closing bracket (`【新型コロナウイルスワクチン接種対策室` / `】 <0131255> 32,681`): the line is the bracket alone.
-DEPARTMENT = re.compile(r'^(?:【[^【】]+】|】)(?:<[0-9]+>)?$')
+# OCR may group the number's digits (`<3,503,960>` for `<3503960>`, 国立市 R7 の scan).
+DEPARTMENT = re.compile(r'^(?:【[^【】]+】|】)(?:<[0-9,]+>)?$')
 
 
 def continues(previous, label, money, code, left_slack: float) -> bool:

@@ -185,7 +185,9 @@ export const REVENUE_SUBJECT_TABLE = searchView(
     ...revenuePath,
     amount_phase: AMOUNT_PHASE,
     is_leaf: `NOT EXISTS (SELECT 1 FROM revenue_subject c WHERE c."parent_subject_id" = x."subject_id")`,
-    category: `(SELECT k."category" FROM fiscal_revenue_category k WHERE k."kan_name" = ${revenuePath.kan_name})`,
+    // 区分は市区町村の一般会計の款だけ（get_revenue と同じ。都道府県はコード6桁の3〜5桁目が 000）
+    category: `(SELECT k."category" FROM fiscal_revenue_category k WHERE k."kan_name" = ${revenuePath.kan_name} ` +
+      `AND e."account_kind" = '一般会計' AND substr(e."jurisdiction_code", 3, 3) <> '000')`,
   },
   `revenue_subject x JOIN revenue e ON e."revenue_id" = x."revenue_id" ` +
     `LEFT JOIN revenue_subject p ON p."subject_id" = x."parent_subject_id" LEFT JOIN revenue_subject g ON g."subject_id" = p."parent_subject_id"`,

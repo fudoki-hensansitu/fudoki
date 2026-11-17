@@ -385,7 +385,7 @@ def with_mark(item: dict, pieces: list[Word] | None) -> list[Word] | None:
 
 def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None = None,
          used: set[str] | None = None, detected: pdf_rules.PageRules | None = None, keep_marks: bool = False,
-         row_gaps: bool = False) -> Page:
+         row_gaps: bool = False, line_pieces: bool = False) -> Page:
     number = observation_page['page_number']
     detected = detected or pdf_rules.detect(pdf, number)
     rules = [Rule(r.position, r.start, r.position, r.end) for r in detected.vertical]
@@ -463,7 +463,9 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
                 reach = 0
                 if item.get('attempt_id') and pieces is not None:
                     children = pieces
-                    pieces = _paddle_pieces(item, pieces, item['id'] in corrected_word_parents, cuts)
+                    # (`rules.line_pieces`: only the rules drawn across the line cut its pieces too)
+                    pieces = _paddle_pieces(item, pieces, item['id'] in corrected_word_parents,
+                                            line_cuts(detected, item['bbox_pdf_pt']) if row_gaps and line_pieces else cuts)
                     reach = PADDLE_REACH if pieces else 0
                     if pieces is None and (padded := document_quirk('padded_number_boxes')) is not None \
                             and (word := padded.module.inside(item, children, cuts)) is not None:
@@ -482,12 +484,18 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
                     continue
                 if keep_marks:
                     pieces = with_mark(item, pieces)
+                if pieces and (spaced := document_quirk('spaced_ocr_codes')) is not None \
+                        and (cut := spaced.module.split(pieces)) is not None:
+                    words += [w for part in cut for w in _cell_words(part, line_cuts(detected, item['bbox_pdf_pt']) if row_gaps else cuts, reach)]
+                    continue
                 words += _cell_words(pieces or [Word(item['raw_text'], *item['bbox_pdf_pt'])],
                                      line_cuts(detected, item['bbox_pdf_pt']) if row_gaps else cuts, reach)
     if (nested := document_quirk('nested_subject_boxes')) is not None:
         words = nested.module.snap(words, detected.vertical)
     if (repeats := document_quirk('bracketed_repeats')) is not None:
         words = repeats.module.dropped(words, detected)
+    if (unbracketed := document_quirk('unbracketed_repeats')) is not None:
+        words = unbracketed.module.dropped(words, detected, unbracketed.value)
     if (marks := document_quirk('unread_marks')) is not None:
         words = marks.module.marked(words, pdf, number, cuts)
     return Page(number, detected.width, detected.height, drop_covered_digits(words), rules)
@@ -690,7 +698,7 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
           header_readings: list[dict] | None = None, rule_dark: int = pdf_rules.DARK, rule_hook=None,
           keep_marks: bool = False, row_gaps: bool = False, short_columns: bool = False,
           skewed: bool = False, row_columns: bool = False, skewed_columns: bool = False,
-          spread_rows: bool = False) -> list[Page]:
+          spread_rows: bool = False, line_pieces: bool = False) -> list[Page]:
     """`rule_hook(PageRules) -> PageRules` completes the rules read from a rendered page before the words are cut at
     them; `keep_marks` keeps the bullet that starts a line in its first word (both for a text document's OCR pages, `mixed.py`)."""
     every = bool((header or {}).get('agree_all_frames'))
@@ -777,7 +785,7 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
     if code_rules:
         corrections = amount_dictionary([r.__dict__ for r in [*(corrections.rules if corrections else ()), *code_rules]])
     used = set()
-    found = [page(p, pdf, corrections, used, detected(p['page_number']), keep_marks, row_gaps) for p in observation['pages']]
+    found = [page(p, pdf, corrections, used, detected(p['page_number']), keep_marks, row_gaps, line_pieces) for p in observation['pages']]
     unused = {r.id for r in corrections.rules} - used if corrections else set()
     if unused:
         raise ValueError(f'Amount corrections matched no observation: {sorted(unused)}')
@@ -1218,6 +1226,8 @@ def declared_unread(built, logicals_: list, columns: dict | None, observation: d
                 for logical in logicals_ for b in logical.bands if b.page == page_['page_number'] for g in b.words)
             ink = document_quirk('rule_ink')
             ruled = ink is not None and ink.module.ruled(box, page_, logicals_)
+            slash = document_quirk('slashed_cells')
+            ruled = ruled or (slash is not None and slash.module.slashed(box, page_, logicals_))
             if not unit and not bracket and not ruled and any(b.page == page_['page_number'] and b.kind == 'amount'
                                 and b.x0 - b.offset < cx < b.x1 - b.offset and b.body_top < cy < b.body_bottom
                                 for logical in logicals_ for b in logical.bands):
@@ -1282,7 +1292,8 @@ def read_pages(source: dict, options: dict, settings: dict | None, selected: lis
                     skewed=bool(((settings or {}).get('rules') or {}).get('skewed')),
                     row_columns=bool(((settings or {}).get('rules') or {}).get('row_columns')),
                     skewed_columns=bool(((settings or {}).get('rules') or {}).get('skewed_columns')),
-                    spread_rows=bool(((settings or {}).get('rules') or {}).get('spread_rows')))
+                    spread_rows=bool(((settings or {}).get('rules') or {}).get('spread_rows')),
+                    line_pieces=bool(((settings or {}).get('rules') or {}).get('line_pieces')))
     if (specks := document_quirk('specks')) is not None:
         printed = specks.module.drop(printed)
     printed = add_code_readings(printed, options.get('code_readings'))
@@ -1310,7 +1321,7 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
 def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict | None = None):
     from ingestion.generic.runtime import page_titles
     from ingestion.generic.workflow import build_reading, effective_settings
-    from ingestion.generic.convert import Table, canonical_headings, correct_names, excluded_regions, fine_sections, scope_pages, split_notes
+    from ingestion.generic.convert import Table, canonical_headings, correct_names, correct_parents, excluded_regions, fine_sections, scope_pages, split_notes
     from ingestion.generic.repair import Report
     from ingestion.generic.units import check as check_units
     from ingestion.lib.node_tables import coverage_regions
@@ -1393,7 +1404,7 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
     # Ink OCR left unread in a block's prose (a line of its 事業説明) lies over the amount columns, though the
     # block is no row of them; ink in its boxed table still stops the conversion.
     built.unowned = [u for u in built.unowned if not (u['kind'] == 'unread ink in amount column'
-                                                      and inner_tables is not None and inner_tables.in_prose(blocks, u['page'], u['box']))]
+                                                      and inner_tables is not None and inner_tables.in_prose(blocks, u['page'], u['box'], 'excluded' in inner))]
     # Ink a declared reading covers (`amount_readings`, `code_readings`: what OCR left unread, read from the rendered
     # page) is read: the reading stands for it.
     declared = [(r['page'], box) for r in options.get('amount_readings', ()) for box in r['boxes']]
@@ -1412,10 +1423,12 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
             raise ValueError(f'rule_pieces: no unread ink at p{page} {box}')
     built.unowned = [u for u in built.unowned if not (
         u['kind'] == 'unread ink in amount column' and (u['page'], u['box']) in pieces_)]
-    # So is a heading the strip seam cut (`header_readings`: 不用額 on 132080 R5 p422): the declared cell stands for it.
+    # So is a heading the strip seam cut (`header_readings`: 不用額 on 132080 R5 p422), or a heading OCR left unread
+    # where a stacked table repeats its header over the amount column (`(前 年 度)`, 132144 R7 後期 p24): the declared
+    # cell stands for it.
     headings = [(page, r['box']) for r in options.get('header_readings', ()) for page in r['pages']]
     built.unowned = [u for u in built.unowned if not (
-        u['kind'] == 'unread strip seam'
+        u['kind'] in ('unread strip seam', 'unread ink in amount column')
         and any(page == u['page'] and box[0] <= (u['box'][0] + u['box'][2]) / 2 <= box[2]
                 and box[1] <= (u['box'][1] + u['box'][3]) / 2 <= box[3] for page, box in headings))]
     built.notes.extend(recovered)
@@ -1426,6 +1439,8 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
     # A misread annotation (`教育センタ一費へ流用`, 131164 R5) is put right like a node.
     built.notes.extend({'kind': 'name correction', 'text': text} for text in correct_names([*built.nodes, *notes], by_node))
     built.notes.extend({'kind': 'variant characters', 'text': text} for text in variants)
+    built.notes.extend({'kind': 'parent correction', 'text': text}
+                       for text in correct_parents(built.nodes, options.get('parent_corrections')))
     nodes = [*built.nodes, *notes]
     amounts, headings = canonical_headings([*kept, *amounts], nodes, kind, header)
     fine_sections(nodes)
@@ -1433,9 +1448,9 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
     for why in dict.fromkeys((k, r) for _, k, r in left_out):
         excluded += coverage_regions([(g.page, g.original, g.text) for g, *rest in left_out
                                       if tuple(rest) == why and re.search(r'[0-9０-９]', g.text)], kind=why[0], reason=why[1])
+    prose_exclusion = (inner or {}).get('excluded') or {'kind': '本文', 'reason': '科目の下の説明（事業説明・残額説明）の文の中の数字。金額の欄ではない。'}
     excluded += coverage_regions([(page, (w.x0, w.y0, w.x1, w.y1), w.text) for page, w in prose
-                                  if re.search(r'[0-9０-９]', w.text)], kind='本文',
-                                 reason='科目の下の説明（事業説明・残額説明）の文の中の数字。金額の欄ではない。')
+                                  if re.search(r'[0-9０-９]', w.text)], kind=prose_exclusion['kind'], reason=prose_exclusion['reason'])
     excluded += coverage_regions([(page, (w.x0, w.y0, w.x1, w.y1), w.text) for page, w in figures
                                   if re.search(r'[0-9０-９]', w.text)], kind='数量表',
                                  reason='事務事業の表の名前の欄に罫で囲んだ実績の表（件数・費用額・被保険者数など）。事業の予算現額・決算額ではない。')

@@ -427,17 +427,22 @@ def observe(pdf: Path, pages: list[int], cache: Path | None = None,
     return result
 
 
-def cropped(pdf: Path, pages: list[Page]) -> list[Page]:
+def cropped(pdf: Path, pages: list[Page], sheet_of=None) -> list[Page]:
     """The pages cut to their CropBox (the layout setting `text_layer.crop_box`).
 
     A sheet printed two pages up is shown page by page through a CropBox over each half (131211's 予算説明書): the
     text layer and the drawing hold the whole sheet on both pages. Only the words whose middle is inside the box,
-    and the rules cut to it, are the page's."""
+    and the rules cut to it, are the page's. `sheet_of(number, boxes)` (the quirk `left_sheet_crop`) names another
+    page whose sheet a page is cut from."""
     import pdfplumber
     result = []
     with pdfplumber.open(pdf) as document:
+        boxes = {page.number: document.pages[page.number - 1].cropbox for page in pages}
+        sheets = {page.number: page for page in pages}
         for page in pages:
-            left, top, right, bottom = document.pages[page.number - 1].cropbox
+            left, top, right, bottom = boxes[page.number]
+            if sheet_of is not None and (source := sheets[sheet_of(page.number, boxes)]) is not page:
+                page = Page(page.number, page.width, page.height, source.words, source.rules)
             inside = lambda x, y: left <= x <= right and top <= y <= bottom
             words = [w for w in page.words if inside((w.x0 + w.x1) / 2, (w.y0 + w.y1) / 2)]
             rules = []
