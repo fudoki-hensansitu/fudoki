@@ -1,5 +1,5 @@
 // ホーム（/）。住んでいるまちのダッシュボード（総額・何に使っている・始めた事業・やめた事業・事業評価）と、ほかのまちを見る検索。
-// 住んでいるまちを決めていないときは、はじめての流れ（onboarding.tsx: まちを選ぶ → 要点 → チェックリスト）を出す。うちのまちは1つで、ブラウザ（localStorage）にだけ置く
+// 住んでいるまちを決めていないときは、はじめての流れ（onboarding.tsx: まちを選ぶ → 要点）を出す。うちのまちは1つで、ブラウザ（localStorage）にだけ置く
 // データは自治体の頁と同じ1年度の分（server/app-data.ts）を /api/jurisdictions/:code で読み、yearView で年度ごとに見る
 import * as React from 'react'
 import { ArrowRightIcon, ArrowSquareOutIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon } from '@phosphor-icons/react'
@@ -14,9 +14,8 @@ import { GRADES, yearView, type Snapshot, type YearView } from '../jurisdiction/
 import { NewIcon, StopIcon } from '../jurisdiction/fresh-icons'
 import { reiwa, yearName } from '../jurisdiction/types'
 import { Amt, FieldIcon, perHeadText } from './parts'
-import { compareHref } from '../compare/compare'
 import { useMyTown, type Town } from './towns'
-import { OtherTowns, Checklist, Empty, Intro, Steps, onboarded, startChecklist, type CheckItem } from './onboarding'
+import { OtherTowns, Empty, Intro, onboarded, markOnboarded } from './onboarding'
 
 export interface Featured {
   code: string
@@ -327,7 +326,6 @@ function RevealLoading({ town, onOpen, onBack }: { town: Town; onOpen: () => voi
 function RevealFrame({ town, onOpen, onBack, busy, children }: { town: Town; onOpen: () => void; onBack: () => void; busy?: boolean; children: React.ReactNode }) {
   return (
     <section className="ob-swap rounded-[24px] border bg-background p-5 sm:p-7" aria-busy={busy || undefined}>
-      <Steps at={2} of={2} />
       <div className="flex items-center gap-3">
         <Emblem code={town.code} name={town.name} className="size-11 rounded-xl p-1.5" />
         <h2 className="text-[22px] font-semibold">{town.name}</h2>
@@ -347,15 +345,6 @@ function RevealFrame({ town, onOpen, onBack, busy, children }: { town: Town; onO
     </section>
   )
 }
-
-/** チェックリストの残りの項目。まちの頁・比べる・アシスタントへ */
-const checkItems = (c: Ctx): CheckItem[] => [
-  { key: 'flow', label: 'お金の使い道を見る', href: flowHref(c) },
-  { key: 'projects', label: '新しく始めた事業を見る', href: `${c.base}/projects?filter=new` },
-  { key: 'compare', label: 'ほかのまちと比べる', href: compareHref(c.town.code) },
-  { key: 'assistant', label: 'アシスタントに質問', href: '/assistant' },
-]
-
 
 /** まちを選ぶ前のホームで、緑の札の下に置く。他のまちを名前で探す欄と、見本のまち（事業評価か都市像のあるまち）を都市像と並べて開けるようにする。住んでいるまちは変えない */
 function FeaturedTowns({ featured, listed }: { featured: Featured[]; listed: boolean }) {
@@ -428,7 +417,7 @@ export function Home({ listed, featured }: HomeProps) {
   const vision = shown ? featured.find((f) => f.code === shown.code)?.vision : undefined
   const open = () => {
     if (!pending) return
-    startChecklist()
+    markOnboarded()
     set(pending)
     setPending(null)
   }
@@ -441,7 +430,6 @@ export function Home({ listed, featured }: HomeProps) {
     body = (
       <Empty
         listed={listed}
-        again={again}
         onPick={(e) => (again ? set(toTown(e)) : setPending(toTown(e)))}
         reveal={
           pending ? (
@@ -461,11 +449,8 @@ export function Home({ listed, featured }: HomeProps) {
       />
     )
   else {
-    // はじめにやることを頭に出すため、まちのデータが読めたら先に組む
-    const ctx = snap.d && snap.year != null && snap.d.years[String(snap.year)] ? buildCtx(town!, snap.d, snap.year, snap.setYear, vision) : null
     body = (
       <>
-        {ctx ? <Checklist items={checkItems(ctx)} /> : null}
         {/* ほかのまちを見る導線。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
         <OtherTowns className="mb-3" />
         {/* リセットはまちの札の右上に添える（住んでいるまちを選び直す） */}
