@@ -1,0 +1,727 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131156",
+    "fiscal_year": 2025,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "28aab0304689540890f20e309ab5468054215a537ebbc85f016f4cd7885f9875"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は議決の番号・担当の課と節ごとの収入の名前と額の再掲で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 150
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "names_in_own_column": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p52-8-727",
+            "page": 52,
+            "code": "8",
+            "y": 727.2,
+            "observed_name": "未来に残す東京の農地プロジェク卜補助金",
+            "corrected_name": "未来に残す東京の農地プロジェクト補助金",
+            "reason": "原典の画像では「未来に残す東京の農地プロジェクト補助金」と印字されている。Paddleが字形の似た字に読んだ（卜→ト）。"
+          },
+          {
+            "id": "p53-11-308",
+            "page": 53,
+            "code": "11",
+            "y": 308.2,
+            "observed_name": "消費者行政强化交付金",
+            "corrected_name": "消費者行政強化交付金",
+            "reason": "原典の画像では「消費者行政強化交付金」と印字されている。Paddleが字形の似た字に読んだ（强→強）。"
+          },
+          {
+            "id": "p58-30-283",
+            "page": 58,
+            "code": "30",
+            "y": 283.9,
+            "observed_name": "利用者支援体制强化事業補助金",
+            "corrected_name": "利用者支援体制強化事業補助金",
+            "reason": "原典の画像では「利用者支援体制強化事業補助金」と印字されている。Paddleが字形の似た字に読んだ（强→強）。"
+          },
+          {
+            "id": "p58-32-403",
+            "page": 58,
+            "code": "32",
+            "y": 403.2,
+            "observed_name": "人生100年時代セ力ンドライフ応援事業補助金",
+            "corrected_name": "人生100年時代セカンドライフ応援事業補助金",
+            "reason": "原典の画像では「人生100年時代セカンドライフ応援事業補助金」と印字されている。Paddleが字形の似た字に読んだ（力→カ）。"
+          },
+          {
+            "id": "p70-62-343",
+            "page": 70,
+            "code": "62",
+            "y": 343.9,
+            "observed_name": "笑顔と学びの体験活動プロジェク卜子供企画型補助金",
+            "corrected_name": "笑顔と学びの体験活動プロジェクト子供企画型補助金",
+            "reason": "原典の画像では「笑顔と学びの体験活動プロジェクト子供企画型補助金」と印字されている。Paddleが字形の似た字に読んだ（卜→ト）。"
+          },
+          {
+            "id": "p75-2-284",
+            "page": 75,
+            "code": "2",
+            "y": 284.2,
+            "observed_name": "財産壳払収入",
+            "corrected_name": "財産売払収入",
+            "reason": "原典の画像では「財産売払収入」と印字されている。Paddleが字形の似た字に読んだ（壳→売）。"
+          },
+          {
+            "id": "p75-1-308",
+            "page": 75,
+            "code": "1",
+            "y": 308.2,
+            "observed_name": "物品壳払収入",
+            "corrected_name": "物品売払収入",
+            "reason": "原典の画像では「物品売払収入」と印字されている。Paddleが字形の似た字に読んだ（壳→売）。"
+          },
+          {
+            "id": "p75-1-332",
+            "page": 75,
+            "code": "1",
+            "y": 332.4,
+            "observed_name": "物品壳払収入",
+            "corrected_name": "物品売払収入",
+            "reason": "原典の画像では「物品売払収入」と印字されている。Paddleが字形の似た字に読んだ（壳→売）。"
+          },
+          {
+            "id": "p75-2-462",
+            "page": 75,
+            "code": "2",
+            "y": 462.7,
+            "observed_name": "不用品壳払収入",
+            "corrected_name": "不用品売払収入",
+            "reason": "原典の画像では「不用品売払収入」と印字されている。Paddleが字形の似た字に読んだ（壳→売）。"
+          },
+          {
+            "id": "p75-2-523",
+            "page": 75,
+            "code": "2",
+            "y": 523.2,
+            "observed_name": "土地壳払収入",
+            "corrected_name": "土地売払収入",
+            "reason": "原典の画像では「土地売払収入」と印字されている。Paddleが字形の似た字に読んだ（壳→売）。"
+          },
+          {
+            "id": "p75-1-547",
+            "page": 75,
+            "code": "1",
+            "y": 547.9,
+            "observed_name": "土地壳払収入",
+            "corrected_name": "土地売払収入",
+            "reason": "原典の画像では「土地売払収入」と印字されている。Paddleが字形の似た字に読んだ（壳→売）。"
+          },
+          {
+            "id": "p80-1-475",
+            "page": 80,
+            "code": "1",
+            "y": 475.9,
+            "observed_name": "特別区预金利子",
+            "corrected_name": "特別区預金利子",
+            "reason": "原典の画像では「特別区預金利子」と印字されている。Paddleが字形の似た字に読んだ（预→預）。"
+          },
+          {
+            "id": "p80-3-558",
+            "page": 80,
+            "code": "3",
+            "y": 558.9,
+            "observed_name": "貸付金元利収人",
+            "corrected_name": "貸付金元利収入",
+            "reason": "原典の画像では「貸付金元利収入」と印字されている。Paddleが字形の似た字に読んだ（人→入）。"
+          },
+          {
+            "id": "p83-3-619",
+            "page": 83,
+            "code": "3",
+            "y": 619.2,
+            "observed_name": "違約金及び延纳利息",
+            "corrected_name": "違約金及び延納利息",
+            "reason": "原典の画像では「違約金及び延納利息」と印字されている。Paddleが字形の似た字に読んだ（纳→納）。"
+          },
+          {
+            "id": "p84-1-152",
+            "page": 84,
+            "code": "1",
+            "y": 152.6,
+            "observed_name": "雇用保険料纳付金",
+            "corrected_name": "雇用保険料納付金",
+            "reason": "原典の画像では「雇用保険料納付金」と印字されている。Paddleが字形の似た字に読んだ（纳→納）。"
+          },
+          {
+            "id": "p84-3-403",
+            "page": 84,
+            "code": "3",
+            "y": 403.2,
+            "observed_name": "みどり東京・温暖化防止プロジェク卜助成金",
+            "corrected_name": "みどり東京・温暖化防止プロジェクト助成金",
+            "reason": "原典の画像では「みどり東京・温暖化防止プロジェクト助成金」と印字されている。Paddleが字形の似た字に読んだ（卜→ト）。"
+          },
+          {
+            "id": "p5-3-151",
+            "page": 5,
+            "code": "3",
+            "y": 151.9,
+            "observed_name": "特別区たばこ",
+            "corrected_name": "特別区たばこ税",
+            "reason": "項の名前は「3 特別区たばこ / 税」と2行に折り返して印字されている。2行目の「税」が下の目の名前に付いた。"
+          },
+          {
+            "id": "p5-1-163",
+            "page": 5,
+            "code": "1",
+            "y": 163.7,
+            "observed_name": "税特別区たばこ税",
+            "corrected_name": "特別区たばこ税",
+            "reason": "目の名前は「1 特別区たばこ / 税」と印字されている。上の項の2行目の「税」が頭に付いた。"
+          },
+          {
+            "id": "p59-40-487",
+            "page": 59,
+            "code": "40",
+            "y": 487.4,
+            "observed_name": "認知症サポ一卜検診事業補助金",
+            "corrected_name": "認知症サポート検診事業補助金",
+            "reason": "原典の画像では「認知症サポート検診事業補助金」と印字されている。Paddleが字形の似た字に読んだ（一→ー・卜→ト）。"
+          },
+          {
+            "id": "p62-63-523",
+            "page": 62,
+            "code": "63",
+            "y": 523.7,
+            "observed_name": "男性へのHPVワクチ任意接種補助金",
+            "corrected_name": "男性へのHPVワクチン任意接種補助金",
+            "reason": "原典の画像では「ＰＶワクチ / ン任意接種」と折り返して印字されている。Paddle は行頭の「ン」を読まなかった。"
+          },
+          {
+            "id": "p68-3-236",
+            "page": 68,
+            "code": "3",
+            "y": 236.2,
+            "observed_name": "スクールソーシャルワ一力一活用事業補助金",
+            "corrected_name": "スクールソーシャルワーカー活用事業補助金",
+            "reason": "原典の画像では「スクールソーシャルワーカー活用事業補助金」と印字されている。Paddleが字形の似た字に読んだ（一→ー・力→カ）。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-settlement"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-settlement-ocr-1",
+          "origin_sha256": "28aab0304689540890f20e309ab5468054215a537ebbc85f016f4cd7885f9875",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "f05bd066aa0fc0ff5185956acf9ddefe1da3e76a487afdb38ac39a472d2c3d2a",
+          "bytes": 2545401
+        },
+        {
+          "id": "general-settlement-ocr-2",
+          "origin_sha256": "28aab0304689540890f20e309ab5468054215a537ebbc85f016f4cd7885f9875",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "572304d770a7cd4bf40e10234d8773164a7d18f1f76907f36169b001fa5e271c",
+          "bytes": 3305023
+        },
+        {
+          "id": "general-settlement-ocr-3",
+          "origin_sha256": "28aab0304689540890f20e309ab5468054215a537ebbc85f016f4cd7885f9875",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "be7d55046b35df9f03a3c5f8b5e182fbef708fe87f98f482f6712bdfa9a77d8b",
+          "bytes": 3250261
+        },
+        {
+          "id": "general-settlement-ocr-4",
+          "origin_sha256": "28aab0304689540890f20e309ab5468054215a537ebbc85f016f4cd7885f9875",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "036ccc58c680415a9a91a1deffb2ea5e90e22bd27decf9cfb78c9b1db2e23c4d",
+          "bytes": 3882932
+        },
+        {
+          "id": "general-settlement-ocr-5",
+          "origin_sha256": "28aab0304689540890f20e309ab5468054215a537ebbc85f016f4cd7885f9875",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "04ae484c46a62fba76b00cdafcf750fe6c616494e2939a1fcfc3885e8fb0dd28",
+          "bytes": 4224895
+        },
+        {
+          "id": "general-settlement-ocr-6",
+          "origin_sha256": "28aab0304689540890f20e309ab5468054215a537ebbc85f016f4cd7885f9875",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "5f9eed139c3a4c6639eadcfdc865815708a0327f284abffb60b20b011ccb12f7",
+          "bytes": 3949882
+        },
+        {
+          "id": "general-settlement-ocr-7",
+          "origin_sha256": "28aab0304689540890f20e309ab5468054215a537ebbc85f016f4cd7885f9875",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70,
+              71,
+              72,
+              73
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "0242918b725d7e88e29cad9d8304b0e3e48637aa78bacb8d8b1c54d7e5e9fa9d",
+          "bytes": 4308961
+        },
+        {
+          "id": "general-settlement-ocr-8",
+          "origin_sha256": "28aab0304689540890f20e309ab5468054215a537ebbc85f016f4cd7885f9875",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80,
+              81,
+              82,
+              83
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9b0de6611e4bc20c6939648dcd9b2238d68f87a8ac66496d7f7522a4d2d83c21",
+          "bytes": 3848115
+        },
+        {
+          "id": "general-settlement-ocr-9",
+          "origin_sha256": "28aab0304689540890f20e309ab5468054215a537ebbc85f016f4cd7885f9875",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "4ed95528e6153b8c302971d74a21c7766e1cfb86762c680c2210fc163425a443",
+          "bytes": 2344368
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "967a471db769aa4a8c521ed52999ef061606a7cada5e281e061039ac28097326"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-insurance-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は議決の番号・担当の課と節ごとの収入の名前と額の再掲で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現額／補正予算額": {
+                  "kind": "amount"
+                },
+                "予算現額／継続費及び繰越事業費繰越財瀕充当額": {
+                  "kind": "amount",
+                  "heading": "継続費及び繰越事業費繰越財源充当額"
+                },
+                "不納欠損額": {
+                  "kind": "amount"
+                },
+                "収入未済額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "substituted_glyphs": true,
+            "names_in_own_column": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p10-8-154",
+            "page": 10,
+            "code": "8",
+            "y": 154.6,
+            "observed_name": "諸収人",
+            "corrected_name": "諸収入",
+            "reason": "原典の画像では「諸収入」と印字されている。文字層が字形の似た字に読んだ（人→入）。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-settlement"
+        }
+      ]
+    },
+    {
+      "id": "care-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "967a471db769aa4a8c521ed52999ef061606a7cada5e281e061039ac28097326"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "care-insurance-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は議決の番号・担当の課と節ごとの収入の名前と額の再掲で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現額／補正予算額": {
+                  "kind": "amount"
+                },
+                "予算現額／継続費及び繰越事業費繰越財瀕充当額": {
+                  "kind": "amount",
+                  "heading": "継続費及び繰越事業費繰越財源充当額"
+                },
+                "不納欠損額": {
+                  "kind": "amount"
+                },
+                "収入未済額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "substituted_glyphs": true,
+            "names_in_own_column": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p30-3-441",
+            "page": 30,
+            "code": "3",
+            "y": 441.6,
+            "observed_name": "地域支援事業繰人金(包括的支援事業)",
+            "corrected_name": "地域支援事業繰入金(包括的支援事業)",
+            "reason": "原典の画像では「地域支援事業繰入金(包括的支援事業)」と印字されている。文字層が字形の似た字に読んだ（人→入）。"
+          },
+          {
+            "id": "p33-10-154",
+            "page": 33,
+            "code": "10",
+            "y": 154.6,
+            "observed_name": "諸収人",
+            "corrected_name": "諸収入",
+            "reason": "原典の画像では「諸収入」と印字されている。文字層が字形の似た字に読んだ（人→入）。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-insurance-settlement"
+        }
+      ]
+    },
+    {
+      "id": "late-stage-elderly-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "967a471db769aa4a8c521ed52999ef061606a7cada5e281e061039ac28097326"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業会計",
+        "table_id": "late-stage-elderly-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は議決の番号・担当の課と節ごとの収入の名前と額の再掲で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現額／補正予算額": {
+                  "kind": "amount"
+                },
+                "予算現額／継続費及び繰越事業費繰越財瀕充当額": {
+                  "kind": "amount",
+                  "heading": "継続費及び繰越事業費繰越財源充当額"
+                },
+                "不納欠損額": {
+                  "kind": "amount"
+                },
+                "収入未済額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "substituted_glyphs": true,
+            "names_in_own_column": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p51-5-154",
+            "page": 51,
+            "code": "5",
+            "y": 154.6,
+            "observed_name": "諸収人",
+            "corrected_name": "諸収入",
+            "reason": "原典の画像では「諸収入」と印字されている。文字層が字形の似た字に読んだ（人→入）。"
+          },
+          {
+            "id": "p52-2-178",
+            "page": 52,
+            "code": "2",
+            "y": 178.5,
+            "observed_name": "雑人",
+            "corrected_name": "雑入",
+            "reason": "原典の画像では「雑入」と印字されている。文字層が字形の似た字に読んだ（人→入）。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "late-stage-elderly-settlement"
+        }
+      ]
+    }
+  ]
+}
