@@ -63,6 +63,13 @@ def printed_totals(scope: dict, nodes: list[dict], amounts: list[dict], directio
             cells[amount['physical_page']].append((amount['x1'], amount['header_path'], amount.get('unit_text')))
     if not cells:
         return []
+    # (a total printed on a page that prints no 款, the scan of that page set off from the others, 東京都 R6 当初予算
+    # 用地会計 p149: the columns of the page's own amounts, of any item)
+    columns: dict[int, list[tuple[float, str, str | None]]] = defaultdict(list)
+    for amount in amounts:
+        if amount.get('physical_page') is not None and amount.get('x1') is not None \
+                and number(amount['amount_text']) is not None:
+            columns[amount['physical_page']].append((amount['x1'], amount['header_path'], amount.get('unit_text')))
     lines: dict[tuple, list] = {}
     anchor = None
     for page, box, text in sorted((_coverage_word(w) for w in scope.get('words', ())),
@@ -106,11 +113,12 @@ def printed_totals(scope: dict, nodes: list[dict], amounts: list[dict], directio
                 right = max(box[2] for box, _ in run)
                 if not AMOUNT_RUN.fullmatch(text) or number(text) is None:
                     continue
-                # The columns of the number's own page first; when that page prints no 款, or none of its
-                # 款 lines up (a total on a page of its own), every page's columns are candidates. The
+                # The columns of the number's own page first; when that page prints no 款, those of its other
+                # amounts; when none lines up (a total on a page of its own), every page's columns. The
                 # number is placed only when they agree on one heading.
                 placed = set()
-                for candidates in (cells.get(row_page, ()), [cell for each in cells.values() for cell in each]):
+                for candidates in (cells.get(row_page, ()), () if row_page in cells else columns.get(row_page, ()),
+                                   [cell for each in cells.values() for cell in each]):
                     placed = {(header, unit) for x1, header, unit in candidates if abs(x1 - right) <= ALIGN}
                     if len({header for header, _ in placed}) == 1:
                         break

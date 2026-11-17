@@ -61,6 +61,21 @@ describe('歳入（get_revenue）', () => {
     expect(revenues[1]!.kan[0]!.category).toBeNull()
   })
 
+  test('辞書にある款の名前でも、特別会計と都道府県の款は区分が null（get_revenue・search_revenue_subjects とも）', async () => {
+    root('r-2026-special', 2026, 'initial', '特別会計', 40, [['1', '特別区税', 40]])
+    insert('revenue', { revenue_id: 'r-pref', jurisdiction_code: '130001', fiscal_year: 2026, document_kind: 'initial', amendment_number: null, account_name: '一般会計', account_kind: '一般会計', total_yen: 10 })
+    insert('revenue_subject', { subject_id: 'r-pref-1', node_key: 'r-pref-1', parent_subject_id: null, revenue_id: 'r-pref', level: '款', code: '1', name: '特別区税', amount_yen: 10, origin_id: 'o-initial' })
+    const special = (await call({ jurisdiction_code: '131091', fiscal_year: 2026 })).revenues.find((r) => r.revenue_id === 'r-2026-special')!
+    expect(special.kan[0]!.category).toBeNull()
+    expect((await call({ jurisdiction_code: '130001' })).revenues[0]!.kan[0]!.category).toBeNull()
+    const res = (await callWebOp({ DB: db } as never, 'search_revenue_subjects', { document_kind: 'initial', fiscal_year: { min: 2026, max: 2026 }, where: { level: { eq: ['款'] }, kan_name: { eq: ['特別区税'] } }, page_size: 100 })) as { value: { subjects: any[] } }
+    expect(res.value.subjects.map((s) => [s.revenue_id, s.category]).sort()).toEqual([
+      ['r-2026-initial', 'まちの税'],
+      ['r-2026-special', null],
+      ['r-pref', null],
+    ])
+  })
+
   test('年度・資料区分・会計の種類で絞る。収録の無い自治体は空', async () => {
     const { revenues } = await call({ jurisdiction_code: '131091', document_kind: 'settlement', account_kind: '一般会計' })
     expect(revenues.map((r) => r.revenue_id)).toEqual(['r-2025-settlement'])
