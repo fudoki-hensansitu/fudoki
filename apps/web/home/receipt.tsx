@@ -211,6 +211,7 @@ function Falling({ onDone, children }: { onDone: () => void; children: React.Rea
     return () => {
       alive = false
       fall?.dispose()
+      fall = null
     }
   }, [])
   return (

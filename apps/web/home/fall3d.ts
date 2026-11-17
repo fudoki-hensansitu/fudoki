@@ -181,7 +181,15 @@ export function fallPaper(texture: HTMLCanvasElement, rect: DOMRect, ms: number)
     renderer.render(scene, camera)
   }
   seek(0)
+  let raf = 0
+  let finish: (() => void) | null = null
+  let gone = false
+  /** 一度だけ片付ける。動いている途中なら描くのを止め、play を終わらせる */
   const dispose = () => {
+    if (gone) return
+    gone = true
+    cancelAnimationFrame(raf)
+    finish?.()
     geo.dispose()
     map.dispose()
     frontMat.dispose()
@@ -191,14 +199,16 @@ export function fallPaper(texture: HTMLCanvasElement, rect: DOMRect, ms: number)
   }
   const play = () =>
     new Promise<void>((done) => {
+      if (gone) return done()
+      finish = done
       const t0 = performance.now()
       const step = (now: number) => {
         const t = now - t0
         seek(Math.min(t, ms))
-        if (t < ms) requestAnimationFrame(step)
+        if (t < ms) raf = requestAnimationFrame(step)
         else done()
       }
-      requestAnimationFrame(step)
+      raf = requestAnimationFrame(step)
     })
   return { play, seek, dispose }
 }
