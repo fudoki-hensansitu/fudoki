@@ -367,8 +367,8 @@ type Older = { r: Printed; height: number }
 let printedId = 0
 
 /** 刷った一枚の紙（数え上げの key と、その年度のデータ） */
-/** href はその紙を刷ったときの年度の頁（QR の行き先）。年度を替えても前の紙の QR は前の年度を指す */
-type Printed = { id: number; key: string; year: number; v: YearView; href: string }
+/** href（QR の行き先）と pop（1人あたりで割る人口）は、その紙を刷ったときの年度のもの。年度を替えても前の紙は前の年度のまま */
+type Printed = { id: number; key: string; year: number; v: YearView; href: string; pop: number }
 
 export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: { name: string; v: YearView; year: number; pop: number | null; base: string; detailHref: string; head: React.ReactNode }) {
   const settled = v.word === '決算'
@@ -397,7 +397,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
   const card = React.useRef<HTMLElement>(null)
   const phase = usePhase(counted)
   React.useEffect(() => {
-    if (phase === 'print' && pop && printed?.key !== counted) setPrinted({ id: ++printedId, key: counted, year, v, href: detailHref })
+    if (phase === 'print' && pop && printed?.key !== counted) setPrinted({ id: ++printedId, key: counted, year, v, href: detailHref, pop })
   }, [phase, counted])
   /** いま刷っている紙の key（刷り終えるまで）。頁送りと紙の動きに使う */
   const printing = phase === 'print' && printed?.key === counted ? counted : null
@@ -422,7 +422,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
   useFollow(phase, printing, card, feed)
   /** 一枚の紙の中身 */
   const paper = (r: Printed) => {
-    const { parts, sum } = perHeadParts(r.v.fields, r.v.total, pop!)
+    const { parts, sum } = perHeadParts(r.v.fields, r.v.total, r.pop)
     return (
     <div className="rc-paper">
       <p className="text-center text-base font-semibold tracking-[0.3em]">{name}</p>
