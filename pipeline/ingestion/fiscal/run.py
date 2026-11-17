@@ -430,8 +430,12 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         checked = tree_checks.check_tree(built.nodes, built.amounts, document['target']['document_kind'],
                                          source_inconsistencies.declared_for(document, ident))
         if not built.nodes or not built.amounts or not checked['passed']:
+            mismatched = [{k: r[k] for k in ('parent_node_key', 'axis_header', 'header_path', 'parent_amount', 'child_sum')}
+                          | {k: node.get(k) for k in ('physical_page', 'code_text', 'name_text')}
+                          for r in checked.get('results', []) if r['status'] == '不一致'
+                          for node in [next((n for n in built.nodes if n['node_key'] == r['parent_node_key']), {})]]
             raise ValueError(f'Table failed the tree check: {ident}: {checked["counts"]}; '
-                             f'{len(checked["issues"])} issues: {checked["issues"][:5]}')
+                             f'{len(checked["issues"])} issues: {checked["issues"][:5]}; mismatched: {mismatched[:5]}')
         completed_by_id[ident] = []
         adopted[ident] = built
         checked_pdf.append((conversion, ident, built, None, file))

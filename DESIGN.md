@@ -200,8 +200,9 @@ shadcn/ui の語彙。色の役割は次のとおり。
 - Assets: 正本は `apps/web/brand/config.json`、生成は `bun run --cwd apps/web build:brand`、出力は `apps/web/public/`（`mark.svg`・`wordmark.svg`・`logo.svg` と各 `-dark.svg`、`favicon.svg`）と画面へ inline にする `apps/web/logo.ts`。docs の public・api の favicon にも同期する。PNG のアイコン（favicon.ico・icon・apple-touch-icon・PWA）は `brand/pwa_icons.py` で描く
 
 ## Motion
-- 動くのは hover・選んだタブの色（150ms）、nav の浮き（300ms ease-out）、紹介の冒頭の札がタブを替えたときに浮き上がる動き（360ms）、FAQ の `+`、AI の節の録画だけ。スクロールに合わせて動かさない。紙・絵は動かさない
-- すべて `prefers-reduced-motion: no-preference` の中に置く
+- 動くのは hover・選んだタブの色（150ms）、nav の浮き（300ms ease-out）、紹介の冒頭の札がタブを替えたときに浮き上がる動き（360ms）、FAQ の `+`、AI の節の録画、ホームのうちのまちの札（下記）だけ。スクロールに合わせて動かさない。ほかの紙・絵は動かさない
+- ホームのうちのまちの札は、選んだまちのお金を「自分の額」に変える瞬間なので動かす。平らな札で予算と1人あたりを 0 から数え上げ（1.2秒、ease-out）、読み終える間（0.5秒）の後に札が立体のレシートの機械になって据わり（three.js の本体と表示窓の彫りが 450〜550ms で現れ、650ms で持ち上がって据わる）、差し出し口から分野ごとの1人あたりのレシートが上から伸びて出る（1.6秒）。段に合わせて、札とレシートが画面に入るよう頁を一度だけ下へ送る（利用者がホイール・タッチ・キー・ポインタで操作したら送らない）。年度を替えたら数え上げと紙の送り出しをやり直す
+- すべて `prefers-reduced-motion: no-preference` の中に置く。reduce ではホームの札も最初からレシートを出した姿で、数え上げ・transition・頁送りをしない
 
 ## 守る規則
 - **画面で集計しない。** 数字は API が返したものをそのまま載せる。同じ数字が2通りに計算されると、いずれ食い違う
