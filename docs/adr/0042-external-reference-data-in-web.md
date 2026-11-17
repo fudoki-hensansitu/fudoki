@@ -6,7 +6,7 @@ apps/api（REST・MCP）が配るのは、風土記が出典から構造化し�
 
 1. 最初の対象は住民基本台帳人口。出典は総務省「住民基本台帳に基づく人口、人口動態及び世帯数」の総計で、Queria の `e_stat.resident_registry.population` から読む。
 2. 取得は `apps/web/scripts/sync-data/<名前>.py`（`bun run --cwd apps/web sync-data:<名前>`）に置く。Queria は DuckDB で ATTACH して読み、本番と preview の D1 の表を全行入れ替える。人口は住基の公表（毎年7月末）のあとに1回流す。
-   - 市区町村の決算の指標（総務省「市町村別決算状況調」、表 `local_finance`）は Queria に入るまで総務省の Excel から読む。Queria に入ったら差し替える（#723）。
+   - 市区町村の決算の指標（総務省「市町村別決算状況調」、表 `local_finance`）は Queria の `soumu.local_finance.municipal_settlement` から読む。決算状況調の公表（翌々年の春）のあと、Queria に入ったら1回流す。
 3. 外部のデータは R2 に写さず、資料の URL・版などの出典の記録も持たない。pipeline（取り込み・dbt・`serving:sync`）では扱わない。
 4. web の D1 の表は `apps/web/migrations/` の migration で作り、deploy-web と deploy-preview-web が deploy の前に当てる。
 5. api の自治体の応答（`/v1/jurisdictions`・`list_jurisdictions`）から `population` を外す。apps/api の D1 の `population`・`population_origin` は、web の deploy を確かめてから `serving:sync --drop-legacy` で消す。
