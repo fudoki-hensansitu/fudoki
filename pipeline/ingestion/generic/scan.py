@@ -488,6 +488,8 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
         words = nested.module.snap(words, detected.vertical)
     if (repeats := document_quirk('bracketed_repeats')) is not None:
         words = repeats.module.dropped(words, detected)
+    if (unbracketed := document_quirk('unbracketed_repeats')) is not None:
+        words = unbracketed.module.dropped(words, detected, unbracketed.value)
     if (marks := document_quirk('unread_marks')) is not None:
         words = marks.module.marked(words, pdf, number, cuts)
     return Page(number, detected.width, detected.height, drop_covered_digits(words), rules)

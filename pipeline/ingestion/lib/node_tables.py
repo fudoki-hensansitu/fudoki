@@ -571,7 +571,8 @@ def migrate_rows(rows: list[dict], metadata: dict) -> NodeTables:
                     header = '／'.join([*context['header_path'], *suffix.split('_')])
                 elif suffix == '計':
                     header = '予算現額／計'
-                elif suffix in ('当初予算額', '補正予算額', '継続費及び繰越事業費繰越額', '予備費支出及び流用増減'):
+                elif suffix in ('当初予算額', '補正予算額', '継続費及び繰越事業費繰越額', '継続費及び繰越事業費繰越財源充当額',
+                                '予備費支出及び流用増減'):
                     header = '予算現額／' + suffix
                 else:
                     header = suffix

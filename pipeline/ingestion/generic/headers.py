@@ -103,6 +103,12 @@ def canonical(path: str, axis: str | None, known: set[str], kind_by_characters: 
         suffix = SEPARATOR.join(segments[start:])
         if suffix in known:
             return suffix
+    # A heading whose first line is read as a group over the whole heading (小平市 R5 決算 p20:
+    # `予算現額／継続費及び繰越／継続費及び繰越事業費繰越財源充当額`): the group is that line, not a level.
+    for start in range(1, len(segments) - 1):
+        merged = SEPARATOR.join([*segments[:start], segments[-1]])
+        if segments[-1].startswith(segments[start]) and merged in known:
+            return merged
     if segments[-1] == '金額' and axis and f'{axis}{SEPARATOR}金額' in known:
         return f'{axis}{SEPARATOR}金額'
     for index in range(len(segments) - 1, -1, -1):
