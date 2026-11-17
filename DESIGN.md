@@ -110,6 +110,13 @@ shadcn/ui の語彙。色の役割は次のとおり。
   --shadow-sheet: 0 20px 25px -5px color-mix(in srgb, var(--night) 12%, transparent), 0 8px 10px -6px color-mix(in srgb, var(--night) 10%, transparent);
   --shadow-pill: 0 1px 2px color-mix(in srgb, var(--night) 4%, transparent), 0 6px 20px color-mix(in srgb, var(--night) 6%, transparent);
   --hair: color-mix(in srgb, var(--foreground) 10%, transparent);
+  /* 地図の濃淡（まち比べ）。値の大きさを青丹の濃さ5段で塗る。良し悪しを表さないので1色だけにする。値の無いまちは斜線 */
+  --shade-1: color-mix(in oklab, var(--primary) 10%, var(--background));
+  --shade-2: color-mix(in oklab, var(--primary) 28%, var(--background));
+  --shade-3: color-mix(in oklab, var(--primary) 48%, var(--background));
+  --shade-4: color-mix(in oklab, var(--primary) 72%, var(--background));
+  --shade-5: var(--primary);
+  --shade-none: repeating-linear-gradient(135deg, var(--card) 0 4px, var(--muted) 4px 6px);
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-sweep: cubic-bezier(0.87, 0, 0.13, 1);
   --duration: 150ms;
