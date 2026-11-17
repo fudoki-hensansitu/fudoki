@@ -12,8 +12,9 @@ const THETA = (14 * Math.PI) / 180
 /** 縁の切れを防ぐ余白（px） */
 const PAD = 12
 
-/** host に canvas を置き、body（DOM の前面）の大きさに合わせて描き続ける。描けなければ null（CSS の本体のまま） */
-export function mountMachine(host: HTMLElement, body: HTMLElement): (() => void) | null {
+/** host に canvas を置き、body（DOM の前面）の大きさに合わせて描き続ける。描けなければ null（CSS の本体のまま）。
+ * 途中で WebGL のコンテキストを失ったら lost を呼ぶ（呼ばれた側が後始末して CSS の本体へ戻す） */
+export function mountMachine(host: HTMLElement, body: HTMLElement, lost: () => void): (() => void) | null {
   let renderer: THREE.WebGLRenderer
   try {
     renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
@@ -25,6 +26,7 @@ export function mountMachine(host: HTMLElement, body: HTMLElement): (() => void)
   renderer.toneMapping = THREE.NeutralToneMapping
   const canvas = renderer.domElement
   canvas.setAttribute('aria-hidden', 'true')
+  canvas.addEventListener('webglcontextlost', lost)
   host.appendChild(canvas)
 
   const scene = new THREE.Scene()
@@ -85,6 +87,7 @@ export function mountMachine(host: HTMLElement, body: HTMLElement): (() => void)
   ro.observe(body)
   draw()
   return () => {
+    canvas.removeEventListener('webglcontextlost', lost)
     ro.disconnect()
     group.traverse((o) => (o as THREE.Mesh).geometry?.dispose())
     shell.dispose()

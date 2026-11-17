@@ -12,11 +12,19 @@ import './receipt.css'
 /** 数え上げの長さ */
 const COUNT_MS = 1200
 
-/** 0 から to まで数え上げる。reduced-motion では最初から to */
+const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
+
+/** 0 から to まで数え上げる。reduced-motion では最初から to。
+ * to が変わったら（年度の切り替え）描く前に 0 へ戻し、前の年度の額を新しい年度の見出しで見せない */
 function useCountUp(to: number) {
-  const [n, setN] = React.useState(to)
+  const [n, setN] = React.useState(() => (reduced() ? to : 0))
+  const [from, setFrom] = React.useState(to)
+  if (from !== to) {
+    setFrom(to)
+    setN(reduced() ? to : 0)
+  }
   React.useEffect(() => {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return setN(to)
+    if (reduced()) return setN(to)
     let raf = 0
     const t0 = performance.now()
     const step = (t: number) => {
@@ -24,7 +32,6 @@ function useCountUp(to: number) {
       setN(Math.round(to * (1 - Math.pow(1 - p, 3))))
       if (p < 1) raf = requestAnimationFrame(step)
     }
-    setN(0)
     raf = requestAnimationFrame(step)
     return () => cancelAnimationFrame(raf)
   }, [to])
@@ -61,9 +68,9 @@ const SOLID_MS = 650
 
 /** 段を進める。reduced-motion では最初から print */
 function usePhase() {
-  const [phase, setPhase] = React.useState<Phase>('flat')
+  const [phase, setPhase] = React.useState<Phase>(() => (reduced() ? 'print' : 'flat'))
   React.useEffect(() => {
-    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return setPhase('print')
+    if (reduced()) return setPhase('print')
     const t1 = setTimeout(() => setPhase('solid'), COUNT_MS + READ_MS)
     const t2 = setTimeout(() => setPhase('print'), COUNT_MS + READ_MS + SOLID_MS)
     return () => {
@@ -74,24 +81,23 @@ function usePhase() {
   return phase
 }
 
-/** 段に合わせて頁を送り、動かさなくても見えるようにする。最初は札（数字）が画面に収まる位置、レシートが出るときは差し出し口が画面の真ん中に来る位置へ。
- * 利用者が自分で送ったら、それ以降は動かさない */
+/** 段に合わせて頁を送り、動かさなくても見えるようにする。最初は札（数字）の下端が画面の外にあるときだけ札が収まる位置へ、
+ * レシートが出るときは差し出し口が画面の真ん中より下にあるときだけ真ん中へ（上へは戻さない）。
+ * 利用者が自分で送ったら（ホイール・タッチ・キー・スクロールバーの操作）、それ以降は動かさない。
+ * scroll の event は数えない（天板が伸びたときのスクロールの anchor の補正でも起き、利用者の操作と区別できない） */
 function useFollow(phase: Phase, machine: React.RefObject<HTMLElement | null>, slot: React.RefObject<HTMLElement | null>) {
   const touched = React.useRef(false)
   React.useEffect(() => {
     const mark = () => (touched.current = true)
     const opts = { passive: true } as const
-    window.addEventListener('wheel', mark, opts)
-    window.addEventListener('touchmove', mark, opts)
-    window.addEventListener('keydown', mark)
+    const events = ['wheel', 'touchmove', 'keydown', 'pointerdown'] as const
+    for (const e of events) window.addEventListener(e, mark, opts)
     return () => {
-      window.removeEventListener('wheel', mark)
-      window.removeEventListener('touchmove', mark)
-      window.removeEventListener('keydown', mark)
+      for (const e of events) window.removeEventListener(e, mark)
     }
   }, [])
   React.useEffect(() => {
-    if (touched.current || matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (touched.current || reduced()) return
     const vh = window.innerHeight
     const go = (y: number) => y > window.scrollY + 4 && window.scrollTo({ top: y, behavior: 'smooth' })
     if (phase === 'flat' && machine.current) {
@@ -123,7 +129,12 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
     if (import.meta.env.SSR) return
     void import('./machine3d').then(({ mountMachine }) => {
       if (!alive || !machine.current || !front.current) return
-      stop = mountMachine(machine.current, front.current)
+      stop = mountMachine(machine.current, front.current, () => {
+        // コンテキストを失ったら canvas を外し、CSS の本体へ戻す
+        stop?.()
+        stop = null
+        setGl(false)
+      })
       setGl(!!stop)
     }).catch(() => {})
     return () => {

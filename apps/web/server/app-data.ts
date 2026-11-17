@@ -2,8 +2,8 @@
 // 頁の loader は最初の画面に要る分（loadYearSnapshot）だけを読み、残り（loadYearExtras）は loader が defer で HTML の後ろに流す。
 // 事業の続き・詳細は画面が web の /api から読む（jurisdiction/app/api.ts）。評価シートと事業のつながりは api のつなぎの表を引くだけで、新しく判断しない
 import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
-import { listQuery, withExtras, type Kan, type YearData, type YearExtras, type Snapshot } from '../jurisdiction/app/data'
-import { listKey, readListPage, toSheet } from '../jurisdiction/app/api'
+import { listQuery, type Kan, type YearData, type YearExtras, type Snapshot } from '../jurisdiction/app/data'
+import { listKey, readListPage } from '../jurisdiction/app/api'
 import type { Env } from './env'
 import { apiCall, type WebOpInput, type WebOpOutput } from './fudoki-api'
 import { loadAccountTotals, shownSettlementYears, type CatalogEntry } from './jurisdiction'
@@ -12,7 +12,6 @@ import { appPageYears, type PageTab } from '../jurisdiction/types'
 const ACCOUNT = '一般会計'
 
 type SubjectBody = WebOpInput<'search_expenditure_subjects'>
-type SheetBody = WebOpInput<'search_evaluation_sheets'>
 
 type Kind = 'initial' | 'settlement'
 
@@ -47,13 +46,6 @@ async function subjectsOf(env: Env, code: string, year: number, kind: Kind) {
   )
   return { rows, origins }
 }
-
-/** 1年度の評価シートを全部（ホームのまちの札だけが使う。自治体の頁は頁ごとに読む） */
-const sheetsOf = (env: Env, code: string, year: number) =>
-  all(
-    (token) => apiCall(env)('search_evaluation_sheets', { fiscal_year: { min: year, max: year }, where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [ACCOUNT] } }, page_size: 1000, ...(token ? { page_token: token } : {}) } as SheetBody),
-    (r) => r.sheets.map((s) => toSheet(s, r.origins)),
-  )
 
 const fieldOf = (cofog: string | null | undefined) => ((cofog ? frameOf(cofog) : undefined) ?? OTHER_FRAME).id
 const short = (id: string) => id.slice(0, 12)
@@ -112,8 +104,8 @@ type SubjectRows = Awaited<ReturnType<typeof subjectsOf>>['rows']
 
 /** 頁の1年度の、最初の画面に要る分。開いた年度の款項目と、タブが要るもの（予算・決算は会計ごとの総額、事業は一覧の1頁目）だけを読む。
  * 評価シート・お金のかかる事業は残り（loadYearExtras）として、loader が defer で後から流す（pending）。
- * tab を渡さない（ホームのまちの札）ときは残りもここで読んで足し、評価のある最新の年度の評価シートも持つ（evaluated） */
-export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: number, opt: { evaluated?: boolean; tab?: PageTab } = {}): Promise<Snapshot> {
+ * tab を渡さない（ホームのまちの札）ときは款項目と年度の一覧だけを返し、残りは読まない（札は総額と分野ごとの額しか出さない） */
+export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: number, opt: { tab?: PageTab } = {}): Promise<Snapshot> {
   const { tab } = opt
   const years = appYears(entry)
   const me = years.find((y) => y.year === year)
@@ -139,20 +131,13 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
   const ownSubjects = subjectsAs(docKind)
   // 事業を当初予算から並べると使わないので、読めなくても投げっぱなしにしない
   ownSubjects.catch(() => undefined)
-  // ホームのまちの札は、評価のある最新の年度の評価シートを出す
-  const evalYear = opt.evaluated ? Math.max(0, ...entry.evaluationYears.filter((y) => years.some((x) => x.year === y))) : 0
   // 会計の札（予算・決算のタブ）。一般会計のほかにも会計を収録した年度だけ、会計ごとの総額を読む（検索1回）。
   // まとめ・事業のタブの頁でも読んでおく（予算・決算のタブへ移ったとき、loader を待つあいだも札を出して流れの図がずれないように）
   const accounts = entry.accounts?.[docKind]?.[String(year)] ?? []
-  const wantAccounts = accounts.length > 1
-  // ホームのまちの札は「やめた事業」も出す（新しく始めた事業は残り（loadYearExtras）が読む）
-  const homeLists = !tab && prev ? [listQuery({ code: entry.code, year, years: { [year]: { kind: me.kind } as YearData }, prev: { year: prev.year, kind: prev.kind } }, 'ended')] : []
-  const [projects, accountTotals, extras, evalSheets, homePages] = await Promise.all([
+  const wantAccounts = tab !== undefined && accounts.length > 1
+  const [projects, accountTotals] = await Promise.all([
     projectPage,
     wantAccounts ? loadAccountTotals(env, entry.code, year, docKind, accounts) : Promise.resolve(undefined),
-    tab ? Promise.resolve(undefined) : loadYearExtras(env, entry.code, year, me.kind, prev),
-    evalYear ? sheetsOf(env, entry.code, evalYear).then((r) => r.rows) : Promise.resolve(null),
-    Promise.all(homeLists.map((q) => readListPage(apiCall(env), q).then((p) => [listKey(q), p] as const))),
   ])
   // 事業を当初予算から並べるときは、分野で絞れるよう款項目も当初予算のものにする
   const subjects = await (projects && projects.kind !== docKind ? subjectsAs(projects.kind) : ownSubjects)
@@ -170,11 +155,10 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
     // 会計の札は款項目と同じ資料のものだけ渡す（事業のタブで当初予算の事業を並べたときは、決算で読んだ札を捨てる）
     ...(accountTotals && subjects.kind === docKind ? { accounts: accountTotals } : {}),
     ...(allPage ? { hasProjects: allPage.total > 0, lists: { [listKey(allQuery)]: allPage } } : { lists: {} }),
-    pending: true,
+    // ホームは残りを読まないので、待つものが無い
+    ...(tab ? { pending: true as const } : {}),
   }
-  if (!extras) return snapshot
-  const full = withExtras(snapshot, { ...extras, lists: { ...extras.lists, ...Object.fromEntries(homePages) } })
-  return evalSheets ? { ...full, evaluated: { fy: evalYear, sheets: evalSheets } } : full
+  return snapshot
 }
 
 /** 頁の1年度の残り（最初の画面に要らない分）。その年度の評価シートの区分ごとの数と、事業の一覧（すべて）の1頁目。

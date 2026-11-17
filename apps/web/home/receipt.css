@@ -25,18 +25,18 @@
   --card: #f8f5ee;
   --primary: #2f5d43;
   padding: 40px 22px 34px;
-  /* 紙の頭は差し出し口の影に入る */
+  /* 下端だけ、ちぎった跡のぎざぎざ */
+  -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 8px) no-repeat, conic-gradient(from -45deg at bottom, transparent 90deg, #000 0) bottom / 14px 8px repeat-x;
+  mask: linear-gradient(#000 0 0) top / 100% calc(100% - 8px) no-repeat, conic-gradient(from -45deg at bottom, transparent 90deg, #000 0) bottom / 14px 8px repeat-x;
+}
+/* 紙の頭は差し出し口の影に入る */
 .rc-paper::before {
   content: '';
   position: absolute;
   inset: 0 0 auto;
   height: 40px;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.06) 45%, transparent);
-}
-/* 下端だけ、ちぎった跡のぎざぎざ */
-  -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 8px) no-repeat, conic-gradient(from -45deg at bottom, transparent 90deg, #000 0) bottom / 14px 8px repeat-x;
-  mask: linear-gradient(#000 0 0) top / 100% calc(100% - 8px) no-repeat, conic-gradient(from -45deg at bottom, transparent 90deg, #000 0) bottom / 14px 8px repeat-x;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.04) 45%, transparent);
 }
 .rc-print.rc-run {
   animation: rc-print 1600ms cubic-bezier(0.33, 1, 0.68, 1) 150ms both;
@@ -58,15 +58,21 @@
   transition: opacity 550ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 /* 段ごとの見た目。flat は今までどおりの平らな緑の札で、立体の部品（天板・表示窓の彫り・差し出し口・キーの厚み）は出さない */
+.rm[data-phase='flat'] .rm-top {
+  /* 平らな札の上に天板の場所を残さない */
+  height: 0;
+}
 .rm[data-phase='flat'] .rm-top,
 .rm[data-phase='flat'] .rm-slot,
 .rm[data-phase='flat'] .rm-display::after {
   opacity: 0;
 }
-.rm-top,
 .rm-slot,
 .rm-display::after {
   transition: opacity 450ms ease-out;
+}
+.rm-top {
+  transition: opacity 450ms ease-out, height 450ms ease-out;
 }
 .rm[data-phase='flat'] .rm-body {
   background: var(--brand);
@@ -181,6 +187,14 @@
   .rc-print.rc-run,
   .rm:not([data-phase='flat']) {
     animation: none;
+  }
+  .rm > canvas,
+  .rm-top,
+  .rm-slot,
+  .rm-body,
+  .rm-display,
+  .rm-display::after {
+    transition: none;
   }
 }
 /* 表示窓の中の区切り */
