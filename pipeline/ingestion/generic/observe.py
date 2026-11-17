@@ -178,7 +178,7 @@ def covered_by_notes(page, items: list[Word]) -> list[Word]:
     return [placed.get(index, word) for index, word in enumerate(items) if index not in dropped]
 
 
-FIGURE = re.compile(r'[\d,，.．△▲\-－()（）円千]+')  # an amount, a sign or a unit: what two amount columns share
+FIGURE = re.compile(r'[\d,，.．△▲+＋\-－−‐―ー%％()（）円千万百億]*')  # an amount, a nil mark, a ratio or a unit
 COPIED_TEXT_SHARE = .1  # a hidden copy repeats the names too (a third or more of the pairs in the measured documents)
 
 
@@ -189,7 +189,8 @@ def drop_hidden_copies(pdf: Path, number: int, width: float, items: list[Word]) 
 
     A copy of every word repeats the names and headings as well as the figures. Twins that are all figures are
     neighbouring amount columns printing the same amount on many rows (a 調定額 and the 収入済額 equal to it, 0 in
-    every column of a row): both show ink, and dropping one side would drop printed amounts."""
+    every column of a row): both show ink, and dropping one side would drop printed amounts. A page of real copies
+    that this keeps reads every amount twice, which the save gate's sum checks stop; a dropped amount passes them."""
     by_place: dict[tuple, list[int]] = {}
     for index, word in enumerate(items):
         by_place.setdefault((word.text, round(word.y0)), []).append(index)
