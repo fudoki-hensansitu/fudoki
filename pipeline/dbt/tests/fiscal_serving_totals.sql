@@ -5,16 +5,25 @@
 -- 出典が子を全部は印字しない款・項（132012 の主要な施策の成果報告書は主要な施策の無い項を載せない）は、
 -- レイアウトの宣言（source_inconsistencies）の差を足す（fiscal_account_totals と同じく決算だけ）。
 -- 予算書の宣言は頁をまたぐ款・項の頁の中の差（132080 の当初の民生費）で、子は次の頁に印字されているので足さない。
-with declared_gaps as (
+with settlement_nodes as (
+    select * from {{ ref('int_fiscal__expenditure_nodes') }} where document_kind = 'settlement' and is_subject
+), child_sums as (
+    select parent_node_id as node_id, sum(amount_yen) as amount from settlement_nodes group by 1
+), declared_gaps as (
+    -- The gap absorbed is what the assembled tree still lacks under the declared parent, not the declared
+    -- difference: a declaration also covers a parent whose children continue in the next volume or page
+    -- (131211 2024, 132241 2020: `continued_rows` puts them back under the same parent), and those add up.
     select n.jurisdiction_code, n.fiscal_year, n.document_kind, n.account_name,
-        sum(d.printed_yen - d.children_sum_yen) as amount
-    from {{ source('fiscal_metadata', 'source_inconsistencies') }} d
-    join {{ ref('int_fiscal__expenditure_nodes') }} n
-      on n.document_kind = 'settlement' and n.is_subject and d.document_kind = n.document_kind
-     and d.jurisdiction_code = n.jurisdiction_code and d.fiscal_year = n.fiscal_year
-     and d.account_name = n.account_name and d.page = n.source_page
-     and d.parent_code is not distinct from n.code and d.parent_name = n.name and d.printed_yen = n.amount_yen
-    where n.node_kind in ('款', '項') and d.children_sum_yen < d.printed_yen and d.axis = n.axis
+        sum(n.amount_yen - coalesce(c.amount, 0)) as amount
+    from settlement_nodes n
+    left join child_sums c on c.node_id = n.node_id
+    where n.node_kind in ('款', '項') and n.amount_yen > coalesce(c.amount, 0)
+      and exists (
+        select 1 from {{ source('fiscal_metadata', 'source_inconsistencies') }} d
+        where d.document_kind = n.document_kind and d.jurisdiction_code = n.jurisdiction_code
+          and d.fiscal_year = n.fiscal_year and d.account_name = n.account_name and d.page = n.source_page
+          and d.parent_code is not distinct from n.code and d.parent_name = n.name and d.printed_yen = n.amount_yen
+          and d.children_sum_yen < d.printed_yen and d.axis = n.axis)
     group by all
 ), doc as (
     select e.jurisdiction_code, e.fiscal_year, e.document_kind, e.account_name,
