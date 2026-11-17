@@ -1,4 +1,4 @@
-// ホームのレシートの1人あたり。画面（receipt.tsx）とシェアの OG 画像（server/og-receipt.ts）で同じ割り方にする
+// ホームのレシートの1人あたりの割り方（receipt.tsx）
 
 /** 分野ごとの1人あたり（円）。和が合計（total を人口で割って丸めた額）に合うよう、大きい端数から1円ずつ足す */
 export function perHeadParts(fields: { yen: number }[], total: number, pop: number) {
