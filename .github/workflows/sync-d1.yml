@@ -50,7 +50,7 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      # 手動の実行は自治体コード（空なら全件）、週1の照合は全件。push は最後に成功した push の同期からの差分
+      # 手動の実行は自治体コード（空なら全件）、毎日の定期は全件。push は最後に成功した push の同期からの差分
       # （取り消された run・落ちた run の範囲も次の run が拾う）。見つからなければ全件
       - id: scope
         env:
