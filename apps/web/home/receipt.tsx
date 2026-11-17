@@ -1,4 +1,4 @@
-// ホームのうちのまちの札。緑の札で予算と1人あたりの額を順に数え上げ、札がレジの画面になって、その下にレジの本体（three.js、形は Blender の model）が現れ、
+// ホームのうちのまちの札。緑の札で予算と1人あたりの額を順に数え上げ、その下にレジの本体（three.js、形は Blender の model）が現れ、
 // 差し出し口から分野ごとの1人あたりのレシートを刷り出す。
 // 1人あたりは予算を人口で割った額（払った税金の額ではない）。分野の行の和が合計に合うよう、大きい端数から1円ずつ足して丸める
 import * as React from 'react'
@@ -9,7 +9,7 @@ import type { YearView } from '../jurisdiction/app/data'
 import { OTHER_FRAME } from '../jurisdiction/domains'
 import { FieldIcon } from './parts'
 import type { Printer } from './machine3d'
-import { COUNT_MS, MORPH_MS, PRINT_MS, READ_MS, SCROLL_MS, SETTLE_MS } from './motion'
+import { COUNT_MS, PRINT_MS, READ_MS, SCROLL_MS } from './motion'
 import './receipt.css'
 
 const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
@@ -59,24 +59,19 @@ export function perHeadParts(fields: { yen: number }[], total: number, pop: numb
   return { sum, parts }
 }
 
-/** 演出の段。count: 札で数え上げる → appear: 札がレジの画面になり本体が現れる → print: 差し出し口からレシートが出る */
-type Phase = 'count' | 'appear' | 'print'
+/** 演出の段。count: 札で数え上げる（レジの本体は最初から札の下にある） → print: 差し出し口からレシートが出る */
+type Phase = 'count' | 'print'
 /** 予算を数え終えてから1人あたりを数える。2つを同時に動かすと目が追えない */
 const COUNT_ALL_MS = COUNT_MS * 2
-const APPEAR_AT = COUNT_ALL_MS + READ_MS
-const PRINT_AT = APPEAR_AT + MORPH_MS + SETTLE_MS
+const PRINT_AT = COUNT_ALL_MS + READ_MS
 
 /** 段を進める。reduced-motion では最初から print */
 function usePhase() {
   const [phase, setPhase] = React.useState<Phase>(() => (reduced() ? 'print' : 'count'))
   React.useEffect(() => {
     if (reduced()) return setPhase('print')
-    const t1 = setTimeout(() => setPhase('appear'), APPEAR_AT)
-    const t2 = setTimeout(() => setPhase('print'), PRINT_AT)
-    return () => {
-      clearTimeout(t1)
-      clearTimeout(t2)
-    }
+    const t = setTimeout(() => setPhase('print'), PRINT_AT)
+    return () => clearTimeout(t)
   }, [])
   return phase
 }
@@ -84,7 +79,7 @@ function usePhase() {
 const easeInOut = (p: number) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2)
 
 /** 段に合わせて頁を送り、動かさなくても見えるようにする（カメラの代わり）。上へは戻さない。
- * count: 札の下端が画面の外なら札が収まる位置へ。appear: 本体が画面の下半分に入る位置へ。
+ * count: 札とその下の本体（差し出し口まで）が画面の外にはみ出すなら、札の上端を越えない範囲で収まる位置へ。
  * print: 紙が伸びるのと同じ長さ・同じ緩急で、本体が画面の上に残る位置まで送り、紙が出てくるのを追う。
  * 利用者が自分で送ったら（ホイール・タッチ・キー・ポインタ）、それ以降は動かさない。
  * scroll の event は数えない（レイアウトの補正でも起き、利用者の操作と区別できない） */
@@ -120,12 +115,9 @@ function useFollow(phase: Phase, card: React.RefObject<HTMLElement | null>, stag
       raf.current = requestAnimationFrame(step)
     }
     if (phase === 'count' && card.current) {
-      const r = card.current.getBoundingClientRect()
-      if (r.bottom > vh) go(window.scrollY + Math.min(r.top - 16, r.bottom - vh + 16), SCROLL_MS, easeInOut)
-    }
-    if (phase === 'appear' && stage.current) {
-      const r = stage.current.getBoundingClientRect()
-      if (r.bottom > vh * 0.7) go(window.scrollY + r.bottom - vh * 0.7, SCROLL_MS, easeInOut)
+      const top = card.current.getBoundingClientRect().top
+      const bottom = (stage.current ?? card.current).getBoundingClientRect().bottom
+      if (bottom > vh) go(window.scrollY + Math.min(top - 16, bottom - vh + 16), SCROLL_MS, easeInOut)
     }
     if (phase === 'print' && stage.current) {
       // 紙（receipt.css の rc-print）と同じ緩急で、差し出し口が画面の上から 3 割の位置に来るまで送る
@@ -170,14 +162,13 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
       m?.stop()
     }
   }, [printable])
-  // 段に合わせて本体を動かす。three.js の読み込みが段より遅れたときと reduced-motion では、動かさずにその段の姿にする
+  // 紙を送るときに本体のキーと灯を動かす。three.js の読み込みが段より遅れたときと reduced-motion では、動かさずに終わりの姿にする
   const shown = React.useRef<{ m: Printer | null; phase: Phase; year: number }>({ m: null, phase: 'count', year })
   React.useEffect(() => {
     if (!gl) return
     const was = shown.current
     const fresh = was.m !== gl
     const instant = fresh || reduced()
-    if (phase !== 'count' && (fresh || was.phase === 'count')) gl.appear(instant)
     if (phase === 'print' && (fresh || was.phase !== 'print' || was.year !== year)) gl.print(instant)
     shown.current = { m: gl, phase, year }
   }, [gl, phase, year])
