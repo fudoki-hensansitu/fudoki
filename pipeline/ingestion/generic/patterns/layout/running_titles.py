@@ -530,6 +530,8 @@ def carry_amounts(logicals) -> None:
             last = lines(target.words)[-1]
             if not amounts_only(first) or has_amount(last):
                 continue
+            if (split := document_quirk('split_name_bands')) is not None and split.module.beside_name(band, first, after.bands):
+                continue
             anchor = last[0]
             gone = {id(w) for w in first}
             band.words = [w for w in band.words if id(w) not in gone]
