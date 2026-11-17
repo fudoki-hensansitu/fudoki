@@ -16,7 +16,7 @@ export function TownPalette({ open, onOpenChange }: { open: boolean; onOpenChang
     visit(e.path)
   }
   return (
-    <CommandDialog open={open} onOpenChange={onOpenChange} title="まちを探す" description="自治体名で探して、そのまちの頁を開きます">
+    <CommandDialog open={open} onOpenChange={onOpenChange} title="まちを探す" description="自治体名で探して開きます">
       <Command shouldFilter={false}>
         <CommandInput placeholder="自治体名で探す（例：品川）" value={q} onValueChange={setQ} />
         <CommandList>

@@ -13,11 +13,6 @@ const STEPS = 5
 // 濃淡の段ごとの地（DESIGN.md の --shade-1〜5）と、その上の文字の色。未収録は斜線（--shade-none）にして 0 と分ける
 const fillOf = (step: number) => (step < 0 ? 'var(--shade-none)' : `var(--shade-${step + 1})`)
 const inkOf = (step: number) => (step >= 3 ? 'var(--primary-foreground)' : undefined)
-// 最多・最小の印（DESIGN.md の --shu・--ai）。一覧のカードの最多・最小の行に付ける
-const MARK = { top: 'var(--shu)', bottom: 'var(--ai)' } as const
-function Mark({ kind }: { kind: keyof typeof MARK }) {
-  return <span aria-hidden="true" className="inline-block size-2.5 shrink-0 rounded-[2px]" style={{ background: MARK[kind] }} />
-}
 
 type Scale = { step: (v: number | null) => number; min: number; max: number; median: number }
 /** 問いの値の並びを5つに分ける */
@@ -81,16 +76,32 @@ function TileMap({ map, q, scale, selected, onPick, large }: { map: CompareMap; 
   )
 }
 
-function Legend({ q, scale }: { q: Question; scale: Scale | null }) {
+/** 凡例。濃淡の帯の両端に最小・最多のまちを置き（押すとそのまちを選ぶ）、選んでいるまちが帯のどこにいるかを上の印で示す */
+function Legend({ map, q, scale, selected, onPick }: { map: CompareMap; q: Question; scale: Scale | null; selected?: string | null; onPick?: (code: string) => void }) {
+  const { top, bottom } = extremes(map.towns, q.slug)
+  const sel = map.towns.find((t) => t.code === selected)
+  const step = scale && sel ? scale.step(sel.values[q.slug] ?? null) : -1
+  const end = (t: MapTown | undefined, label: string) =>
+    t ? (
+      <button type="button" onClick={() => onPick?.(t.code)} className="flex items-baseline gap-1.5 rounded-sm text-left transition-colors hover:text-foreground">
+        <span>{label}</span>
+        <span className="font-medium text-foreground">{t.name}</span>
+        <Num v={t.values[q.slug] ?? null} q={q} />
+      </button>
+    ) : null
   return (
-    <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-muted-foreground">
+    <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-2 text-[13px] text-muted-foreground">
       {scale ? (
-        <span className="flex items-center gap-2">
-          <span className="flex gap-0.5">
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+          {end(bottom, '最小')}
+          <span className="relative flex gap-0.5 pt-2">
+            {step >= 0 ? (
+              <span aria-hidden="true" className="absolute top-0 h-1 w-7 rounded-full bg-foreground transition-[left] duration-300 ease-out motion-reduce:transition-none" style={{ left: `calc(${step} * (1.75rem + 2px))` }} />
+            ) : null}
             {Array.from({ length: STEPS }, (_, i) => <span key={i} className="h-2.5 w-7 rounded-[2px]" style={{ background: fillOf(i) }} />)}
           </span>
-          <Num v={scale.min} q={q} />〜<Num v={scale.max} q={q} />
-        </span>
+          {end(top, '最多')}
+        </div>
       ) : null}
       <span className="flex items-center gap-2">
         <span className="h-2.5 w-3.5 rounded-[2px]" style={{ background: fillOf(-1) }} />
@@ -130,8 +141,8 @@ export function CompareList({ map, failed }: { map: CompareMap; failed: boolean 
                 <h2 className="min-h-[2.9em] text-[15px] leading-[1.45] font-medium">{q.title}</h2>
                 <TileMap map={map} q={q} scale={scale} />
                 <p className="flex flex-col gap-1 text-xs text-muted-foreground">
-                  {top ? <span className="flex items-center gap-1"><Mark kind="top" />最多 <b className="font-medium text-foreground">{top.name}</b> <Num v={top.values[q.slug]!} q={q} /></span> : null}
-                  {bottom ? <span className="flex items-center gap-1"><Mark kind="bottom" />最小 <b className="font-medium text-foreground">{bottom.name}</b> <Num v={bottom.values[q.slug]!} q={q} /></span> : null}
+                  {top ? <span>最多 <b className="font-medium text-foreground">{top.name}</b> <Num v={top.values[q.slug]!} q={q} /></span> : null}
+                  {bottom ? <span>最小 <b className="font-medium text-foreground">{bottom.name}</b> <Num v={bottom.values[q.slug]!} q={q} /></span> : null}
                 </p>
                 <p className="mt-auto text-[11px] leading-relaxed text-muted-foreground">※{q.caveat}</p>
               </Link>
@@ -180,7 +191,7 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
           <div>
             <TileMap map={map} q={q} scale={scale} selected={code} onPick={pick} large />
-            <Legend q={q} scale={scale} />
+            <Legend map={map} q={q} scale={scale} selected={code} onPick={pick} />
           </div>
           {t ? (
             <aside key={t.code} aria-live="polite" className="flex animate-in flex-col rounded-2xl border bg-background p-5 fade-in slide-in-from-bottom-1 duration-200 motion-reduce:animate-none">
@@ -189,7 +200,7 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
                 <small className="text-xs font-normal text-muted-foreground">{popText(t.pop)}</small>
               </p>
               <Button size="lg" nativeButton={false} render={<Link href={t.path} />} className="mt-3 h-11 w-full text-[15px]">
-                {t.name}の頁を開く
+                {t.name}を開く
                 <ArrowRightIcon aria-hidden="true" />
               </Button>
               <p className="mt-6 text-[13px] text-muted-foreground">{q.short}</p>
