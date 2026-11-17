@@ -13,14 +13,15 @@ const smooth = (a: number, b: number, x: number) => {
 
 /** 紙の裏の色（刷っていない面） */
 const BACK = 0xf4f1ea
-/** 巻いた紙の半径と、1ラジアン巻くごとに横へずれる量（px）。紙の幅より大きく巻き、横へ流れる螺旋にする */
+/** 巻いた紙の半径（px）。紙の幅より大きく巻く */
 const RADIUS = 110
+/** 1ラジアン巻くごとに横へずれる量（px）の上限。長い紙は、巻き終えたときに横へ紙の幅の半分ほどずれる螺旋になるよう小さくする（床で場所を取りすぎない） */
 const PITCH = 45
 
 /** 床に落ちた紙の山（x の幅と、山の上端の y）。床は画面の下端 */
 type Pile = { x0: number; x1: number; top: number }
 /** 落とす紙を描く場。画面の大きさが変わったら作り直す（床の位置が変わるので、積んだ紙も片付ける） */
-type Stage = { canvas: HTMLCanvasElement; renderer: THREE.WebGLRenderer; scene: THREE.Scene; camera: THREE.PerspectiveCamera; vw: number; vh: number; piles: Pile[]; papers: Set<() => void> }
+type Stage = { canvas: HTMLCanvasElement; renderer: THREE.WebGLRenderer; scene: THREE.Scene; camera: THREE.OrthographicCamera; vw: number; vh: number; piles: Pile[]; papers: Set<() => void> }
 let stage: Stage | null = null
 
 function openStage(): Stage | null {
@@ -40,10 +41,8 @@ function openStage(): Stage | null {
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2))
   renderer.setSize(vw, vh, false)
   renderer.outputColorSpace = THREE.SRGBColorSpace
-  // 奥行き 0 の面が画面の px と1対1になる距離に置く
-  const fov = 30
-  const camera = new THREE.PerspectiveCamera(fov, vw / vh, 10, 20000)
-  camera.position.set(0, 0, vh / 2 / Math.tan((fov * Math.PI) / 360))
+  // 正面から平行に写し、どの奥行きでも画面の px と1対1にする（巻いて奥へ回った所も床の高さがずれない）
+  const camera = new THREE.OrthographicCamera(-vw / 2, vw / 2, vh / 2, -vh / 2, -5000, 5000)
   const scene = new THREE.Scene()
   // 平らなうちは DOM の紙と同じ明るさ（環境光と正面の光で 1 になる）。巻いて光に背を向けた所だけ暗くなる
   scene.add(new THREE.AmbientLight(0xffffff, 0.47 * Math.PI))
@@ -87,6 +86,7 @@ export function fallPaper(texture: HTMLCanvasElement, rect: DOMRect, ms: number)
   const pos = geo.attributes.position as THREE.BufferAttribute
   const base = Float32Array.from(pos.array as Float32Array)
   const ds = H / rows
+  const pitch = Math.min(PITCH, (0.5 * W * RADIUS) / H)
   const line = new Float32Array((rows + 1) * 3)
   /** p（0〜1）だけ巻く。巻く所は下の端から上へ伸び、刷った面を外にして奥へ巻き上がる */
   const curl = (p: number) => {
@@ -104,7 +104,7 @@ export function fallPaper(texture: HTMLCanvasElement, rect: DOMRect, ms: number)
     }
     for (let i = 0; i < pos.count; i++) {
       const j = Math.min(rows, Math.max(0, Math.round(-base[i * 3 + 1]! / ds)))
-      pos.setXYZ(i, base[i * 3]! + line[j * 3 + 2]! * PITCH, line[j * 3]!, line[j * 3 + 1]!)
+      pos.setXYZ(i, base[i * 3]! + line[j * 3 + 2]! * pitch, line[j * 3]!, line[j * 3 + 1]!)
     }
     pos.needsUpdate = true
     geo.computeVertexNormals()
@@ -121,11 +121,14 @@ export function fallPaper(texture: HTMLCanvasElement, rect: DOMRect, ms: number)
   const bw = box.max.x - box.min.x
   const bh = box.max.y - box.min.y
   const room = Math.max(0, vw / 2 - bw / 2 - 8)
-  const cx = Math.max(-room, Math.min(room, top.x + (Math.random() - 0.5) * vw * 0.6))
+  // 床で一番低く収まる所に置く（紙の下あたりを少し好む）。山に乗るときは少し沈み込ませる（丸まった紙どうしは隙間に収まる）
+  const restAt = (c: number) => st.piles.reduce((y, p) => (p.x1 > c - bw / 2 && p.x0 < c + bw / 2 ? Math.max(y, p.top - bh * 0.45) : y), -vh / 2)
+  const tries = Array.from({ length: 9 }, (_, i) => (room * (i - 4)) / 4)
+  const score = tries.map((c) => restAt(c) + Math.abs(c - top.x) * 0.05 + Math.random() * 6)
+  const cx = tries[score.indexOf(Math.min(...score))]!
   const x0 = cx - bw / 2
   const x1 = cx + bw / 2
-  // 山に乗るときは少し沈み込ませる（丸まった紙どうしは隙間に収まる）
-  const rest = st.piles.reduce((y, p) => (p.x1 > x0 && p.x0 < x1 ? Math.max(y, p.top - bh * 0.3) : y), -vh / 2)
+  const rest = restAt(cx)
   const pile = { x0, x1, top: rest + bh }
   st.piles.push(pile)
   const end = new THREE.Vector3(cx - (box.min.x + box.max.x) / 2, rest - box.min.y, 0)
