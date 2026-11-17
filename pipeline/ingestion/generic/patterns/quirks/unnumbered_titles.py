@@ -2,7 +2,8 @@
 明細書の歳入 R8: `2款 地方譲与税` / `項 地方道路譲与税`, its 目 `地方道路譲与税 0 1 △1` with no number either).
 `running_titles.title` reads a title only with its code, so the line was no title and went on with the name of the
 款 title above it (`地方譲与税項地方道路譲与税`, a second 款 2). With the quirk a title line that opens with the bare
-mark (`項` or `款`, then the name) is a title with no code. The name may be in brackets (文京区 R6 当初の歳入:
+mark (`項` or `款`, then the name) is a title with no code, and so is one after the 款 title on its line (武蔵野市の予算事項別明細書の歳入 R8:
+`9款 地方特例交付金 項 地方特別交付金`). The name may be in brackets (文京区 R6 当初の歳入:
 `項 (広域連合補助金)`), but not a bracketed number or mark (`項(1)`, `款(項)`).
 
 A table title above the frame that names a 款 the year drops prints `第` and `款` with no number between them (稲城市の
@@ -25,3 +26,8 @@ def title(value: str) -> tuple[str, None, str] | None:
 def kan_title(value: str) -> str | None:
     match = KAN.match(value)
     return match.group(1) if match else None
+
+
+def opens(run: str) -> bool:
+    """A run of a title line that opens a title with no code (`項`, or `項地方特別交付金` glued)."""
+    return BARE.match(run) is not None or run in ('款', '項')
