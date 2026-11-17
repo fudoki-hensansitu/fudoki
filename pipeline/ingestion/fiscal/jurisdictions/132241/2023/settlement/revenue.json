@@ -97,7 +97,13 @@
           "quirks": {
             "names_in_own_column": true
           }
-        }
+        },
+        "pages": [
+          [
+            131,
+            138
+          ]
+        ]
       },
       "expected_tables": [
         {
@@ -146,7 +152,13 @@
           "quirks": {
             "names_in_own_column": true
           }
-        }
+        },
+        "pages": [
+          [
+            191,
+            196
+          ]
+        ]
       },
       "expected_tables": [
         {
