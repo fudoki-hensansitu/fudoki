@@ -43,10 +43,7 @@
       "required": [
         "width",
         "levels",
-        "subject_amounts",
-        "funding",
-        "setsu",
-        "setsu_amount"
+        "subject_amounts"
       ],
       "description": "The left page's frame. Every x is measured from the frame's left rule.",
       "properties": {
@@ -83,16 +80,24 @@
         },
         "funding": {
           "$ref": "#/$defs/range",
-          "description": "The 財源内訳 column (source names and amounts), not taken in."
+          "description": "The 財源内訳 column (source names and amounts), not taken in. A statement without one (a settlement report) leaves it out."
         },
         "setsu": {
           "$ref": "#/$defs/range",
-          "description": "The 節 区分 column: the 節 code and name."
+          "description": "The 節 区分 column: the 節 code and name. Declared with setsu_amount, or neither."
         },
         "setsu_amount": {
           "$ref": "#/$defs/column",
           "description": "The 節 金額 column and its heading in the shared dictionary."
         }
+      },
+      "dependentRequired": {
+        "setsu": [
+          "setsu_amount"
+        ],
+        "setsu_amount": [
+          "setsu"
+        ]
       }
     },
     "right": {
@@ -156,6 +161,34 @@
         "prose_indent": {
           "type": "number",
           "description": "A line of prose starting right of this x is a quantity line under an item."
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/column"
+          },
+          "description": "Amount columns the facing frame draws right of the 説明, each between its own rules (a settlement report's 事業別予算現額): the amount printed in one on an item's line is the item's. The 説明 ends where the first one starts."
+        },
+        "note": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "heading",
+            "kind"
+          ],
+          "properties": {
+            "heading": {
+              "type": "string",
+              "minLength": 1,
+              "description": "A line (its words joined) that opens a note under the 目 (`1議決予算額…のうち下記のとおり充当した`)."
+            },
+            "kind": {
+              "type": "string",
+              "minLength": 1,
+              "description": "The note's kind in the shared annotation dictionary (充用・流用など)."
+            }
+          },
+          "description": "The lines under the heading, up to the next item, that print an amount at their right end are amount annotations: their text and amount (注記金額), with no phase and outside the tree (ADR 0024)."
         },
         "aside_heading": {
           "type": "string",

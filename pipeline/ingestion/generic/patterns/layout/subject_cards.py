@@ -29,7 +29,7 @@
 import re
 import unicodedata
 from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from ingestion.generic import layout
 from ingestion.generic.layout import Band, Glyph, Logical, is_amount
@@ -174,8 +174,11 @@ def dividing(page: Page, top: float, bottom: float, left: float, right: float) -
     horizontals = sorted(y for (kind, y), length in reach.items() if kind == 'h' and length >= (right - left) * .9)
     # The block's heading row (`節 区 分`) spans the frame: its cells start under the first horizontal (台東区).
     start = horizontals[0] if horizontals and horizontals[0] - top < 25 else top
-    # The last card on a page ends at the frame's foot: the empty space under its last row is no part of its cells.
-    end = horizontals[-1] if horizontals and bottom - horizontals[-1] > 100 and horizontals[-1] > start else bottom
+    # The last card on a page ends at the frame's foot: the empty space under its last row is no part of its cells
+    # (a space under 100pt too when nothing is printed in it: 台東区 R8 p73, a dropped 目's card 62pt over the foot).
+    empty = bool(horizontals) and not any(horizontals[-1] + 1 < (w.y0 + w.y1) / 2 < bottom - 1 and left < w.x0 < right
+                                          for w in page.words)
+    end = horizontals[-1] if horizontals and (bottom - horizontals[-1] > 100 or empty) and horizontals[-1] > start else bottom
     for r in page.rules:
         if r.vertical and r.y0 < end - 1 and r.y1 > start + 1 and left + FRAME_REACH < r.x0 < right - FRAME_REACH:
             reach['v', round(r.x0, 1)] += min(r.y1, end) - max(r.y0, start)
@@ -448,6 +451,12 @@ def place_page(page: Page, columns: Columns | None):
             columns.held = {amount_value(w.text) for w in s_words} - {None}
         elif columns is None:
             return None
+        elif abs(columns.left - left) > 10 and abs((columns.right - columns.left) - (right - left)) <= 1:
+            # A card going on from the page before keeps that page's columns, set where this page's frame stands
+            # (台東区: the left and right pages print their frames 41pt apart). Left where the page before set them,
+            # the headings made for the card divide the columns of the next card on the page in two.
+            dx = left - columns.left
+            columns = replace(columns, left=left, right=right, inner=[x + dx for x in columns.inner])
         level_width = columns.inner[0] - left
         shift = (len(columns.levels) - 1) * level_width  # where the 目 column and the amounts go
         setsu_left = right + shift
