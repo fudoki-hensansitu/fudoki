@@ -81,12 +81,11 @@
   border-bottom: 1px dotted var(--border);
   transform: translateY(-4px);
 }
-.rc-bar {
-  height: 26px;
-  width: 64%;
+.rc-qr {
+  display: block;
+  width: 88px;
+  height: 88px;
   margin: 18px auto 0;
-  opacity: 0.7;
-  background: repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 4px, currentColor 4px 5px, transparent 5px 8px, currentColor 8px 11px, transparent 11px 12px);
 }
 @media (prefers-reduced-motion: reduce) {
   .rc-print.rc-run {

@@ -2,6 +2,7 @@
 // 札そのものをレジに見立て、立体は使わない（平らな描き方に揃える）。
 // 1人あたりは予算を人口で割った額（払った税金の額ではない）。分野の行の和が合計に合うよう、大きい端数から1円ずつ足して丸める
 import * as React from 'react'
+import { encode } from 'uqr'
 import { ArrowRightIcon } from '@phosphor-icons/react'
 import { Link } from '../nav/link'
 import { reiwa, yearName } from '../jurisdiction/types'
@@ -35,6 +36,18 @@ function useCountUp(to: number, delay = 0) {
     return () => cancelAnimationFrame(raf)
   }, [to])
   return n
+}
+
+/** url の QR コード（紙の上なので、明暗で変えない色で描く）。相対の url はいま開いている origin に付けて読めるようにする */
+function Qr({ url }: { url: string }) {
+  const href = typeof location === 'undefined' ? url : new URL(url, location.origin).href
+  const { data, size } = React.useMemo(() => encode(href, { border: 0 }), [href])
+  const d = data.flatMap((row, y) => row.map((on, x) => (on ? `M${x} ${y}h1v1h-1z` : ''))).join('')
+  return (
+    <svg viewBox={`0 0 ${size} ${size}`} className="rc-qr" role="img" aria-label="まちの頁を開く QR コード" shapeRendering="crispEdges">
+      <path d={d} fill="currentColor" />
+    </svg>
+  )
 }
 
 const Yen = ({ n, className }: { n: number; className?: string }) => (
@@ -124,7 +137,7 @@ function useFollow(phase: Phase, card: React.RefObject<HTMLElement | null>, feed
       if (r.bottom > vh) go(window.scrollY + Math.min(r.top - 16, r.bottom - vh + 16), SCROLL_MS, easeInOut)
     }
     if (phase === 'print' && feed.current) {
-      // 紙（receipt.css の rc-print）と同じ緩急で、レシートの最後（合計・バーコード）まで送る。紙は clip-path で伸ばすので、高さは最初から刷り終えた分ある
+      // 紙（receipt.css の rc-print）と同じ緩急で、レシートの最後（合計・QR コード）まで送る。紙は clip-path で伸ばすので、高さは最初から刷り終えた分ある
       const r = feed.current.getBoundingClientRect()
       go(window.scrollY + r.bottom - vh + 16, PRINT_MS, (p) => 1 - Math.pow(1 - p, 1.6))
     }
@@ -210,10 +223,11 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
               })}
             </ul>
             <p className="rc-rule mt-2 flex items-baseline justify-between pt-3">
-              <span className="text-[15px]">合計</span>
+              <span className="text-[15px]">1人あたりの合計</span>
               <Yen n={receipt.sum} className="text-[28px] font-semibold text-primary" />
             </p>
-            <div className="rc-bar" aria-hidden="true" />
+            {/* 読み取るとまちの頁を開く */}
+            <Qr url={detailHref} />
           </div>
           </div>
         </div>
