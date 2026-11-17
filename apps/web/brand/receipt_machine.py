@@ -1,22 +1,26 @@
-"""ホームのうちのまちの札の下に置くレシートプリンタの立体を Blender で組み、glb に書き出す。
+"""ホームのうちのまちの札を画面に見立てたレジの本体を Blender で組み、glb に書き出す。
 
   /Applications/Blender.app/Contents/MacOS/Blender -b --factory-startup --python apps/web/brand/receipt_machine.py -- [--render <dir>]
 
-起動中の Blender（Blender MCP など）でも同じ形を組める。そのときは collection `receipt_machine` の中だけを作り直し、
-他の object には触らない（書き出しは background のときか、引数に --export を付けたときだけ）。
+起動中の Blender（Blender MCP など）でも同じ形を組める。そのときは scene `register-v1` の collection `receipt_machine`
+の中だけを作り直し、他の scene・object には触らない（書き出しは background のときか、引数に --export を付けたときだけ）。
 
-店のレジ横にある感熱式のレシートプリンタに見える、背が低く奥行きの深いずんぐりした筐体にする（実在の製品の形やロゴはなぞらない）。
-単位は px 相当。幅 520・高さ 150（足を含む）・奥行き 260。
+店のカウンターにある電子レジに見える形にする（実在の製品の形やロゴはなぞらない）。画面は作らない。
+画面はホームの緑の札（DOM）で、支柱の上端の empty `mount` に札の下端の中心が来る。
+下に現金の引き出し、その上に紙の差し出し口のある前面の帯、さらに上に手前へ傾いた鍵盤の台、奥の中央に画面の支柱。
+単位は px 相当。幅 560・奥行き 300・筐体の高さ 176（足を含む）、支柱の上端まで 286。
 
 向き: glTF では前面が +z、上が +y（Blender では前面が -Y、上が +Z で組み、書き出しで glTF の向きへ直る）。
-原点（glTF の座標の 0）は差し出し口の中心（前面の外側の面で、紙が出てくる点）。
+原点（glTF の座標の 0）は差し出し口の溝の中心（前面の外側の面で、紙が出てくる点）。
 three.js は model を一様に拡大縮小するだけで、伸ばさない。
 
 object:
-- body: 筐体・底の段・ゴムの足・差し出し口・刃・蝶番・側面の放熱スリット。原点は差し出し口の中心
-- cover: 天板の奥半分の、紙のロールを収めた丸く膨らんだ蓋（手前に指かけのくぼみ）。原点は蝶番の軸の中心（x=0）
-- btn: 紙送りのキー（天板の手前の右）。原点はキーの底面の中心。押し込みは glTF の -y（下）へ沈める
-- lamp: 通電の灯（キーの左）。原点は灯の底面の中心
+- body: 筐体・底の段・ゴムの足・引き出し（合わせ目と引き手の溝）・差し出し口（彫り込み・溝・刃・庇）・鍵盤の台の板。原点は差し出し口の中心
+- keys: 小さな角丸のキーの格子と横長のキー。原点は鍵盤の台の面の中心
+- btn: 右手前の大きめの「合計」キー。原点はキーの底面の中心。押し込みは glTF の -y（下）へ沈める
+- lamp: 通電の灯（台の奥の左）。原点は灯の底面の中心
+- pole: 画面の支柱。原点は支柱の底面の中心
+- mount: empty。画面（札）の下端の中心が来る点
 
 色は塗り分けの目安だけ（three.js で DESIGN.md の token の色に置き換える）。material は名前で引く。
 アニメーションは付けない。書き出した receipt-machine.raw.glb は gltf-transform の dedup だけをかけて
@@ -34,32 +38,44 @@ from mathutils import Matrix, Vector
 HERE = Path(__file__).resolve().parent if "__file__" in globals() else Path.cwd() / "apps/web/brand"
 OUT = HERE.parent / "public/home/receipt-machine.raw.glb"
 COLLECTION = "receipt_machine"
-LIVE_SCENE = "printer-v3"  # 起動中の Blender ではこの scene だけを作り直す
+STAGE = "receipt_machine_stage"  # render のための床・光・カメラ（書き出さない）
+LIVE_SCENE = "register-v1"  # 起動中の Blender ではこの scene だけを作り直す
 
 # 大きさ（Blender の座標。組むあいだは底を z=0、前面を y=-D/2 に置き、最後に原点へ移す）
-W = 520.0
-D = 260.0
-H = 150.0
+W = 560.0
+D = 300.0
 FRONT = -D / 2
+BACK = D / 2
 
 FOOT_H = 6.0  # ゴムの足
 FOOT_R = 13.0
-FEET = [(sx * 214.0, sy * 98.0) for sx in (-1, 1) for sy in (-1, 1)]
-PLINTH_Z = 16.0  # 底の段の上端
+FEET = [(sx * 236.0, sy * 116.0) for sx in (-1, 1) for sy in (-1, 1)]
+PLINTH_Z = 14.0  # 底の段の上端
 PLINTH_IN = 9.0  # 底の段の引っ込み
-SHELL_TOP = 100.0  # 筐体の天板（手前半分の低い段）
-SHELL_R = 26.0  # 筐体の平面の角の丸み
-SHELL_EDGE = 14.0  # 天板の縁の丸み
-FRONT_LEAN = 14.0  # 前面の上端を奥へ倒す量（前面を少し上向きにする）
-SEAM_Z = 76.0  # 上下の筐体の合わせ目の溝
-POCKET = 3.0  # 蓋の周りの隙間
+SHELL_Z = 12.0  # 筐体の下端
+SHELL_R = 22.0  # 筐体の平面の角の丸み
+SHELL_EDGE = 9.0  # 稜の丸み
 
-# 差し出し口と刃（前面の下寄り）
+# 断面（y, z）: 前面は垂直に DECK_Z0 まで立ち、そこから鍵盤の台が奥へ上がり、DECK_Y1 から奥は水平
+DECK_Z0 = 132.0  # 鍵盤の台の手前の縁の高さ
+DECK_Y1 = 30.0  # 鍵盤の台の奥の縁
+TOP_Z = 176.0  # 奥の水平な天板の高さ
+
+# 現金の引き出し（前面の下）
+DRAWER_Z = (20.0, 76.0)
+DRAWER_W = W - 36.0
+SEAM = 2.0  # 合わせ目の溝の幅
+PULL_W = 220.0  # 引き手の溝
+PULL_H = 9.0
+PULL_Z = 64.0
+PULL_DEPTH = 7.0
+
+# 差し出し口と刃（引き出しの上の前面の帯）
 SLOT_W = 440.0
 SLOT_H = 12.0
-SLOT_Z = 44.0  # 底からの高さ（紙が出てくる点）
+SLOT_Z = 102.0  # 底からの高さ（紙が出てくる点）
 PANEL_W = 476.0  # 差し出し口の周りの浅い彫り込み
-PANEL_H = 50.0
+PANEL_H = 38.0
 PANEL_DEPTH = 4.0
 LIP_W = 452.0  # 差し出し口の下で紙を受ける庇
 LIP_OUT = 11.0
@@ -67,28 +83,27 @@ LIP_T = 4.0
 BLADE_W = 452.0
 BLADE_H = 5.0
 
-# 蓋（天板の奥半分）
-COVER_W = 492.0
-COVER_Y0 = -6.0  # 蓋の手前の縁（筐体の中心からの y）
-COVER_Y1 = 118.0  # 蓋の奥の縁
-COVER_EXP = 2.6  # 断面の膨らみ（2 で楕円、大きいほど肩が張る）
-HINGE_R = 7.0
+# 鍵盤の台（傾いた面の上に置く板と、キー）
+DECK_PLATE_IN = 22.0  # 台の縁からの板の引っ込み
+KEY = 26.0  # 小さなキーの一辺
+KEY_H = 7.0
+KEY_R = 6.0
+PITCH = (36.0, 32.0)  # キーの間隔（横, 斜面に沿う方向）
+ROWS = (48.0, 16.0, -16.0, -48.0)  # 台の中心から斜面に沿った各段の位置（奥が正）
+SMALL_U = (-212.0, -176.0, -140.0, -104.0)  # 小さなキーの格子の列
+WIDE = [(-40.0, 48.0, 64.0), (32.0, 48.0, 64.0), (-40.0, 16.0, 64.0), (32.0, 16.0, 64.0), (-4.0, -16.0, 136.0), (-4.0, -48.0, 136.0)]  # (u, v, 幅)
+SIDE_U = 104.0  # 合計キーの左の小さなキーの列
+TOTAL = (176.0, -32.0, 84.0, 58.0)  # 合計キー (u, v, 幅, 奥行き)
+TOTAL_H = 9.0
 
-# 紙送りのキーと灯（天板の手前の右）
-KEY = (200.0, -84.0)
-KEY_SIZE = 32.0
-KEY_R = 7.0
-KEY_H = 8.0
-LAMP = (156.0, -84.0)
-LAMP_SIZE = (16.0, 5.0)
+# 灯（台の奥の右）と支柱（奥の中央）
+LAMP = (204.0, 64.0)
+LAMP_SIZE = (18.0, 6.0)
 LAMP_H = 1.6
-
-# 側面の放熱スリット
-VENT_N = 5
-VENT_Y = (22.0, 104.0)
-VENT_Z0 = 40.0
-VENT_STEP = 12.0
-VENT_H = 4.5
+POLE = (0.0, 96.0)
+POLE_SIZE = (64.0, 26.0)
+POLE_TOP = 286.0
+POLE_BASE = (128.0, 70.0, 5.0)  # 支柱の根元の台座
 
 
 def srgb(hex_: str, a: float = 1.0) -> tuple:
@@ -120,6 +135,7 @@ MATS: dict = {}
 
 
 def materials() -> None:
+    # 艶は控えめな樹脂。material は名前で共有されるので、同じ名前を使う他の scene の色を変えないよう前の model の値のままにする
     MATS["shell"] = material("shell", srgb("#2f6b4f"), 0.8)
     MATS["cover"] = material("cover", srgb("#3f8462"), 0.75)
     MATS["slot"] = material("slot", srgb("#16201b"), 0.9)
@@ -258,40 +274,59 @@ def smooth(ob: bpy.types.Object, angle: float = 35.0) -> None:
     me.set_sharp_from_angle(angle=math.radians(angle))
 
 
+SLOPE = math.atan2(TOP_Z - DECK_Z0, DECK_Y1 - FRONT)  # 鍵盤の台の傾き
+DECK_L = math.hypot(TOP_Z - DECK_Z0, DECK_Y1 - FRONT)
+DECK_C = Vector((0.0, (FRONT + DECK_Y1) / 2, (DECK_Z0 + TOP_Z) / 2))
+DECK = Matrix.Translation(DECK_C) @ Matrix.Rotation(SLOPE, 4, "X")  # 台の面の座標（u: 横, v: 奥へ上る, n: 面の法線）
+PLATE_T = 1.5  # 台の板の面の高さ（n）
+
+
+def on_deck(ob: bpy.types.Object, u: float, v: float, n: float = 0.0) -> bpy.types.Object:
+    ob.data.transform(DECK @ Matrix.Translation((u, v, n)))
+    return ob
+
+
+def cap(name: str, w: float, d: float, r: float, h: float, edge: float, mat: str) -> bpy.types.Object:
+    """底面の中心を原点にした角丸の帽子形"""
+    ob = prism(name, rrect(w, d, r, 4), 0, h, mat)
+    bevel(ob, edge, 2)
+    return bake(ob)
+
+
+def front_cut(name: str, w: float, h: float, r: float, z: float, depth: float, mat: str) -> bpy.types.Object:
+    """前面に彫る角丸の穴（(x, z) の輪郭を前面から奥へ）"""
+    ob = prism(name, rrect(w, h, r, 4), FRONT - 20, FRONT + depth, mat, axis="Y")
+    move(ob, (0, 0, z))
+    return ob
+
+
 def body() -> bpy.types.Object:
     parts = []
-    # 筐体: 平面の角を丸めた箱。天板の縁を丸める
-    shell = prism("shell_main", rrect(W, D, SHELL_R, 8), PLINTH_Z - 2, SHELL_TOP, "shell")
-    bevel(shell, SHELL_EDGE, 3)
+    # 筐体: 平面の角を丸めた箱から、鍵盤の台の斜面と奥の天板より上を削る
+    shell = prism("shell_main", rrect(W, D, SHELL_R, 8), SHELL_Z, TOP_Z + 60, "shell")
+    s = math.tan(SLOPE)
+    y0 = FRONT - 30
+    top = prism("cut_top", [(y0, DECK_Z0 - 30 * s), (DECK_Y1, TOP_Z), (BACK + 30, TOP_Z), (BACK + 30, TOP_Z + 100), (y0, TOP_Z + 100)], -W, W, "shell", axis="X")
+    cut(shell, top)
     bake(shell)
-    # 差し出し口の周りの浅い彫り込みと、差し出し口
-    panel = prism("cut_panel", rrect(PANEL_W, PANEL_H, 8, 4), FRONT - 20, FRONT + PANEL_DEPTH, "shell", axis="Y")
-    move(panel, (0, 0, SLOT_Z))
-    slot = prism("cut_slot", rrect(SLOT_W, SLOT_H, 3, 3), FRONT - 20, FRONT + 40, "slot", axis="Y")
-    move(slot, (0, 0, SLOT_Z))
-    for ob in (slot, panel):
-        cut(shell, ob)
-    # 上下の筐体の合わせ目の溝（外周をめぐる細い溝）
-    ring = prism("cut_seam", rrect(W + 20, D + 20, SHELL_R + 10, 8), SEAM_Z - 1.5, SEAM_Z + 1.5, "slot")
-    inner = prism("cut_seam_in", rrect(W - 6, D - 6, SHELL_R - 3, 8), SEAM_Z - 3, SEAM_Z + 3, "slot")
+    bevel(shell, SHELL_EDGE, 3, angle=30)
+    bake(shell)
+    # 差し出し口の周りの浅い彫り込みと、溝
+    cuts = [
+        front_cut("cut_panel", PANEL_W, PANEL_H, 8, SLOT_Z, PANEL_DEPTH, "shell"),
+        front_cut("cut_slot", SLOT_W, SLOT_H, 3, SLOT_Z, 40, "slot"),
+        front_cut("cut_pull", PULL_W, PULL_H, PULL_H / 2, PULL_Z, PULL_DEPTH, "slot"),
+    ]
+    # 引き出しの合わせ目（前面の細い溝の輪）
+    dh = DRAWER_Z[1] - DRAWER_Z[0]
+    ring = front_cut("cut_seam", DRAWER_W, dh, 8, (DRAWER_Z[0] + DRAWER_Z[1]) / 2, 3, "slot")
+    inner = prism("cut_seam_in", rrect(DRAWER_W - 2 * SEAM, dh - 2 * SEAM, 8 - SEAM, 4), FRONT - 30, FRONT + 10, "slot", axis="Y")
+    move(inner, (0, 0, (DRAWER_Z[0] + DRAWER_Z[1]) / 2))
     cut(ring, inner)
     bake(ring)
-    cut(shell, ring)
-    # 蓋の周りの隙間（蓋が筐体の凹みに収まって見えるように）
-    pocket = prism("cut_pocket", rrect(COVER_W + 2 * POCKET, COVER_Y1 - COVER_Y0 + 2 * POCKET, 14, 6), SHELL_TOP - 4, SHELL_TOP + 40, "slot")
-    move(pocket, (0, (COVER_Y0 + COVER_Y1) / 2, 0))
-    cut(shell, pocket)
-    # キーの周りの浅いくぼみ
-    bezel = prism("cut_bezel", rrect(KEY_SIZE + 8, KEY_SIZE + 8, KEY_R + 4, 5), SHELL_TOP - 2, SHELL_TOP + 20, "shell")
-    move(bezel, (KEY[0], KEY[1], 0))
-    cut(shell, bezel)
-    # 側面の放熱スリット（左右）
-    for i in range(VENT_N):
-        z = VENT_Z0 + i * VENT_STEP
-        for sx in (-1, 1):
-            v = prism(f"cut_vent{i}{sx}", rrect(VENT_Y[1] - VENT_Y[0], VENT_H, VENT_H / 2, 3), sx * W / 2 - 10, sx * W / 2 + 10, "slot", axis="X")
-            move(v, (0, (VENT_Y[0] + VENT_Y[1]) / 2, z))
-            cut(shell, v)
+    cuts.append(ring)
+    for ob in cuts:
+        cut(shell, ob)
     bake(shell)
     for ob in list(COL.objects):
         if ob.name.startswith("cut_"):
@@ -327,61 +362,48 @@ def body() -> bpy.types.Object:
     bevel(lip, 1.5, 2)
     parts.append(bake(lip))
 
-    # 蝶番（蓋の奥の縁、二つの節）
-    for i, sx in enumerate((-1, 1)):
-        bm = bmesh.new()
-        bmesh.ops.create_cone(bm, cap_ends=True, segments=16, radius1=HINGE_R, radius2=HINGE_R, depth=70)
-        bmesh.ops.rotate(bm, verts=bm.verts, cent=(0, 0, 0), matrix=Matrix.Rotation(math.pi / 2, 3, "Y"))
-        bmesh.ops.translate(bm, verts=bm.verts, vec=(sx * 150, COVER_Y1 - 2, SHELL_TOP + 2))
-        parts.append(new_object(f"hinge{i}", bm, ["shell"]))
-    ob = join("body", parts)
-    lean(ob)
+    # 鍵盤の台の板（斜面に少し埋めた暗い板。キーはこの上に載る）
+    plate = cap("deck_plate", W - 2 * DECK_PLATE_IN, DECK_L - 2 * DECK_PLATE_IN + 8, 10, 5, 1.2, "cover")
+    parts.append(on_deck(plate, 0, 0, PLATE_T - 5))
+    return join("body", parts)
+
+
+def keys() -> bpy.types.Object:
+    parts = []
+    for v in ROWS:
+        for u in SMALL_U:
+            parts.append(on_deck(cap("key", KEY, KEY - 2, KEY_R, KEY_H, 2.0, "knob"), u, v, PLATE_T))
+    for u, v, w in WIDE:
+        parts.append(on_deck(cap("key", w, KEY - 2, KEY_R, KEY_H, 2.0, "knob"), u, v, PLATE_T))
+    for v in ROWS[:2]:
+        for u in (SIDE_U, TOTAL[0]):
+            parts.append(on_deck(cap("key", KEY, KEY - 2, KEY_R, KEY_H, 2.0, "knob"), u, v, PLATE_T))
+    for v in ROWS[2:]:
+        parts.append(on_deck(cap("key", KEY, KEY - 2, KEY_R, KEY_H, 2.0, "knob"), SIDE_U, v, PLATE_T))
+    return join("keys", parts)
+
+
+def total_key() -> bpy.types.Object:
+    ob = cap("btn", TOTAL[2], TOTAL[3], 9, TOTAL_H, 2.5, "knob")
+    return on_deck(ob, TOTAL[0], TOTAL[1], PLATE_T)
+
+
+def lamp() -> bpy.types.Object:
+    ob = cap("lamp", LAMP_SIZE[0], LAMP_SIZE[1], LAMP_SIZE[1] / 2, LAMP_H, 0.8, "led")
+    move(ob, (LAMP[0], LAMP[1], TOP_Z))
     return ob
 
 
-def lean(ob: bpy.types.Object) -> None:
-    """前面を上ほど奥へ倒す。前面の近くの頂点を高さに比例して奥へずらし、天板は水平のまま"""
-    for v in ob.data.vertices:
-        t = min(1.0, max(0.0, (FRONT + 44 - v.co.y) / 24))
-        h = min(1.0, max(0.0, (v.co.z - PLINTH_Z) / (SHELL_TOP - PLINTH_Z)))
-        v.co.y += FRONT_LEAN * t * h
-
-
-def cover() -> bpy.types.Object:
-    """紙のロールを収めた丸く膨らんだ蓋。断面は奥行き方向の超楕円の上半分"""
-    ry = (COVER_Y1 - COVER_Y0) / 2
-    yc = COVER_Y0 + ry
-    rz = H - SHELL_TOP + 4
-    n = 24
-    prof = []
-    for i in range(n + 1):
-        a = math.pi * i / n  # 0: 奥 → π: 手前
-        c, s = math.cos(a), math.sin(a)
-        y = yc + ry * math.copysign(abs(c) ** (2 / COVER_EXP), c)
-        z = rz * abs(s) ** (2 / COVER_EXP)
-        prof.append((y, SHELL_TOP - 4 + z))
-    ob = prism("cover_raw", prof, -COVER_W / 2, COVER_W / 2, "cover", axis="X")
-    bevel(ob, 12.0, 4, angle=30)
-    bake(ob)
-    # 手前の指かけのくぼみ
-    bm = bmesh.new()
-    bmesh.ops.create_uvsphere(bm, u_segments=24, v_segments=12, radius=1.0)
-    bmesh.ops.scale(bm, vec=(34, 9, 9), verts=bm.verts)
-    finger = new_object("cut_finger", bm, ["cover"])
-    move(finger, (0, COVER_Y0 - 3, SHELL_TOP + 15))
-    cut(ob, finger)
-    bake(ob)
-    remove(finger)
-    ob.name = "cover"
-    ob.data.name = "cover"
-    return ob
-
-
-def rounded_cap(name: str, size: tuple, r: float, h: float, edge: float, mat: str, at: tuple, base: float = SHELL_TOP) -> bpy.types.Object:
-    ob = prism(name, rrect(size[0], size[1], r, 4), 0, h, mat)
-    bevel(ob, edge, 2)
-    bake(ob)
-    move(ob, (at[0], at[1], base))
+def pole() -> bpy.types.Object:
+    """画面の支柱。天板の台座から細い首が立ち、上端に画面を受ける横長の受け"""
+    base = cap("pole_base", POLE_BASE[0], POLE_BASE[1], 18, POLE_BASE[2], 2.0, "shell")
+    neck = prism("pole_neck", rrect(POLE_SIZE[0], POLE_SIZE[1], 10, 6), 0, POLE_TOP - TOP_Z - 14, "shell")
+    bevel(neck, 2.0, 2)
+    bake(neck)
+    head = cap("pole_head", 104, 32, 12, 16, 3.0, "shell")
+    move(head, (0, 0, POLE_TOP - TOP_Z - 16))
+    ob = join("pole", [base, neck, head])
+    move(ob, (POLE[0], POLE[1], TOP_Z))
     return ob
 
 
@@ -389,21 +411,19 @@ def build() -> list:
     global COL
     COL = reset()
     materials()
-    objs = [
-        body(),
-        cover(),
-        rounded_cap("btn", (KEY_SIZE, KEY_SIZE), KEY_R, KEY_H, 2.5, "knob", KEY, SHELL_TOP - 2),
-        rounded_cap("lamp", LAMP_SIZE, LAMP_SIZE[1] / 2, LAMP_H, 0.8, "led", LAMP),
-    ]
-    # 原点を差し出し口の中心へ移す。cover は蝶番の軸、btn・lamp は底面の中心を原点にする
-    # 前面は上ほど奥へ倒してあるので、差し出し口の高さでの前面の位置を原点にする
-    front_at_slot = FRONT + FRONT_LEAN * (SLOT_Z - PLINTH_Z) / (SHELL_TOP - PLINTH_Z)
-    shift = Matrix.Translation((0, -front_at_slot, -SLOT_Z))
+    objs = [body(), keys(), total_key(), lamp(), pole()]
+    mount = bpy.data.objects.new("mount", None)
+    mount.empty_display_type = "ARROWS"
+    mount.empty_display_size = 30
+    COL.objects.link(mount)
+    # 原点を差し出し口の中心へ移す。他の object はそれぞれの原点へ
+    shift = Matrix.Translation((0, -FRONT, -SLOT_Z))
     pivots = {
-        "body": Vector((0, front_at_slot, SLOT_Z)),
-        "cover": Vector((0, COVER_Y1 - 2, SHELL_TOP + 2)),
-        "btn": Vector((KEY[0], KEY[1], SHELL_TOP - 2)),
-        "lamp": Vector((LAMP[0], LAMP[1], SHELL_TOP)),
+        "body": Vector((0, FRONT, SLOT_Z)),
+        "keys": DECK @ Vector((0, 0, PLATE_T)),
+        "btn": DECK @ Vector((TOTAL[0], TOTAL[1], PLATE_T)),
+        "lamp": Vector((LAMP[0], LAMP[1], TOP_Z)),
+        "pole": Vector((POLE[0], POLE[1], TOP_Z)),
     }
     for ob in objs:
         ob.data.transform(shift)
@@ -412,7 +432,8 @@ def build() -> list:
         ob.matrix_world = Matrix.Translation(p)
         smooth(ob)
         ob.data.name = ob.name
-    return objs
+    mount.location = shift @ Vector((POLE[0], POLE[1], POLE_TOP))
+    return objs + [mount]
 
 
 def export(objs: list) -> None:
@@ -435,8 +456,13 @@ def export(objs: list) -> None:
 
 
 def render(dir_: Path, samples: int = 48) -> None:
-    """確かめるための絵。床と柔らかい光で、正面やや上と斜め上から撮る"""
+    """確かめるための絵。床と柔らかい光で、正面やや上と斜め上から撮る（床・光・カメラは collection STAGE に置く）"""
     scene = bpy.context.scene
+    stage = bpy.data.collections.get(STAGE) or bpy.data.collections.new(STAGE)
+    if stage.name not in scene.collection.children:
+        scene.collection.children.link(stage)
+    for ob in list(stage.objects):
+        bpy.data.objects.remove(ob)
     try:
         scene.render.engine = "CYCLES"
         scene.cycles.samples = samples
@@ -446,33 +472,38 @@ def render(dir_: Path, samples: int = 48) -> None:
     scene.render.resolution_x = 1200
     scene.render.resolution_y = 900
     scene.view_settings.view_transform = "AgX"
-    world = bpy.data.worlds.new("world")
+    world = bpy.data.worlds.get("register_world") or bpy.data.worlds.new("register_world")
     world.use_nodes = True
     bg = next(n for n in world.node_tree.nodes if n.type == "BACKGROUND")
     bg.inputs["Color"].default_value = (0.92, 0.9, 0.86, 1)
     bg.inputs["Strength"].default_value = 0.6
     scene.world = world
-    bpy.ops.mesh.primitive_plane_add(size=6000, location=(0, 0, -SLOT_Z))
-    floor = bpy.context.object
-    floor.data.materials.append(material("floor", srgb("#f3f0ea"), 0.9))
-    for loc, energy, angle in (((-500, -700, 900), 2.6, 25), ((800, -300, 500), 0.9, 40), ((0, 600, 800), 0.6, 40)):
-        bpy.ops.object.light_add(type="SUN", location=loc)
-        light = bpy.context.object
+    me = bpy.data.meshes.new("stage_floor")
+    bm = bmesh.new()
+    bmesh.ops.create_grid(bm, x_segments=1, y_segments=1, size=3000)
+    bmesh.ops.translate(bm, verts=bm.verts, vec=(0, 0, -SLOT_Z))
+    bm.to_mesh(me)
+    bm.free()
+    me.materials.append(material("floor", srgb("#f3f0ea"), 0.9))
+    stage.objects.link(bpy.data.objects.new("stage_floor", me))
+    for i, (loc, energy, angle) in enumerate((((-500, -700, 900), 2.6, 25), ((800, -300, 500), 0.9, 40), ((0, 600, 800), 0.6, 40))):
+        light = bpy.data.objects.new(f"stage_sun{i}", bpy.data.lights.new(f"stage_sun{i}", "SUN"))
         light.data.energy = energy
         light.data.angle = math.radians(angle)
         light.rotation_euler = (Vector((0, 0, 0)) - Vector(loc)).to_track_quat("-Z", "Y").to_euler()
-    bpy.ops.object.camera_add()
-    cam = bpy.context.object
+        stage.objects.link(light)
+    cam = bpy.data.objects.new("stage_camera", bpy.data.cameras.new("stage_camera"))
     cam.data.lens = 70
     cam.data.clip_start = 10
     cam.data.clip_end = 20000
+    stage.objects.link(cam)
     scene.camera = cam
     dir_.mkdir(parents=True, exist_ok=True)
-    target = Vector((0, D / 2, 20))
-    for name, down, side in (("front", 20, 0), ("angle", 32, -38)):
+    target = Vector((0, D / 2, 30))
+    for name, down, side in (("front", 14, 0), ("angle", 30, -36)):
         dv = Vector((0, -1, 0))
         dv.rotate(Matrix.Rotation(math.radians(side), 3, "Z"))
-        dv = (dv * math.cos(math.radians(down)) + Vector((0, 0, math.sin(math.radians(down))))) * 2200
+        dv = (dv * math.cos(math.radians(down)) + Vector((0, 0, math.sin(math.radians(down))))) * 2300
         cam.location = target + dv
         cam.rotation_euler = (-dv).to_track_quat("-Z", "Y").to_euler()
         scene.render.filepath = str(dir_ / f"receipt-machine-{name}.png")
@@ -492,4 +523,4 @@ def main(argv: list) -> list:
     return objs
 
 
-main(sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else [])
+main(sys.argv[sys.argv.index("--") + 1 :] if "--" in sys.argv else globals().get("ARGV", []))
