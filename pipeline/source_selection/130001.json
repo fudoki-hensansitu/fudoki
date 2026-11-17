@@ -24,6 +24,16 @@
               "scope": [
                 {
                   "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 115
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -42,11 +52,31 @@
               "scope": [
                 {
                   "account": "特別区財政調整会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 2,
+                      "end": 3
+                    }
+                  ]
+                },
+                {
+                  "account": "特別区財政調整会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 4,
                       "end": 5
+                    }
+                  ]
+                },
+                {
+                  "account": "地方消費税清算会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 9
                     }
                   ]
                 },
@@ -62,11 +92,31 @@
                 },
                 {
                   "account": "小笠原諸島生活再建資金会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 14,
+                      "end": 15
+                    }
+                  ]
+                },
+                {
+                  "account": "小笠原諸島生活再建資金会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 16,
                       "end": 17
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 20,
+                      "end": 25
                     }
                   ]
                 },
@@ -82,11 +132,31 @@
                 },
                 {
                   "account": "母子父子福祉貸付資金会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 32,
+                      "end": 35
+                    }
+                  ]
+                },
+                {
+                  "account": "母子父子福祉貸付資金会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 36,
                       "end": 37
+                    }
+                  ]
+                },
+                {
+                  "account": "心身障害者扶養年金会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 40,
+                      "end": 41
                     }
                   ]
                 },
@@ -102,11 +172,31 @@
                 },
                 {
                   "account": "地方独立行政法人東京都立病院機構貸付等事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 46,
+                      "end": 49
+                    }
+                  ]
+                },
+                {
+                  "account": "地方独立行政法人東京都立病院機構貸付等事業会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 50,
                       "end": 53
+                    }
+                  ]
+                },
+                {
+                  "account": "中小企業設備導入等資金会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 56,
+                      "end": 57
                     }
                   ]
                 },
@@ -122,11 +212,31 @@
                 },
                 {
                   "account": "林業・木材産業改善資金助成会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 64,
+                      "end": 65
+                    }
+                  ]
+                },
+                {
+                  "account": "林業・木材産業改善資金助成会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 66,
                       "end": 67
+                    }
+                  ]
+                },
+                {
+                  "account": "沿岸漁業改善資金助成会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 70,
+                      "end": 71
                     }
                   ]
                 },
@@ -142,11 +252,31 @@
                 },
                 {
                   "account": "と場会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 76,
+                      "end": 79
+                    }
+                  ]
+                },
+                {
+                  "account": "と場会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 80,
                       "end": 85
+                    }
+                  ]
+                },
+                {
+                  "account": "都営住宅等事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 88,
+                      "end": 95
                     }
                   ]
                 },
@@ -162,11 +292,31 @@
                 },
                 {
                   "account": "都営住宅等保証金会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 106,
+                      "end": 109
+                    }
+                  ]
+                },
+                {
+                  "account": "都営住宅等保証金会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 110,
                       "end": 111
+                    }
+                  ]
+                },
+                {
+                  "account": "都市開発資金会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 114,
+                      "end": 117
                     }
                   ]
                 },
@@ -182,11 +332,31 @@
                 },
                 {
                   "account": "用地会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 122,
+                      "end": 125
+                    }
+                  ]
+                },
+                {
+                  "account": "用地会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 126,
                       "end": 127
+                    }
+                  ]
+                },
+                {
+                  "account": "公債費会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 130,
+                      "end": 133
                     }
                   ]
                 },
@@ -202,11 +372,31 @@
                 },
                 {
                   "account": "臨海都市基盤整備事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 140,
+                      "end": 143
+                    }
+                  ]
+                },
+                {
+                  "account": "臨海都市基盤整備事業会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 144,
                       "end": 147
+                    }
+                  ]
+                },
+                {
+                  "account": "工業用水道事業清算会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 150,
+                      "end": 153
                     }
                   ]
                 },
@@ -225,7 +415,7 @@
           ]
         }
       ],
-      "reason": "会計管理局「官庁会計による決算情報（過年度分）」の令和６年度。歳入歳出決算事項別明細書の歳出（文字PDF、単位円）。見開きで、左頁に款・項・目と予算現額（当初予算額・補正予算額・継続費及び繰越事業費繰越額・予備費支出及び流用増減・計）、節・細節の区分と金額、右頁に支出済額・翌年度繰越額（継続費逓次繰越・繰越明許費・事故繰越し）・不用額・備考。目の下に事業の階層はない。一般会計（物理505頁、印字＋8＝物理）の歳出は物理116-505頁（印字108-497頁、第1款議会費から第18款予備費・歳出合計 支出済額 8,724,585,235,292円まで）。特別会計18会計の歳出は別冊（特別会計）にあり、会計ごとの物理頁は scope のとおり（各会計とも会計の扉頁の後に歳入、歳出の順）。歳入・実質収支調書・財産調書は scope 外。同じ内容を東京都オープンデータカタログが XLSX（事項別明細 歳出、印刷様式のシート）でも出しているが、風土記の取り込みは CSV・PDF だけなので文字PDFを選んだ。XLSX は op20251218_06kessan_05_jikoubetu_saisyutu.xlsx（2026-10-29確認）。",
+      "reason": "会計管理局「官庁会計による決算情報（過年度分）」の令和６年度。歳入歳出決算事項別明細書の歳入と歳出（文字PDF、単位円）。歳出は見開きで、左頁に款・項・目と予算現額（当初予算額・補正予算額・継続費及び繰越事業費繰越額・予備費支出及び流用増減・計）、節・細節の区分と金額、右頁に支出済額・翌年度繰越額（継続費逓次繰越・繰越明許費・事故繰越し）・不用額・備考。目の下に事業の階層はない。歳入も見開きで、款・項・目と予算現額・調定額・収入済額・不納欠損額・収入未済額・備考を印字する。一般会計（物理505頁、印字＋8＝物理）の歳入は物理10-115頁、歳出は物理116-505頁（印字108-497頁、第1款議会費から第18款予備費・歳出合計 支出済額 8,724,585,235,292円まで）。特別会計18会計の歳入・歳出は別冊（特別会計）にあり、会計ごとの物理頁は scope のとおり（各会計とも会計の扉頁の後に歳入、歳出の順）。実質収支調書・財産調書は scope 外。同じ内容を東京都オープンデータカタログが XLSX（事項別明細 歳出、印刷様式のシート）でも出しているが、風土記の取り込みは CSV・PDF だけなので文字PDFを選んだ。XLSX は op20251218_06kessan_05_jikoubetu_saisyutu.xlsx（2026-10-29確認）。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -266,6 +456,16 @@
               "scope": [
                 {
                   "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 9,
+                      "end": 114
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -284,11 +484,31 @@
               "scope": [
                 {
                   "account": "特別区財政調整会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 2,
+                      "end": 3
+                    }
+                  ]
+                },
+                {
+                  "account": "特別区財政調整会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 4,
                       "end": 5
+                    }
+                  ]
+                },
+                {
+                  "account": "地方消費税清算会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 9
                     }
                   ]
                 },
@@ -304,11 +524,31 @@
                 },
                 {
                   "account": "小笠原諸島生活再建資金会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 14,
+                      "end": 15
+                    }
+                  ]
+                },
+                {
+                  "account": "小笠原諸島生活再建資金会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 16,
                       "end": 17
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 20,
+                      "end": 25
                     }
                   ]
                 },
@@ -324,11 +564,31 @@
                 },
                 {
                   "account": "母子父子福祉貸付資金会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 32,
+                      "end": 35
+                    }
+                  ]
+                },
+                {
+                  "account": "母子父子福祉貸付資金会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 36,
                       "end": 37
+                    }
+                  ]
+                },
+                {
+                  "account": "心身障害者扶養年金会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 40,
+                      "end": 41
                     }
                   ]
                 },
@@ -344,11 +604,31 @@
                 },
                 {
                   "account": "地方独立行政法人東京都立病院機構貸付等事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 46,
+                      "end": 49
+                    }
+                  ]
+                },
+                {
+                  "account": "地方独立行政法人東京都立病院機構貸付等事業会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 50,
                       "end": 53
+                    }
+                  ]
+                },
+                {
+                  "account": "中小企業設備導入等資金会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 56,
+                      "end": 57
                     }
                   ]
                 },
@@ -364,11 +644,31 @@
                 },
                 {
                   "account": "林業・木材産業改善資金助成会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 64,
+                      "end": 65
+                    }
+                  ]
+                },
+                {
+                  "account": "林業・木材産業改善資金助成会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 66,
                       "end": 67
+                    }
+                  ]
+                },
+                {
+                  "account": "沿岸漁業改善資金助成会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 70,
+                      "end": 71
                     }
                   ]
                 },
@@ -384,11 +684,31 @@
                 },
                 {
                   "account": "と場会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 76,
+                      "end": 79
+                    }
+                  ]
+                },
+                {
+                  "account": "と場会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 80,
                       "end": 85
+                    }
+                  ]
+                },
+                {
+                  "account": "都営住宅等事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 88,
+                      "end": 95
                     }
                   ]
                 },
@@ -404,11 +724,31 @@
                 },
                 {
                   "account": "都営住宅等保証金会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 106,
+                      "end": 109
+                    }
+                  ]
+                },
+                {
+                  "account": "都営住宅等保証金会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 110,
                       "end": 111
+                    }
+                  ]
+                },
+                {
+                  "account": "都市開発資金会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 114,
+                      "end": 117
                     }
                   ]
                 },
@@ -424,11 +764,31 @@
                 },
                 {
                   "account": "用地会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 122,
+                      "end": 125
+                    }
+                  ]
+                },
+                {
+                  "account": "用地会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 126,
                       "end": 127
+                    }
+                  ]
+                },
+                {
+                  "account": "公債費会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 130,
+                      "end": 133
                     }
                   ]
                 },
@@ -444,11 +804,31 @@
                 },
                 {
                   "account": "臨海都市基盤整備事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 138,
+                      "end": 141
+                    }
+                  ]
+                },
+                {
+                  "account": "臨海都市基盤整備事業会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 142,
                       "end": 145
+                    }
+                  ]
+                },
+                {
+                  "account": "工業用水道事業清算会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 148,
+                      "end": 151
                     }
                   ]
                 },
@@ -467,7 +847,7 @@
           ]
         }
       ],
-      "reason": "会計管理局「東京都の決算情報」の最新年度（令和７年度）。掲載頁の見出しは「決算（見込み）」で、議会の認定前に調製・提出された決算書類。歳入歳出決算事項別明細書の歳出（文字PDF、単位円）。見開きで、左頁に款・項・目と予算現額（当初予算額・補正予算額・継続費及び繰越事業費繰越額・予備費支出及び流用増減・計）、節・細節の区分と金額、右頁に支出済額・翌年度繰越額（継続費逓次繰越・繰越明許費・事故繰越し）・不用額・備考。目の下に事業の階層はない。一般会計（物理510頁、印字＋7＝物理）の歳出は物理115-510頁（第1款議会費から第18款予備費・歳出合計まで）。特別会計18会計の歳出は別冊（特別会計）にあり、会計ごとの物理頁は scope のとおり（各会計とも会計の扉頁の後に歳入、歳出の順）。歳入・実質収支調書・財産調書は scope 外。同じ内容を東京都オープンデータカタログが XLSX（事項別明細 歳出、印刷様式のシート）でも出しているが、風土記の取り込みは CSV・PDF だけなので文字PDFを選んだ。令和７年度分の XLSX はカタログに未掲載（2026-10-29確認）。",
+      "reason": "会計管理局「東京都の決算情報」の最新年度（令和７年度）。掲載頁の見出しは「決算（見込み）」で、議会の認定前に調製・提出された決算書類。歳入歳出決算事項別明細書の歳入と歳出（文字PDF、単位円）。歳出は見開きで、左頁に款・項・目と予算現額（当初予算額・補正予算額・継続費及び繰越事業費繰越額・予備費支出及び流用増減・計）、節・細節の区分と金額、右頁に支出済額・翌年度繰越額（継続費逓次繰越・繰越明許費・事故繰越し）・不用額・備考。目の下に事業の階層はない。歳入も見開きで、款・項・目と予算現額・調定額・収入済額・不納欠損額・収入未済額・備考を印字する。一般会計（物理510頁、印字＋7＝物理）の歳入は物理9-114頁、歳出は物理115-510頁（第1款議会費から第18款予備費・歳出合計まで）。特別会計18会計の歳入・歳出は別冊（特別会計）にあり、会計ごとの物理頁は scope のとおり（各会計とも会計の扉頁の後に歳入、歳出の順）。実質収支調書・財産調書は scope 外。同じ内容を東京都オープンデータカタログが XLSX（事項別明細 歳出、印刷様式のシート）でも出しているが、風土記の取り込みは CSV・PDF だけなので文字PDFを選んだ。令和７年度分の XLSX はカタログに未掲載（2026-10-29確認）。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
