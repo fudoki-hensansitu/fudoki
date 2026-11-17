@@ -1,0 +1,413 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131067",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e7458a6c67522e8aead736c464915d8aaaa0807146690f5870b249a14be4e870"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  },
+                  "note_kinds": {
+                    "均等割": "積算",
+                    "税率": "積算",
+                    "運用原資": "積算",
+                    "賦課限度額": "積算",
+                    "基金原資": "積算",
+                    "保険料基準額": "積算"
+                  }
+                },
+                "quirks": {
+                  "unnumbered_notes": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        },
+        "pages": [
+          [
+            26,
+            145
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "1f97e8a44fe7891b6c24014f2a3450b8d60a03fb70116bbba98025b60e6cab83"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  },
+                  "note_kinds": {
+                    "均等割": "積算",
+                    "税率": "積算",
+                    "運用原資": "積算",
+                    "賦課限度額": "積算",
+                    "基金原資": "積算",
+                    "保険料基準額": "積算"
+                  }
+                },
+                "quirks": {
+                  "unnumbered_notes": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        },
+        "pages": [
+          [
+            20,
+            43
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "1f97e8a44fe7891b6c24014f2a3450b8d60a03fb70116bbba98025b60e6cab83"
+        }
+      ],
+      "options": {
+        "account": "介護保険会計",
+        "table_id": "care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  },
+                  "note_kinds": {
+                    "均等割": "積算",
+                    "税率": "積算",
+                    "運用原資": "積算",
+                    "賦課限度額": "積算",
+                    "基金原資": "積算",
+                    "保険料基準額": "積算"
+                  }
+                },
+                "quirks": {
+                  "unnumbered_notes": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        },
+        "pages": [
+          [
+            164,
+            191
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "1f97e8a44fe7891b6c24014f2a3450b8d60a03fb70116bbba98025b60e6cab83"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  },
+                  "note_kinds": {
+                    "均等割": "積算",
+                    "税率": "積算",
+                    "運用原資": "積算",
+                    "賦課限度額": "積算",
+                    "基金原資": "積算",
+                    "保険料基準額": "積算"
+                  }
+                },
+                "quirks": {
+                  "unnumbered_notes": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        },
+        "pages": [
+          [
+            108,
+            123
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    },
+    {
+      "id": "geriatric-facility-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "1f97e8a44fe7891b6c24014f2a3450b8d60a03fb70116bbba98025b60e6cab83"
+        }
+      ],
+      "options": {
+        "account": "老人保健施設会計",
+        "table_id": "geriatric-facility-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  },
+                  "note_kinds": {
+                    "均等割": "積算",
+                    "税率": "積算",
+                    "運用原資": "積算",
+                    "賦課限度額": "積算",
+                    "基金原資": "積算",
+                    "保険料基準額": "積算"
+                  }
+                },
+                "quirks": {
+                  "unnumbered_notes": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        },
+        "pages": [
+          [
+            258,
+            265
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "geriatric-facility-initial"
+        }
+      ]
+    },
+    {
+      "id": "hospital-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "1f97e8a44fe7891b6c24014f2a3450b8d60a03fb70116bbba98025b60e6cab83"
+        }
+      ],
+      "options": {
+        "account": "病院施設会計",
+        "table_id": "hospital-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  },
+                  "note_kinds": {
+                    "均等割": "積算",
+                    "税率": "積算",
+                    "運用原資": "積算",
+                    "賦課限度額": "積算",
+                    "基金原資": "積算",
+                    "保険料基準額": "積算"
+                  }
+                },
+                "quirks": {
+                  "unnumbered_notes": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        },
+        "pages": [
+          [
+            292,
+            303
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "hospital-initial"
+        }
+      ]
+    }
+  ]
+}
