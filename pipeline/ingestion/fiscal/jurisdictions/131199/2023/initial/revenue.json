@@ -1,0 +1,996 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131199",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "funded_explanation",
+            "options": {
+              "columns": {
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "前年度／予算額": {
+                  "heading": "前年度予算額"
+                },
+                "前年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "本年度／予算額": {
+                  "heading": "本年度予算額"
+                },
+                "本年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "比較／増減率": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・見込額など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "code_after_amount": {
+              "code_digits": 1
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "auto-p69-full-page-a0-result0-r56",
+            "page": 69,
+            "observation_id": "p69:full-page:a0:result0:r56",
+            "observed_name": "(2) 証明・閱覧手数料",
+            "corrected_name": "(2) 証明・閲覧手数料",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p79-full-page-a0-result0-r32",
+            "page": 79,
+            "observation_id": "p79:full-page:a0:result0:r32",
+            "observed_name": "〔個人番号力一ド交付事務費補助金",
+            "corrected_name": "〔個人番号カード交付事務費補助金",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p95-full-page-a0-result0-r50",
+            "page": 95,
+            "observation_id": "p95:full-page:a0:result0:r50",
+            "observed_name": "（12）都市型軽費老人ホ一ム整備費補助金",
+            "corrected_name": "（12）都市型軽費老人ホーム整備費補助金",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p99-full-page-a0-result0-r44",
+            "page": 99,
+            "observation_id": "p99:full-page:a0:result0:r44",
+            "observed_name": "（24）とうきようママパパ応援事業費補助金",
+            "corrected_name": "（24）とうきょうママパパ応援事業費補助金",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p101-full-page-a0-result0-r18",
+            "page": 101,
+            "observation_id": "p101:full-page:a0:result0:r18",
+            "observed_name": "（6）とうきようママパパ応援事業費補助金",
+            "corrected_name": "（6）とうきょうママパパ応援事業費補助金",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p123-full-page-a0-result0-r29",
+            "page": 123,
+            "observation_id": "p123:full-page:a0:result0:r29",
+            "observed_name": "〔歲計現金等保管利子",
+            "corrected_name": "〔歳計現金等保管利子",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p141-full-page-a0-result0-r4",
+            "page": 141,
+            "observation_id": "p141:full-page:a0:result0:r4",
+            "observed_name": "(4) 揭示板広告収入",
+            "corrected_name": "(4) 掲示板広告収入",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          }
+        ],
+        "pages": [
+          [
+            44,
+            149
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p90-hikaku",
+            "page": 90,
+            "observation_id": "p90:full-page:a0:result0:r14",
+            "observed": "320",
+            "reason": "原典の画像で、比較の欄の金額 320 は欄の右の罫線に接して印字されている。OCR の枠が罫線を越えたため、最後の桁が右の節の欄に分けられた。読みを外し、比較の欄の中の枠で 320 と宣言する。"
+          },
+          {
+            "id": "p110-hikaku",
+            "page": 110,
+            "observation_id": "p110:full-page:a0:result0:r19",
+            "observed": "739",
+            "reason": "原典の画像で、比較の欄の金額 739 は欄の右の罫線に接して印字されている。OCR の枠が罫線を越えたため、最後の桁が右の節の欄に分けられた。読みを外し、比較の欄の中の枠で 739 と宣言する。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p90-hikaku",
+            "page": 90,
+            "boxes": [
+              [
+                329.0,
+                498.0,
+                344.0,
+                507.0
+              ]
+            ],
+            "amount": "320",
+            "reason": "原典の画像で、比較の欄の金額 320 は欄の右の罫線に接して印字されている。OCR の枠が罫線を越えたため、最後の桁が右の節の欄に分けられた。読みを外し、比較の欄の中の枠で 320 と宣言する。"
+          },
+          {
+            "id": "p110-hikaku",
+            "page": 110,
+            "boxes": [
+              [
+                329.0,
+                393.0,
+                344.0,
+                403.0
+              ]
+            ],
+            "amount": "739",
+            "reason": "原典の画像で、比較の欄の金額 739 は欄の右の罫線に接して印字されている。OCR の枠が罫線を越えたため、最後の桁が右の節の欄に分けられた。読みを外し、比較の欄の中の枠で 739 と宣言する。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-revenue-ocr-1",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49
+            ]
+          },
+          "sha256": "1ece8bfbfb5ecbd38e4381d89776b2e2bad48dde8fbf083ea8371340bfad1a6b",
+          "bytes": 1092215
+        },
+        {
+          "id": "general-initial-revenue-ocr-2",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59
+            ]
+          },
+          "sha256": "bb92b7db11435618aff1ad86c8ff971758483f4ce8a4e2d1c4fe51dfafde1178",
+          "bytes": 1278793
+        },
+        {
+          "id": "general-initial-revenue-ocr-3",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              60,
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69
+            ]
+          },
+          "sha256": "f1c8a0b614dc71275671cadbf892c84827940ecc3d4b6271c8d72b5fc1ce8246",
+          "bytes": 1580386
+        },
+        {
+          "id": "general-initial-revenue-ocr-4",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              70,
+              71,
+              72,
+              73,
+              74,
+              75,
+              76,
+              77,
+              78,
+              79
+            ]
+          },
+          "sha256": "24b2440372d6ed94d7615339e6193e5d80a56945f14998f808c54bf46d44997c",
+          "bytes": 1548682
+        },
+        {
+          "id": "general-initial-revenue-ocr-5",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              80,
+              81,
+              82,
+              83,
+              84,
+              85,
+              86,
+              87,
+              88,
+              89
+            ]
+          },
+          "sha256": "75c1676ae0f48e8fe7703efef25850ade676620b4dbe11b103edb529970d4d28",
+          "bytes": 1549071
+        },
+        {
+          "id": "general-initial-revenue-ocr-6",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              90,
+              91,
+              92,
+              93,
+              94,
+              95,
+              96,
+              97,
+              98,
+              99
+            ]
+          },
+          "sha256": "c226b6c22df57cf9ada3f4aa1060351834c651dabf210fea465aa30ef113e1ad",
+          "bytes": 1575002
+        },
+        {
+          "id": "general-initial-revenue-ocr-7",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              100,
+              101,
+              102,
+              103,
+              104,
+              105,
+              106,
+              107,
+              108,
+              109
+            ]
+          },
+          "sha256": "82dc04cb4d6de7686ecb87c9cfa00c1fe0889427c158ad853f7b0049a854fb3f",
+          "bytes": 1604984
+        },
+        {
+          "id": "general-initial-revenue-ocr-8",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              110,
+              111,
+              112,
+              113,
+              114,
+              115,
+              116,
+              117,
+              118,
+              119
+            ]
+          },
+          "sha256": "a56d43e91a63d9602b8f5c2fc17b7d108427f49c3512056e80755eacbc5b466a",
+          "bytes": 1229360
+        },
+        {
+          "id": "general-initial-revenue-ocr-9",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              120,
+              121,
+              122,
+              123,
+              124,
+              125,
+              126,
+              127,
+              128,
+              129
+            ]
+          },
+          "sha256": "122f59465e0194e66089b1727793e6c57c1c3817f066fa729b7dbace482fd694",
+          "bytes": 1531440
+        },
+        {
+          "id": "general-initial-revenue-ocr-10",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              130,
+              131,
+              132,
+              133,
+              134,
+              135,
+              136,
+              137,
+              138,
+              139
+            ]
+          },
+          "sha256": "f69105bfe34b73a41c7cd6c167a8b0cc58ccd1d56614aee31e482730a8cf7988",
+          "bytes": 1171717
+        },
+        {
+          "id": "general-initial-revenue-ocr-11",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              140,
+              141,
+              142,
+              143,
+              144,
+              145,
+              146,
+              147,
+              148,
+              149
+            ]
+          },
+          "sha256": "305ce432d2dbb2c94b79a71dc1c122afc50dc429bc66d16bd7946306981f6066",
+          "bytes": 1011435
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "funded_explanation",
+            "options": {
+              "columns": {
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "前年度／予算額": {
+                  "heading": "前年度予算額"
+                },
+                "前年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "本年度／予算額": {
+                  "heading": "本年度予算額"
+                },
+                "本年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "比較／増減率": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・見込額など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "code_after_amount": {
+              "code_digits": 1
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-initial-revenue-ocr-1",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              342,
+              343,
+              344,
+              345,
+              346,
+              347,
+              348,
+              349,
+              350,
+              351
+            ]
+          },
+          "sha256": "b31c00594e2a5e8dfb394649dc0153ecd5909fbfa0a86af049a1705af1020052",
+          "bytes": 1197602
+        },
+        {
+          "id": "national-health-initial-revenue-ocr-2",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              352,
+              353,
+              354,
+              355,
+              356,
+              357,
+              358,
+              359
+            ]
+          },
+          "sha256": "d06ed1f58cc418d043045229a43d6ba053c37a835065ea9f00df5ba406352ecd",
+          "bytes": 855828
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "care-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "funded_explanation",
+            "options": {
+              "columns": {
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "前年度／予算額": {
+                  "heading": "前年度予算額"
+                },
+                "前年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "本年度／予算額": {
+                  "heading": "本年度予算額"
+                },
+                "本年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "比較／増減率": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・見込額など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "code_after_amount": {
+              "code_digits": 1
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "care-initial-revenue-ocr-1",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              398,
+              399,
+              400,
+              401,
+              402,
+              403,
+              404,
+              405,
+              406,
+              407
+            ]
+          },
+          "sha256": "767c5f9f3960bfc77052072701aa5eff9325bf6a1790b4e9dfc65636e94570f1",
+          "bytes": 1254183
+        },
+        {
+          "id": "care-initial-revenue-ocr-2",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              408,
+              409,
+              410,
+              411,
+              412,
+              413
+            ]
+          },
+          "sha256": "5a39171b43eb97526f54b3a955d7208b492fe99eed7948a511d5305547172c33",
+          "bytes": 601989
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業特別会計",
+        "table_id": "elderly-medical-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "funded_explanation",
+            "options": {
+              "columns": {
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "前年度／予算額": {
+                  "heading": "前年度予算額"
+                },
+                "前年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "本年度／予算額": {
+                  "heading": "本年度予算額"
+                },
+                "本年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "比較／増減率": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・見込額など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "code_after_amount": {
+              "code_digits": 1
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "auto-p451-full-page-a0-result0-r30",
+            "page": 451,
+            "observation_id": "p451:full-page:a0:result0:r30",
+            "observed_name": "〔前年度歲計剩余金",
+            "corrected_name": "〔前年度歳計剩余金",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-initial-revenue-ocr-1",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              446,
+              447,
+              448,
+              449,
+              450,
+              451,
+              452,
+              453,
+              454,
+              455
+            ]
+          },
+          "sha256": "95660dfaa8b82d2b69f96db9cf412fb38ec4e3b932014820a7e28ce43e059ed0",
+          "bytes": 989377
+        }
+      ]
+    },
+    {
+      "id": "tobu-tojo-grade-separation-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a"
+        }
+      ],
+      "options": {
+        "account": "東武東上線連続立体化事業特別会計",
+        "table_id": "tobu-tojo-grade-separation-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "funded_explanation",
+            "options": {
+              "columns": {
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "前年度／予算額": {
+                  "heading": "前年度予算額"
+                },
+                "前年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "本年度／予算額": {
+                  "heading": "本年度予算額"
+                },
+                "本年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "比較／増減率": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・見込額など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "code_after_amount": {
+              "code_digits": 1
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "tobu-tojo-grade-separation-initial-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "tobu-tojo-grade-separation-initial-revenue-ocr-1",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              472,
+              473,
+              474,
+              475
+            ]
+          },
+          "sha256": "f9ae542198d55efa56aebd982ac4b15eb9226fe40934748f531b38bd546438cd",
+          "bytes": 313918
+        }
+      ]
+    }
+  ]
+}

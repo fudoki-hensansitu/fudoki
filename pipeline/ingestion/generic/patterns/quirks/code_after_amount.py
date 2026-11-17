@@ -24,8 +24,8 @@ def pieces(text: str, value: object = True) -> tuple[str, str] | None:
     if found:
         return found.group(1), found.group(2)
     digits = value.get('code_digits') if isinstance(value, dict) else None
-    run = re.match(r'[0-9]+', text)
-    if digits and run and 0 < len(run.group()) - digits <= 3:
+    run = re.match(r'(△?)([0-9]+)', text)  # a minus sign before the digits stays the amount's (`△3151雑入`, 131199)
+    if digits and run and 0 < len(run.group(2)) - digits <= 3:
         return text[:len(run.group()) - digits], text[len(run.group()) - digits:]
     return None
 

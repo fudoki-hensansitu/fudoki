@@ -1,0 +1,1269 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131199",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-detail",
+        "pages": [
+          [
+            54,
+            237
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true,
+                "line_pieces": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考は収入の内容・相手先・件数などの説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                }
+              }
+            }
+          },
+          "quirks": {
+            "inner_tables": {
+              "marker": "当初予算額",
+              "left": "目",
+              "right": "節",
+              "excluded": {
+                "kind": "歳入の説明",
+                "reason": "各目の下の（説明）の表は、目の予算現額・調定額・決算額を区分（現年分・滞納繰越分など）ごとに示す説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "auto-p78-full-page-a0-result0-r45",
+            "page": 78,
+            "observation_id": "p78:full-page:a0:result0:r45",
+            "observed_name": "〔老人ホ一ム入所者自己負担金",
+            "corrected_name": "〔老人ホーム入所者自己負担金",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p84-full-page-a0-result0-r36",
+            "page": 84,
+            "observation_id": "p84:full-page:a0:result0:r36",
+            "observed_name": "地域センタ一使用料及び美術館使用料等の実績による増",
+            "corrected_name": "地域センター使用料及び美術館使用料等の実績による増",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p84-full-page-a0-result0-r37",
+            "page": 84,
+            "observation_id": "p84:full-page:a0:result0:r37",
+            "observed_name": "一使用料",
+            "corrected_name": "ー使用料",
+            "reason": "原典の画像では前の行の末尾のカタカナに続く長音「ー」で行が始まる。Paddle は「ー」を漢字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p84-full-page-a0-result0-r54",
+            "page": 84,
+            "observation_id": "p84:full-page:a0:result0:r54",
+            "observed_name": "2情報処理センタ一使用料",
+            "corrected_name": "2情報処理センター使用料",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p96-full-page-a0-result0-r85",
+            "page": 96,
+            "observation_id": "p96:full-page:a0:result0:r85",
+            "observed_name": "(2)証明·閱覧手数料",
+            "corrected_name": "(2)証明·閲覧手数料",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p112-full-page-a0-result0-r21",
+            "page": 112,
+            "observation_id": "p112:full-page:a0:result0:r21",
+            "observed_name": "〔個人番号力一ド交付事務費補",
+            "corrected_name": "〔個人番号カード交付事務費補",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p144-full-page-a0-result0-r28",
+            "page": 144,
+            "observation_id": "p144:full-page:a0:result0:r28",
+            "observed_name": "（12）都市型軽費老人ホ一ム整備",
+            "corrected_name": "（12）都市型軽費老人ホーム整備",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p148-full-page-a0-result0-r45",
+            "page": 148,
+            "observation_id": "p148:full-page:a0:result0:r45",
+            "observed_name": "（15）保育所等利用多子世带負担",
+            "corrected_name": "（15）保育所等利用多子世帯負担",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p150-full-page-a0-result0-r54",
+            "page": 150,
+            "observation_id": "p150:full-page:a0:result0:r54",
+            "observed_name": "(24)とうきようママパパ応援事",
+            "corrected_name": "(24)とうきょうママパパ応援事",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p154-full-page-a0-result0-r41",
+            "page": 154,
+            "observation_id": "p154:full-page:a0:result0:r41",
+            "observed_name": "(6)とうきようママパパ応援事",
+            "corrected_name": "(6)とうきょうママパパ応援事",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p188-full-page-a0-result0-r59",
+            "page": 188,
+            "observation_id": "p188:full-page:a0:result0:r59",
+            "observed_name": "1 土地壳払収入",
+            "corrected_name": "1 土地売払収入",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p218-full-page-a0-result0-r67",
+            "page": 218,
+            "observation_id": "p218:full-page:a0:result0:r67",
+            "observed_name": "(5) 揭示板広告収入",
+            "corrected_name": "(5) 掲示板広告収入",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p224-full-page-a0-result0-r63",
+            "page": 224,
+            "observation_id": "p224:full-page:a0:result0:r63",
+            "observed_name": "（34）企業活性化センタ一管理業",
+            "corrected_name": "（34）企業活性化センター管理業",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p230-full-page-a0-result0-r21",
+            "page": 230,
+            "observation_id": "p230:full-page:a0:result0:r21",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "p211-funou",
+            "page": 211,
+            "observation_id": "p211:full-page:a0:result0:r15",
+            "observed": "188,071,6882",
+            "reason": "原典の画像では、生活保護費弁償金の不納欠損額は 188,071,688、収入未済額は 2,077,055,057 と印字されている。OCR は不納欠損額の行を右の欄の最初の「2」まで延ばして「188,071,6882」と読んだ。読みを外し、不納欠損額の欄の中の枠で 188,071,688 と宣言する。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p211-funou",
+            "page": 211,
+            "boxes": [
+              [
+                308.5,
+                143.5,
+                360.5,
+                153.3
+              ]
+            ],
+            "amount": "188,071,688",
+            "reason": "原典の画像では、生活保護費弁償金の不納欠損額は 188,071,688、収入未済額は 2,077,055,057 と印字されている。OCR は不納欠損額の行を右の欄の最初の「2」まで延ばして「188,071,6882」と読んだ。読みを外し、不納欠損額の欄の中の枠で 188,071,688 と宣言する。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-ocr-1",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63
+            ]
+          },
+          "sha256": "98d598f0858a1ca2042189ffc41a721ca6ff953fad74ce666f52a377e8dbb6f5",
+          "bytes": 1865560
+        },
+        {
+          "id": "general-revenue-ocr-2",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70,
+              71,
+              72,
+              73
+            ]
+          },
+          "sha256": "21f7ab087a7c5b43d9e0bfa00f6f735d119bfc6506fbf9b40ecf7b13aa17dc8d",
+          "bytes": 1189669
+        },
+        {
+          "id": "general-revenue-ocr-3",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80,
+              81,
+              82,
+              83
+            ]
+          },
+          "sha256": "9e7ae790d4c2c2f80d0be279c4a0508a4f7695f7067e635e77d8b3c099bcae57",
+          "bytes": 1677565
+        },
+        {
+          "id": "general-revenue-ocr-4",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90,
+              91,
+              92,
+              93
+            ]
+          },
+          "sha256": "11595037c861c97e8a504a36080dc102745e501718203c289ee3b3910da3278d",
+          "bytes": 2501434
+        },
+        {
+          "id": "general-revenue-ocr-5",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              94,
+              95,
+              96,
+              97,
+              98,
+              99,
+              100,
+              101,
+              102,
+              103
+            ]
+          },
+          "sha256": "26f30cb7fdeb43e43f89181f5a7b721a3028d97288deedf5bf490f818e8a0bd2",
+          "bytes": 2143725
+        },
+        {
+          "id": "general-revenue-ocr-6",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              104,
+              105,
+              106,
+              107,
+              108,
+              109,
+              110,
+              111,
+              112,
+              113
+            ]
+          },
+          "sha256": "742e006e049f28c80cffabba803ce9afb2ad8d62640b54d55760b761891a5e0e",
+          "bytes": 1965229
+        },
+        {
+          "id": "general-revenue-ocr-7",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              114,
+              115,
+              116,
+              117,
+              118,
+              119,
+              120,
+              121,
+              122,
+              123
+            ]
+          },
+          "sha256": "0a007dd9ce7c3ef924d51e2f5c615a9aeb89a67e2f6cf456652d7681433d2c8b",
+          "bytes": 1852855
+        },
+        {
+          "id": "general-revenue-ocr-8",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              124,
+              125,
+              126,
+              127,
+              128,
+              129,
+              130,
+              131,
+              132,
+              133
+            ]
+          },
+          "sha256": "2726c4484ace048d90413a793fed4c2c59450b7c7ea650fbcae94c30f7cced62",
+          "bytes": 1857408
+        },
+        {
+          "id": "general-revenue-ocr-9",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              134,
+              135,
+              136,
+              137,
+              138,
+              139,
+              140,
+              141,
+              142,
+              143
+            ]
+          },
+          "sha256": "af539da27633edc9796a09cf70a95ce3a9eead58e239253e273d9405f501a138",
+          "bytes": 1874853
+        },
+        {
+          "id": "general-revenue-ocr-10",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              144,
+              145,
+              146,
+              147,
+              148,
+              149,
+              150,
+              151,
+              152,
+              153
+            ]
+          },
+          "sha256": "77ce961c6349b3f6f0dd806dd1ab2d03b89b677b5d92bc69dd0cb58f5709a1cd",
+          "bytes": 1648654
+        },
+        {
+          "id": "general-revenue-ocr-11",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              154,
+              155,
+              156,
+              157,
+              158,
+              159,
+              160,
+              161,
+              162,
+              163
+            ]
+          },
+          "sha256": "b7cc07f30efe9a6870fbfcb1e82117c3a13dd1a43016038edec47889770645da",
+          "bytes": 1821109
+        },
+        {
+          "id": "general-revenue-ocr-12",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              164,
+              165,
+              166,
+              167,
+              168,
+              169,
+              170,
+              171,
+              172,
+              173
+            ]
+          },
+          "sha256": "ae6eaa66b42208505f66a857479e84f5d15925986650e450873cd60eec95e202",
+          "bytes": 1674309
+        },
+        {
+          "id": "general-revenue-ocr-13",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              174,
+              175,
+              176,
+              177,
+              178,
+              179,
+              180,
+              181,
+              182,
+              183
+            ]
+          },
+          "sha256": "db79789a53949c421084e7fd7956e6e979d18ca835b610a54f3819c22cac35c0",
+          "bytes": 1848558
+        },
+        {
+          "id": "general-revenue-ocr-14",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              184,
+              185,
+              186,
+              187,
+              188,
+              189,
+              190,
+              191,
+              192,
+              193
+            ]
+          },
+          "sha256": "47d5c19cb175749d3d17acca2c493a31bb7ae9953bd463b854b4860228f3f9d4",
+          "bytes": 2019874
+        },
+        {
+          "id": "general-revenue-ocr-15",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              194,
+              195,
+              196,
+              197,
+              198,
+              199,
+              200,
+              201,
+              202,
+              203
+            ]
+          },
+          "sha256": "4c5b49f22a9097e6d10c3d4bd4d0f0cb70ee1d8c47799276631aa015d2b23fbf",
+          "bytes": 1997244
+        },
+        {
+          "id": "general-revenue-ocr-16",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              204,
+              205,
+              206,
+              207,
+              208,
+              209,
+              210,
+              211,
+              212,
+              213
+            ]
+          },
+          "sha256": "f5df9f960a2827c9a420e137861b0e930fb561e1456cecbed79ff7952856f40d",
+          "bytes": 2182924
+        },
+        {
+          "id": "general-revenue-ocr-17",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              214,
+              215,
+              216,
+              217,
+              218,
+              219,
+              220,
+              221,
+              222,
+              223
+            ]
+          },
+          "sha256": "4c1ee3e03440e1d082e6aac0ad5f7f001d17bccb6551226f346163ce9d790442",
+          "bytes": 1701200
+        },
+        {
+          "id": "general-revenue-ocr-18",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              224,
+              225,
+              226,
+              227,
+              228,
+              229,
+              230,
+              231,
+              232,
+              233
+            ]
+          },
+          "sha256": "f55a05b9f5f0f630a9d12e12bf9f17098b8f6afc59c423d3747b059803ec4515",
+          "bytes": 1615507
+        },
+        {
+          "id": "general-revenue-ocr-19",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              234,
+              235,
+              236,
+              237
+            ]
+          },
+          "sha256": "647c6c10c10ab833652bf4b30070a077dedc312aed2208ece220eb951d3466bd",
+          "bytes": 629685
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "nhi-revenue-detail",
+        "pages": [
+          [
+            454,
+            479
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true,
+                "line_pieces": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考は収入の内容・相手先・件数などの説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                }
+              }
+            }
+          },
+          "quirks": {
+            "digit_set_codes": 4.0,
+            "inner_tables": {
+              "marker": "当初予算額",
+              "left": "目",
+              "right": "節",
+              "excluded": {
+                "kind": "歳入の説明",
+                "reason": "各目の下の（説明）の表は、目の予算現額・調定額・決算額を区分（現年分・滞納繰越分など）ごとに示す説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "auto-p454-full-page-a0-result0-r94",
+            "page": 454,
+            "observation_id": "p454:full-page:a0:result0:r94",
+            "observed_name": "介護納付金滯",
+            "corrected_name": "介護納付金滞",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p456-full-page-a0-result0-r87",
+            "page": 456,
+            "observation_id": "p456:full-page:a0:result0:r87",
+            "observed_name": "介護納付金滯",
+            "corrected_name": "介護納付金滞",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p472-full-page-a0-result0-r40",
+            "page": 472,
+            "observation_id": "p472:full-page:a0:result0:r40",
+            "observed_name": "〔前年度歲計剩余金",
+            "corrected_name": "〔前年度歳計剩余金",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-revenue-ocr-1",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              454,
+              455,
+              456,
+              457,
+              458,
+              459,
+              460,
+              461,
+              462,
+              463
+            ]
+          },
+          "sha256": "918150988272b6e8c6c78030daa9fcc68769e46224c656ae38d4aa397da3e23e",
+          "bytes": 1708368
+        },
+        {
+          "id": "nhi-revenue-ocr-2",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              464,
+              465,
+              466,
+              467,
+              468,
+              469,
+              470,
+              471,
+              472,
+              473
+            ]
+          },
+          "sha256": "9a253ad31b18dc3d46a786cb040d9688ee4395906a7be1fd481308071518c1a4",
+          "bytes": 1308183
+        },
+        {
+          "id": "nhi-revenue-ocr-3",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              474,
+              475,
+              476,
+              477,
+              478,
+              479
+            ]
+          },
+          "sha256": "2b1fdb1aa9ebec64223b00867704b9feaed600378d0816154f7ff00753ff3a5f",
+          "bytes": 1023270
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "kaigo-revenue-detail",
+        "pages": [
+          [
+            518,
+            543
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true,
+                "line_pieces": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考は収入の内容・相手先・件数などの説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                }
+              }
+            }
+          },
+          "quirks": {
+            "digit_set_codes": 4.0,
+            "inner_tables": {
+              "marker": "当初予算額",
+              "left": "目",
+              "right": "節",
+              "excluded": {
+                "kind": "歳入の説明",
+                "reason": "各目の下の（説明）の表は、目の予算現額・調定額・決算額を区分（現年分・滞納繰越分など）ごとに示す説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "auto-p536-full-page-a0-result0-r40",
+            "page": 536,
+            "observation_id": "p536:full-page:a0:result0:r40",
+            "observed_name": "〔前年度歲計剩余金",
+            "corrected_name": "〔前年度歳計剩余金",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-revenue-ocr-1",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              518,
+              519,
+              520,
+              521,
+              522,
+              523,
+              524,
+              525,
+              526,
+              527
+            ]
+          },
+          "sha256": "5c01b5eae5237505b602d918df16abf6ce9bb806beefdd8a7e55a60dd5af9b70",
+          "bytes": 1748680
+        },
+        {
+          "id": "kaigo-revenue-ocr-2",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              528,
+              529,
+              530,
+              531,
+              532,
+              533,
+              534,
+              535,
+              536,
+              537
+            ]
+          },
+          "sha256": "161a8e5b1cd71754c6f63d1f60c880f92e37e69bf03bd76f951e8d9d4a39a72c",
+          "bytes": 1592051
+        },
+        {
+          "id": "kaigo-revenue-ocr-3",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              538,
+              539,
+              540,
+              541,
+              542,
+              543
+            ]
+          },
+          "sha256": "42c2766cb60a9fd9c2b1e1a7b69ce8e71c4998027bfaf60641cefd800bf55651",
+          "bytes": 898432
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業特別会計",
+        "table_id": "kouki-revenue-detail",
+        "pages": [
+          [
+            576,
+            587
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true,
+                "line_pieces": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考は収入の内容・相手先・件数などの説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                }
+              }
+            }
+          },
+          "quirks": {
+            "digit_set_codes": 4.0,
+            "inner_tables": {
+              "marker": "当初予算額",
+              "left": "目",
+              "right": "節",
+              "excluded": {
+                "kind": "歳入の説明",
+                "reason": "各目の下の（説明）の表は、目の予算現額・調定額・決算額を区分（現年分・滞納繰越分など）ごとに示す説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-revenue-ocr-1",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              576,
+              577,
+              578,
+              579,
+              580,
+              581,
+              582,
+              583,
+              584,
+              585
+            ]
+          },
+          "sha256": "7afb039ea59cdf96e804259c785642f39fc8c95fea70fe9d2e55ab30edebbbaa",
+          "bytes": 1615241
+        },
+        {
+          "id": "kouki-revenue-ocr-2",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              586,
+              587
+            ]
+          },
+          "sha256": "f2bbd622dcd5b8dd980e6b8207c479772deb0341f4251fe1bff5d80c0e6ea813",
+          "bytes": 361224
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "tobu",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7"
+        }
+      ],
+      "options": {
+        "account": "東武東上線連続立体化事業特別会計",
+        "table_id": "tobu-revenue-detail",
+        "pages": [
+          [
+            606,
+            613
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true,
+                "line_pieces": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考は収入の内容・相手先・件数などの説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                }
+              }
+            }
+          },
+          "quirks": {
+            "digit_set_codes": 4.0,
+            "inner_tables": {
+              "marker": "当初予算額",
+              "left": "目",
+              "right": "節",
+              "excluded": {
+                "kind": "歳入の説明",
+                "reason": "各目の下の（説明）の表は、目の予算現額・調定額・決算額を区分（現年分・滞納繰越分など）ごとに示す説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "auto-p610-full-page-a0-result0-r40",
+            "page": 610,
+            "observation_id": "p610:full-page:a0:result0:r40",
+            "observed_name": "〔前年度歲計剩余金",
+            "corrected_name": "〔前年度歳計剩余金",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "tobu-revenue-ocr-1",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              606,
+              607,
+              608,
+              609,
+              610,
+              611,
+              612,
+              613
+            ]
+          },
+          "sha256": "7eded6729bedad75777294c203c8a9878fdef6dc4baeca3b64c0f6bd6b512c78",
+          "bytes": 919925
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "tobu-revenue-detail"
+        }
+      ]
+    }
+  ]
+}
