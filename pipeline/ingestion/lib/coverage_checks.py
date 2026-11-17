@@ -415,6 +415,25 @@ def _apply_recheck(normalized, words, amount_columns, recheck):
             'hinted': sum(p is not None for p in hints)}
 
 
+def _join_touching_zones(exclusions):
+    """Join zones of one kind and reason on one page whose x_ranges touch.
+
+    A declared excluded column split by inner rules arrives as touching zones,
+    and a print set across an inner rule (an explanation's amount) must stay
+    excluded rather than straddle two zones.
+    """
+    joined = []
+    for entry in exclusions:
+        last = joined[-1] if joined else None
+        if (last is not None and 'x_range' in entry and 'x_range' in last and set(entry) == set(last)
+                and all(entry[k] == last[k] for k in entry if k != 'x_range')
+                and abs(last['x_range'][1] - entry['x_range'][0]) < 0.5):
+            joined[-1] = {**last, 'x_range': [last['x_range'][0], max(last['x_range'][1], entry['x_range'][1])]}
+        else:
+            joined.append(entry)
+    return joined
+
+
 def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_columns=(), control_tables=(),
                          recheck=None):
     """Every printed digit in scope is an amount row or a known non-amount.
@@ -451,7 +470,7 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
     started = time.perf_counter()
     if tolerance < 0 or not math.isfinite(tolerance):
         raise ValueError('Coverage tolerance must be a nonnegative finite number')
-    exclusions = validate_exclusions(exclusions)
+    exclusions = _join_touching_zones(validate_exclusions(exclusions))
     exclusion_counts = [0] * len(exclusions)
     exclusions_by_page = defaultdict(list)
     for index, entry in enumerate(exclusions):
