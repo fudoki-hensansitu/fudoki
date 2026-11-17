@@ -299,7 +299,7 @@ function ProjectTable({ rows, ended }: { rows: Proj[]; /** やめた事業は前
   const columns = React.useMemo(() => projectColumn.columns([
     projectColumn.accessor('rank', { header: () => <span className="sr-only">順位</span>, cell: (c) => c.getValue(), meta: { className: 'w-8 pr-0 text-right tabular-nums' } }),
     projectColumn.display({ id: 'name', header: '事業名', cell: (c) => <ProjectNameCell p={c.row.original} />, meta: { className: 'whitespace-normal' } }),
-    projectColumn.display({ id: 'field', header: '分野', cell: (c) => <ProjectFieldCell p={c.row.original} />, meta: { className: '@max-3xl:hidden w-36' } }),
+    projectColumn.display({ id: 'field', header: '分野', cell: (c) => <ProjectFieldCell p={c.row.original} />, meta: { className: '@max-3xl:hidden w-44' } }),
     projectColumn.accessor('yen', { header: () => <span className="inline-flex items-center gap-1">{amount}<ArrowDownIcon className="size-3.5" aria-label="多い順" /></span>, cell: (c) => (c.getValue() == null ? '—' : yenText(c.getValue()!)), meta: { className: 'w-40 text-right tabular-nums' } }),
     // 評価の列は、頁の中に評価のある事業があるときだけ出す
     ...(graded ? [projectColumn.accessor('grade', { header: '評価', cell: (c) => c.getValue() ?? '', meta: { className: '@max-3xl:hidden w-16 text-center' } })] : []),
