@@ -39,8 +39,8 @@ D1 の `sync_state` に置く印（token）で確かめる。同期は書き始�
   一致しない文字があっても、ある範囲で消して別の範囲で書くだけになるよう、全範囲の delete を先に流してから書く。
 - `cf d1 raw --local` は「Network connection lost」で散発的に失敗する（cf 1.0.0-beta の実測）ので3回まで再試行する。
   応答が失われただけで書き込みは済んでいた場合に備え、投入は `insert or replace`（流し直しても同じ結果）にし、最後の照合で重複や欠落を止める。
-- D1 の REST は1回の API 要求が30秒以内（公式 limits）。1回の cf 呼び出しは約1MBの batch と、読み戻し約4000行に抑える。
-- cf の呼び出し回数を減らすため、多数の文を1回の `cf d1 raw --batch` にまとめる（約1MBごと）。
+- D1 の REST は1回の API 要求が30秒以内（公式 limits）。1回の cf 呼び出しは約250KBの batch と、読み戻し約4000行に抑える。
+- cf の呼び出し回数を減らすため、多数の文を1回の `cf d1 raw --batch` にまとめる（約250KBごと）。本番では呼び出しの間を1秒空ける（API の読み出しを通すため）。
 """
 from __future__ import annotations
 
@@ -68,7 +68,11 @@ LOCAL_DATABASE_ID = 'b9b6f209-083e-45b3-a896-1014a17a15f9'
 # D1 の1文 100KB の内側。1回の cf 呼び出しの大きさ
 MAX_STATEMENT_BYTES = 60_000
 MAX_ROWS_PER_STATEMENT = 100
-MAX_BATCH_BYTES = 1_000_000
+MAX_BATCH_BYTES = 250_000
+# 本番の D1 は1本の SQLite で、同期の書き込みと API の読み出しが同じ D1 の時間を取り合う。1MB の batch を続けて流すと
+# D1 が「overloaded」（10秒の窓の上限）になり、API が読めずに止まった（2026-11-17）。batch を小さくし、呼び出しの
+# 間を空けて、同期中も API の読み出しが通るようにする
+REMOTE_PAUSE_SECONDS = 1.0
 FETCH_ROWS = 500
 MEMORY_LIMIT = '1GB'
 READ_ROWS_PER_CALL = 4000
@@ -348,7 +352,9 @@ class D1:
             self.command += ['--local', '--persist-to', str(persist_to)]
         self.calls = 0
 
-    def batch(self, statements: list[dict], retries: int = 3) -> list[dict]:
+    def batch(self, statements: list[dict], retries: int = 5) -> list[dict]:
+        if not self.local and self.calls:
+            time.sleep(REMOTE_PAUSE_SECONDS)
         self.calls += 1
         with tempfile.NamedTemporaryFile('w', suffix='.json', encoding='utf-8') as file:
             json.dump(statements, file, ensure_ascii=False)
@@ -360,7 +366,7 @@ class D1:
                 print(f'  cf 失敗 {attempt + 1} 回目: {stdout[-200:]}{stderr[-200:]}'.replace(chr(10), ' '), flush=True)
                 if attempt == retries - 1:
                     raise RuntimeError(f'cf d1 raw が失敗した: {stdout[:2000]}{stderr[:2000]}')
-                time.sleep(5)
+                time.sleep(10 * (attempt + 1))  # overloaded は10秒の窓なので、窓をまたいで待つ
         results = json.loads(stdout)
         if len(results) != len(statements) or not all(r.get('success') for r in results):
             raise RuntimeError(f'cf d1 raw の結果が不正: {stdout[:2000]}')
