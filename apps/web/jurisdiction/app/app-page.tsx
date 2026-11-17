@@ -58,6 +58,7 @@ import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock } from '../ask-dock'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type Moku, type PageData, type PageFlow, type Setsu, type YearTotal, TAB_SLUGS, hasDocument, type PageTab } from '../types'
+import { Title, titleVariants } from '@/components/ui/title'
 import { withExtras, yearView, type AccountTotal, type Proj, type Snapshot, type YearExtras, type YearView } from './data'
 import { fieldSubjects, listKey, listPage, projectLatest, type ListPage, type ListQuery, type ProjectFull } from './api'
 import { ClientSuspense, FAILED, Resources, type Loaded } from './resource'
@@ -137,15 +138,15 @@ function Mark({ kind, label, className = 'size-6' }: { kind: string; label?: str
   )
 }
 function Chip({ children }: { children: React.ReactNode }) {
-  return <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border bg-background px-2 py-0.5 text-xs text-muted-foreground [&_svg]:size-3">{children}</span>
+  return <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border bg-background px-2 py-1 text-xs text-muted-foreground [&_svg]:size-3">{children}</span>
 }
 function SectionHead({ title, sub, children }: { title: string; sub?: string; children?: React.ReactNode }) {
   return (
     <div className="mb-3 flex items-center justify-between gap-3">
-      <h2 className="text-[17px] font-semibold">
+      <Title size="h3" as="h2">
         {title}
         {sub ? <span className="ml-2 text-xs font-normal text-muted-foreground">{sub}</span> : null}
-      </h2>
+      </Title>
       {children ? <div className="flex items-center gap-2">{children}</div> : null}
     </div>
   )
@@ -166,10 +167,10 @@ function TabHead({ title, children }: { title: string; children: React.ReactNode
   return (
     <div className="mb-5">
       <div className="flex items-center justify-between gap-3">
-        <h2 className="text-xl font-semibold leading-snug">{title}</h2>
+        <Title size="h2">{title}</Title>
         <TabYear />
       </div>
-      <p className="mt-1.5 text-[15px] leading-[1.7] text-muted-foreground">{children}</p>
+      <p className="mt-2 text-sm leading-[1.7] text-muted-foreground">{children}</p>
     </div>
   )
 }
@@ -190,7 +191,7 @@ function Elsewhere() {
       <SectionHead title="ほかの自治体を見る" />
       <div className="grid gap-x-6 sm:grid-cols-2">
         {places.map((x) => (
-          <Link key={x.href} href={x.href} className="flex items-center gap-3 px-2.5 py-3 text-base text-foreground no-underline transition-colors hover:bg-card">
+          <Link key={x.href} href={x.href} className="flex items-center gap-3 px-3 py-3 text-base text-foreground no-underline transition-colors hover:bg-card">
             <IconBox>{x.icon}</IconBox>
             <span className="min-w-0 flex-1 truncate">{x.name}</span>
           </Link>
@@ -227,7 +228,7 @@ const RowsSkeleton = ({ n = 5 }: { n?: number }) => (
     {Array.from({ length: n }, (_, i) => <Skeleton key={i} className="h-12 rounded-lg" />)}
   </div>
 )
-const LoadFailed = () => <p className="px-2.5 py-4 text-sm text-muted-foreground">読み込めませんでした。少し待ってから開き直してください。</p>
+const LoadFailed = () => <p className="px-3 py-4 text-sm text-muted-foreground">読み込めませんでした。少し待ってから開き直してください。</p>
 
 /** 頁ごとに読む一覧。1頁目のあと、末尾が見えたら続きを読んで足す（足した一覧は key の置き場に入れ直す） */
 function Paged<T, P extends { rows: T[]; next: string | null }>({ k, first, next, head, render, list }: { k: string; first: () => Promise<P>; next: (token: string) => Promise<P>; head?: (page: P) => React.ReactNode; render?: (t: T, i: number) => React.ReactNode; /** 行をまとめて描く（表）。無ければ render で1行ずつ描く */ list?: (rows: T[]) => React.ReactNode }) {
@@ -278,7 +279,7 @@ function ProjectNameCell({ p }: { p: Proj }) {
     <span className="block [overflow-wrap:anywhere]">
       {/* 押せることとフォーカスは事業名のボタンが持つ（行を押しても同じく詳細を開く） */}
       <button type="button" className="rounded-sm text-left outline-none focus-visible:ring-2 focus-visible:ring-primary">{p.name}</button>
-      {ended || v.isNew(p) ? <span className="ml-1.5 inline-flex align-middle">{ended ? <Mark kind="stop" label="やめた事業" className="size-5" /> : <Mark kind="new" label="新しく始める事業" className="size-5" />}</span> : null}
+      {ended || v.isNew(p) ? <span className="ml-2 inline-flex align-middle">{ended ? <Mark kind="stop" label="やめた事業" className="size-5" /> : <Mark kind="new" label="新しく始める事業" className="size-5" />}</span> : null}
       {/* 狭い幅で事業名の下に添える分野は、事業名より控えめな色にする */}
       <span className="flex items-center gap-1 text-muted-foreground @3xl:hidden"><FieldIcon id={v.fieldOf(p)} className="size-4 shrink-0" />{[fieldName(v, v.fieldOf(p)), 'grade' in p && p.grade ? `評価 ${p.grade}` : null].filter(Boolean).join(' · ')}</span>
     </span>
@@ -286,7 +287,7 @@ function ProjectNameCell({ p }: { p: Proj }) {
 }
 function ProjectFieldCell({ p }: { p: Proj }) {
   const { v } = useApp()
-  return <span className="inline-flex items-center gap-1.5"><FieldIcon id={v.fieldOf(p)} className="size-4 shrink-0 text-muted-foreground" />{fieldName(v, v.fieldOf(p))}</span>
+  return <span className="inline-flex items-center gap-2"><FieldIcon id={v.fieldOf(p)} className="size-4 shrink-0 text-muted-foreground" />{fieldName(v, v.fieldOf(p))}</span>
 }
 
 /** 事業の表（shadcn の data table）。並びは api が返した金額の多い順のまま。行を押すと詳細を開く。文字は見出しも中身もすべて同じ大きさ・同じ色にする（狭い画面で名前の下に出す分野だけは薄い色） */
@@ -298,10 +299,10 @@ function ProjectTable({ rows, ended }: { rows: Proj[]; /** やめた事業は前
   const columns = React.useMemo(() => projectColumn.columns([
     projectColumn.accessor('rank', { header: () => <span className="sr-only">順位</span>, cell: (c) => c.getValue(), meta: { className: 'w-8 pr-0 text-right tabular-nums' } }),
     projectColumn.display({ id: 'name', header: '事業名', cell: (c) => <ProjectNameCell p={c.row.original} />, meta: { className: 'whitespace-normal' } }),
-    projectColumn.display({ id: 'field', header: '分野', cell: (c) => <ProjectFieldCell p={c.row.original} />, meta: { className: '@max-3xl:hidden' } }),
-    projectColumn.accessor('yen', { header: () => <span className="inline-flex items-center gap-1">{amount}<ArrowDownIcon className="size-3.5" aria-label="多い順" /></span>, cell: (c) => (c.getValue() == null ? '—' : yenText(c.getValue()!)), meta: { className: 'text-right tabular-nums' } }),
+    projectColumn.display({ id: 'field', header: '分野', cell: (c) => <ProjectFieldCell p={c.row.original} />, meta: { className: '@max-3xl:hidden w-44' } }),
+    projectColumn.accessor('yen', { header: () => <span className="inline-flex items-center gap-1">{amount}<ArrowDownIcon className="size-3.5" aria-label="多い順" /></span>, cell: (c) => (c.getValue() == null ? '—' : yenText(c.getValue()!)), meta: { className: 'w-40 text-right tabular-nums' } }),
     // 評価の列は、頁の中に評価のある事業があるときだけ出す
-    ...(graded ? [projectColumn.accessor('grade', { header: '評価', cell: (c) => c.getValue() ?? '', meta: { className: '@max-3xl:hidden text-center' } })] : []),
+    ...(graded ? [projectColumn.accessor('grade', { header: '評価', cell: (c) => c.getValue() ?? '', meta: { className: '@max-3xl:hidden w-16 text-center' } })] : []),
   ]), [amount, graded])
   const data = React.useMemo(() => rows.map((p, i) => ({ ...p, rank: i + 1 })), [rows])
   const table = useTable({ features: projectFeatures, columns, data, getRowId: (p) => p.id })
@@ -329,7 +330,7 @@ function ProjectTable({ rows, ended }: { rows: Proj[]; /** やめた事業は前
           return (
             <TableRow key={row.id} onClick={moku ? undefined : () => openProject(row.original.id)} className={moku ? 'hover:bg-transparent' : 'cursor-pointer hover:bg-card'}>
               {row.getAllCells().map((cell) => (
-                <TableCell key={cell.id} className={cn('py-2.5', cls(cell.column.columnDef.meta))}>
+                <TableCell key={cell.id} className={cn('py-3', cls(cell.column.columnDef.meta))}>
                   <table.FlexRender cell={cell} />
                 </TableCell>
               ))}
@@ -364,7 +365,7 @@ function FieldRow({ f, i, max, onClick, grow = true }: { f: YearView['fields'][n
   const { v } = useApp()
   const pct = (f.yen / v.total) * 100
   return (
-    <button type="button" onClick={onClick} className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 rounded-lg px-2.5 py-3 text-left transition-colors hover:bg-card sm:grid-cols-[10rem_minmax(0,1fr)_4.5rem]">
+    <button type="button" onClick={onClick} className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2 rounded-lg px-3 py-3 text-left transition-colors hover:bg-card sm:grid-cols-[10rem_minmax(0,1fr)_4.5rem]">
       <span className="col-start-1 row-start-1 min-w-0 sm:col-start-auto sm:row-start-auto">
         <span className="block truncate text-base font-medium">{f.name}</span>
         <span className="block text-xs text-muted-foreground"><Amt yen={f.yen} /></span>
@@ -372,7 +373,7 @@ function FieldRow({ f, i, max, onClick, grow = true }: { f: YearView['fields'][n
       <span className="col-span-2 col-start-1 row-start-2 block h-1.5 overflow-hidden rounded-full bg-secondary sm:col-span-1 sm:col-start-auto sm:row-start-auto">
         <span className={cn(grow && 'app-grow', 'block h-full rounded-full bg-primary')} style={{ width: `${Math.max(1, (f.yen / max) * 100)}%`, animationDelay: `${i * 30}ms` }} />
       </span>
-      <span className="col-start-2 row-start-1 text-right text-[17px] tabular-nums sm:col-start-auto sm:row-start-auto">
+      <span className="col-start-2 row-start-1 text-right text-base tabular-nums sm:col-start-auto sm:row-start-auto">
         {pct.toFixed(1)}
         <small className="text-xs text-muted-foreground">%</small>
       </span>
@@ -399,9 +400,9 @@ function AccountCards({ accounts, account, setAccount }: { accounts: AccountTota
   return (
     <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-2" role="radiogroup" aria-label="会計">
       {accounts.map((x) => (
-        <button key={x.name} type="button" role="radio" aria-checked={x.name === account} onClick={() => setAccount(x.name)} data-selected={x.name === account || undefined} className="flex min-w-0 flex-col items-start rounded-xl bg-card px-3.5 py-2.5 text-left ring-1 ring-inset ring-transparent transition-colors hover:bg-accent data-selected:bg-accent data-selected:ring-primary">
+        <button key={x.name} type="button" role="radio" aria-checked={x.name === account} onClick={() => setAccount(x.name)} data-selected={x.name === account || undefined} className="flex min-w-0 flex-col items-start rounded-xl bg-card px-4 py-3 text-left ring-1 ring-inset ring-transparent transition-colors hover:bg-accent data-selected:bg-accent data-selected:ring-primary">
           <span className="max-w-full text-xs text-muted-foreground [overflow-wrap:anywhere]">{x.name}</span>
-          <Amt yen={x.yen} className="text-[17px] text-primary" />
+          <Amt yen={x.yen} className="text-base text-primary" />
         </button>
       ))}
     </div>
@@ -466,8 +467,8 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
       {total ? <FieldsSection phase={phase} /> : null}
       {total ? (
         <div>
-          <h2 className="mb-2.5 text-[17px] font-semibold">お金の流れ</h2>
-          <p className="text-[15px] leading-[1.7] text-muted-foreground">{current?.revenue?.length ? '歳入（左）と歳出（右）が、款から項・目へとどう分かれていくかを示しています。' : '歳出が、款から項・目へとどう分かれていくかを示しています。'}会計を選ぶと、その会計の流れに切り替わります。</p>
+          <Title size="h3" as="h2" className="mb-3">お金の流れ</Title>
+          <p className="text-sm leading-[1.7] text-muted-foreground">{current?.revenue?.length ? '歳入（左）と歳出（右）が、款から項・目へとどう分かれていくかを示しています。' : '歳出が、款から項・目へとどう分かれていくかを示しています。'}会計を選ぶと、その会計の流れに切り替わります。</p>
         </div>
       ) : null}
       {total ? <AccountCards accounts={accounts} account={account} setAccount={setAccount} /> : null}
@@ -509,11 +510,11 @@ function FieldsSection({ phase }: { phase: 'initial' | 'settlement' }) {
   })
   return (
     <section className="mb-5">
-      <h2 className="mb-2.5 text-[17px] font-semibold">
-        {phase === 'initial' ? '何に使う？' : '何に使った？'}<span className="ml-1.5 text-[13px] font-normal text-muted-foreground">歳出</span>
+      <Title size="h3" as="h2" className="mb-3">
+        {phase === 'initial' ? '何に使う？' : '何に使った？'}<span className="ml-2 text-sm font-normal text-muted-foreground">歳出</span>
         <Amt yen={v.total} className="ml-2 font-medium text-primary" />
-      </h2>
-      <p className="mb-2.5 text-[15px] leading-[1.7] text-muted-foreground">税金を主な財源にする基本の会計（一般会計）の歳出を、使い道の分野ごとに分けています。</p>
+      </Title>
+      <p className="mb-3 text-sm leading-[1.7] text-muted-foreground">税金を主な財源にする基本の会計（一般会計）の歳出を、使い道の分野ごとに分けています。</p>
       {/* 棒の長さは一番大きい分野を満たんにし、割合の数字は合計に対する比のまま出す */}
       <div className="grid gap-x-8 @3xl:grid-flow-col @3xl:grid-cols-2 @3xl:grid-rows-(--rows)" style={{ '--rows': `repeat(${Math.ceil(v.fields.length / 2)}, auto)` } as React.CSSProperties}>
         {v.fields.map((f, i) => <FieldRow key={f.id} f={f} i={i} max={max} grow={grow} onClick={() => openField(f.id)} />)}
@@ -529,7 +530,7 @@ function Overview() {
       {/* ホームのまちの札と同じく、濃い緑の地に総額と1人あたりを載せる。事業の件数は出さない */}
       <section className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7">
         <p className="text-sm opacity-80">{reiwa(v.year)}の{v.word}（一般会計）</p>
-        <Amt yen={v.total} className="mt-1 block text-[40px] leading-none font-semibold sm:text-[48px]" />
+        <Amt yen={v.total} className={cn(titleVariants({ size: 'display' }), 'mt-1 block')} />
         {v.perHead != null ? (
           <p className="mt-2 text-sm opacity-80">
             1人あたり <Amt yen={v.perHead} />
@@ -549,7 +550,7 @@ const KINDS = [
   { id: 'ended', label: 'やめた', icon: <StopIcon className="size-4 text-primary" /> },
 ] as const
 // 絞り込みのボタン（Apple の pop-up / pull-down button と同じく、押すとメニューが開き、今の値をボタンに出す）。絞っている間は緑地にする
-const filterTrigger = (on: boolean) => cn('inline-flex h-9 min-w-0 max-w-full items-center gap-1.5 rounded-full border px-3.5 text-sm transition-colors', on ? 'border-primary bg-primary text-primary-foreground' : 'border-input bg-background hover:bg-card')
+const filterTrigger = (on: boolean) => cn('inline-flex h-9 min-w-0 max-w-full items-center gap-2 rounded-full border px-4 text-sm transition-colors', on ? 'border-primary bg-primary text-primary-foreground' : 'border-input bg-background hover:bg-card')
 /** 事業の区分（新しく始める・やめた）。1つだけ選ぶ（引く年度の資料が違うので重ねられない）。既定は「すべての事業」。
  */
 function KindMenu({ v, filter, setFilter }: { v: YearView; filter: string; setFilter: (f: string) => void }) {
@@ -621,7 +622,7 @@ function ProjectsTab({ filter, setFilter, fields, setFields, q, setQ }: { filter
     timer.current = setTimeout(() => setQ(t.trim()), 300)
   }
   // 件数は出さない。新しく始める事業だけ、何を新しいとしたかを添える
-  const head = () => (filter === 'new' ? <p className="px-2.5 text-xs text-muted-foreground">予算書で新しく現れた事業</p> : null)
+  const head = () => (filter === 'new' ? <p className="px-3 text-xs text-muted-foreground">予算書で新しく現れた事業</p> : null)
   const body = (v: YearView) => {
     const list = v.query(filter as ListQuery['filter'], { ...cofogOf(fields), ...(q ? { q } : {}) })
     // 事業の収録の無い自治体は、目を事業の代わりに並べる（手元に全部ある）
@@ -663,7 +664,7 @@ function ProjectsTab({ filter, setFilter, fields, setFields, q, setQ }: { filter
 function DetailSection({ icon: I, title, children }: { icon: Icon; title: string; children: React.ReactNode }) {
   return (
     <section className="mt-6">
-      <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold"><I className="size-4 text-muted-foreground" aria-hidden="true" />{title}</h3>
+      <Title size="headline" as="h3" className="mb-2 flex items-center gap-2"><I className="size-4 text-muted-foreground" aria-hidden="true" />{title}</Title>
       {children}
     </section>
   )
@@ -672,10 +673,10 @@ function DetailSection({ icon: I, title, children }: { icon: Icon; title: string
 function ProjectTitle({ p, mark }: { p: Pick<ProjectFull, 'name'>; mark: 'new' | 'stop' | null }) {
   return (
     <>
-      <h2 className="mb-2 flex items-start gap-1.5 text-xl font-semibold leading-snug">
+      <Title size="h2" className="mb-2 flex items-start gap-2">
         {p.name}
         {mark === 'stop' ? <Mark kind="stop" label="やめた事業" /> : mark === 'new' ? <Mark kind="new" label="新しく始める事業" /> : null}
-      </h2>
+      </Title>
     </>
   )
 }
@@ -693,9 +694,9 @@ function ProjectBack({ res, id, label, close, open }: { res: Resources; id: stri
 function ProjectCrumbs({ label, close, open, ancestors }: { label: string; close: () => void; open: (id: string) => void; ancestors: NonNullable<ProjectFull['ancestors']> }) {
   return (
     <Breadcrumb className="min-w-0">
-      <BreadcrumbList className="flex-nowrap text-[15px] sm:text-[17px]">
+      <BreadcrumbList className="flex-nowrap text-sm sm:text-base">
         <BreadcrumbItem className="shrink-0">
-          <BreadcrumbLink render={<button type="button" onClick={close} />} className="cursor-pointer">{label}</BreadcrumbLink>
+          <BreadcrumbLink render={<button type="button" onClick={close} />} className="inline-flex cursor-pointer items-center gap-1"><ListBulletsIcon className="size-4 shrink-0" aria-hidden="true" />{label}</BreadcrumbLink>
         </BreadcrumbItem>
         {ancestors.map((a) => (
           <React.Fragment key={a.id}>
@@ -712,10 +713,10 @@ function ProjectCrumbs({ label, close, open, ancestors }: { label: string; close
 
 /** 年度ごとの表の額。出典の頁が分かれば、額から公式の資料（その頁）を開く */
 function SourceAmt({ yen, href, label }: { yen: number | null | undefined; href?: string; label: string }) {
-  if (yen == null || !href) return <Amt yen={yen} className="text-[15px]" />
+  if (yen == null || !href) return <Amt yen={yen} className="text-sm" />
   return (
     <a href={href} target="_blank" rel="noopener" aria-label={`${label}（${yenText(yen)}）`} className="inline-flex items-center gap-1 text-foreground no-underline hover:text-primary hover:underline">
-      <Amt yen={yen} className="text-[15px]" />
+      <Amt yen={yen} className="text-sm" />
       <ArrowSquareOutIcon className="size-3 text-muted-foreground" aria-hidden="true" />
     </a>
   )
@@ -742,14 +743,14 @@ function ProjectPageBody({ id }: { id: string }) {
   return (
     <>
       <ProjectTitle p={p} mark={p.ended != null ? 'stop' : p.started === year ? 'new' : null} />
-      <div className="flex flex-wrap gap-1.5">
+      <div className="flex flex-wrap gap-2">
         <Chip><FieldIcon id={frame.id} />{frame.name}</Chip>
       </div>
       <DetailSection icon={CalendarBlankIcon} title="年度ごと">
         {/* 評価シートのある年度は、その年度の行に評価（A〜D）を並べる。評価が一つも無ければ列を出さない */}
-        <div className={cn('grid max-w-xl text-[15px]', graded ? 'grid-cols-[auto_1fr_1fr_auto]' : 'grid-cols-[auto_1fr_1fr]')}>
-          <span className="py-1.5 text-xs" /><span className="py-1.5 text-right text-xs text-muted-foreground">当初予算</span><span className="px-1 py-1.5 text-right text-xs text-muted-foreground">決算</span>
-          {graded ? <span className="px-2 py-1.5 text-center text-xs text-muted-foreground">評価</span> : null}
+        <div className={cn('grid max-w-xl text-sm', graded ? 'grid-cols-[auto_1fr_1fr_auto]' : 'grid-cols-[auto_1fr_1fr]')}>
+          <span className="py-2 text-xs" /><span className="py-2 text-right text-xs text-muted-foreground">当初予算</span><span className="px-1 py-2 text-right text-xs text-muted-foreground">決算</span>
+          {graded ? <span className="px-2 py-2 text-center text-xs text-muted-foreground">評価</span> : null}
           {rows.map((y) => (
             <div key={y} className={cn('col-span-full grid grid-cols-subgrid', y === year && 'bg-card')}>
               <Separator className="col-span-full" />
@@ -765,7 +766,7 @@ function ProjectPageBody({ id }: { id: string }) {
         <DetailSection icon={TreeStructureIcon} title="内訳">
           {/* 内訳の一つ一つも年度をまたぐ事業なので、押すとその事業の頁へ移る。額はその事業の最新の年度のもの */}
           <Infinite items={p.kids} step={10} list={(kids) => (
-            <Table className="text-[15px]">
+            <Table className="text-sm">
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
                   <TableHead className="h-9 font-normal">事業名</TableHead>
@@ -776,11 +777,11 @@ function ProjectPageBody({ id }: { id: string }) {
               <TableBody>
                 {kids.map((k, i) => (
                   <TableRow key={k.id ?? i} onClick={() => k.id && openProject(k.id)} className="cursor-pointer hover:bg-card">
-                    <TableCell className="whitespace-normal py-2.5 [overflow-wrap:anywhere]">
+                    <TableCell className="whitespace-normal py-3 [overflow-wrap:anywhere]">
                       <button type="button" className="rounded-sm text-left outline-none focus-visible:ring-2 focus-visible:ring-primary">{k.name}</button>
                     </TableCell>
-                    <TableCell className="py-2.5 text-muted-foreground">{k.fy != null ? `${r(k.fy)} ${k.kind === 'initial' ? '当初予算' : '決算'}` : ''}</TableCell>
-                    <TableCell className="py-2.5 text-right tabular-nums">{k.yen == null ? '—' : yenText(k.yen)}</TableCell>
+                    <TableCell className="py-3 text-muted-foreground">{k.fy != null ? `${r(k.fy)} ${k.kind === 'initial' ? '当初予算' : '決算'}` : ''}</TableCell>
+                    <TableCell className="py-3 text-right tabular-nums">{k.yen == null ? '—' : yenText(k.yen)}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -809,7 +810,7 @@ function YearMenu({ years, current, onChange }: { years: number[]; current: numb
   return (
     <DropdownMenu>
       {/* 選んでいる年度を出すので、広い画面の年度の丸（選択中）と同じく緑地に白字にする */}
-      <DropdownMenuTrigger render={<Button size="sm" className="h-8 rounded-full px-3 text-[13px] font-normal" />}>
+      <DropdownMenuTrigger render={<Button size="sm" className="h-8 rounded-full px-3 text-sm font-normal" />}>
         {yearName(current)}
         <CaretDownIcon className="size-3.5" aria-hidden="true" />
       </DropdownMenuTrigger>
@@ -1032,21 +1033,21 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
 
   const header = (
     <header className="grid grid-cols-[80px_minmax(0,1fr)] items-start gap-4 py-7 sm:grid-cols-[108px_minmax(0,1fr)] sm:gap-6">
-      <div className="grid size-20 place-items-center rounded-xl border bg-emblem p-2.5 sm:size-[108px] sm:rounded-2xl sm:p-4">
-        {emblem ? <img src={emblem} alt="" className="size-full min-h-0 min-w-0 object-contain" /> : <span className="text-3xl text-foreground sm:text-5xl">{data.name[0]}</span>}
+      <div className="grid size-20 place-items-center rounded-xl border bg-emblem p-3 sm:size-[108px] sm:rounded-2xl sm:p-4">
+        {emblem ? <img src={emblem} alt="" className="size-full min-h-0 min-w-0 object-contain" /> : <span className={cn(titleVariants({ size: 'display' }), 'font-normal text-foreground')}>{data.name[0]}</span>}
       </div>
-      <div className="flex min-w-0 flex-col gap-1.5">
+      <div className="flex min-w-0 flex-col gap-2">
         {/* 年度の切り替えは、まとめ以外のタブの見出しの横に置く（まとめには置かない） */}
-        <h1 className="min-w-0 text-[22px] font-normal leading-7 sm:text-[26px] sm:leading-8">{data.name}</h1>
-        {vision ? <p className="mt-2 text-base leading-snug sm:mt-0 sm:text-[17px]">{vision}</p> : null}
-        <div className="mt-1 flex flex-wrap gap-x-2.5 gap-y-1.5 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
-          <span className="inline-flex items-center gap-1 sm:gap-1.5"><MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" />{data.prefecturePath ? <Button variant="link" size="inline" nativeButton={false} render={<Link href={data.prefecturePath} />}>{data.prefecture}</Button> : data.prefecture}</span>
+        <Title size="h2" as="h1" className="min-w-0 font-normal">{data.name}</Title>
+        {vision ? <p className="mt-2 text-base leading-snug sm:mt-0 sm:text-base">{vision}</p> : null}
+        <div className="mt-1 flex flex-wrap gap-x-3 gap-y-2 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
+          <span className="inline-flex items-center gap-1 sm:gap-2"><MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" />{data.prefecturePath ? <Button variant="link" size="inline" nativeButton={false} render={<Link href={data.prefecturePath} />}>{data.prefecture}</Button> : data.prefecture}</span>
           {data.population ? (
             <Hint label={`住民基本台帳人口（${formatAsOf(data.population.asOf)}時点）`}>
-              <span className="inline-flex items-center gap-1 text-foreground sm:gap-1.5"><UsersIcon className="size-3.5 text-muted-foreground sm:size-4" aria-hidden="true" /><span className="sr-only">人口 </span>{formatPeople(data.population.people)}</span>
+              <span className="inline-flex items-center gap-1 text-foreground sm:gap-2"><UsersIcon className="size-3.5 text-muted-foreground sm:size-4" aria-hidden="true" /><span className="sr-only">人口 </span>{formatPeople(data.population.people)}</span>
             </Hint>
           ) : null}
-          {data.officialUrl ? <span className="inline-flex items-center gap-1 sm:gap-1.5"><GlobeIcon className="size-3.5 sm:size-4" aria-hidden="true" /><Button variant="link" size="inline" nativeButton={false} render={<a href={data.officialUrl} target="_blank" rel="noopener" />}>公式サイト</Button></span> : null}
+          {data.officialUrl ? <span className="inline-flex items-center gap-1 sm:gap-2"><GlobeIcon className="size-3.5 sm:size-4" aria-hidden="true" /><Button variant="link" size="inline" nativeButton={false} render={<a href={data.officialUrl} target="_blank" rel="noopener" />}>公式サイト</Button></span> : null}
         </div>
       </div>
     </header>
@@ -1078,7 +1079,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
             ) : (
             <TabsList variant="line" className="relative z-10 min-w-0 flex-1 justify-start gap-2 overflow-x-auto p-0 [scrollbar-width:none] group-data-horizontal/tabs:h-12 sm:gap-4 sm:group-data-horizontal/tabs:h-[52px]">
               {tabs.map((t) => (
-                <TabsTrigger key={t.key} value={t.key} nativeButton={false} render={<a href={pageHref(year, t.key)} />} onClick={(e) => (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey ? e.preventBaseUIHandler() : e.preventDefault())} className="no-underline h-full flex-none gap-1.5 px-3 py-0 has-data-[icon=inline-start]:pl-2.5 focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:text-foreground text-[15px] leading-none data-active:text-primary data-active:hover:text-primary data-active:focus-visible:text-primary dark:data-active:text-primary group-data-horizontal/tabs:after:-bottom-[0.5px] group-data-horizontal/tabs:after:h-[2.5px] after:bg-primary sm:text-[17px]">
+                <TabsTrigger key={t.key} value={t.key} nativeButton={false} render={<a href={pageHref(year, t.key)} />} onClick={(e) => (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey ? e.preventBaseUIHandler() : e.preventDefault())} className="no-underline h-full flex-none gap-2 px-3 py-0 has-data-[icon=inline-start]:pl-3 focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:text-foreground text-sm leading-none data-active:text-primary data-active:hover:text-primary data-active:focus-visible:text-primary dark:data-active:text-primary group-data-horizontal/tabs:after:-bottom-[0.5px] group-data-horizontal/tabs:after:h-[2.5px] after:bg-primary sm:text-base">
                   <t.icon data-icon="inline-start" />
                   {t.label}
                 </TabsTrigger>
@@ -1090,7 +1091,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
             {yearStuck && v ? (
               <div className="relative h-0">
               <div className="absolute inset-x-0 top-0 mx-[calc(50%-50cqw)] flex h-12 items-center justify-between gap-3 border-b bg-background px-[calc(50cqw-50%)]">
-                <span className="truncate text-[15px] font-semibold">{projectPage ? '' : TABS.find((t) => t.key === tab)?.label}</span>
+                <span className="truncate text-sm font-semibold">{projectPage ? '' : TABS.find((t) => t.key === tab)?.label}</span>
                 <div className="shrink-0">
                   <div className="md:hidden"><YearMenu years={years} current={v.year} onChange={setYear} /></div>
                   <div className="max-md:hidden"><YearPicker years={years} current={v.year} onChange={setYear} hrefOf={yearHref} /></div>

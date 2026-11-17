@@ -269,6 +269,16 @@
                       "end": 21
                     }
                   ]
+                },
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 10
+                    }
+                  ]
                 }
               ]
             },
@@ -289,6 +299,16 @@
                     {
                       "start": 8,
                       "end": 10
+                    }
+                  ]
+                },
+                {
+                  "account": "駐車場事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 7
                     }
                   ]
                 }
@@ -335,6 +355,16 @@
                       "end": 13
                     }
                   ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 6
+                    }
+                  ]
                 }
               ]
             },
@@ -359,11 +389,389 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_01_sizei.pdf",
+              "sha256": "68e9922ebea5c53fa1326fda8f7f8385b28032587249cc08588e04e44710acfd",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_02_jyouyozei.pdf",
+              "sha256": "c7cd7335f0fe33e3634c5f866894ccfff6b8deff8135c55a1d6118456bd39d2e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_03_risiwari.pdf",
+              "sha256": "50e5d76d111b197d69fe479f2626a52f77e0efd71f02ddd43ccd2b9889e2a2e4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_04_haitouwari.pdf",
+              "sha256": "d71ceeb5eee59aff79ac77d02c2a31397ce907b99303e9b20b6db05a5a1214ea",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_05_kabusiki.pdf",
+              "sha256": "fa3afb5b87fbca3691071fbcd27f95f1e95ffd2ed70a3349d265400429fc2282",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_06_houjin.pdf",
+              "sha256": "170160fb976806c36a9f19f0793d9d50a6f6557375f584ac7a04dac0d236a454",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_07_syouhizei.pdf",
+              "sha256": "2e178742fad425c8a4ee01859e481fd59c3b38d2b3b9c4d7860f38d3bd2f486d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_08_kankyouseinou.pdf",
+              "sha256": "b727f4021ca7b9de203ef2c175f3342b516a32f8553ec686e4a1b43841708e43",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_09_tihoutokurei.pdf",
+              "sha256": "e80cf714fa005a385dc95e4a76d33256398ef49bd1fe364014bff3f8ad18477d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_10_kouhuzei.pdf",
+              "sha256": "bd8704bdacbc9d3e4c0fe6949e002723e54be8b2b95a9f192c222809463be834",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_11_koutuuannzen.pdf",
+              "sha256": "fbfe9f71053b9d56b38ab497431811f90293ebb3285254153bcf4c7a7de29930",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_12_buntanhutan.pdf",
+              "sha256": "d194561199118a568e50942a4f32135a93fdbb2ae6de9fe3c3c491e1c34798da",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_13_siyoutesuuryou.pdf",
+              "sha256": "13407bd54c9be65462bcc13a69bbd181804b95dc885dceca60bc0f782b4da301",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_14_kokkosisyutukin.pdf",
+              "sha256": "b91f6e4826e19fc40a5fbf7380c0d1cab8dad369353d447fdabd229edb62e078",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 8
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_15_tosisyutukin.pdf",
+              "sha256": "ba2fa56523de22f70d9919dd8248937cdb8af5c40bc11801f174be612117e837",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 23
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_16_zaisansyunyu.pdf",
+              "sha256": "92951142782e3c71abdf2eb44805298b168f6f6f50c8d21794d753b8170795f8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_17_kihukin.pdf",
+              "sha256": "5411fd045181e563a6a1cf266f866625cf9dcb9fde698fee9672cc7194617f1b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_18_kuriirekin.pdf",
+              "sha256": "537a8d87e9e8810b7d3c90934eadbaa36abc1448ac38f65cdf1dd064ca6864f6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_19_kurikosikin.pdf",
+              "sha256": "82e9f757598866f60df0b53b265a8c78a00f82362c5d117f4d77a86d93db208e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_20_syosyuunyuu.pdf",
+              "sha256": "0b7655d9140a9477b5ef0df8ebe003b8c94a9b58e05c7238336a643d5f9b8126",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_21_sisai.pdf",
+              "sha256": "e9eedbfb2cf352c7ef7ff24444fe879987cf007acdaeeba71cf807a709621c5b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 3
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "令和8年度当初予算の歳出を全会計で選定。一般会計は歳出予算事項別明細書の款別13分冊（r8_07_jikoubetumeisai_01〜13）が第1款議会費〜第13款予備費の歳出明細を構成し、各冊全体が歳出（款・項・目・本年度予算額・節内訳、単位千円、文字PDF）。特別会計3件（国保・駐車場・後期高齢者）は歳入歳出予算事項別明細書1冊に歳入と歳出が同居するため歳出部分のみを範囲指定：国保は物理2頁（歳出総括）と11-21頁（第1款総務費〜第8款予備費）、駐車場は2頁と8-10頁（第1款駐車場費〜第3款予備費）、後期高齢者は2頁と8-13頁（第1款総務費〜第6款予備費）。介護保険は同様の明細書だが文字層のないアウトライン化PDF（描画して確認、物理1頁=印字2頁の見開き）で、歳出は物理2頁（歳出総括・印字8-9）と12-24頁（３歳出 第1款総務費・印字28-29〜第7款予備費・印字52-53）、千円。下水道事業会計は予算及び同説明書1冊で、収益的支出明細（物理19-21頁・第1款下水道事業費用・款項目節・本年度予定額・千円）と資本的支出明細（物理23頁・第1款資本的支出）を歳出範囲とし、22頁は資本的収入。各会計の掲載ページは同indexの会計別リンク（ippan/R8ippankaikeiyosan.html、kokuho/R8_kokuhotousho.html、tyuusyajyou/R8chusyajo.html、kaigo/kaigohokentokubetukaikei.html、kouki/R8_kourei.html、gesuidou/8gesuidouyosan.html）。歳入は未確認・対象外。補正号は掲載一覧に一般会計第1-6号・国保/駐車場/介護/後期高齢者各第1号があるが本選定には含めない。",
+      "reason": "令和8年度当初予算の歳出を全会計で選定。一般会計は歳出予算事項別明細書の款別13分冊（r8_07_jikoubetumeisai_01〜13）が第1款議会費〜第13款予備費の歳出明細を構成し、各冊全体が歳出（款・項・目・本年度予算額・節内訳、単位千円、文字PDF）。特別会計3件（国保・駐車場・後期高齢者）は歳入歳出予算事項別明細書1冊に歳入と歳出が同居するため歳出部分のみを範囲指定：国保は物理2頁（歳出総括）と11-21頁（第1款総務費〜第8款予備費）、駐車場は2頁と8-10頁（第1款駐車場費〜第3款予備費）、後期高齢者は2頁と8-13頁（第1款総務費〜第6款予備費）。介護保険は同様の明細書だが文字層のないアウトライン化PDF（描画して確認、物理1頁=印字2頁の見開き）で、歳出は物理2頁（歳出総括・印字8-9）と12-24頁（３歳出 第1款総務費・印字28-29〜第7款予備費・印字52-53）、千円。下水道事業会計は予算及び同説明書1冊で、収益的支出明細（物理19-21頁・第1款下水道事業費用・款項目節・本年度予定額・千円）と資本的支出明細（物理23頁・第1款資本的支出）を歳出範囲とし、22頁は資本的収入。各会計の掲載ページは同indexの会計別リンク（ippan/R8ippankaikeiyosan.html、kokuho/R8_kokuhotousho.html、tyuusyajyou/R8chusyajo.html、kaigo/kaigohokentokubetukaikei.html、kouki/R8_kourei.html、gesuidou/8gesuidouyosan.html）。歳入は未確認・対象外。補正号は掲載一覧に一般会計第1-6号・国保/駐車場/介護/後期高齢者各第1号があるが本選定には含めない。 2026-11-17 歳入を追加: 各特別会計の予算書の歳入歳出予算事項別明細書の歳入の頁（国民健康保険特別会計 物理3-10頁、駐車場事業特別会計 物理3-7頁、後期高齢者医療特別会計 物理3-6頁）を各会計の歳入の範囲にした。 2026-11-17 歳入を追加: 一般会計の予算書の歳入歳出予算事項別明細書の歳入は款ごとの分冊（第1款〜第21款の21冊）で公開されているので、21冊を一般会計の歳入の範囲として足した。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -458,9 +866,114 @@
             "key": "fiscal/source-selection/132292/2026/initial-7.pdf",
             "sha256": "49a20ae9b38a9a7eae4aa5ce45de260ada8d07a26a20d67d9d41b3fa661e9ff4",
             "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/gesuidou/8gesuidouyosan.files/8gesuiyosan.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/initial-708.pdf",
+            "sha256": "68e9922ebea5c53fa1326fda8f7f8385b28032587249cc08588e04e44710acfd",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_01_sizei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/initial-715.pdf",
+            "sha256": "c7cd7335f0fe33e3634c5f866894ccfff6b8deff8135c55a1d6118456bd39d2e",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_02_jyouyozei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/initial-705.pdf",
+            "sha256": "50e5d76d111b197d69fe479f2626a52f77e0efd71f02ddd43ccd2b9889e2a2e4",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_03_risiwari.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/initial-717.pdf",
+            "sha256": "d71ceeb5eee59aff79ac77d02c2a31397ce907b99303e9b20b6db05a5a1214ea",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_04_haitouwari.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/initial-720.pdf",
+            "sha256": "fa3afb5b87fbca3691071fbcd27f95f1e95ffd2ed70a3349d265400429fc2282",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_05_kabusiki.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/initial-703.pdf",
+            "sha256": "170160fb976806c36a9f19f0793d9d50a6f6557375f584ac7a04dac0d236a454",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_06_houjin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/initial-704.pdf",
+            "sha256": "2e178742fad425c8a4ee01859e481fd59c3b38d2b3b9c4d7860f38d3bd2f486d",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_07_syouhizei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/initial-711.pdf",
+            "sha256": "b727f4021ca7b9de203ef2c175f3342b516a32f8553ec686e4a1b43841708e43",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_08_kankyouseinou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/initial-718.pdf",
+            "sha256": "e80cf714fa005a385dc95e4a76d33256398ef49bd1fe364014bff3f8ad18477d",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_09_tihoutokurei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/initial-714.pdf",
+            "sha256": "bd8704bdacbc9d3e4c0fe6949e002723e54be8b2b95a9f192c222809463be834",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_10_kouhuzei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/initial-721.pdf",
+            "sha256": "fbfe9f71053b9d56b38ab497431811f90293ebb3285254153bcf4c7a7de29930",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_11_koutuuannzen.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/initial-716.pdf",
+            "sha256": "d194561199118a568e50942a4f32135a93fdbb2ae6de9fe3c3c491e1c34798da",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_12_buntanhutan.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/initial-702.pdf",
+            "sha256": "13407bd54c9be65462bcc13a69bbd181804b95dc885dceca60bc0f782b4da301",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_13_siyoutesuuryou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/initial-712.pdf",
+            "sha256": "b91f6e4826e19fc40a5fbf7380c0d1cab8dad369353d447fdabd229edb62e078",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_14_kokkosisyutukin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/initial-713.pdf",
+            "sha256": "ba2fa56523de22f70d9919dd8248937cdb8af5c40bc11801f174be612117e837",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_15_tosisyutukin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/initial-710.pdf",
+            "sha256": "92951142782e3c71abdf2eb44805298b168f6f6f50c8d21794d753b8170795f8",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_16_zaisansyunyu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/initial-707.pdf",
+            "sha256": "5411fd045181e563a6a1cf266f866625cf9dcb9fde698fee9672cc7194617f1b",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_17_kihukin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/initial-706.pdf",
+            "sha256": "537a8d87e9e8810b7d3c90934eadbaa36abc1448ac38f65cdf1dd064ca6864f6",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_18_kuriirekin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/initial-709.pdf",
+            "sha256": "82e9f757598866f60df0b53b265a8c78a00f82362c5d117f4d77a86d93db208e",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_19_kurikosikin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/initial-701.pdf",
+            "sha256": "0b7655d9140a9477b5ef0df8ebe003b8c94a9b58e05c7238336a643d5f9b8126",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_20_syosyuunyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2026/initial-719.pdf",
+            "sha256": "e9eedbfb2cf352c7ef7ff24444fe879987cf007acdaeeba71cf807a709621c5b",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-8/ippan/R8ippankaikeiyosan.files/r8_06_jikoubetumeisai_21_sisai.pdf"
           }
         ],
-        "archived_at": "2026-10-07T16:10:21.675Z"
+        "archived_at": "2026-11-17T05:23:23.515Z"
       }
     },
     {
@@ -725,6 +1238,16 @@
                       "end": 19
                     }
                   ]
+                },
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 8
+                    }
+                  ]
                 }
               ]
             },
@@ -741,6 +1264,16 @@
                     {
                       "start": 6,
                       "end": 8
+                    }
+                  ]
+                },
+                {
+                  "account": "駐車場事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 5
                     }
                   ]
                 }
@@ -761,6 +1294,16 @@
                       "end": 22
                     }
                   ]
+                },
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 8
+                    }
+                  ]
                 }
               ]
             },
@@ -777,6 +1320,16 @@
                     {
                       "start": 6,
                       "end": 11
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 5
                     }
                   ]
                 }
@@ -799,11 +1352,389 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.16-19.pdf",
+              "sha256": "f2176b766a54ddc74d1262079ebf22c3b1620d713e10afa3390daa2e8dc85ee6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.20-21.pdf",
+              "sha256": "b62cb7e3af9913d58f01a369c4484a14dfeba5976486a9eb5259eaea492293fa",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.22-23.pdf",
+              "sha256": "2b3cad611ba51c2b6cc3316a31cf5702ab1d95b1b1767bfe541b84ba257205bf",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.24-25.pdf",
+              "sha256": "a91121a4e6311cd7c45f64405ab81b0904530d54978945ca9d728988b47d59a5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.26-27.pdf",
+              "sha256": "47896f7db1e1bc66ca4b59a5fcc7f2d15b0c82e39658b3813d4403326d9b2ee6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.28-29.pdf",
+              "sha256": "ed78ec56439c94b67b114f402587dd2c36c0f7284affb3aeea1979331aae54d9",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.30-31.pdf",
+              "sha256": "61a324fd389732bde00525a9fcf722559164f83feac78739431e71cb28320724",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.32-33.pdf",
+              "sha256": "127a05bc1f6b245474709567e4f4a706252accb9feb0e0f9dd6bcad3c3b47a54",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.34-35.pdf",
+              "sha256": "b468d67b7b21742988d4f6b0481fa591d80153520bd81964578c50a34e38e2b1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.36-37.pdf",
+              "sha256": "ad188fbdb6adf1697181eeeb833703cc5a8045195477063416eaf6dd9b43d81e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.38-39.pdf",
+              "sha256": "32224f4fd7fbedad171e7965caa5a72dc4cfd99f786ab17fe3f85f4344afc017",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.40-41.pdf",
+              "sha256": "e56c1d9dead395b378c3a59ced342ed3215046869e79ce0d908e9c06ae616569",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.42-45.pdf",
+              "sha256": "96ae235c0e8fa3ba5cb34f69e65e894e3c130179f7038ad67dcc04a4eaa207f1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.46-57.pdf",
+              "sha256": "6e97963bd445ce2694bac1594d64bb846f08d572712134c2fd0ab28423c150ba",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 6
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.58-85.pdf",
+              "sha256": "fbe5ee5124dae7de9dc40469066bee155df92e33104c19d11138ddcbbb8de3ee",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 14
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.86-89.pdf",
+              "sha256": "2a0e1923e9a84edd6c9375264394bde7acfacf3e3748eed14e75c52b0c35019a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.90-91.pdf",
+              "sha256": "b8b6467569a7dec49900714c3689d02da7ea913380561582dfe7c31f2ba13500",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.92-95.pdf",
+              "sha256": "21b4bf3562e7200c566659e952846f2679580b1261d7fb643eec9bce9a63c057",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.96-97.pdf",
+              "sha256": "3100148e70d1457a35820498c5e821be0bc03becd96165f1f13225eacfd4ee0b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.98-109.pdf",
+              "sha256": "638bb39d439d45414fdbc5a4b62e3ab1864d173fce3847ddb72c1c842b16ad6a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 6
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.110-113.pdf",
+              "sha256": "b327699a1b7a9c400df43583fd210a1dc1a199f5530da88cc0c35c388d0ca220",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "令和7年度決算（議会認定済み、同indexに認定結果の記載あり）の歳出を全会計で選定。一般会計は歳入歳出決算事項別明細書の歳出・款別13分冊（7.116-121〜7.512-513、第1款議会費〜第13款予備費）で、各冊全体が歳出明細（款・項・目・節、列は当初予算額・補正予算額・予算現額・支出済額・翌年度繰越額・不用額、単位円、文字PDF）。特別会計は歳入歳出決算事項別明細書1冊に歳入と歳出が同居：国保t7.14-53は物理9-19頁が歳出（第1款総務費〜第8款予備費）、駐車場t7.66-83は6-8頁（第1款駐車場費〜第3款予備費）、介護t7.98-143は9-22頁（第1款総務費〜第7款予備費）、後期高齢者t7.156-179は6-11頁（第1款総務費〜第6款予備費）。いずれも単位円・支出済額列を列見出しで確認。下水道事業会計決算書1冊では収益費用明細書の収益的支出（物理17-18頁・款項目節・決算額・円）と資本的収支明細書（19頁、同頁に資本的収入と資本的支出が同居）を歳出範囲とする。各会計の掲載ページは同indexの会計別リンク（ippankessansho.html、kokuhotokubetu.html、tyusyazyotokubetu.html、kaigotokubetu.html、koukitokubetu.html、gesui.html）。歳入は未確認・対象外。",
+      "reason": "令和7年度決算（議会認定済み、同indexに認定結果の記載あり）の歳出を全会計で選定。一般会計は歳入歳出決算事項別明細書の歳出・款別13分冊（7.116-121〜7.512-513、第1款議会費〜第13款予備費）で、各冊全体が歳出明細（款・項・目・節、列は当初予算額・補正予算額・予算現額・支出済額・翌年度繰越額・不用額、単位円、文字PDF）。特別会計は歳入歳出決算事項別明細書1冊に歳入と歳出が同居：国保t7.14-53は物理9-19頁が歳出（第1款総務費〜第8款予備費）、駐車場t7.66-83は6-8頁（第1款駐車場費〜第3款予備費）、介護t7.98-143は9-22頁（第1款総務費〜第7款予備費）、後期高齢者t7.156-179は6-11頁（第1款総務費〜第6款予備費）。いずれも単位円・支出済額列を列見出しで確認。下水道事業会計決算書1冊では収益費用明細書の収益的支出（物理17-18頁・款項目節・決算額・円）と資本的収支明細書（19頁、同頁に資本的収入と資本的支出が同居）を歳出範囲とする。各会計の掲載ページは同indexの会計別リンク（ippankessansho.html、kokuhotokubetu.html、tyusyazyotokubetu.html、kaigotokubetu.html、koukitokubetu.html、gesui.html）。歳入は未確認・対象外。 2026-11-17 歳入を追加: 各特別会計の決算書の歳入歳出決算事項別明細書の歳入の頁（国民健康保険特別会計 物理1-8頁、駐車場事業特別会計 物理1-5頁、介護保険特別会計 物理1-8頁、後期高齢者医療特別会計 物理1-5頁）を各会計の歳入の範囲にした。 2026-11-17 歳入を追加: 一般会計の決算書の歳入歳出決算事項別明細書の歳入は款ごとの分冊（第1款〜第21款の21冊）で公開されているので、21冊を一般会計の歳入の範囲として足した。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -898,9 +1829,114 @@
             "key": "fiscal/source-selection/132292/2025/settlement-13.pdf",
             "sha256": "b7f4904d0609971921b9d524f952e4a2f56101e5f8bca2c55ef64b673916c458",
             "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/gesui.files/r7gesui.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/settlement-720.pdf",
+            "sha256": "f2176b766a54ddc74d1262079ebf22c3b1620d713e10afa3390daa2e8dc85ee6",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.16-19.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/settlement-716.pdf",
+            "sha256": "b62cb7e3af9913d58f01a369c4484a14dfeba5976486a9eb5259eaea492293fa",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.20-21.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/settlement-704.pdf",
+            "sha256": "2b3cad611ba51c2b6cc3316a31cf5702ab1d95b1b1767bfe541b84ba257205bf",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.22-23.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/settlement-712.pdf",
+            "sha256": "a91121a4e6311cd7c45f64405ab81b0904530d54978945ca9d728988b47d59a5",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.24-25.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/settlement-707.pdf",
+            "sha256": "47896f7db1e1bc66ca4b59a5fcc7f2d15b0c82e39658b3813d4403326d9b2ee6",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.26-27.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/settlement-719.pdf",
+            "sha256": "ed78ec56439c94b67b114f402587dd2c36c0f7284affb3aeea1979331aae54d9",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.28-29.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/settlement-708.pdf",
+            "sha256": "61a324fd389732bde00525a9fcf722559164f83feac78739431e71cb28320724",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.30-31.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/settlement-701.pdf",
+            "sha256": "127a05bc1f6b245474709567e4f4a706252accb9feb0e0f9dd6bcad3c3b47a54",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.32-33.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/settlement-715.pdf",
+            "sha256": "b468d67b7b21742988d4f6b0481fa591d80153520bd81964578c50a34e38e2b1",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.34-35.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/settlement-713.pdf",
+            "sha256": "ad188fbdb6adf1697181eeeb833703cc5a8045195477063416eaf6dd9b43d81e",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.36-37.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/settlement-706.pdf",
+            "sha256": "32224f4fd7fbedad171e7965caa5a72dc4cfd99f786ab17fe3f85f4344afc017",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.38-39.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/settlement-718.pdf",
+            "sha256": "e56c1d9dead395b378c3a59ced342ed3215046869e79ce0d908e9c06ae616569",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.40-41.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/settlement-711.pdf",
+            "sha256": "96ae235c0e8fa3ba5cb34f69e65e894e3c130179f7038ad67dcc04a4eaa207f1",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.42-45.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/settlement-710.pdf",
+            "sha256": "6e97963bd445ce2694bac1594d64bb846f08d572712134c2fd0ab28423c150ba",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.46-57.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/settlement-721.pdf",
+            "sha256": "fbe5ee5124dae7de9dc40469066bee155df92e33104c19d11138ddcbbb8de3ee",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.58-85.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/settlement-703.pdf",
+            "sha256": "2a0e1923e9a84edd6c9375264394bde7acfacf3e3748eed14e75c52b0c35019a",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.86-89.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/settlement-717.pdf",
+            "sha256": "b8b6467569a7dec49900714c3689d02da7ea913380561582dfe7c31f2ba13500",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.90-91.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/settlement-702.pdf",
+            "sha256": "21b4bf3562e7200c566659e952846f2679580b1261d7fb643eec9bce9a63c057",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.92-95.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/settlement-705.pdf",
+            "sha256": "3100148e70d1457a35820498c5e821be0bc03becd96165f1f13225eacfd4ee0b",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.96-97.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/settlement-709.pdf",
+            "sha256": "638bb39d439d45414fdbc5a4b62e3ab1864d173fce3847ddb72c1c842b16ad6a",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.98-109.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/settlement-714.pdf",
+            "sha256": "b327699a1b7a9c400df43583fd210a1dc1a199f5530da88cc0c35c388d0ca220",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r7/ippankessansho.files/7.110-113.pdf"
           }
         ],
-        "archived_at": "2026-10-07T16:10:49.607Z"
+        "archived_at": "2026-11-17T05:24:01.715Z"
       }
     },
     {
@@ -1165,6 +2201,16 @@
                       "end": 19
                     }
                   ]
+                },
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 8
+                    }
+                  ]
                 }
               ]
             },
@@ -1181,6 +2227,16 @@
                     {
                       "start": 5,
                       "end": 7
+                    }
+                  ]
+                },
+                {
+                  "account": "駐車場事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
                     }
                   ]
                 }
@@ -1201,6 +2257,16 @@
                       "end": 22
                     }
                   ]
+                },
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 8
+                    }
+                  ]
                 }
               ]
             },
@@ -1217,6 +2283,16 @@
                     {
                       "start": 5,
                       "end": 10
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
                     }
                   ]
                 }
@@ -1239,11 +2315,389 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.16-19.pdf",
+              "sha256": "d266707687fe9c4ab1e9830d3359eb40c5b3063938a9a1fabc63ab0ffab07672",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.20-21.pdf",
+              "sha256": "1ff9d45e99cdddfe711bf6770a16fdb17eced28f64e5c44cf2fa56a16b96ed85",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.22-23.pdf",
+              "sha256": "31de82eee2f2f2392e7067d2a0df97cbbd980b6eb3ebc08de5dfb8d57f58c78f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.24-25.pdf",
+              "sha256": "6d646f44e667f682bd442a7a698a9be2b5fa7c962a325a50f8e582cbeb268bf4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.26-27.pdf",
+              "sha256": "d681c87fb7a2cda234756cfcffc1383519354d74d8fde92549ce4e9a714df7d7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.28-29.pdf",
+              "sha256": "bc5f1570a5915f52f4597a0fd722bb914335229d6f54e03589109a5a19c11c76",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.30-31.pdf",
+              "sha256": "ef8fe22e2e9c97d491a4f5d4a76d172ca1d46c0c07e42d18cb2ee0c39bd2a0c1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.32-33.pdf",
+              "sha256": "b31a8b17b3f13443a897eb3e41e2c32eaa73ca631c7a6300f4d40cababe9e69f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.34-35.pdf",
+              "sha256": "322193549fd2171fdfd2e6cca071750d8248a6ed6ad31e4c5a03572de4ccf196",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.36-37.pdf",
+              "sha256": "972cae211da8a3c53e2fd7498da99f8e1ab96d118720a1e624e4eefebd7f7f48",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.38-39.pdf",
+              "sha256": "9ee69898021e9d6d47b7b3394a1079acc8072546bdebcb2ea8c5ded28357b718",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.40-41.pdf",
+              "sha256": "2c87b6dba24609c659a64d4b56b0c280110e1d591e52f3d99262c39b57b70007",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.42-45.pdf",
+              "sha256": "f1f24e69704d416ca2cf4f4b7bd67380185698f2e21ac9661f1aca51946fe1e1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.46-55.pdf",
+              "sha256": "ecffcf8431eabb5a5d76aa14e59220024693fc4d0d5dab57a9ce16cf6bee5cf1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.56-81.pdf",
+              "sha256": "dc3125afd7228f34c9ff5d0a88e43cec7d0396e7c173c43fa6de6b1bb6e0f2ba",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 13
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.82-85.pdf",
+              "sha256": "24cc6325f78ec12860a55b00e2945e00f9a898f2e359ca5f4226f8f42ace2f40",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.86-87.pdf",
+              "sha256": "da5704f186411945dce8a7670d57f7ea7dc8a695123c25bb30a1dfbf473e0c2c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.88-91.pdf",
+              "sha256": "90379420dcf3e30243294934dea4fee9bc220c731db5840a2f228948ce59227e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.92-93.pdf",
+              "sha256": "c1b6e5176bb3fcd36cbfb7a84f2fb90a1da019c63f7aeef582ab5e86a2b839f2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.94-105.pdf",
+              "sha256": "a76756984a5e58cc793a24ec1dac4d555fb29aa57229b9c253052680de11fc59",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 6
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.106-107.pdf",
+              "sha256": "791bda7211040130c6b6f399a5036ac90403ff023e9eb89cfd9d7465fef82c33",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "令和6年度決算（市公式「決算」一覧の令和6年度ページに掲載、議会認定済み）の歳出を全会計で選定。2024年度の会計構成は一般会計・国民健康保険特別会計・駐車場事業特別会計・介護保険特別会計・後期高齢者医療特別会計・下水道事業会計の6会計（令和7年度と同一構成をr6/index.htmlと各会計決算書ページで確認）。一般会計は歳入歳出決算事項別明細書の歳出・款別13分冊（6.110-113第1款議会費〜6.496-497第13款予備費）で各冊全体が歳出明細。列は款・項・目・節区分と当初予算額・補正予算額・継続費及び繰越額等の予算現額・支出済額・翌年度繰越額・不用額、単位円、全冊文字PDF。特別会計は歳入歳出決算事項別明細書1冊に歳入と歳出が同居するため歳出部分のみを範囲指定：国保は物理9-19頁（第1款総務費〜第8款予備費、1-8頁は歳入）、駐車場は5-7頁（第1款駐車場費〜第3款予備費、1-4頁は歳入）、介護は9-22頁（第1款総務費〜第7款予備費、1-8頁は歳入）、後期高齢者は5-10頁（第1款総務費〜第6款予備費、1-4頁は歳入）。いずれも款・項・目・節と支出済額を同一明細で掲載、単位円、文字PDF。下水道事業会計は決算書（gesui6.pdf・25物理頁）のうち物理17-18頁=収益費用明細書の収益的支出（款・項・目・節・金額=決算額・説明、単位円）、19頁=資本的収支明細書（同頁に資本的収入と資本的支出が同居、資本的支出の建設改良費が款項目節・当年度額を掲載）。損益計算書・貸借対照表・キャッシュ・フロー計算書・固定資産明細書・企業債明細書は支出明細でないため範囲外。歳入明細・歳入歳出決算書総括・実質収支に関する調書・財産に関する調書は未確認・対象外。",
+      "reason": "令和6年度決算（市公式「決算」一覧の令和6年度ページに掲載、議会認定済み）の歳出を全会計で選定。2024年度の会計構成は一般会計・国民健康保険特別会計・駐車場事業特別会計・介護保険特別会計・後期高齢者医療特別会計・下水道事業会計の6会計（令和7年度と同一構成をr6/index.htmlと各会計決算書ページで確認）。一般会計は歳入歳出決算事項別明細書の歳出・款別13分冊（6.110-113第1款議会費〜6.496-497第13款予備費）で各冊全体が歳出明細。列は款・項・目・節区分と当初予算額・補正予算額・継続費及び繰越額等の予算現額・支出済額・翌年度繰越額・不用額、単位円、全冊文字PDF。特別会計は歳入歳出決算事項別明細書1冊に歳入と歳出が同居するため歳出部分のみを範囲指定：国保は物理9-19頁（第1款総務費〜第8款予備費、1-8頁は歳入）、駐車場は5-7頁（第1款駐車場費〜第3款予備費、1-4頁は歳入）、介護は9-22頁（第1款総務費〜第7款予備費、1-8頁は歳入）、後期高齢者は5-10頁（第1款総務費〜第6款予備費、1-4頁は歳入）。いずれも款・項・目・節と支出済額を同一明細で掲載、単位円、文字PDF。下水道事業会計は決算書（gesui6.pdf・25物理頁）のうち物理17-18頁=収益費用明細書の収益的支出（款・項・目・節・金額=決算額・説明、単位円）、19頁=資本的収支明細書（同頁に資本的収入と資本的支出が同居、資本的支出の建設改良費が款項目節・当年度額を掲載）。損益計算書・貸借対照表・キャッシュ・フロー計算書・固定資産明細書・企業債明細書は支出明細でないため範囲外。歳入明細・歳入歳出決算書総括・実質収支に関する調書・財産に関する調書は未確認・対象外。 2026-11-17 歳入を追加: 各特別会計の決算書の歳入歳出決算事項別明細書の歳入の頁（国民健康保険特別会計 物理1-8頁、駐車場事業特別会計 物理1-4頁、介護保険特別会計 物理1-8頁、後期高齢者医療特別会計 物理1-4頁）を各会計の歳入の範囲にした。 2026-11-17 歳入を追加: 一般会計の決算書の歳入歳出決算事項別明細書の歳入は款ごとの分冊（第1款〜第21款の21冊）で公開されているので、21冊を一般会計の歳入の範囲として足した。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -1338,9 +2792,114 @@
             "key": "fiscal/source-selection/132292/2024/settlement-13.pdf",
             "sha256": "bd3c339ccfee14cf51f34924ebdb1626f3e7cc8f8784e3ecaedfa650ad885bfd",
             "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/gesui6.files/gesui6.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/settlement-33.pdf",
+            "sha256": "d266707687fe9c4ab1e9830d3359eb40c5b3063938a9a1fabc63ab0ffab07672",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.16-19.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/settlement-19.pdf",
+            "sha256": "1ff9d45e99cdddfe711bf6770a16fdb17eced28f64e5c44cf2fa56a16b96ed85",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.20-21.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/settlement-22.pdf",
+            "sha256": "31de82eee2f2f2392e7067d2a0df97cbbd980b6eb3ebc08de5dfb8d57f58c78f",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.22-23.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/settlement-24.pdf",
+            "sha256": "6d646f44e667f682bd442a7a698a9be2b5fa7c962a325a50f8e582cbeb268bf4",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.24-25.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/settlement-34.pdf",
+            "sha256": "d681c87fb7a2cda234756cfcffc1383519354d74d8fde92549ce4e9a714df7d7",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.26-27.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/settlement-31.pdf",
+            "sha256": "bc5f1570a5915f52f4597a0fd722bb914335229d6f54e03589109a5a19c11c76",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.28-29.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/settlement-38.pdf",
+            "sha256": "ef8fe22e2e9c97d491a4f5d4a76d172ca1d46c0c07e42d18cb2ee0c39bd2a0c1",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.30-31.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/settlement-30.pdf",
+            "sha256": "b31a8b17b3f13443a897eb3e41e2c32eaa73ca631c7a6300f4d40cababe9e69f",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.32-33.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/settlement-23.pdf",
+            "sha256": "322193549fd2171fdfd2e6cca071750d8248a6ed6ad31e4c5a03572de4ccf196",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.34-35.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/settlement-27.pdf",
+            "sha256": "972cae211da8a3c53e2fd7498da99f8e1ab96d118720a1e624e4eefebd7f7f48",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.36-37.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/settlement-28.pdf",
+            "sha256": "9ee69898021e9d6d47b7b3394a1079acc8072546bdebcb2ea8c5ded28357b718",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.38-39.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/settlement-21.pdf",
+            "sha256": "2c87b6dba24609c659a64d4b56b0c280110e1d591e52f3d99262c39b57b70007",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.40-41.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/settlement-39.pdf",
+            "sha256": "f1f24e69704d416ca2cf4f4b7bd67380185698f2e21ac9661f1aca51946fe1e1",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.42-45.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/settlement-37.pdf",
+            "sha256": "ecffcf8431eabb5a5d76aa14e59220024693fc4d0d5dab57a9ce16cf6bee5cf1",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.46-55.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/settlement-36.pdf",
+            "sha256": "dc3125afd7228f34c9ff5d0a88e43cec7d0396e7c173c43fa6de6b1bb6e0f2ba",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.56-81.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/settlement-20.pdf",
+            "sha256": "24cc6325f78ec12860a55b00e2945e00f9a898f2e359ca5f4226f8f42ace2f40",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.82-85.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/settlement-35.pdf",
+            "sha256": "da5704f186411945dce8a7670d57f7ea7dc8a695123c25bb30a1dfbf473e0c2c",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.86-87.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/settlement-26.pdf",
+            "sha256": "90379420dcf3e30243294934dea4fee9bc220c731db5840a2f228948ce59227e",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.88-91.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/settlement-32.pdf",
+            "sha256": "c1b6e5176bb3fcd36cbfb7a84f2fb90a1da019c63f7aeef582ab5e86a2b839f2",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.92-93.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/settlement-29.pdf",
+            "sha256": "a76756984a5e58cc793a24ec1dac4d555fb29aa57229b9c253052680de11fc59",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.94-105.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/settlement-25.pdf",
+            "sha256": "791bda7211040130c6b6f399a5036ac90403ff023e9eb89cfd9d7465fef82c33",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r6/6ippan.files/6.106-107.pdf"
           }
         ],
-        "archived_at": "2026-10-08T01:06:41.971Z"
+        "archived_at": "2026-11-17T05:05:43.354Z"
       }
     },
     {
@@ -2041,6 +3600,16 @@
                       "end": 21
                     }
                   ]
+                },
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 10
+                    }
+                  ]
                 }
               ]
             },
@@ -2061,6 +3630,16 @@
                     {
                       "start": 8,
                       "end": 10
+                    }
+                  ]
+                },
+                {
+                  "account": "駐車場事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 7
                     }
                   ]
                 }
@@ -2085,6 +3664,16 @@
                       "end": 24
                     }
                   ]
+                },
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 11
+                    }
+                  ]
                 }
               ]
             },
@@ -2105,6 +3694,16 @@
                     {
                       "start": 8,
                       "end": 13
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 7
                     }
                   ]
                 }
@@ -2131,11 +3730,389 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_01_sizei.pdf",
+              "sha256": "60b3478d126e86b70360714dac4f7d11f3e0fa24d25458e2476595a32a6deff5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_02_jyouyozei.pdf",
+              "sha256": "89770125e1dc1a17560b3a78bc9b838dea1d78c1eb647935b8d7cab398d70104",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_03_risiwari.pdf",
+              "sha256": "bbc8535992c0ee31b4598f218b0fee3e7b301922a385f02eaacd9d12a560d6e6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_04_haitouwari.pdf",
+              "sha256": "b84116f5ebf05feb2e06ff38a60e77b46449335c9e5d68de7d3f59ed58491e09",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_05_kabusiki.pdf",
+              "sha256": "256eb7a732062b36de2d1027e98710359b45eb1fe291e36e82022114207f3641",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_06_houjin.pdf",
+              "sha256": "699398a1ead6b455f2a1b818d4eb90c647adebe3e5900d353cbb6bf2ad9ce813",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_07_syouhizei.pdf",
+              "sha256": "212dcb3f84113b66cbea1406d9a338f31ddc853ffcbba442d4257300341a4e11",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_08_kankyouseinou.pdf",
+              "sha256": "d62f4354e30143fda68ca226eed5d40b8fa6cf22decca4e9a212ab979d48911f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_09_tihoutokurei.pdf",
+              "sha256": "0c84186bd95df6bac3fcfc371d81121a1f9b2c683a05054da80473af4d247f7b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_10_kouhuzei.pdf",
+              "sha256": "4bf353b2a1066c5e1b810c6fc539d9f771359760f26222487ca004f3a4eaf23e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_11_koutuuannzen.pdf",
+              "sha256": "c01b9143bb93aca1b6511a4b2c965b3e41915cb4c2e0fc99c13029ae11bdcf02",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_12_buntanhutan.pdf",
+              "sha256": "e2e19288697f2686b7e98b5357f4c7db1002d3474ec46af4b82a0c057c0362f8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_13_siyoutesuuryou.pdf",
+              "sha256": "e90c433684be0a7c3517e45bd77bdcc5f3ef80749e5bf4436dab6ca4be0e37df",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_14_kokkosisyutukin.pdf",
+              "sha256": "8fe1f8bdb667dc783f343d6799493bce17fd889d19a7e6bf1b93b49bca590e08",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 8
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_15_tosisyutukin.pdf",
+              "sha256": "a4443282decb58d753aa6305f958408cdf8acad3f61b314916d5e1fecb905a69",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 21
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_16_zaisansyunyu.pdf",
+              "sha256": "0132903dbf1a5bdcd4a8f8e3fc8c1d63114cec0333087d1635a7daaaeb0a6d95",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_17_kihukin.pdf",
+              "sha256": "9dea88ce28cee59f00d3f0d7275f38659ee77237f0d389f9f1b93ec64e2daf2b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_18_kuriirekin.pdf",
+              "sha256": "14df86bf21fc9fe75aa17672470529ac396497fda399e9b3a4c7258bb5be15db",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_19_kurikosikin.pdf",
+              "sha256": "67553e488b65902fcfed598700caada7634c7f026485354b75e7c6fa4adbaef2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_20_syosyuunyuu.pdf",
+              "sha256": "b6b3b6f0c088c9fe5224de1b377be41cf40bad91ba8e036fce2136a323834439",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_21_sisai.pdf",
+              "sha256": "e2a1bba8e805773b51a77dbe3d353e934116f74c3581f73d3340cefe19306f68",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 3
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "令和7年度当初予算の歳出を全会計で選定。一般会計は歳出予算事項別明細書の款別13分冊（r7_07_jikoubetumeisai_01議会費2頁〜13予備費1頁、総務37・民生58・衛生15・労働1・農林3・商工3・土木18・消防5・教育39・公債1・諸支出金1頁）が第1款議会費〜第13款予備費の歳出明細を構成し、各冊全体が歳出（款・項・目・本年度予算額・前年度予算額・比較・財源内訳・節・説明、単位千円、文字PDF）。特別会計4件は歳入歳出予算事項別明細書1冊に歳入と歳出が同居するため歳出部分のみを範囲指定：国保は物理2頁（歳出総括）と11-21頁（３歳出 第1款総務費〜第8款予備費）、駐車場は2頁と8-10頁（第1款駐車場費〜第3款予備費）、介護は2頁と12-24頁（第1款総務費〜第7款予備費、文字PDF）、後期高齢者は2頁と8-13頁（第1款総務費〜第6款予備費）。下水道事業会計は予算及び同説明書1冊（23頁）で、収益的支出明細（物理19-21頁・第1款下水道事業費用・款項目節・本年度予定額・千円）と資本的支出明細（物理23頁・第1款資本的支出）を歳出範囲とし、22頁は資本的収入。各会計の掲載ページは同indexの会計別リンク（ippan/R7ippankaikeiyosan.html、kokuho/R7_kokuhotousho.html、tyuusyajyou/R7chusyajo.html、kaigo/R7kaigokaisei.html、kouki/R7_kourei.html、gesuidou/7gesuiyosan.html）。歳入は未確認・対象外。",
+      "reason": "令和7年度当初予算の歳出を全会計で選定。一般会計は歳出予算事項別明細書の款別13分冊（r7_07_jikoubetumeisai_01議会費2頁〜13予備費1頁、総務37・民生58・衛生15・労働1・農林3・商工3・土木18・消防5・教育39・公債1・諸支出金1頁）が第1款議会費〜第13款予備費の歳出明細を構成し、各冊全体が歳出（款・項・目・本年度予算額・前年度予算額・比較・財源内訳・節・説明、単位千円、文字PDF）。特別会計4件は歳入歳出予算事項別明細書1冊に歳入と歳出が同居するため歳出部分のみを範囲指定：国保は物理2頁（歳出総括）と11-21頁（３歳出 第1款総務費〜第8款予備費）、駐車場は2頁と8-10頁（第1款駐車場費〜第3款予備費）、介護は2頁と12-24頁（第1款総務費〜第7款予備費、文字PDF）、後期高齢者は2頁と8-13頁（第1款総務費〜第6款予備費）。下水道事業会計は予算及び同説明書1冊（23頁）で、収益的支出明細（物理19-21頁・第1款下水道事業費用・款項目節・本年度予定額・千円）と資本的支出明細（物理23頁・第1款資本的支出）を歳出範囲とし、22頁は資本的収入。各会計の掲載ページは同indexの会計別リンク（ippan/R7ippankaikeiyosan.html、kokuho/R7_kokuhotousho.html、tyuusyajyou/R7chusyajo.html、kaigo/R7kaigokaisei.html、kouki/R7_kourei.html、gesuidou/7gesuiyosan.html）。歳入は未確認・対象外。 2026-11-17 歳入を追加: 各特別会計の予算書の歳入歳出予算事項別明細書の歳入の頁（国民健康保険特別会計 物理3-10頁、駐車場事業特別会計 物理3-7頁、介護保険特別会計 物理3-11頁、後期高齢者医療特別会計 物理3-7頁）を各会計の歳入の範囲にした。 2026-11-17 歳入を追加: 一般会計の予算書の歳入歳出予算事項別明細書の歳入は款ごとの分冊（第1款〜第21款の21冊）で公開されているので、21冊を一般会計の歳入の範囲として足した。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -2230,9 +4207,114 @@
             "key": "fiscal/source-selection/132292/2025/initial-7.pdf",
             "sha256": "5fce0d97643300934d66a8407dbc521a319e139ea1077b8cbc2c922f3d5f222a",
             "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/gesuidou/7gesuiyosan.files/7gesuiyosan.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/initial-807.pdf",
+            "sha256": "60b3478d126e86b70360714dac4f7d11f3e0fa24d25458e2476595a32a6deff5",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_01_sizei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/initial-810.pdf",
+            "sha256": "89770125e1dc1a17560b3a78bc9b838dea1d78c1eb647935b8d7cab398d70104",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_02_jyouyozei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/initial-816.pdf",
+            "sha256": "bbc8535992c0ee31b4598f218b0fee3e7b301922a385f02eaacd9d12a560d6e6",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_03_risiwari.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/initial-815.pdf",
+            "sha256": "b84116f5ebf05feb2e06ff38a60e77b46449335c9e5d68de7d3f59ed58491e09",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_04_haitouwari.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/initial-805.pdf",
+            "sha256": "256eb7a732062b36de2d1027e98710359b45eb1fe291e36e82022114207f3641",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_05_kabusiki.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/initial-809.pdf",
+            "sha256": "699398a1ead6b455f2a1b818d4eb90c647adebe3e5900d353cbb6bf2ad9ce813",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_06_houjin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/initial-804.pdf",
+            "sha256": "212dcb3f84113b66cbea1406d9a338f31ddc853ffcbba442d4257300341a4e11",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_07_syouhizei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/initial-818.pdf",
+            "sha256": "d62f4354e30143fda68ca226eed5d40b8fa6cf22decca4e9a212ab979d48911f",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_08_kankyouseinou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/initial-802.pdf",
+            "sha256": "0c84186bd95df6bac3fcfc371d81121a1f9b2c683a05054da80473af4d247f7b",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_09_tihoutokurei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/initial-806.pdf",
+            "sha256": "4bf353b2a1066c5e1b810c6fc539d9f771359760f26222487ca004f3a4eaf23e",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_10_kouhuzei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/initial-817.pdf",
+            "sha256": "c01b9143bb93aca1b6511a4b2c965b3e41915cb4c2e0fc99c13029ae11bdcf02",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_11_koutuuannzen.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/initial-820.pdf",
+            "sha256": "e2e19288697f2686b7e98b5357f4c7db1002d3474ec46af4b82a0c057c0362f8",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_12_buntanhutan.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/initial-821.pdf",
+            "sha256": "e90c433684be0a7c3517e45bd77bdcc5f3ef80749e5bf4436dab6ca4be0e37df",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_13_siyoutesuuryou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/initial-811.pdf",
+            "sha256": "8fe1f8bdb667dc783f343d6799493bce17fd889d19a7e6bf1b93b49bca590e08",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_14_kokkosisyutukin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/initial-813.pdf",
+            "sha256": "a4443282decb58d753aa6305f958408cdf8acad3f61b314916d5e1fecb905a69",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_15_tosisyutukin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/initial-801.pdf",
+            "sha256": "0132903dbf1a5bdcd4a8f8e3fc8c1d63114cec0333087d1635a7daaaeb0a6d95",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_16_zaisansyunyu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/initial-812.pdf",
+            "sha256": "9dea88ce28cee59f00d3f0d7275f38659ee77237f0d389f9f1b93ec64e2daf2b",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_17_kihukin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/initial-803.pdf",
+            "sha256": "14df86bf21fc9fe75aa17672470529ac396497fda399e9b3a4c7258bb5be15db",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_18_kuriirekin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/initial-808.pdf",
+            "sha256": "67553e488b65902fcfed598700caada7634c7f026485354b75e7c6fa4adbaef2",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_19_kurikosikin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/initial-814.pdf",
+            "sha256": "b6b3b6f0c088c9fe5224de1b377be41cf40bad91ba8e036fce2136a323834439",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_20_syosyuunyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2025/initial-819.pdf",
+            "sha256": "e2a1bba8e805773b51a77dbe3d353e934116f74c3581f73d3340cefe19306f68",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-7/ippan/R7ippankaikeiyosan.files/r7_06_jikoubetumeisai_21_sisai.pdf"
           }
         ],
-        "archived_at": "2026-10-08T07:10:04.004Z"
+        "archived_at": "2026-11-17T05:25:47.006Z"
       }
     },
     {
@@ -2523,6 +4605,16 @@
                       "end": 9
                     }
                   ]
+                },
+                {
+                  "account": "駐車場事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 6
+                    }
+                  ]
                 }
               ]
             },
@@ -2545,6 +4637,16 @@
                       "end": 24
                     }
                   ]
+                },
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 11
+                    }
+                  ]
                 }
               ]
             },
@@ -2565,6 +4667,16 @@
                     {
                       "start": 7,
                       "end": 12
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 6
                     }
                   ]
                 }
@@ -2591,11 +4703,389 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_01_sizei.pdf",
+              "sha256": "284c095b790b56b3b4f1cdbeb658b49f0d1d231629db3828967a78e961c5b8ca",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_02_jyouyozei.pdf",
+              "sha256": "381501b3dde48f00cc29e4960e854facf824abcdaca3b2b8836e8b04bddcb896",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_03_risiwari.pdf",
+              "sha256": "12e9c7108f22e123e2d7fd3e64cbfb0d89eddd436f804afb745988a2a5b0ee8d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_04_haitouwari.pdf",
+              "sha256": "8145e2cb8be26b84f7d3a75df2d8230902b6f61d10dd5a36f3b80ee39e5e72fc",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_05_kabusiki.pdf",
+              "sha256": "bd18993850e17ddf8e5090bace8ea00e5de54ee0c6ef8d06609dc0bc24112f0d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_06_houjin.pdf",
+              "sha256": "8ab747e0649650666416bc2536fc98c7e99753eb58f1b7124ee0a9e685140de3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_07_syouhizei.pdf",
+              "sha256": "1719b7ae7cb4f02dfee3512ba98c51ff4ca92a9720bafb0d07ba0e33a37d177a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_08_kankyouseinou.pdf",
+              "sha256": "fccc6118dcc9ea43ed6a63d12fd97635211df83b7ed25a2805d4abce327c31f2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_09_tihoutokurei.pdf",
+              "sha256": "1ac1cf550e47b145a53cc7f7af6340623d694df7059f1db09a60d6b92197356c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_10_kouhuzei.pdf",
+              "sha256": "30b5a5f8df3d413766a2befaafd4d030c6778913f837071bcd025be97a38432f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_11_koutuuannzen.pdf",
+              "sha256": "87b916cda705d39b287ae190438fdaac57a95dbf1afa6ebcd99462995d826dd2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_12_buntanhutan.pdf",
+              "sha256": "311d0c589246eb8407948bc8584e91d39d390ead5c7320ad92ae60e2b3ec8b64",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_13_siyoutesuuryou.pdf",
+              "sha256": "9b56b15b00c100b5c11306c8b5aafe8b91b90b652bac4732cdd2c37be774b815",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_14_kokkosisyutukin.pdf",
+              "sha256": "f22b900504ffdca2abe9197f8279b57774fac6129e86de3ea1295e96c4088e2c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_15_tosisyutukin.pdf",
+              "sha256": "0928ae384ddd71a265dd7ec1635a4a6fc53e7ac8333ffed04d99012cb9f4b658",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 21
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_16_zaisansyunyu.pdf",
+              "sha256": "6399298da1414109c27f751b3259f933e28014106ae1c320c7e1242a6fdf7294",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_17_kihukin.pdf",
+              "sha256": "56d0898833458f385fd37760cb46d493c80027da1a9fceb2b514812ff77f89f7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_18_kuriirekin.pdf",
+              "sha256": "2806545329fdb445619aa1ebfa67c2720c60f68296ef2053d16e19b61c1596a2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_19_kurikosikin.pdf",
+              "sha256": "ae988b76225322583e4fb948e529963e6d5bffec46ba339265dab845ee6d6487",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_20_syosyuunyuu.pdf",
+              "sha256": "7fa4e4406ddc775db4abd07063054aa49704f28c96eda19db2d72aa52dbccd2c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_21_sisai.pdf",
+              "sha256": "54fcb7d0ade72894c2815aa580436cdb48a23ddf926a296b9550b04e58784e09",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "令和6年度当初予算の歳出を全会計で選定。一般会計は歳出予算事項別明細書の款別13分冊（r6_07_jikoubetumeisai_01議会費2頁〜13予備費1頁、総務37・民生56・衛生14・労働1・農林3・商工3・土木18・消防5・教育39・公債1・諸支出金1頁）が第1款議会費〜第13款予備費の歳出明細を構成し、各冊全体が歳出（款・項・目・本年度予算額・前年度予算額・比較・財源内訳・節・説明、単位千円、文字PDF）。特別会計4件は歳入歳出予算事項別明細書1冊に歳入と歳出が同居するため歳出部分のみを範囲指定：国保は物理2頁（歳出総括）と11-21頁（３歳出 第1款総務費・予算額260,347千円〜第8款予備費）、駐車場は2頁と7-9頁（第1款駐車場費112,010千円〜第3款予備費）、介護は2頁と12-24頁（第1款総務費481,423千円〜第7款予備費、文字PDF）、後期高齢者は2頁と7-12頁（第1款総務費34,580千円〜第6款予備費、３歳出頭は7頁）。下水道事業会計は予算及び同説明書1冊（23頁）で、収益的支出明細（物理19-21頁・第1款下水道事業費用・予定額3,220,050千円・款項目節・千円）と資本的支出明細（物理23頁・第1款資本的支出・予定額786,716千円）を歳出範囲とし、22頁は資本的収入。各会計の掲載ページは同indexの会計別リンク（ippan/R6ippankaikeiyosan.html、kokuho/R6_kokuhotousho.html、chushajou/R6chusyajo.html、kaigo/20240327.html、kouki_koureisha/R6_kourei.html、gesuidou/6gesuiyosan.html）。歳入は未確認・対象外。",
+      "reason": "令和6年度当初予算の歳出を全会計で選定。一般会計は歳出予算事項別明細書の款別13分冊（r6_07_jikoubetumeisai_01議会費2頁〜13予備費1頁、総務37・民生56・衛生14・労働1・農林3・商工3・土木18・消防5・教育39・公債1・諸支出金1頁）が第1款議会費〜第13款予備費の歳出明細を構成し、各冊全体が歳出（款・項・目・本年度予算額・前年度予算額・比較・財源内訳・節・説明、単位千円、文字PDF）。特別会計4件は歳入歳出予算事項別明細書1冊に歳入と歳出が同居するため歳出部分のみを範囲指定：国保は物理2頁（歳出総括）と11-21頁（３歳出 第1款総務費・予算額260,347千円〜第8款予備費）、駐車場は2頁と7-9頁（第1款駐車場費112,010千円〜第3款予備費）、介護は2頁と12-24頁（第1款総務費481,423千円〜第7款予備費、文字PDF）、後期高齢者は2頁と7-12頁（第1款総務費34,580千円〜第6款予備費、３歳出頭は7頁）。下水道事業会計は予算及び同説明書1冊（23頁）で、収益的支出明細（物理19-21頁・第1款下水道事業費用・予定額3,220,050千円・款項目節・千円）と資本的支出明細（物理23頁・第1款資本的支出・予定額786,716千円）を歳出範囲とし、22頁は資本的収入。各会計の掲載ページは同indexの会計別リンク（ippan/R6ippankaikeiyosan.html、kokuho/R6_kokuhotousho.html、chushajou/R6chusyajo.html、kaigo/20240327.html、kouki_koureisha/R6_kourei.html、gesuidou/6gesuiyosan.html）。歳入は未確認・対象外。 2026-11-17 歳入を追加: 各特別会計の予算書の歳入歳出予算事項別明細書の歳入の頁（駐車場事業特別会計 物理3-6頁、介護保険特別会計 物理3-11頁、後期高齢者医療特別会計 物理3-6頁）を各会計の歳入の範囲にした。 2026-11-17 歳入を追加: 一般会計の予算書の歳入歳出予算事項別明細書の歳入は款ごとの分冊（第1款〜第21款の21冊）で公開されているので、21冊を一般会計の歳入の範囲として足した。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -2690,9 +5180,114 @@
             "key": "fiscal/source-selection/132292/2024/initial-3.pdf",
             "sha256": "1976db63d3dc6745dda1efa6d9718548085423f4f7025d6f063dd38b033e7230",
             "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/gesuidou/6gesuiyosan.files/6gesuiyosan.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/initial-706.pdf",
+            "sha256": "284c095b790b56b3b4f1cdbeb658b49f0d1d231629db3828967a78e961c5b8ca",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_01_sizei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/initial-709.pdf",
+            "sha256": "381501b3dde48f00cc29e4960e854facf824abcdaca3b2b8836e8b04bddcb896",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_02_jyouyozei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/initial-702.pdf",
+            "sha256": "12e9c7108f22e123e2d7fd3e64cbfb0d89eddd436f804afb745988a2a5b0ee8d",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_03_risiwari.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/initial-714.pdf",
+            "sha256": "8145e2cb8be26b84f7d3a75df2d8230902b6f61d10dd5a36f3b80ee39e5e72fc",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_04_haitouwari.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/initial-719.pdf",
+            "sha256": "bd18993850e17ddf8e5090bace8ea00e5de54ee0c6ef8d06609dc0bc24112f0d",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_05_kabusiki.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/initial-716.pdf",
+            "sha256": "8ab747e0649650666416bc2536fc98c7e99753eb58f1b7124ee0a9e685140de3",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_06_houjin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/initial-703.pdf",
+            "sha256": "1719b7ae7cb4f02dfee3512ba98c51ff4ca92a9720bafb0d07ba0e33a37d177a",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_07_syouhizei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/initial-721.pdf",
+            "sha256": "fccc6118dcc9ea43ed6a63d12fd97635211df83b7ed25a2805d4abce327c31f2",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_08_kankyouseinou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/initial-704.pdf",
+            "sha256": "1ac1cf550e47b145a53cc7f7af6340623d694df7059f1db09a60d6b92197356c",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_09_tihoutokurei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/initial-707.pdf",
+            "sha256": "30b5a5f8df3d413766a2befaafd4d030c6778913f837071bcd025be97a38432f",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_10_kouhuzei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/initial-715.pdf",
+            "sha256": "87b916cda705d39b287ae190438fdaac57a95dbf1afa6ebcd99462995d826dd2",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_11_koutuuannzen.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/initial-708.pdf",
+            "sha256": "311d0c589246eb8407948bc8584e91d39d390ead5c7320ad92ae60e2b3ec8b64",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_12_buntanhutan.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/initial-717.pdf",
+            "sha256": "9b56b15b00c100b5c11306c8b5aafe8b91b90b652bac4732cdd2c37be774b815",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_13_siyoutesuuryou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/initial-720.pdf",
+            "sha256": "f22b900504ffdca2abe9197f8279b57774fac6129e86de3ea1295e96c4088e2c",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_14_kokkosisyutukin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/initial-701.pdf",
+            "sha256": "0928ae384ddd71a265dd7ec1635a4a6fc53e7ac8333ffed04d99012cb9f4b658",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_15_tosisyutukin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/initial-712.pdf",
+            "sha256": "6399298da1414109c27f751b3259f933e28014106ae1c320c7e1242a6fdf7294",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_16_zaisansyunyu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/initial-711.pdf",
+            "sha256": "56d0898833458f385fd37760cb46d493c80027da1a9fceb2b514812ff77f89f7",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_17_kihukin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/initial-705.pdf",
+            "sha256": "2806545329fdb445619aa1ebfa67c2720c60f68296ef2053d16e19b61c1596a2",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_18_kuriirekin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/initial-718.pdf",
+            "sha256": "ae988b76225322583e4fb948e529963e6d5bffec46ba339265dab845ee6d6487",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_19_kurikosikin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/initial-713.pdf",
+            "sha256": "7fa4e4406ddc775db4abd07063054aa49704f28c96eda19db2d72aa52dbccd2c",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_20_syosyuunyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2024/initial-710.pdf",
+            "sha256": "54fcb7d0ade72894c2815aa580436cdb48a23ddf926a296b9550b04e58784e09",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-6/ippan/R6ippankaikeiyosan.files/r6_06_jikoubetumeisai_21_sisai.pdf"
           }
         ],
-        "archived_at": "2026-10-08T07:11:04.129Z"
+        "archived_at": "2026-11-17T05:24:51.243Z"
       }
     },
     {
@@ -2961,6 +5556,16 @@
                       "end": 22
                     }
                   ]
+                },
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 11
+                    }
+                  ]
                 }
               ]
             },
@@ -2981,6 +5586,16 @@
                     {
                       "start": 7,
                       "end": 9
+                    }
+                  ]
+                },
+                {
+                  "account": "駐車場事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 6
                     }
                   ]
                 }
@@ -3005,6 +5620,16 @@
                       "end": 24
                     }
                   ]
+                },
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 11
+                    }
+                  ]
                 }
               ]
             },
@@ -3025,6 +5650,16 @@
                     {
                       "start": 7,
                       "end": 12
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 6
                     }
                   ]
                 }
@@ -3051,11 +5686,389 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_01_sizei.pdf",
+              "sha256": "309fa72fe480daf32a146e179c1f85c51da2b38c88a42f1300ce845d0fa94c65",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_02_jyouyozei.pdf",
+              "sha256": "9b19cfb016b6c6b790dbf3662491c1b37081451054961a9b59c8eba72c6049f7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_03_risiwari.pdf",
+              "sha256": "551156cd578a5409e68bffe0066b002b66728f21e453d81585cd9d1a0b52f549",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_04_haitouwari.pdf",
+              "sha256": "b4b8534f9e2aaf905f711b7c5c5b4b10e742eedf2caf21af1a09551415ca82fb",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_05_kabusiki.pdf",
+              "sha256": "8175ab7ef92f6fc68e4ca84e293594879ab892e0b96a6b8370dc6e1e712a7042",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_06_houjin.pdf",
+              "sha256": "9081b0ea4f7a7ef001799162be5cf955d33a1055e89ac1091d853c0af7ea7556",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_07_syouhizei.pdf",
+              "sha256": "2f3a199c6dd05f50a0bab7dc10a77c714b27703f80aa3c50c0147d93fcb1b2ca",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_08_kankyouseinou.pdf",
+              "sha256": "6bd093df1e9f982d53bd9b4dae256ea69c131f295e4893550a427b133d295005",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_09_tihoutokurei.pdf",
+              "sha256": "6c168f0947026e03b41eae4c4563789ee3fb3a72e7489f5608bd1e93f97f42c7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_10_kouhuzei.pdf",
+              "sha256": "32b30e0b946102b99a37a8bc614e69de1d057bb25c831ee8ca5d98c8e129ed2f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_11_koutuuannzen.pdf",
+              "sha256": "5a6dac1cf72837ebe28fbaf0ef57dd740e87d62f2e0d4f551b56550918821877",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_12_buntanhutan.pdf",
+              "sha256": "8bf75aafdaabf70f278ef81b68c64020f667c0517e6fce55c50bb9abf14b2d3c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_13_siyoutesuuryou.pdf",
+              "sha256": "23a4a8e6f500956d6f57d76233acf5d43f4168cb2cfec0a45a579b9269f1dd24",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_14_kokkosisyutukin.pdf",
+              "sha256": "34d30c40d5e2e21e382e4397e07713db4ba6de0a82217686dca638ef1a9b5849",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 8
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_15_tosisyutukin.pdf",
+              "sha256": "37580166e7b005421d8c081428079a1ecda5a601d3e65a012831cf27529deb8a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 20
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_16_zaisansyunyu.pdf",
+              "sha256": "38111070d85799b67d04d7dd33532a39ab48ab8f134300f43a8c4bc58954f6f2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_17_kihukin.pdf",
+              "sha256": "b2f1470fe001ab26223835ce8e2923e0bc27f28937cfeed7189446100e8360b1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_18_kuriirekin.pdf",
+              "sha256": "9aeb30dc0301e83332ee67ee6d725a36c8b8330ef4c3ae694d2b54283240ad63",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_19_kurikosikin.pdf",
+              "sha256": "d12f21bc4f1cb09ac35e72e3b273d338498c3b88141b9fa1e84462fdf1e6ed7e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_20_syosyuunyuu.pdf",
+              "sha256": "04dabba8013dc8c479682991f2c5111ebf2c3b10777616c8c7bf85aec01c3b67",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_21_sisai.pdf",
+              "sha256": "799a40c08c80284fa3df2ac9904d23b9212d597baf0a524b7da2f3aad570cedd",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "令和5年度当初予算の歳出を全会計で選定。一般会計は歳出予算事項別明細書の款別13分冊（r5_07_jikoubetumeisai_01議会費451,470千円2頁〜13予備費1頁、総務34・民生57・衛生14・労働1・農林3・商工4・土木18・消防5・教育38・公債1・諸支出金1頁）が第1款議会費〜第13款予備費の歳出明細を構成し、各冊全体が歳出（款・項・目・本年度予算額・前年度予算額・比較・財源内訳・節・説明、単位千円、文字PDF）。特別会計4件は歳入歳出予算事項別明細書1冊に歳入と歳出が同居するため歳出部分のみを範囲指定：国保は物理2頁（歳出総括）と12-22頁（３歳出 第1款総務費241,171千円〜第8款予備費、22頁建てのためR6/R7と1頁ずれる）、駐車場は2頁と7-9頁（第1款駐車場費112,010千円〜第3款予備費）、介護は2頁と12-24頁（第1款総務費478,552千円〜第7款予備費、文字PDF）、後期高齢者は2頁と7-12頁（第1款総務費40,764千円〜第6款予備費）。下水道事業会計は予算及び同説明書1冊（23頁）で、収益的支出明細（物理19-21頁・第1款下水道事業費用・予定額3,178,725千円・款項目節・千円）と資本的支出明細（物理23頁・第1款資本的支出・予定額937,918千円）を歳出範囲とし、22頁は資本的収入。各会計の掲載ページは同indexの会計別リンク（ippan/R5ippankaikeiyosan.html、kokuho/r5kokuhotoushoyosan.html、chushajo/R5cyuusyajyotousyo.html、kaigo/r5_kaigohokenntokubetukaikei.html、kouki-koureisha/R5koukiyosan.html、gesuidou/5gesuiyosan.html）。歳入は未確認・対象外。",
+      "reason": "令和5年度当初予算の歳出を全会計で選定。一般会計は歳出予算事項別明細書の款別13分冊（r5_07_jikoubetumeisai_01議会費451,470千円2頁〜13予備費1頁、総務34・民生57・衛生14・労働1・農林3・商工4・土木18・消防5・教育38・公債1・諸支出金1頁）が第1款議会費〜第13款予備費の歳出明細を構成し、各冊全体が歳出（款・項・目・本年度予算額・前年度予算額・比較・財源内訳・節・説明、単位千円、文字PDF）。特別会計4件は歳入歳出予算事項別明細書1冊に歳入と歳出が同居するため歳出部分のみを範囲指定：国保は物理2頁（歳出総括）と12-22頁（３歳出 第1款総務費241,171千円〜第8款予備費、22頁建てのためR6/R7と1頁ずれる）、駐車場は2頁と7-9頁（第1款駐車場費112,010千円〜第3款予備費）、介護は2頁と12-24頁（第1款総務費478,552千円〜第7款予備費、文字PDF）、後期高齢者は2頁と7-12頁（第1款総務費40,764千円〜第6款予備費）。下水道事業会計は予算及び同説明書1冊（23頁）で、収益的支出明細（物理19-21頁・第1款下水道事業費用・予定額3,178,725千円・款項目節・千円）と資本的支出明細（物理23頁・第1款資本的支出・予定額937,918千円）を歳出範囲とし、22頁は資本的収入。各会計の掲載ページは同indexの会計別リンク（ippan/R5ippankaikeiyosan.html、kokuho/r5kokuhotoushoyosan.html、chushajo/R5cyuusyajyotousyo.html、kaigo/r5_kaigohokenntokubetukaikei.html、kouki-koureisha/R5koukiyosan.html、gesuidou/5gesuiyosan.html）。歳入は未確認・対象外。 2026-11-17 歳入を追加: 各特別会計の予算書の歳入歳出予算事項別明細書の歳入の頁（国民健康保険特別会計 物理3-11頁、駐車場事業特別会計 物理3-6頁、介護保険特別会計 物理3-11頁、後期高齢者医療特別会計 物理3-6頁）を各会計の歳入の範囲にした。 2026-11-17 歳入を追加: 一般会計の予算書の歳入歳出予算事項別明細書の歳入は款ごとの分冊（第1款〜第21款の21冊）で公開されているので、21冊を一般会計の歳入の範囲として足した。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -3150,9 +6163,114 @@
             "key": "fiscal/source-selection/132292/2023/initial-4.pdf",
             "sha256": "27e5699b17c595e641f5f5e7ab58d1c99fd1213c806c1b461f22ac5bd96d35c2",
             "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/gesuidou/5gesuiyosan.files/5gesuiyosan.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/initial-22.pdf",
+            "sha256": "309fa72fe480daf32a146e179c1f85c51da2b38c88a42f1300ce845d0fa94c65",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_01_sizei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/initial-36.pdf",
+            "sha256": "9b19cfb016b6c6b790dbf3662491c1b37081451054961a9b59c8eba72c6049f7",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_02_jyouyozei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/initial-27.pdf",
+            "sha256": "551156cd578a5409e68bffe0066b002b66728f21e453d81585cd9d1a0b52f549",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_03_risiwari.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/initial-38.pdf",
+            "sha256": "b4b8534f9e2aaf905f711b7c5c5b4b10e742eedf2caf21af1a09551415ca82fb",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_04_haitouwari.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/initial-32.pdf",
+            "sha256": "8175ab7ef92f6fc68e4ca84e293594879ab892e0b96a6b8370dc6e1e712a7042",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_05_kabusiki.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/initial-34.pdf",
+            "sha256": "9081b0ea4f7a7ef001799162be5cf955d33a1055e89ac1091d853c0af7ea7556",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_06_houjin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/initial-21.pdf",
+            "sha256": "2f3a199c6dd05f50a0bab7dc10a77c714b27703f80aa3c50c0147d93fcb1b2ca",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_07_syouhizei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/initial-29.pdf",
+            "sha256": "6bd093df1e9f982d53bd9b4dae256ea69c131f295e4893550a427b133d295005",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_08_kankyouseinou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/initial-30.pdf",
+            "sha256": "6c168f0947026e03b41eae4c4563789ee3fb3a72e7489f5608bd1e93f97f42c7",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_09_tihoutokurei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/initial-23.pdf",
+            "sha256": "32b30e0b946102b99a37a8bc614e69de1d057bb25c831ee8ca5d98c8e129ed2f",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_10_kouhuzei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/initial-28.pdf",
+            "sha256": "5a6dac1cf72837ebe28fbaf0ef57dd740e87d62f2e0d4f551b56550918821877",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_11_koutuuannzen.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/initial-33.pdf",
+            "sha256": "8bf75aafdaabf70f278ef81b68c64020f667c0517e6fce55c50bb9abf14b2d3c",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_12_buntanhutan.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/initial-20.pdf",
+            "sha256": "23a4a8e6f500956d6f57d76233acf5d43f4168cb2cfec0a45a579b9269f1dd24",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_13_siyoutesuuryou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/initial-24.pdf",
+            "sha256": "34d30c40d5e2e21e382e4397e07713db4ba6de0a82217686dca638ef1a9b5849",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_14_kokkosisyutukin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/initial-25.pdf",
+            "sha256": "37580166e7b005421d8c081428079a1ecda5a601d3e65a012831cf27529deb8a",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_15_tosisyutukin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/initial-26.pdf",
+            "sha256": "38111070d85799b67d04d7dd33532a39ab48ab8f134300f43a8c4bc58954f6f2",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_16_zaisansyunyu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/initial-37.pdf",
+            "sha256": "b2f1470fe001ab26223835ce8e2923e0bc27f28937cfeed7189446100e8360b1",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_17_kihukin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/initial-35.pdf",
+            "sha256": "9aeb30dc0301e83332ee67ee6d725a36c8b8330ef4c3ae694d2b54283240ad63",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_18_kuriirekin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/initial-39.pdf",
+            "sha256": "d12f21bc4f1cb09ac35e72e3b273d338498c3b88141b9fa1e84462fdf1e6ed7e",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_19_kurikosikin.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/initial-19.pdf",
+            "sha256": "04dabba8013dc8c479682991f2c5111ebf2c3b10777616c8c7bf85aec01c3b67",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_20_syosyuunyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/initial-31.pdf",
+            "sha256": "799a40c08c80284fa3df2ac9904d23b9212d597baf0a524b7da2f3aad570cedd",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/yosan/reiwa-5/ippan/R5ippankaikeiyosan.files/r5_06_jikoubetumeisai_21_sisai.pdf"
           }
         ],
-        "archived_at": "2026-10-08T07:11:45.787Z"
+        "archived_at": "2026-11-17T05:10:56.189Z"
       }
     },
     {
@@ -3417,6 +6535,16 @@
                       "end": 19
                     }
                   ]
+                },
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 8
+                    }
+                  ]
                 }
               ]
             },
@@ -3433,6 +6561,16 @@
                     {
                       "start": 5,
                       "end": 7
+                    }
+                  ]
+                },
+                {
+                  "account": "駐車場事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
                     }
                   ]
                 }
@@ -3453,6 +6591,16 @@
                       "end": 22
                     }
                   ]
+                },
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 8
+                    }
+                  ]
                 }
               ]
             },
@@ -3469,6 +6617,16 @@
                     {
                       "start": 5,
                       "end": 10
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
                     }
                   ]
                 }
@@ -3491,11 +6649,389 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.12-13.pdf",
+              "sha256": "030757ea13812d82a420aefc968dae67a9ecbed22c192fa2052363084e2fea83",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.14.pdf",
+              "sha256": "aa3b9ef7a4106e5645638480ec9828ec967be85a1d2a4ca93264c7e896f3cb32",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.15.pdf",
+              "sha256": "df4d99167488fcb72113d5b42a22b7bdb7523ea71390c53722eaef2cdc2e0428",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.16.pdf",
+              "sha256": "683036d9a6165cbf137ec0d30cb57947ed66d42cdbd7a7c2f37809913e2c21dc",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.17.pdf",
+              "sha256": "a53bb3f5d83aca17c958064704acb6cc6bfcf205fd7c46556fc966e6d359327f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.18.pdf",
+              "sha256": "a7d6f15ed50ea5661937ffd5791313ebd22a0a29f18d013a4bb1ebe2d4cad510",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.19.pdf",
+              "sha256": "cd0a4782e4b0fb2367c75ba740beb0c5b6996598d27e0d70fb68a2f3713d060c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.20.pdf",
+              "sha256": "d48d45053d09b6becc11b509c0a3d97ea4b6b288ab0229f34e09a89cd6f6a1d0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.21.pdf",
+              "sha256": "c36d663116fa2e7a9e1ec065c949e11b21cf03f74c82acba39d9922094461582",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.22.pdf",
+              "sha256": "c50b56f0cb647823b774c0c8ffcaa6f2ff48a7346991204caabb34e96da3ccf5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.23.pdf",
+              "sha256": "b1bcea41d65da4fa0e01cd73531cb8a40d973fd1481515323f6e3ee33ba9cb04",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.24.pdf",
+              "sha256": "727a4a021e701a68e771c2b0ac3abb0a69ddd567574e9a5b38a5bd88d8791e87",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.25-27.pdf",
+              "sha256": "bd5de500fe4c068354179a8d8069193f57910114eb70b964af40a2c6fc6bb4fa",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.28-33.pdf",
+              "sha256": "a1136e11f5f8d9a25d832915ed1b5319dbfc3429f7e186ce8d17cd09be99fa9e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 6
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.34-47.pdf",
+              "sha256": "5902dde8f5e6cdf1e596c4681c9cc7ff7730cc650efb557f867d71a2a460dfd8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 14
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.48-49.pdf",
+              "sha256": "2f73c568ac1465eaa7eeb7cdb85add163151af80b99af3c15a2885e0df6f03ad",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.50.pdf",
+              "sha256": "6d0def04b7bef6c3a8a04a30acf713e65a9524f493a49cb3e090272bd65e9e3d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.51-52.pdf",
+              "sha256": "aa3668401789cb889fd6e1312706f9b970386d5c613889c71a5064434099c864",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.53.pdf",
+              "sha256": "4a1b65b944f38491f5370fdfb5cdaf4e1e34c32944665f025214cfd43b912074",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.54-58.pdf",
+              "sha256": "5c229fd1c86e2033a5708c37d53413035759f2ad682d35098b99cbb1c4cc579c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.59.pdf",
+              "sha256": "edf46bd26f11fbbfbc568656aa90c6427527c5c626ea6dc6800b28922ca31a19",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "令和5年度決算（市公式「決算」一覧の令和5年度ページに掲載）の歳出を全会計で選定。2023年度の会計構成は一般会計・国民健康保険特別会計・駐車場事業特別会計・介護保険特別会計・後期高齢者医療特別会計・下水道事業会計の6会計（r5/index.htmlと各会計決算書ページで確認、R6/R7と同一構成）。一般会計は歳入歳出決算事項別明細書の歳出・款別13分冊（5.61-62第1款議会費〜5.251第13款予備費）で各冊全体が歳出明細。列は款・項・目と当初予算額・補正予算額・継続費及び繰越額等の予算現額・支出済額・翌年度繰越額・不用額・節・備考、単位円、全冊文字PDF。特別会計は歳入歳出決算事項別明細書1冊に歳入と歳出が同居するため歳出部分のみを範囲指定：国保t5.11-18.20-30は物理9-19頁（歳出頭・第1款総務費〜第8款予備費、1-8頁は歳入）、駐車場t5.39-42.44-46は5-7頁（第1款駐車場費〜第3款予備費、1-4頁は歳入）、介護t5.56-63.65-79は9-22頁（第1款総務費〜第7款予備費、1-8頁は歳入）、後期高齢者t5.88-91.93-98は5-10頁（第1款総務費〜第6款予備費、1-4頁は歳入）。いずれも款・項・目・節と支出済額を同一明細で掲載、単位円、文字PDF。下水道事業会計は決算書（gesui5.pdf・25物理頁）のうち物理17-18頁=収益費用明細書の収益的支出（款・項・目・節・金額=決算額2,863,950,409円・円）と19頁=資本的収支明細書（同頁に資本的収入465,065,018円と資本的支出799,964,853円が同居）を歳出範囲とする。固定資産明細書・企業債明細書・損益計算書・貸借対照表等は支出明細でないため範囲外。各会計の掲載ページは同indexの会計別リンク（r5ippankessan.html、r5kokuhotokkaikessan.html、r5tyusyajyotokkaikessan.html、r5kaigotokkaikessan.html、r5koukikoureitokkaikessan.html、5gesuikessan.html）。歳入は未確認・対象外。",
+      "reason": "令和5年度決算（市公式「決算」一覧の令和5年度ページに掲載）の歳出を全会計で選定。2023年度の会計構成は一般会計・国民健康保険特別会計・駐車場事業特別会計・介護保険特別会計・後期高齢者医療特別会計・下水道事業会計の6会計（r5/index.htmlと各会計決算書ページで確認、R6/R7と同一構成）。一般会計は歳入歳出決算事項別明細書の歳出・款別13分冊（5.61-62第1款議会費〜5.251第13款予備費）で各冊全体が歳出明細。列は款・項・目と当初予算額・補正予算額・継続費及び繰越額等の予算現額・支出済額・翌年度繰越額・不用額・節・備考、単位円、全冊文字PDF。特別会計は歳入歳出決算事項別明細書1冊に歳入と歳出が同居するため歳出部分のみを範囲指定：国保t5.11-18.20-30は物理9-19頁（歳出頭・第1款総務費〜第8款予備費、1-8頁は歳入）、駐車場t5.39-42.44-46は5-7頁（第1款駐車場費〜第3款予備費、1-4頁は歳入）、介護t5.56-63.65-79は9-22頁（第1款総務費〜第7款予備費、1-8頁は歳入）、後期高齢者t5.88-91.93-98は5-10頁（第1款総務費〜第6款予備費、1-4頁は歳入）。いずれも款・項・目・節と支出済額を同一明細で掲載、単位円、文字PDF。下水道事業会計は決算書（gesui5.pdf・25物理頁）のうち物理17-18頁=収益費用明細書の収益的支出（款・項・目・節・金額=決算額2,863,950,409円・円）と19頁=資本的収支明細書（同頁に資本的収入465,065,018円と資本的支出799,964,853円が同居）を歳出範囲とする。固定資産明細書・企業債明細書・損益計算書・貸借対照表等は支出明細でないため範囲外。各会計の掲載ページは同indexの会計別リンク（r5ippankessan.html、r5kokuhotokkaikessan.html、r5tyusyajyotokkaikessan.html、r5kaigotokkaikessan.html、r5koukikoureitokkaikessan.html、5gesuikessan.html）。歳入は未確認・対象外。 2026-11-17 歳入を追加: 各特別会計の決算書の歳入歳出決算事項別明細書の歳入の頁（国民健康保険特別会計 物理1-8頁、駐車場事業特別会計 物理1-4頁、介護保険特別会計 物理1-8頁、後期高齢者医療特別会計 物理1-4頁）を各会計の歳入の範囲にした。 2026-11-17 歳入を追加: 一般会計の決算書の歳入歳出決算事項別明細書の歳入は款ごとの分冊（第1款〜第21款の21冊）で公開されているので、21冊を一般会計の歳入の範囲として足した。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -3590,9 +7126,114 @@
             "key": "fiscal/source-selection/132292/2023/settlement-11.pdf",
             "sha256": "8338740210398bb53ee06514f68d463232ba5711b01b53b6134991585118197a",
             "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/5gesuikessan.files/gesui5.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/settlement-19.pdf",
+            "sha256": "030757ea13812d82a420aefc968dae67a9ecbed22c192fa2052363084e2fea83",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.12-13.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/settlement-31.pdf",
+            "sha256": "aa3b9ef7a4106e5645638480ec9828ec967be85a1d2a4ca93264c7e896f3cb32",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.14.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/settlement-38.pdf",
+            "sha256": "df4d99167488fcb72113d5b42a22b7bdb7523ea71390c53722eaef2cdc2e0428",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.15.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/settlement-24.pdf",
+            "sha256": "683036d9a6165cbf137ec0d30cb57947ed66d42cdbd7a7c2f37809913e2c21dc",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.16.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/settlement-28.pdf",
+            "sha256": "a53bb3f5d83aca17c958064704acb6cc6bfcf205fd7c46556fc966e6d359327f",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.17.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/settlement-29.pdf",
+            "sha256": "a7d6f15ed50ea5661937ffd5791313ebd22a0a29f18d013a4bb1ebe2d4cad510",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.18.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/settlement-36.pdf",
+            "sha256": "cd0a4782e4b0fb2367c75ba740beb0c5b6996598d27e0d70fb68a2f3713d060c",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.19.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/settlement-37.pdf",
+            "sha256": "d48d45053d09b6becc11b509c0a3d97ea4b6b288ab0229f34e09a89cd6f6a1d0",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.20.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/settlement-34.pdf",
+            "sha256": "c36d663116fa2e7a9e1ec065c949e11b21cf03f74c82acba39d9922094461582",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.21.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/settlement-35.pdf",
+            "sha256": "c50b56f0cb647823b774c0c8ffcaa6f2ff48a7346991204caabb34e96da3ccf5",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.22.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/settlement-32.pdf",
+            "sha256": "b1bcea41d65da4fa0e01cd73531cb8a40d973fd1481515323f6e3ee33ba9cb04",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.23.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/settlement-26.pdf",
+            "sha256": "727a4a021e701a68e771c2b0ac3abb0a69ddd567574e9a5b38a5bd88d8791e87",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.24.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/settlement-33.pdf",
+            "sha256": "bd5de500fe4c068354179a8d8069193f57910114eb70b964af40a2c6fc6bb4fa",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.25-27.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/settlement-27.pdf",
+            "sha256": "a1136e11f5f8d9a25d832915ed1b5319dbfc3429f7e186ce8d17cd09be99fa9e",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.28-33.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/settlement-22.pdf",
+            "sha256": "5902dde8f5e6cdf1e596c4681c9cc7ff7730cc650efb557f867d71a2a460dfd8",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.34-47.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/settlement-20.pdf",
+            "sha256": "2f73c568ac1465eaa7eeb7cdb85add163151af80b99af3c15a2885e0df6f03ad",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.48-49.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/settlement-25.pdf",
+            "sha256": "6d0def04b7bef6c3a8a04a30acf713e65a9524f493a49cb3e090272bd65e9e3d",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.50.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/settlement-30.pdf",
+            "sha256": "aa3668401789cb889fd6e1312706f9b970386d5c613889c71a5064434099c864",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.51-52.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/settlement-21.pdf",
+            "sha256": "4a1b65b944f38491f5370fdfb5cdaf4e1e34c32944665f025214cfd43b912074",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.53.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/settlement-23.pdf",
+            "sha256": "5c229fd1c86e2033a5708c37d53413035759f2ad682d35098b99cbb1c4cc579c",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.54-58.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132292/2023/settlement-39.pdf",
+            "sha256": "edf46bd26f11fbbfbc568656aa90c6427527c5c626ea6dc6800b28922ca31a19",
+            "final_url": "https://www.city.nishitokyo.lg.jp/siseizyoho/zaisei/kessansyo/r5/r5ippankessan.files/5.59.pdf"
           }
         ],
-        "archived_at": "2026-10-08T07:12:19.793Z"
+        "archived_at": "2026-11-17T04:59:40.320Z"
       }
     },
     {

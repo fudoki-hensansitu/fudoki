@@ -132,6 +132,7 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 102,akishima-kyoiku-yochien,132071,一般会計,,,教育総務費,,幼稚園費,eq,,assigned,09.1,retained,目,,昭島市 款10 項1 のうち幼稚園。COFOG 09.1 就学前教育及び初等教育。⚠️ 他の3自治体は幼稚園費が項として立っているが、昭島市は教育総務費の目にある,false
 103,akishima-kyoiku-gakko,132071,一般会計,,,教育総務費,,,eq,,assigned,09.8,retained,項,,昭島市 款10 項1 の残り。COFOG 09.8 他に分類されない教育,false
 104,akishima-kyoiku-shoto,132071,一般会計,,,小学校費,,,eq,,assigned,09.1,retained,項,,昭島市 款10 項2。COFOG 09.1 就学前教育及び初等教育,false
+111,akishima-nakagami-kita,132071,,地域整備,,,,道路・公園等整備事業費,eq,,assigned,06.2,retained,目,,昭島市 中神駅北側地域整備事業特別会計の目「道路・公園等整備事業費」。駅周辺の地域整備で、一般会計の中神駅北側地域整備費（都市計画費の残り）と同じく COFOG 06.2 コミュニティの開発。,false
 105,akishima-kyoiku-chuto,132071,一般会計,,,中学校費,,,eq,,assigned,09.2,retained,項,,昭島市 款10 項3。COFOG 09.2 中等教育,false
 106,akishima-shakaikyoiku-bunka,132071,一般会計,,,社会教育費,,図書館費|市民会館費|公民館費|文化財保護費,eq,,assigned,08.2,retained,目,,昭島市 款10 項4 のうち図書館・市民会館・公民館・文化財。COFOG 08.2 文化サービス,false
 107,akishima-shakaikyoiku-other,132071,一般会計,,,社会教育費,,,eq,,assigned,09.5,retained,項,,昭島市 款10 項4 の残り（社会教育総務費・青少年育成費・社会教育施設管理費）。COFOG 09.5 水準を特定できない教育,false
@@ -345,8 +346,9 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 979,kind-fallback-meat-center,,,食肉センター,,,,,,,assigned,07.4,retained,目,,食肉センター（と畜場）の事業会計を公衆衛生サービス 07.4 に分類する（vocab-slaughterhouse と同じ。例: 281000 食肉センター事業費）。,true
 980,kind-fallback-single-parent-loan,,,母子父子寡婦福祉資金貸付,,,,,,,assigned,10.4,retained,目,,母子父子寡婦福祉資金の貸付の事務を家族及び児童 10.4 に分類する。貸付金そのものは先の規則が対象外にする（例: 281000）。,false
 981,kind-fallback-redevelopment,,,市街地再開発,,,,,,,assigned,06.2,retained,目,,市街地再開発の事業会計を地域開発 06.2 に分類する（例: 281000 市街地再開発事業費）。,false
-982,kind-fallback-debt,,,公債費,,,,,,,assigned,01.7,retained,目,,公債費の特別会計で元金・利子以外の目（公債諸費など発行・償還の事務）を公債取引 01.7 に分類する（keyword-debt-cost と同じ。例: 281000 公債費）。元金は先の規則が対象外にする。,false
+982,kind-fallback-debt,,,公債費,,,,,,,assigned,01.7,retained,目,,公債費の特別会計で元金・利子以外の目（公債諸費など発行・償還の事務）を公債取引 01.7 に分類する（keyword-debt-cost と同じ。例: 281000 公債費）。元金と繰出金は先の規則が取る。,false
 983,kind-fallback-tv-reception,,,テレビ共同受信,,,,,,,unclassifiable,,retained,目,,テレビ共同受信施設の整備・管理は放送の受信環境の維持であり COFOG 08.3 放送・出版に当たるが、マスタ（packages/fiscal/cofog-master.ts）は 08.3 を持たない。捨てずに分類不能として残す。,false
+984,kind-fallback-salary-utility,,,給与及び公共料金,,,,,,,unclassifiable,,retained,目,,各会計の職員の給与と公共料金を一括して支払う特別会計（132012 八王子市の給与及び公共料金特別会計）。どの会計のどの事業の給与・料金かは目の名前で分からず、機能を決められない。捨てずに分類不能として残す。,false
 1326,vocab-funeral-hall,,一般会計,,,,,聖苑,contains,,assigned,06.2,retained,目,,聖苑（火葬場・葬祭場）の運営を霊園・斎場の規則と同じく地域アメニティに寄せる。境界の判断のため暫定とする。,true
 1327,keyword-health-medical,,一般会計,,衛生費,,,保健医療,contains,,assigned,07,retained,目,,衛生費に属する保健医療を保健に分類する。名称からの判断で定義の確認が要るため暫定とする。,true
 1328,keyword-school-management-general,,一般会計,,教育費,学校教育費,,学校管理,contains,,assigned,09,retained,目,,学校教育費に属する学校管理は学校段階を名称から分けられないため COFOG 09 教育の division 止まりで暫定とする。,true
@@ -552,3 +554,6 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1710,edogawa-2026-01,131237,一般会計,,生活振興費,地域振興総務費,,住民情報費,eq,,assigned,01.3.3,retained,目,,江戸川区 住民記録・マイナンバーなど住民情報の事務を一般サービスに分類する（R6 までのマイナンバー推進費と同じ）。名称からの判断。,true
 1711,edogawa-2026-02,131237,一般会計,,健康費,保健衛生費,,医療保険年金関係費,eq,,assigned,07,retained,目,,江戸川区 医療保険（国民健康保険・後期高齢者医療）と国民年金に関わる経費を保健に分類する（R6 までの医療保険関係費と同じ）。名称からの判断。,true
 1712,edogawa-2026-03,131237,一般会計,,危機管理費,防災危機管理費,,災害要配慮者支援費,eq,,assigned,03.2,retained,目,,江戸川区 災害時の要配慮者の支援は防災に分類する（keyword-civil-protection の防災危機管理費と同じ）。名称からの判断。,true
+967,kind-x-debt-transfer,,,公債費,繰出金,,,,,,out-of-scope,,retained,目,,公債費（特別会計）の繰出金は、借り入れた資金を他会計へ渡す金融取引で、COFOG の対象（経費・非金融資産への純投資）ではない（例: 132012 八王子市の借入金管理特別会計から一般会計・土地取得事業特別会計・下水道事業会計への繰出）。同じ会計の元金・利子は先の規則が取る。,false
+968,kind-x-single-parent-loan-bond,,,母子父子寡婦福祉資金貸付,,,,貸付金公債費,contains,,unclassifiable,,retained,目,,母子父子寡婦福祉資金の貸付金の公債費の目は、元金（対象外）と利子（01.7）が混ざり、目の名前だけでは分けられない（kind-x-debt-combined にならう。例: 281000 神戸市の母子福祉資金貸付金公債費）。,false
+969,kind-x-single-parent-loans,,,母子父子寡婦福祉資金貸付,,,,貸付金,contains,,out-of-scope,,retained,目,,母子父子寡婦福祉資金の貸付金の目は金融資産の取得で、COFOG の対象（経費・非金融資産への純投資）ではない。事務費の目は会計の種類の fallback（kind-fallback-single-parent-loan）が 10.4 に分類する（例: 281000 神戸市・132012 八王子市）。,false

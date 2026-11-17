@@ -1,0 +1,854 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131016",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "4784b820c56ce13ac3d826e2410b60cd20e234fa42f6b55a5eb1f5e84bb89e33"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "short_columns": true,
+                "dark": 180,
+                "dark_pages": {
+                  "45": 230
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stray_subject_starts": true,
+            "gapped_column_rules": true,
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            8,
+            55
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "general-繰越財源充当額",
+            "pages": [
+              8,
+              10,
+              12,
+              14,
+              16,
+              18,
+              20,
+              22,
+              24,
+              26,
+              28,
+              30,
+              32,
+              34,
+              36,
+              38,
+              40,
+              42,
+              44,
+              46,
+              48,
+              50,
+              52,
+              54
+            ],
+            "box": [
+              269.0,
+              66.0,
+              334.0,
+              99.0
+            ],
+            "text": "継続費及び繰越事業費繰越財源充当額",
+            "reason": "予算現額の「継続費及び繰越事業費繰越財源充当額」の升は3行に分けて印字し、OCR が読まない。見出しの無いこの欄の額が予算現額に入っていた。原典の描画で升の印字と罫線の位置を確かめ、どの左頁も同じ位置なので升の見出しを宣言する。見出しは共有の見出し辞書の語（予算現額／継続費及び繰越事業費繰越財源充当額）に揃える。升の左右の罫が 267.8・334.6pt にあり、箱を罫の内側に収める（罫を越えると見出しが隣の升に切られる）。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "general-p44-3-wrapped-r27",
+            "page": 44,
+            "observation_id": "p44:full-page:a0:result1:r27",
+            "observed": "3番町さくら館職",
+            "reason": "物理44頁の節「3 番町さくら館職務住宅貸付料」。名前の2行目「務住宅貸付料」は罫で区切った同じ欄にあるが、行の高さの中ほどが次の節「4 かんだ連雀土地」の行とほぼ等しく離れ、組み立てで次の節の名前に付いた。原典の描画で欄の罫と名前を確かめ、2行の読みは使わず、番号と名前を1行に宣言する。"
+          },
+          {
+            "id": "general-p44-3-wrapped-r28",
+            "page": 44,
+            "observation_id": "p44:full-page:a0:result1:r28",
+            "observed": "務住宅貸付料",
+            "reason": "物理44頁の節「3 番町さくら館職務住宅貸付料」。名前の2行目「務住宅貸付料」は罫で区切った同じ欄にあるが、行の高さの中ほどが次の節「4 かんだ連雀土地」の行とほぼ等しく離れ、組み立てで次の節の名前に付いた。原典の描画で欄の罫と名前を確かめ、2行の読みは使わず、番号と名前を1行に宣言する。"
+          }
+        ],
+        "name_readings": [
+          {
+            "id": "general-p44-3-code",
+            "page": 44,
+            "box": [
+              410.6,
+              232.5,
+              412.0,
+              241.6
+            ],
+            "name": "3",
+            "reason": "物理44頁の節「3 番町さくら館職務住宅貸付料」。名前の2行目「務住宅貸付料」は罫で区切った同じ欄にあるが、行の高さの中ほどが次の節「4 かんだ連雀土地」の行とほぼ等しく離れ、組み立てで次の節の名前に付いた。原典の描画で欄の罫と名前を確かめ、2行の読みは使わず、番号と名前を1行に宣言する。"
+          },
+          {
+            "id": "general-p44-3-name",
+            "page": 44,
+            "box": [
+              415.1,
+              232.5,
+              477.3,
+              241.6
+            ],
+            "name": "番町さくら館職務住宅貸付料",
+            "reason": "物理44頁の節「3 番町さくら館職務住宅貸付料」。名前の2行目「務住宅貸付料」は罫で区切った同じ欄にあるが、行の高さの中ほどが次の節「4 かんだ連雀土地」の行とほぼ等しく離れ、組み立てで次の節の名前に付いた。原典の描画で欄の罫と名前を確かめ、2行の読みは使わず、番号と名前を1行に宣言する。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-ocr-1",
+          "origin_sha256": "4784b820c56ce13ac3d826e2410b60cd20e234fa42f6b55a5eb1f5e84bb89e33",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              8,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "d14bcc1b822a5e871a6a0bdd81f9ebf447f5113b2c335c02e390a49657fff78c",
+          "bytes": 1061748
+        },
+        {
+          "id": "general-ocr-p9",
+          "origin_sha256": "4784b820c56ce13ac3d826e2410b60cd20e234fa42f6b55a5eb1f5e84bb89e33",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              9
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9aa0d2abbda954405c733f636040c291d1c89de8aaf42c63258c8cf8877996d4",
+          "bytes": 314073
+        },
+        {
+          "id": "general-ocr-2",
+          "origin_sha256": "4784b820c56ce13ac3d826e2410b60cd20e234fa42f6b55a5eb1f5e84bb89e33",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "2042a1ac30d01ce791151cdac1161f1607c954b3c2fd720fdc95254ef57f5b56",
+          "bytes": 906396
+        },
+        {
+          "id": "general-ocr-3",
+          "origin_sha256": "4784b820c56ce13ac3d826e2410b60cd20e234fa42f6b55a5eb1f5e84bb89e33",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              28,
+              29,
+              30,
+              31,
+              32,
+              34,
+              35,
+              36,
+              37
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "5fa62bf718d8557b3d693c5da9ab75c9725dca4016024dbfcaa66007b64f6bbf",
+          "bytes": 1997705
+        },
+        {
+          "id": "general-ocr-p33",
+          "origin_sha256": "4784b820c56ce13ac3d826e2410b60cd20e234fa42f6b55a5eb1f5e84bb89e33",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              33
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a6d2a27fe044e4799f968f5745ccf376d2a5368a27315f3baef80d058884d640",
+          "bytes": 370080
+        },
+        {
+          "id": "general-ocr-4",
+          "origin_sha256": "4784b820c56ce13ac3d826e2410b60cd20e234fa42f6b55a5eb1f5e84bb89e33",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              38,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "3ba1e75937afa2eacd5c161c9c6a357bfc586fda138023af521c551725cb6eea",
+          "bytes": 2028909
+        },
+        {
+          "id": "general-ocr-p39",
+          "origin_sha256": "4784b820c56ce13ac3d826e2410b60cd20e234fa42f6b55a5eb1f5e84bb89e33",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              39
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a3e3c17317e508adcb0d2782c3d7c3f1dbe3372c4a51a33ade44459891be4bd1",
+          "bytes": 271384
+        },
+        {
+          "id": "general-ocr-5",
+          "origin_sha256": "4784b820c56ce13ac3d826e2410b60cd20e234fa42f6b55a5eb1f5e84bb89e33",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              48,
+              49,
+              50,
+              51,
+              52
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "b15092d631bbd883c21404c55a21a8e6962c8041f4e66ba152d1be4201547775",
+          "bytes": 1269015
+        },
+        {
+          "id": "general-ocr-p53",
+          "origin_sha256": "4784b820c56ce13ac3d826e2410b60cd20e234fa42f6b55a5eb1f5e84bb89e33",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              53
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "68a41c469c27bcb52b1edfc7e2244b7ca0b58ca8c4361a3e05f082a322faf69a",
+          "bytes": 379330
+        },
+        {
+          "id": "general-ocr-p54",
+          "origin_sha256": "4784b820c56ce13ac3d826e2410b60cd20e234fa42f6b55a5eb1f5e84bb89e33",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              54
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c0641f3f81120df960411073697bcc8078d3bdb0a7de7419fd83c7c8c42d4053",
+          "bytes": 293476
+        },
+        {
+          "id": "general-ocr-p55",
+          "origin_sha256": "4784b820c56ce13ac3d826e2410b60cd20e234fa42f6b55a5eb1f5e84bb89e33",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              55
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "0f3295b3fe95395c15980c6def511481d1b4819856d5900e17123eec1cf42880",
+          "bytes": 322160
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "73fa9ef92789f45f5f24249dc87b029c2f8df5fef62c5e44a51598ac5007595f"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "nhi-revenue-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "short_columns": true,
+                "dark": 180
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "gapped_column_rules": true,
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            6,
+            21
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "nhi-繰越財源充当額",
+            "pages": [
+              6,
+              8,
+              10,
+              12,
+              14,
+              16,
+              18,
+              20
+            ],
+            "box": [
+              269.0,
+              66.0,
+              334.0,
+              99.0
+            ],
+            "text": "継続費及び繰越事業費繰越財源充当額",
+            "reason": "予算現額の「継続費及び繰越事業費繰越財源充当額」の升は3行に分けて印字し、OCR が読まない。見出しの無いこの欄の額が予算現額に入っていた。原典の描画で升の印字と罫線の位置を確かめ、どの左頁も同じ位置なので升の見出しを宣言する。見出しは共有の見出し辞書の語（予算現額／継続費及び繰越事業費繰越財源充当額）に揃える。升の左右の罫が 267.8・334.6pt にあり、箱を罫の内側に収める（罫を越えると見出しが隣の升に切られる）。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-ocr-1",
+          "origin_sha256": "73fa9ef92789f45f5f24249dc87b029c2f8df5fef62c5e44a51598ac5007595f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              6,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "af21d2772149d57517115b0287ad33ccb1d8e90a81cacf39aebde57edaea9457",
+          "bytes": 907004
+        },
+        {
+          "id": "nhi-ocr-p7",
+          "origin_sha256": "73fa9ef92789f45f5f24249dc87b029c2f8df5fef62c5e44a51598ac5007595f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              7
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "cc2ca6de33920294fdd640602c2715b348698e9f78028bffb76ba1242d6ab17c",
+          "bytes": 236440
+        },
+        {
+          "id": "nhi-ocr-2",
+          "origin_sha256": "73fa9ef92789f45f5f24249dc87b029c2f8df5fef62c5e44a51598ac5007595f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "4f2495211695fd71644fe952156d99a901b696607e9189faf128dacee11fd543",
+          "bytes": 701813
+        },
+        {
+          "id": "nhi-ocr-p21",
+          "origin_sha256": "73fa9ef92789f45f5f24249dc87b029c2f8df5fef62c5e44a51598ac5007595f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a2ef2a2d892522e12a36ed5588a1693601b6fb89a90ddde9ea5690ca84b2fc28",
+          "bytes": 229536
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "9fbf4be1b326068265526a32ffac76804cff6705193224dd5754afbeed72cde3"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-revenue-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "short_columns": true,
+                "dark": 180
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "gapped_column_rules": true,
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            6,
+            23
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "kaigo-繰越財源充当額",
+            "pages": [
+              6,
+              8,
+              10,
+              12,
+              14,
+              16,
+              18,
+              20,
+              22
+            ],
+            "box": [
+              269.0,
+              66.0,
+              334.0,
+              99.0
+            ],
+            "text": "継続費及び繰越事業費繰越財源充当額",
+            "reason": "予算現額の「継続費及び繰越事業費繰越財源充当額」の升は3行に分けて印字し、OCR が読まない。見出しの無いこの欄の額が予算現額に入っていた。原典の描画で升の印字と罫線の位置を確かめ、どの左頁も同じ位置なので升の見出しを宣言する。見出しは共有の見出し辞書の語（予算現額／継続費及び繰越事業費繰越財源充当額）に揃える。升の左右の罫が 267.8・334.6pt にあり、箱を罫の内側に収める（罫を越えると見出しが隣の升に切られる）。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-ocr-1",
+          "origin_sha256": "9fbf4be1b326068265526a32ffac76804cff6705193224dd5754afbeed72cde3",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "6737163e349b3e419e3c1cf53f188f5c6d4a508b2ecffdb1e3b3d21d35629305",
+          "bytes": 1592475
+        },
+        {
+          "id": "kaigo-ocr-2",
+          "origin_sha256": "9fbf4be1b326068265526a32ffac76804cff6705193224dd5754afbeed72cde3",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "d9cd31ef1aaea41b4eb92dff08b115729d793200770c458ffc88aab4f25d6124",
+          "bytes": 978038
+        },
+        {
+          "id": "kaigo-ocr-p23",
+          "origin_sha256": "9fbf4be1b326068265526a32ffac76804cff6705193224dd5754afbeed72cde3",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              23
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "4d6697ec8f90a10a27d746861ad1486cd89f9259f02445da81ad69fe60a47190",
+          "bytes": 155996
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "9d9299ef3b5fa2f8578e6d8066f7d4e348c71e1e8fdfa100ec8b1a99478f5e81"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-revenue-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "short_columns": true,
+                "dark": 180
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "gapped_column_rules": true,
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            6,
+            17
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "kouki-繰越財源充当額",
+            "pages": [
+              6,
+              8,
+              10,
+              12,
+              14,
+              16
+            ],
+            "box": [
+              269.0,
+              66.0,
+              334.0,
+              99.0
+            ],
+            "text": "継続費及び繰越事業費繰越財源充当額",
+            "reason": "予算現額の「継続費及び繰越事業費繰越財源充当額」の升は3行に分けて印字し、OCR が読まない。見出しの無いこの欄の額が予算現額に入っていた。原典の描画で升の印字と罫線の位置を確かめ、どの左頁も同じ位置なので升の見出しを宣言する。見出しは共有の見出し辞書の語（予算現額／継続費及び繰越事業費繰越財源充当額）に揃える。升の左右の罫が 267.8・334.6pt にあり、箱を罫の内側に収める（罫を越えると見出しが隣の升に切られる）。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-ocr-1",
+          "origin_sha256": "9d9299ef3b5fa2f8578e6d8066f7d4e348c71e1e8fdfa100ec8b1a99478f5e81",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              6,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "162c2d3b2444dddb0062f693dd817fc8b676ce6a21fdbcd179f103c8c599844a",
+          "bytes": 840565
+        },
+        {
+          "id": "kouki-ocr-p7",
+          "origin_sha256": "9d9299ef3b5fa2f8578e6d8066f7d4e348c71e1e8fdfa100ec8b1a99478f5e81",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              7
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "f31aaff7a55fc7d717c021eece87b288e57c4fe3bc003fa300d5a9b5d0ea388a",
+          "bytes": 161881
+        },
+        {
+          "id": "kouki-ocr-2",
+          "origin_sha256": "9d9299ef3b5fa2f8578e6d8066f7d4e348c71e1e8fdfa100ec8b1a99478f5e81",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              16
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "e15f131fd37094877ce33ee90de7740459596130f364d3129c9fed702e200a3c",
+          "bytes": 310291
+        },
+        {
+          "id": "kouki-ocr-p17",
+          "origin_sha256": "9d9299ef3b5fa2f8578e6d8066f7d4e348c71e1e8fdfa100ec8b1a99478f5e81",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              17
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "2f6b02bb771cb80d78d49a39bdf51e25a16c92db7958c06a68f3b26bc604d96a",
+          "bytes": 253370
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue-detail"
+        }
+      ]
+    }
+  ]
+}

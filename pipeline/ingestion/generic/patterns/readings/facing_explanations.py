@@ -13,6 +13,18 @@ over as many lines as it needs (`社会福祉` / `総務費`). Some originals dr
 distance to the side and leaving no ink (the shared observation drops such copies only on pages with many words);
 the reading drops the copy that shows no ink on the rendered page and reports each dropped word.
 
+A settlement report (131083 2023) draws the same spread with other columns: the left page prints each 款・項・目 row's
+決算額・予算現額・翌年度繰越額・不用額 and no 財源内訳 or 節, and the facing frame adds a column right of the 説明
+(事業別予算現額) whose amount, level with an item's line, is the item's. The profile leaves out the left page's
+funding and 節 columns and declares the facing page's columns. The 予備費's explanation is a note of where it went
+(`1議決予算額…のうち下記のとおり充当した` over `第2款総務費 151,000,000`): the lines under the declared heading are
+amount annotations (ADR 0024).
+
+A budget statement's 歳入 (131083) draws the same spread: the left page prints each 款・項・目 row's amounts and the
+節 of each 目, with no 財源内訳, and the facing page the 説明 of the 目 (its 節 told again in prose and small tables).
+The profile declares `explanation_excluded`: the reading then takes the 歳入 scope, reads the left page alone, and
+reports every word of the facing page as excluded under the profile's kind and reason.
+
 The reading builds the printed tree directly (科目・節・説明) and hands the node and amount tables with the
 digit-coverage scope to the shared checks. What it reads but does not take in (the 財源内訳, the quantities and prose
 of the explanation) is described as coverage exclusions from where it found them. The column edges, relative to the
@@ -204,20 +216,27 @@ class Reader(Reading):
         self.LEVELS = [(name, tuple(x)) for name, x in left['levels']]
         self.SUBJECT = (self.LEVELS[0][1][0], self.LEVELS[-1][1][1])
         self.SUBJECT_AMOUNTS = [(c['header'], tuple(c['x'])) for c in left['subject_amounts']]
-        self.FUNDING = tuple(left['funding'])
-        self.SETSU = tuple(left['setsu'])
-        self.SETSU_AMOUNT = (left['setsu_amount']['header'], tuple(left['setsu_amount']['x']))
+        # A settlement report's left page prints no 財源内訳 and no 節 (131083 2023).
+        self.FUNDING = tuple(left['funding']) if 'funding' in left else None
+        self.SETSU = tuple(left['setsu']) if 'setsu' in left else None
+        self.SETSU_AMOUNT = (left['setsu_amount']['header'], tuple(left['setsu_amount']['x'])) \
+            if 'setsu_amount' in left else None
         right = profile['right']
         self.RIGHT_WIDTH = right['width']
+        self.RIGHT_COLUMNS = [(c['header'], tuple(c['x'])) for c in right.get('columns', [])]
+        self.EXPLANATION_RIGHT = self.RIGHT_COLUMNS[0][1][0] if self.RIGHT_COLUMNS else self.RIGHT_WIDTH
         self.ITEMS = [{'pattern': re.compile(i['pattern']), 'x': tuple(i['x']), 'amount': i['amount'],
                        'bullet': i.get('bullet'), 'code': re.compile(i['code']) if 'code' in i else CODE}
                       for i in right['items']]
         self.AMOUNT_LEFT = right['amount_left']
         self.PROSE_INDENT = right['prose_indent']
         self.ASIDE = re.compile(right['aside_heading'])
+        self.NOTE = (re.compile(right['note']['heading']), right['note']['kind']) if 'note' in right else None
         self.UNITS = profile['units']
         self.ABOLISHED = profile['abolished_mark']
         self.DIVIDER = profile['divider_text']
+        # A 歳入 statement's facing page is not taken in (131083): its words are coverage exclusions.
+        self.EXPLANATION_EXCLUDED = profile.get('explanation_excluded')
 
     # --- frames -----------------------------------------------------------------------------------------------
 
@@ -230,10 +249,11 @@ class Reader(Reading):
                     continue
                 inner = [x for x in long if x0 + EDGE < x < x0 + width - EDGE]
                 if kind == 'left':
-                    edges = [e for _, (e, _) in self.SUBJECT_AMOUNTS] + [self.FUNDING[0], self.SETSU[0], self.SETSU_AMOUNT[1][0]]
+                    edges = [e for _, (e, _) in self.SUBJECT_AMOUNTS] + [r[0] for r in (
+                        self.FUNDING, self.SETSU, self.SETSU_AMOUNT and self.SETSU_AMOUNT[1]) if r]
                     if not all(any(abs(x - x0 - e) <= EDGE for x in inner) for e in edges[:4]):
                         continue
-                elif inner:
+                elif not self.EXPLANATION_EXCLUDED and not self.right_rules(inner, x0):
                     continue
                 full = sorted(r.y0 for r in page.rules if not r.vertical and r.x0 <= x0 + EDGE and r.x1 >= x0 + width - EDGE)
                 if len(full) < 3:
@@ -245,18 +265,24 @@ class Reader(Reading):
                 return kind, x0, top, heading, bottom
         return None
 
+    def right_rules(self, inner, x0):
+        """Whether the long vertical rules inside a facing frame are those of its declared amount columns."""
+        edges = [x[0] for _, x in self.RIGHT_COLUMNS]
+        return len(inner) == len(edges) and all(any(abs(x - x0 - e) <= EDGE for x in inner) for e in edges)
+
     # --- conversion -------------------------------------------------------------------------------------------
 
     def convert(self, inputs, destination, options):
         if len(inputs) != 1:
             raise ValueError('One original makes one table')
         source = inputs[0]
-        if source['format'] != 'pdf' or source['pdf_type'] != 'text' or source['direction'] != 'expenditure':
-            raise ValueError('Expected the expenditure of a text PDF')
+        direction = 'revenue' if self.EXPLANATION_EXCLUDED else 'expenditure'
+        if source['format'] != 'pdf' or source['pdf_type'] != 'text' or source['direction'] != direction:
+            raise ValueError(f'Expected the {direction} of a text PDF')
         if sha_file(source['path']) != source['sha256']:
             raise ValueError('Original SHA differs')
         scopes = [s for s in source['scope'] if s['account'] == options['account']
-                  and s.get('direction', 'expenditure') == 'expenditure']
+                  and s.get('direction', direction) == direction]
         if len(scopes) != 1:
             raise ValueError(f'Expected one selected scope of the account {options["account"]}')
         numbers_ = [p for span in scopes[0]['pages'] for p in range(span['start'], span['end'] + 1)] \
@@ -312,6 +338,7 @@ class Reader(Reading):
             return [w for w in page_words if x0 + x_range[0] <= (w.x0 + w.x1) / 2 < x0 + x_range[1]]
 
         pending_left = []   # amounts of a left page wait for the unit its facing page prints
+        printed = {}        # node key -> header -> amount of the subjects read
         last_right = None   # the frame of the last explanation page
         for page in pages:
             frame = self.frame(page)
@@ -341,7 +368,7 @@ class Reader(Reading):
                 if pending_left:
                     raise ValueError(f'Page {page.number}: a left page follows a left page with no facing page')
                 spread = self.left_page(page, x0, body, open_, add_node, grow, exclude, column, report, pending_left)
-                for header, x_range in [*self.SUBJECT_AMOUNTS, self.SETSU_AMOUNT]:
+                for header, x_range in [*self.SUBJECT_AMOUNTS, *([self.SETSU_AMOUNT] if self.SETSU_AMOUNT else [])]:
                     amount_columns.setdefault(('left', header), [x0 + x_range[0], x0 + x_range[1]])
                 continue
             if spread is None or spread['page'] != page.number - 1:
@@ -349,9 +376,17 @@ class Reader(Reading):
             unit = self.unit(page, top)
             for args in pending_left:
                 add_amount(*args, unit)
+                printed.setdefault(args[0]['node_key'], {})[args[1]] = args[2]
             pending_left.clear()
-            self.right_page(page, x0, body, spread, explained, add_node, grow, add_amount, exclude, unit, report)
-            amount_columns.setdefault(('right', '説明'), [x0 + self.AMOUNT_LEFT - 60, x0 + width])
+            if self.EXPLANATION_EXCLUDED:
+                exclude(self.EXPLANATION_EXCLUDED['kind'], self.EXPLANATION_EXCLUDED['reason'], page.number, body)
+                report['excluded explanation words'] += len(body)
+                spread = None
+                continue
+            self.right_page(page, x0, body, spread, explained, add_node, grow, add_amount, exclude, unit, report, printed)
+            amount_columns.setdefault(('right', '説明'), [x0 + self.AMOUNT_LEFT - 60, x0 + self.EXPLANATION_RIGHT])
+            for header, x_range in self.RIGHT_COLUMNS:
+                amount_columns.setdefault(('right', header), [x0 + x_range[0], x0 + x_range[1]])
             spread = None
         if pending_left:
             raise ValueError('The last left page has no facing page')
@@ -362,9 +397,18 @@ class Reader(Reading):
             raise ValueError(f'{table_id}: nothing read')
         notes = [
             '款・項・目は左頁の科目の欄から、それぞれの行の本年度・前年度・比較の金額とともに読んだ。印字の見出し「本年度」「前年度」'
+            '「比較増(△)減」は共有辞書の「本年度予算額」「前年度予算額」「比較」とした。節は節の欄から目ごとに読んだ。',
+            '向かいの頁の説明（節の内訳を文と小さな表で言い直したもの）は取り込んでいない。',
+        ] if self.EXPLANATION_EXCLUDED else [
+            '款・項・目は左頁の科目の欄から、それぞれの行の本年度・前年度・比較の金額とともに読んだ。印字の見出し「本年度」「前年度」'
             '「比較増(△)減」は共有辞書の「本年度予算額」「前年度予算額」「比較」とした。',
             '財源内訳の欄は取り込んでいない。説明は向かいの頁から、施策（4桁の番号）・事業（番号と右端の金額）・「・」の項目'
             '（右端の金額）を字下げで読み、文中の数（人数・回数など）は取り込んでいない。',
+        ] if self.FUNDING else [
+            '款・項・目は左頁の科目の欄から、それぞれの行の' + '・'.join(h for h, _ in self.SUBJECT_AMOUNTS) + 'とともに読んだ。',
+            '説明は向かいの頁から、施策（4桁の番号）・事業（番号と右端の金額）・「・」の項目（右端の金額）を字下げで読み、'
+            '金額は見出し「説明」とした' + ''.join(f'。右の欄の{h}は同じ行の項目の金額とした' for h, _ in self.RIGHT_COLUMNS)
+            + '。文中の数（人数・回数など）は取り込んでいない。',
         ]
         return {'nodes': nodes, 'amounts': amounts, 'words': words, 'excluded': excluded,
                 'amount_columns': [{'header': header, 'x_range': x} for (_, header), x in amount_columns.items()],
@@ -457,11 +501,16 @@ class Reader(Reading):
                 return None
             return continuing
 
+        if self.FUNDING is None and self.SETSU is None:
+            return {'page': page.number, 'owner_at': owner_at}
         # 財源内訳
-        funding = column(body, x0, self.FUNDING)
+        funding = column(body, x0, self.FUNDING) if self.FUNDING else []
         exclude('財源内訳', '科目の行ごとに印字する財源内訳（財源の名前と金額）は取り込まない。財源の種類ごとの額で、'
                 '本年度の金額の内訳の別の切り口のため。', page.number, funding)
-        report['funding words'] += len(funding)
+        if self.FUNDING:
+            report['funding words'] += len(funding)
+        if self.SETSU is None:
+            return {'page': page.number, 'owner_at': owner_at}
         # 節
         setsu = None
         setsu_starts = []
@@ -491,8 +540,25 @@ class Reader(Reading):
             pending.append((owner[0], header, value, line, page.number))
         return {'page': page.number, 'owner_at': owner_at}
 
-    def right_page(self, page, x0, body, spread, explained, add_node, grow, add_amount, exclude, unit, report):
+    def right_page(self, page, x0, body, spread, explained, add_node, grow, add_amount, exclude, unit, report, printed):
         owner_at = spread['owner_at']
+        cells = []   # (header, words) of the amounts in the columns right of the 説明
+        for header, x_range in self.RIGHT_COLUMNS:
+            for cell in lines([w for w in body if x0 + x_range[0] <= (w.x0 + w.x1) / 2 < x0 + x_range[1]]):
+                cell = clipped(cell, x0 + x_range[1], report)
+                value = ''.join(w.text for w in cell)
+                if not AMOUNT.fullmatch(value):
+                    raise ValueError(f'Page {page.number}: unread {header} {value!r}')
+                cells.append((header, value, cell))
+        if self.RIGHT_COLUMNS:
+            body = [w for w in body if (w.x0 + w.x1) / 2 < x0 + self.EXPLANATION_RIGHT]
+
+        def take_cells(line, node):
+            """The column amounts printed level with an item's line are the item's."""
+            for found in [c for c in cells if abs(mid(c[2][0]) - mid(line[0])) <= LINE]:
+                add_amount(node, found[0], found[1], found[2], page.number, unit)
+                cells.remove(found)
+
         for line in lines(body):
             y = mid(line[0])
             owner = owner_at(y)
@@ -500,7 +566,7 @@ class Reader(Reading):
             if owner is None:
                 raise ValueError(f'Page {page.number}: explanation {text!r} beside a 款・項 row')
             if owner is not explained['moku']:
-                explained.update(moku=owner, stack=[], pending=None, aside=None)
+                explained.update(moku=owner, stack=[], pending=None, aside=None, note=None)
             stack = explained['stack']
             offset = line[0].x0 - x0
             item = next((i for i in self.ITEMS if i['x'][0] <= offset < i['x'][1] and i['pattern'].match(text)), None)
@@ -522,15 +588,32 @@ class Reader(Reading):
                         raise ValueError(f'Page {page.number}: no code in the item {name!r}')
                     code, name = found.group(1), found.group(2)
                 node = add_node('説明', depth, None, code, name, page.number, name_words, parent)
+                take_cells(line, node)
                 stack.append({'node': node, 'rank': rank})
                 explained['pending'] = None
                 explained['aside'] = None
+                explained['note'] = None
                 if tail:
                     if not item['amount']:
                         raise ValueError(f'Page {page.number}: an amount beside {text!r}')
                     add_amount(node, '説明', tail[0], tail[1], page.number, unit)
                 elif item['amount']:
                     explained['pending'] = node
+                continue
+            if self.NOTE and self.NOTE[0].fullmatch(text):
+                # A note under the 目 (`1議決予算額３００，０００千円のうち下記のとおり充当した`, the 予備費): the lines
+                # under it up to the next item name where its amount went, an amount annotation (ADR 0024).
+                explained['note'] = self.NOTE[1]
+                explained['pending'] = None
+                exclude('予備費の充用', '充用の注記の見出しの文中の数（議決予算額など）は金額として取り込まない。見出しの下の行の金額を'
+                        '注記の金額として持つ。', page.number, line)
+                report['note headings'] += 1
+                continue
+            if explained.get('note') and tail:
+                label = [w for w in line if w not in tail[1]]
+                node = add_node('注記', 1, explained['note'], None, text_of(label), page.number, label or tail[1], owner)
+                add_amount(node, '注記金額', tail[0], tail[1], page.number, unit)
+                report[f'notes {explained["note"]}'] += 1
                 continue
             if self.ASIDE.fullmatch(text):
                 explained['aside'] = text
@@ -548,6 +631,7 @@ class Reader(Reading):
                 node = explained['pending']
                 grow(node, [w for w in line if w not in tail[1]], text_of([w for w in line if w not in tail[1]]))
                 add_amount(node, '説明', tail[0], tail[1], page.number, unit)
+                take_cells(line, node)
                 explained['pending'] = None
                 report['wrapped item names'] += 1
                 continue
@@ -558,5 +642,17 @@ class Reader(Reading):
                 exclude(kind, '説明の文中の数（人数・回数・面積・日付など）は事業の内訳の金額として取り込まない。'
                         '金額の内訳は番号の付いた事業と「・」の項目の右端の金額だけ。', page.number, line)
                 report[f'excluded lines {kind}'] += 1
+        for found in list(cells):
+            # A column amount level with no line of the 説明, the 目's own amount of the same heading printed again
+            # beside the top of its explanation (the 予備費, whose explanation is a note and no item).
+            owner = owner_at(mid(found[2][0]))
+            if owner is not None and printed.get(owner['node_key'], {}).get(found[0]) == found[1] \
+                    and not any(abs(mid(w) - mid(found[2][0])) <= LINE for w in body):
+                exclude('親の繰り返し', '説明の項目の無い行に、目の金額を同じ見出しの欄に再掲した金額は取り込まない。目の金額として取り込み済み。',
+                        page.number, found[2])
+                report['subject amounts printed again'] += 1
+                cells.remove(found)
+        if cells:
+            raise ValueError(f'Page {page.number}: column amounts beside no item: {[(h, v) for h, v, _ in cells][:5]}')
         if explained['pending'] is not None:
             report['items with no amount on their page'] += 1

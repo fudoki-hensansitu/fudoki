@@ -16,7 +16,7 @@ export function TownPalette({ open, onOpenChange }: { open: boolean; onOpenChang
     visit(e.path)
   }
   return (
-    <CommandDialog open={open} onOpenChange={onOpenChange} title="まちを探す" description="自治体名で探して、そのまちの頁を開きます">
+    <CommandDialog open={open} onOpenChange={onOpenChange} title="まちを探す" description="自治体名で探して開きます">
       <Command shouldFilter={false}>
         <CommandInput placeholder="自治体名で探す（例：品川）" value={q} onValueChange={setQ} />
         <CommandList>
@@ -34,7 +34,7 @@ export function TownPalette({ open, onOpenChange }: { open: boolean; onOpenChang
           {(entries ?? []).map((e) => (
             <CommandItem key={e.code} value={e.code} onSelect={() => pick(e)}>
               {e.name}
-              <span className="text-[11px] text-muted-foreground">{e.kind === '都道府県' ? '都道府県' : e.prefecture}</span>
+              <span className="text-xs text-muted-foreground">{e.kind === '都道府県' ? '都道府県' : e.prefecture}</span>
             </CommandItem>
           ))}
           {hasMore ? <MoreDots key={moreKey} onVisible={more} /> : null}

@@ -11,16 +11,22 @@ const SQL =
 
 /** 自治体コードごとの人口（基準日の古い順） */
 export async function loadPopulations(env: Env, codes: string[]): Promise<Map<string, Population[]>> {
+  return (await readPopulations(env, codes)) ?? new Map()
+}
+
+/** loadPopulations と同じで、読めなかったときは null（D1 の無い手元は空の Map） */
+export async function readPopulations(env: Env, codes: string[]): Promise<Map<string, Population[]> | null> {
   const out = new Map<string, Population[]>()
   const statement = env.DB?.prepare(SQL).bind(JSON.stringify(codes))
   if (!statement?.all || codes.length === 0) return out
   try {
     const { results } = await statement.all<{ jurisdiction_code: string; reference_date: string; population: number }>()
     for (const r of results) out.set(r.jurisdiction_code, [...(out.get(r.jurisdiction_code) ?? []), { people: r.population, asOf: r.reference_date }])
+    return out
   } catch (e) {
     logError(e)
+    return null
   }
-  return out
 }
 
 export const POPULATION_TOOL = 'get_population'

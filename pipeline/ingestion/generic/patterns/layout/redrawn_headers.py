@@ -33,8 +33,12 @@ LEFT = ('目', '本年度予算額', '前年度予算額', '比較', '財源内�
 RIGHT = ('区分', '金額', '説明')
 # The columns' rules, from the frame's left side (pt). Both pages are about as wide, so a page is told by its inner rules.
 PLACES = {LEFT: (0, 68, 135, 203, 270, 333, 395, 457, 516), RIGHT: (0, 79, 157, 518)}
+# The revenue's facing pages (`header.revenue_columns`): the left page prints 目・本年度予算額・前年度予算額・比較増(△)減
+# and no 財源内訳, the right page the 節 and a narrower 説明.
+REVENUE_LEFT = ('目', '本年度予算額', '前年度予算額', '比較')
+REVENUE_PLACES = {REVENUE_LEFT: (0, 270, 346, 421.5, 497), RIGHT: (0, 81.6, 155.2, 504)}
 SPANNING = {RIGHT: ('節', 2)}  # a cell over the first columns of the header's upper half
-SURE = {LEFT: 4, RIGHT: 3}  # inner and side rules read in place that tell the page without its neighbours
+SURE = {LEFT: 4, REVENUE_LEFT: 4, RIGHT: 3}  # inner and side rules read in place that tell the page without its neighbours
 
 
 def frame(page: Page) -> tuple[float, float] | None:
@@ -77,13 +81,14 @@ def stray(xs: list[float], places: tuple, left: float) -> int:
                and not any(abs(x - left - p) <= NEAR for p in places))
 
 
-def kind(page: Page) -> tuple[tuple | None, float]:
+def kind(page: Page, places: dict = PLACES) -> tuple[tuple | None, float]:
     xs = verticals(page)
-    scores = {headings: fit(xs, PLACES[headings]) for headings in (LEFT, RIGHT)}
+    left_headings = next(h for h in places if h is not RIGHT)
+    scores = {headings: fit(xs, places[headings]) for headings in (left_headings, RIGHT)}
     # A rule between the sides at none of the places is another table's (the 款 summary's 財源内訳 has columns of its own
     # whose sides fall near some of the left page's).
-    sure = [h for h in (LEFT, RIGHT) if scores[h][0] >= SURE[h] and scores[h][0] > scores[LEFT if h is RIGHT else RIGHT][0]
-            and not stray(xs, PLACES[h], scores[h][1])]
+    sure = [h for h in (left_headings, RIGHT) if scores[h][0] >= SURE[h]
+            and scores[h][0] > scores[left_headings if h is RIGHT else RIGHT][0] and not stray(xs, places[h], scores[h][1])]
     if sure:
         return sure[0], scores[sure[0]][1]
     return None, max(scores.values())[1] if xs else 0.0
@@ -188,7 +193,7 @@ def figures_in_text(words: list[Word], x0: float, x1: float) -> list[Word]:
     return joined
 
 
-def redrawn(page: Page, headings: tuple | None, left: float) -> Page:
+def redrawn(page: Page, headings: tuple | None, left: float, places: dict = PLACES) -> Page:
     found = frame(page)
     if found is None:
         return page
@@ -200,7 +205,7 @@ def redrawn(page: Page, headings: tuple | None, left: float) -> Page:
     # where its place puts it.
     read_xs = verticals(page)
     xs = [min(read_xs, key=lambda x: abs(x - left - place)) if any(abs(x - left - place) <= NEAR for x in read_xs)
-          else left + place for place in PLACES[headings]]
+          else left + place for place in places[headings]]
     line = top + HEADER
     # (the unit row under the header, `千円`, is read a little into it)
     inside = lambda w: xs[0] < (w.x0 + w.x1) / 2 < xs[-1] and top < (w.y0 + w.y1) / 2 and w.y1 <= line + 3
@@ -221,7 +226,9 @@ def redrawn(page: Page, headings: tuple | None, left: float) -> Page:
 
 
 def read(pages, **options):
-    kinds = [kind(page) for page in pages]
+    places = REVENUE_PLACES if (options.get('header') or {}).get('revenue_columns') else PLACES
+    left_headings = next(h for h in places if h is not RIGHT)
+    kinds = [kind(page, places) for page in pages]
     numbers = {page.number: index for index, page in enumerate(pages)}
     for index, page in enumerate(pages):
         headings, left = kinds[index]
@@ -230,11 +237,11 @@ def read(pages, **options):
             # right page.
             before = kinds[numbers[page.number - 1]] if page.number - 1 in numbers else (None, 0)
             after = kinds[numbers[page.number + 1]] if page.number + 1 in numbers else (None, 0)
-            headings = RIGHT if before[0] is LEFT else LEFT if after[0] is RIGHT else None
+            headings = RIGHT if before[0] is left_headings else left_headings if after[0] is RIGHT else None
             if headings is not None:
-                count, left = fit(verticals(page), PLACES[headings])
+                count, left = fit(verticals(page), places[headings])
                 headings = headings if count >= 2 else None
-        changed = redrawn(page, headings, left)
+        changed = redrawn(page, headings, left, places)
         # The observed page itself carries the redrawn header (digit coverage reads the same words).
         page.words, page.rules = changed.words, changed.rules
         pages[index] = page

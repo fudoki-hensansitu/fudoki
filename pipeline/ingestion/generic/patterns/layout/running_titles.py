@@ -8,6 +8,8 @@
 
 題字の金額は印字された見出しを持たないので、題字の右に金額が並ぶ書式では、最初の金額が属する見出しを設定で
 宣言する（`header.title_amount`）。宣言が無ければ題字の金額は読まず、題字の段は子の和で確かめない。
+題字が本年度・前年度・比較の金額を並べる書式（杉並区の歳入）は、見出しを金額の順に並べて宣言し（`title_amount` に配列）、
+題字の金額をすべて読む。
 題字の金額は、その款・項の表の始まり（項の最初の目が `1`）と終わり（項の `計` の行）が読む範囲に収まるときだけ読む。
 分冊の境で款が2冊にまたがると（文京区は冊の末尾に次の款の最初の見開きを載せる）、どちらの冊にも款・項の一部の目しか
 無く、題字の金額は冊の目の和と比べられない。その題字は項目として残し、金額は読まない（`complete_titles`）。
@@ -46,6 +48,8 @@ from ingestion.generic.patterns.layout import stacked_titles
 
 STACKED_SHIFT = 6  # how far aside a scan sets one table of a page from the one above it (国分寺市)
 FULL_REACH = 3  # how far short of the frame's edges a rule may end and still cross the whole frame
+SKEWED_STEP = 2.0  # points: a piece of a slanted rule of a skewed scan steps this far from the piece before it
+SKEWED_REACH = 2  # how much further a column rule of a skewed scan (`rules.skewed`) may run past a full rule
 
 # `（款） 1 議会費`・`(項)1 総務管理費`・`（款） 2.総務費` or `1款 議会費`・`第2項 防災費`. The point after the code
 # (檜原村) is the code's, not the name's.
@@ -134,11 +138,14 @@ def title(name: list[Glyph]) -> tuple[str, str, str] | None:
     return None
 
 
-def titles(logical: layout.Logical, heading: str | None) -> list[tuple[str, str, str, list[Glyph], tuple | None]]:
-    """The 款・項 titles above the frame, top to bottom: level, code, name, name glyphs and (heading, amount glyphs)."""
+def titles(logical: layout.Logical, heading: str | list[str] | None) -> list[tuple[str, str, str, list[Glyph], tuple | list | None]]:
+    """The 款・項 titles above the frame, top to bottom: level, code, name, name glyphs and (heading, amount glyphs)
+    (a list of them when the headings are declared as a list)."""
     found = []
+    codeless = document_quirk('codeless_titles')
     # `outside` holds each page's own coordinates: the lines of a spread are read page by page.
     pages = sorted({g.page for g in logical.outside})
+    entries = []  # (title, text, name glyphs, amount glyphs)
     for line in (line for page in pages for line in lines([g for g in logical.outside if g.page == page])):
         if any(logical.below_foot(g) for g in line):
             continue  # the page's foot (`（款） 1 議会費 （項） 1 議会費` under the frame of a right-hand page)
@@ -147,12 +154,19 @@ def titles(logical: layout.Logical, heading: str | None) -> list[tuple[str, str,
             while len(parts) > 1 and is_amount(normalize(text(parts[-1]))):
                 amounts.insert(0, parts.pop())
             name = [g for part in parts for g in part]
-            found_title = title(name)
-            if found_title is None:
-                continue
-            level, code, label = found_title
+            entries.append((title(name), normalize(text(name)), name, amounts))
+    # A dropped 款・項's title prints no code (`codeless_titles`).
+    titled = codeless.module.assign([(t, v, n, bool(a)) for t, v, n, a in entries]) if codeless is not None and entries \
+        else [e[0] for e in entries]
+    for found_title, (_, _, name, amounts) in zip(titled, entries):
+        if found_title is None:
+            continue
+        level, code, label = found_title
+        if isinstance(heading, list):  # the headings of the amounts in the order printed (杉並区の歳入)
+            amount = list(zip(heading, amounts)) or None
+        else:
             amount = (heading, amounts[0]) if amounts and heading else None
-            found.append((level, code, label, name, amount))
+        found.append((level, code, label, name, amount))
     return found
 
 
@@ -167,13 +181,15 @@ def title_segments(parts: list[list[Glyph]]) -> list[list[list[Glyph]]]:
     segments: list[list[list[Glyph]]] = []
     if (glued := document_quirk('glued_titles')) is not None:
         parts = glued.module.split(parts)
+    bare = document_quirk('unnumbered_titles')
     for run in parts:
         shown = normalize(text(run))
         if UNIT_NOTE.match(shown):
             continue
         # A mark opens the next title only after one (`2款 総務費 1項 総務管理費`): the digits of a code the
         # OCR split (`1` `1款 公債費`) stay with their mark.
-        if not segments or (MARK.match(shown) and any(c in '款項' for part in segments[-1] for c in text(part))):
+        opens = MARK.match(shown) or (bare is not None and bare.module.opens(shown))
+        if not segments or (opens and any(c in '款項' for part in segments[-1] for c in text(part))):
             segments.append([run])
         else:
             segments[-1].append(run)
@@ -197,9 +213,11 @@ def extend_columns(page):
     for rule in verticals:
         if not left - 1 <= rule.x0 <= right + 1:
             continue
-        # A skewed scan ends a piece up to a few points past the full rule it meets (国分寺市).
-        above = [y for y in full if y <= rule.y0 + FULL_REACH]
-        below = [y for y in full if y >= rule.y1 - FULL_REACH]
+        # A skewed scan ends a piece up to a few points past the full rule it meets (国分寺市), and with `rules.skewed`
+        # a little further (R6 介護 p48: a column rule down to 221 under the table's bottom rule at 217.5).
+        reach = FULL_REACH + (SKEWED_REACH if layout.LINE_TOLERANCE.get() > 2.0 else 0)
+        above = [y for y in full if y <= rule.y0 + reach]
+        below = [y for y in full if y >= rule.y1 - reach]
         # Not up to the frame's top rule: a rule of the header that starts under a spanning cell (`節` over
         # `区分`・`金額`) stays under it.
         if above and above[-1] > full[0] and rule.y0 - above[-1] > 1:
@@ -302,10 +320,27 @@ def full_rules(page) -> list[float]:
         whole = sorted({*whole, *(r.y0 for r in layout._joined(horizontals) if first is not None
                                    and left + reach < r.x0 < first - 10 and r.x1 >= right - reach)})
         # The right end goes pale the same way (国分寺市 R8 p55: the top rule of the first of two stacked tables
-        # stops inside the last column): a rule from the left edge that reaches into the last column is one.
+        # stops inside the last column; R8 後期 p22: the rules of the second of three stop 5 points before the
+        # last column's rule): a rule from the left edge that reaches the last column is one.
         last = next((x for x in reversed(verticals) if x < right - reach), None)
         whole = sorted({*whole, *(r.y0 for r in layout._joined(horizontals) if last is not None
-                                   and r.x0 <= left + reach and last + 10 < r.x1 < right - reach)})
+                                   and r.x0 <= left + reach and last - 10 < r.x1 < right - reach)})
+        # A slanted rule is found as pieces stepping down a point or so (国分寺市 R8 後期 p18: the bottom rule of the
+        # second of two stacked tables, 53–256 at 729.2 and 232–460 at 728.0): pieces that overlap end to end
+        # within the skew are one rule, at the height of the first.
+        if last is not None:
+            pieces = sorted(layout._joined(horizontals), key=lambda r: r.x0)
+            for start in (r for r in pieces if r.x0 <= left + reach):
+                end, edge = start, start.x1
+                for piece in pieces:
+                    if piece.x0 > end.x0 and piece.x0 <= edge + 3 and abs(piece.y0 - end.y0) <= SKEWED_STEP:
+                        end, edge = piece, max(edge, piece.x1)
+                if end is not start and edge > last - 10:
+                    whole = sorted({*whole, start.y0})
+        # And both ends at once (国分寺市 R6 後期 p18: the bottom rule of the first of two stacked tables, 109–464 of a
+        # frame 31–542): a rule across every inner column, from the first column rule to the last, is one.
+        whole = sorted({*whole, *(r.y0 for r in layout._joined(horizontals) if first is not None and last is not None
+                                   and r.x0 < first + 3 and r.x1 > last - 3)})
     if whole:
         return whole
     if (spread := document_quirk('spread_stacked_tables')) is not None:
@@ -344,16 +379,23 @@ def between_tables(logical: layout.Logical, verticals: dict, full: dict) -> list
             if above and below:
                 candidates.append((band, word, (band.page, above[-1], below[0])))
     moved = []
+    codeless = document_quirk('codeless_titles')
     for stretch in dict.fromkeys(c[2] for c in candidates):
         inside = [(band, word) for band, word, at in candidates if at == stretch]
         glyphs = [Glyph(w.text, *w.original, w.page, 0) for _, w in inside]
         last = None
+        entries = []
         for line in lines(glyphs):
             parts = runs(line)
+            amounted = len(parts) > 1 and is_amount(normalize(text(parts[-1])))
             while len(parts) > 1 and is_amount(normalize(text(parts[-1]))):
                 parts.pop()
             name = [g for part in parts for g in part]
-            if title(name) is not None or PAGE_INDEX.match(normalize(text(name))):
+            entries.append((title(name), normalize(text(name)), name, amounted, line))
+        # A dropped 款・項's title prints no code (`codeless_titles`).
+        titled = codeless.module.assign([e[:4] for e in entries]) if codeless is not None and entries else [e[0] for e in entries]
+        for found, (_, value, _, _, line) in zip(titled, entries):
+            if found is not None or PAGE_INDEX.match(value):
                 last = max(g.y1 for g in line)  # (the index over the next table of a right-hand page: no title, not a row)
         if last is not None:
             moved.extend((band, word) for band, word in inside if (word.y0 + word.y1) / 2 <= last)
@@ -374,6 +416,9 @@ def subject_events(logical: layout.Logical) -> list[tuple]:
                 events.append(((line[0].page, line[0].y0), ('total',)))
             elif code:
                 events.append(((line[0].page, line[0].y0), ('moku', code.group(1))))
+            elif shown[:1] in '(（':
+                # a 目 the year drops, printed in brackets with no code (`(環境性能割交付金)`)
+                events.append(((line[0].page, line[0].y0), ('moku', None)))
     return [event for _, event in sorted(events, key=lambda e: e[0])]
 
 
@@ -395,12 +440,16 @@ def complete_titles(logicals: list[layout.Logical]) -> None:
                         if kou not in kous_of.setdefault(kan, []):
                             kous_of[kan].append(kou)
             elif event[0] == 'moku' and kou is not None and kou not in opened:
-                opened[kou] = event[1] in (zero.module.OPENING_CODES if zero is not None else ('1',))
+                # A 項 the year drops prints no code, nor do its 目 (`項 (環境性能割交付金)` over `(環境性能割交付金)`,
+                # 新宿区 R8 の歳入, the quirk `unnumbered_titles`): its first 目 in brackets opens it.
+                opened[kou] = event[1] in (zero.module.OPENING_CODES if zero is not None else ('1',)) \
+                    or (event[1] is None and kou[1] is None)
             elif event[0] == 'total' and kou is not None:
                 closed.add(kou)
     whole_kou = {k for k in opened if opened[k] and k in closed}
     whole_kan = {k for k, kous in kous_of.items()
-                 if kous and kous[0][1] == '1' and all(k2 in whole_kou for k2 in kous)}
+                 if kous and (kous[0][1] == '1' or (k is None and kous[0][1] is None))
+                 and all(k2 in whole_kou for k2 in kous)}
     kan = None
     for logical in logicals:
         kept = []
@@ -516,6 +565,8 @@ def carry_amounts(logicals) -> None:
             first = lines(band.words)[0]
             last = lines(target.words)[-1]
             if not amounts_only(first) or has_amount(last):
+                continue
+            if (split := document_quirk('split_name_bands')) is not None and split.module.beside_name(band, first, after.bands):
                 continue
             anchor = last[0]
             gone = {id(w) for w in first}

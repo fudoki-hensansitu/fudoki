@@ -27,7 +27,7 @@ export function MoreDots({ onVisible }: { onVisible: () => void }) {
     return () => io.disconnect()
   }, [])
   return (
-    <div ref={ref} className="flex justify-center gap-1.5 py-5" aria-hidden="true">
+    <div ref={ref} className="flex justify-center gap-2 py-5" aria-hidden="true">
       {[0, 1, 2].map((i) => <span key={i} className="app-dot size-1.5 rounded-full bg-border" style={{ animationDelay: `${i * 150}ms` }} />)}
     </div>
   )

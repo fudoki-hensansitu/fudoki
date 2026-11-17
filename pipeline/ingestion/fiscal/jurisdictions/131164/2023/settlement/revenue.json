@@ -1,0 +1,490 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131164",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "436ffeab0e0411578cb157a0f39035b3282c15f965533e1c086801e690b353e4"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の内訳・担当の課の注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "gapped_column_rules": true
+          }
+        },
+        "pages": [
+          [
+            35,
+            65
+          ]
+        ],
+        "code_readings": [
+          {
+            "id": "general-revenue-p37-moku-code",
+            "page": 37,
+            "box": [
+              49.2,
+              379.0,
+              53.0,
+              386.0
+            ],
+            "code": "1",
+            "reason": "物理37頁の目「1 地方消費税交付金」の番号。名前を2行に分けて刷った目の番号を OCR が読まなかった。原典の描画で印字を確かめた。"
+          },
+          {
+            "id": "general-revenue-p60-moku-code",
+            "page": 60,
+            "box": [
+              49.2,
+              371.5,
+              53.2,
+              378.5
+            ],
+            "code": "1",
+            "reason": "物理60頁の目「1 子ども若者応援基金繰入金」の番号。名前を2行に分けて刷った目の番号を OCR が読まなかった。原典の描画で印字を確かめた。"
+          },
+          {
+            "id": "general-revenue-p43-setsu-code",
+            "page": 43,
+            "box": [
+              279.3,
+              498.3,
+              283.5,
+              504.8
+            ],
+            "code": "1",
+            "reason": "物理43頁の目「2 総務費補助金」の節「1 都市安全確保促進事業費補助金」の番号。OCR が読まなかった。原典の描画で印字を確かめた。"
+          },
+          {
+            "id": "general-revenue-p44-setsu-code",
+            "page": 44,
+            "box": [
+              279.3,
+              111.2,
+              283.5,
+              117.2
+            ],
+            "code": "1",
+            "reason": "物理44頁の目「3 区民費補助金」の節「1 個人番号カード交付事務費補助金」の番号。OCR が読まなかった。原典の描画で印字を確かめた。"
+          },
+          {
+            "id": "general-revenue-p50-setsu-code",
+            "page": 50,
+            "box": [
+              279.3,
+              111.3,
+              283.5,
+              117.3
+            ],
+            "code": "1",
+            "reason": "物理50頁の目「5 環境清掃費補助金」の節「1 外来種（アライグマ・ハクビシン）捕獲処分事業費補助金」の番号。OCR が読まなかった。原典の描画で印字を確かめた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-ocr-1",
+          "origin_sha256": "436ffeab0e0411578cb157a0f39035b3282c15f965533e1c086801e690b353e4",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44
+            ]
+          },
+          "sha256": "e7799271d8e728c416d0064030001397063ad4fb6afad7ed4aa9d3f93357b3b3",
+          "bytes": 6686855
+        },
+        {
+          "id": "general-revenue-ocr-2",
+          "origin_sha256": "436ffeab0e0411578cb157a0f39035b3282c15f965533e1c086801e690b353e4",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54
+            ]
+          },
+          "sha256": "e7d93116cff4cbd9dc5c819479d762c6b89d7a21155c51fd199ad60116ec7fd9",
+          "bytes": 6200451
+        },
+        {
+          "id": "general-revenue-ocr-3",
+          "origin_sha256": "436ffeab0e0411578cb157a0f39035b3282c15f965533e1c086801e690b353e4",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63,
+              64
+            ]
+          },
+          "sha256": "f6566d9a5afb393b4efbfedc23ac0be22e6e3988b39df81288f6e15d321fd355",
+          "bytes": 6657951
+        },
+        {
+          "id": "general-revenue-ocr-4",
+          "origin_sha256": "436ffeab0e0411578cb157a0f39035b3282c15f965533e1c086801e690b353e4",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              65
+            ]
+          },
+          "sha256": "990e047ab725bb53f9e428bb88608b0feb3184c730e1130b36bac25f97dfb49d",
+          "bytes": 439800
+        }
+      ]
+    },
+    {
+      "id": "national-health-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "436ffeab0e0411578cb157a0f39035b3282c15f965533e1c086801e690b353e4"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の内訳・担当の課の注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "gapped_column_rules": true
+          }
+        },
+        "pages": [
+          [
+            107,
+            112
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "nhi-revenue-ocr-1",
+          "origin_sha256": "436ffeab0e0411578cb157a0f39035b3282c15f965533e1c086801e690b353e4",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              107,
+              108,
+              109,
+              110,
+              111,
+              112
+            ]
+          },
+          "sha256": "c5cfbe75bdd001b5a8b88dd5f773845b6e8bd4b583a19319d7dc30f3183dd344",
+          "bytes": 2998984
+        }
+      ]
+    },
+    {
+      "id": "late-elderly-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "436ffeab0e0411578cb157a0f39035b3282c15f965533e1c086801e690b353e4"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業会計",
+        "table_id": "late-elderly-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の内訳・担当の課の注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "gapped_column_rules": true
+          }
+        },
+        "pages": [
+          [
+            120,
+            123
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "late-elderly-revenue-p122-r26",
+            "page": 122,
+            "observation_id": "p122:full-page:a0:result0:r26",
+            "observed": "6",
+            "reason": "物理122頁の頭に、前の頁から続く款「6 繰越金」の番号だけを名前も金額も無しに刷り直したもの。前の頁の款の続きで新しい款ではないので、この読みは使わない。"
+          },
+          {
+            "id": "late-elderly-revenue-p122-r27",
+            "page": 122,
+            "observation_id": "p122:full-page:a0:result0:r27",
+            "observed": "1",
+            "reason": "物理122頁の頭に、前の頁から続く項「1 繰越金」の番号だけを名前も金額も無しに刷り直したもの。前の頁の項の続きで新しい項ではないので、この読みは使わない。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "late-elderly-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kouki-revenue-ocr-1",
+          "origin_sha256": "436ffeab0e0411578cb157a0f39035b3282c15f965533e1c086801e690b353e4",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              120,
+              121,
+              122,
+              123
+            ]
+          },
+          "sha256": "28c78d8fb32aa4a6378404f457a8acc1a188b55c197ccd096b3e1089729a7bb8",
+          "bytes": 2076355
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "436ffeab0e0411578cb157a0f39035b3282c15f965533e1c086801e690b353e4"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "long-term-care-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の内訳・担当の課の注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "gapped_column_rules": true
+          }
+        },
+        "pages": [
+          [
+            129,
+            134
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "long-term-care-revenue-p132-ink-r0",
+            "page": 132,
+            "observation_id": "p132:ink-0:a0:result0:r0",
+            "observed": "|1",
+            "reason": "物理132頁の目「1 介護給付費準備基金繰入金」の下の空いた升で、款・項・目の欄の縦の罫を OCR が文字「|1」と読んだもの。原典の描画で印字が無いことを確かめた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kaigo-revenue-ocr-1",
+          "origin_sha256": "436ffeab0e0411578cb157a0f39035b3282c15f965533e1c086801e690b353e4",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              129,
+              130,
+              131,
+              132,
+              133,
+              134
+            ]
+          },
+          "sha256": "79353f9e6ab0e8646553275c36047aff5d04afedfe2326a689fb8f24a27ad21f",
+          "bytes": 3280324
+        }
+      ]
+    }
+  ]
+}

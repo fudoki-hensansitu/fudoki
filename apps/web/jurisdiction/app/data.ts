@@ -37,8 +37,6 @@ export type Snapshot = {
   prev?: { year: number; kind: YearData['kind'] }
   /** 一般会計のほかにも会計を収録した年度の、会計ごとの総額 */
   accounts?: AccountTotal[]
-  /** 評価のある最新の年度の評価シート（ホームのまちの札だけが読む） */
-  evaluated?: { fy: number; sheets: Sheet[] }
   /** 事業の収録がある自治体か。無ければ目を事業の代わりに並べる。まだ分からない（事業の1頁目を読んでいない）ときは undefined */
   hasProjects?: boolean
   /** 事業の一覧の1頁目（listKey ごと） */
@@ -156,9 +154,3 @@ export function directionOf(s: Pick<Sheet, 'dc' | 'dl'>): { code: DirectionCode;
   return s.dc ? { code: s.dc, icon: DIRECTION_ICONS[s.dc], label: s.dl ?? '' } : undefined
 }
 
-export const GRADES = [
-  ['A', '広げる'],
-  ['B', '続ける'],
-  ['C', '見直す'],
-  ['D', '終える'],
-] as const

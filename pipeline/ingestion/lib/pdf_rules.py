@@ -105,12 +105,19 @@ def _chained(rules: tuple[Rule, ...], minimum: float, drift: float = 1.5, gap: f
 
 
 def detect(pdf: Path, page: int, *, dpi: int = DPI, vertical_fraction: float = 0.05,
-           horizontal_fraction: float = 0.2, dark: int = DARK, skewed: bool = False) -> PageRules:
+           horizontal_fraction: float = 0.2, dark: int = DARK, skewed: bool = False,
+           skewed_columns: bool = False, spread_rows: bool = False) -> PageRules:
     """`dark` is the gray level below which a pixel is ink; a scan that prints its rules pale declares a higher one.
     `skewed`: a scan set a little off level breaks each long horizontal rule into pieces a pixel row apart; the pieces
-    (each at least a quarter of the usual length) are joined end to end before the length is checked."""
+    (each at least a quarter of the usual length) are joined end to end before the length is checked. `skewed_columns`:
+    the same for the vertical rules, of a scan turned enough that a column rule steps a pixel column every few points
+    (131113 R5 決算): the pieces over a header's short cells are each too short for the detector. `spread_rows`: the
+    page is a spread of two pages side by side (A3) whose row rules may run across only the two narrow columns of a
+    節 (120pt of a 1190pt sheet), and a row rule is kept at a third of the usual share of the width."""
     image = render(pdf, page, dpi)
     dark = image < dark
+    if spread_rows:
+        horizontal_fraction /= 3
     scale = 72 / dpi
     height, width = dark.shape
     if skewed:
@@ -118,5 +125,9 @@ def detect(pdf: Path, page: int, *, dpi: int = DPI, vertical_fraction: float = 0
                               width * horizontal_fraction * scale)
     else:
         horizontal = _merge(_runs(dark.T, int(width * horizontal_fraction)), scale)
-    return PageRules(page, round(width * scale, 1), round(height * scale, 1),
-                     _merge(_runs(dark, int(height * vertical_fraction)), scale), horizontal)
+    if skewed_columns:
+        vertical = _chained(_merge(_runs(dark, int(height * vertical_fraction / 4)), scale),
+                            height * vertical_fraction * scale)
+    else:
+        vertical = _merge(_runs(dark, int(height * vertical_fraction)), scale)
+    return PageRules(page, round(width * scale, 1), round(height * scale, 1), vertical, horizontal)

@@ -199,6 +199,30 @@
       "observed_char": "遞",
       "corrected_char": "逓",
       "reason": "継続費逓次繰越の逓（多摩市 R2 決算 p2）。日本の予算・決算書では 遞 を使わない。"
+    },
+    {
+      "id": "variant-32",
+      "observed_char": "纳",
+      "corrected_char": "納",
+      "reason": "納付金・滞納処分費などの納。日本の科目名では 纳 を正字として使わない。"
+    },
+    {
+      "id": "variant-33",
+      "observed_char": "财",
+      "corrected_char": "財",
+      "reason": "財産・財政などの財。日本の科目名では 财 を正字として使わない。"
+    },
+    {
+      "id": "variant-34",
+      "observed_char": "稅",
+      "corrected_char": "税",
+      "reason": "譲与税・特別区税などの税。日本の科目名では 稅 を正字として使わない。"
+    },
+    {
+      "id": "variant-35",
+      "observed_char": "收",
+      "corrected_char": "収",
+      "reason": "貸付金元利収入・受託収入などの収。日本の科目名では 收 を正字として使わない（大田区 R5 決算の歳入で Paddle が 收 と読んだ）。"
     }
   ]
 }

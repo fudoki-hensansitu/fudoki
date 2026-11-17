@@ -170,6 +170,686 @@
           "table_id": "general-initial"
         }
       ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "fbfe6ca1f51a86fe7bc87f1a1aee4eff51774fe2e424f5ecbe061618e4fa9d94"
+        }
+      ],
+      "options": {
+        "pages": [
+          [
+            63,
+            63
+          ],
+          [
+            72,
+            87
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "continued_pages",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源／国支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／国支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳の列を取り込まない。款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳の列を取り込まない。款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳の列を取り込まない。款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳の列を取り込まない。款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳の列を取り込まない。款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "前年度増減比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "構成比／本年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "構成比／前年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "区分": {
+                  "kind": "label",
+                  "axis_header": "節"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true,
+                  "amount_brackets": true
+                },
+                "quirks": {
+                  "full_width_numbers": {
+                    "stop_ends_number": true
+                  },
+                  "department_amounts": true,
+                  "heading_repeated_over_code": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        },
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-initial"
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "fbfe6ca1f51a86fe7bc87f1a1aee4eff51774fe2e424f5ecbe061618e4fa9d94"
+        }
+      ],
+      "options": {
+        "pages": [
+          [
+            11,
+            11
+          ],
+          [
+            16,
+            31
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "continued_pages",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源／国支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／国支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳の列を取り込まない。款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳の列を取り込まない。款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳の列を取り込まない。款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳の列を取り込まない。款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳の列を取り込まない。款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "前年度増減比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "構成比／本年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "構成比／前年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "区分": {
+                  "kind": "label",
+                  "axis_header": "節"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true,
+                  "amount_brackets": true
+                },
+                "quirks": {
+                  "full_width_numbers": {
+                    "stop_ends_number": true
+                  },
+                  "department_amounts": true,
+                  "heading_repeated_over_code": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true,
+            "zero_codes": true,
+            "zero_coded_drops": true
+          }
+        },
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-initial"
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "fbfe6ca1f51a86fe7bc87f1a1aee4eff51774fe2e424f5ecbe061618e4fa9d94"
+        }
+      ],
+      "options": {
+        "pages": [
+          [
+            43,
+            43
+          ],
+          [
+            48,
+            53
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "continued_pages",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源／国支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／国支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳の列を取り込まない。款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳の列を取り込まない。款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳の列を取り込まない。款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳の列を取り込まない。款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳の列を取り込まない。款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "前年度増減比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "構成比／本年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "構成比／前年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "区分": {
+                  "kind": "label",
+                  "axis_header": "節"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true,
+                  "amount_brackets": true
+                },
+                "quirks": {
+                  "full_width_numbers": {
+                    "stop_ends_number": true
+                  },
+                  "department_amounts": true,
+                  "heading_repeated_over_code": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        },
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial"
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    },
+    {
+      "id": "parking-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "fbfe6ca1f51a86fe7bc87f1a1aee4eff51774fe2e424f5ecbe061618e4fa9d94"
+        }
+      ],
+      "options": {
+        "pages": [
+          [
+            98,
+            98
+          ],
+          [
+            101,
+            102
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "continued_pages",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源／国支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／国支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳の列を取り込まない。款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳の列を取り込まない。款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳の列を取り込まない。款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳の列を取り込まない。款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳の列を取り込まない。款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "前年度増減比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "構成比／本年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "構成比／前年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "区分": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true,
+                  "amount_brackets": true
+                },
+                "quirks": {
+                  "full_width_numbers": {
+                    "stop_ends_number": true
+                  },
+                  "department_amounts": true,
+                  "heading_repeated_over_code": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        },
+        "account": "駐車場事業特別会計",
+        "table_id": "parking-initial"
+      },
+      "expected_tables": [
+        {
+          "table_id": "parking-initial"
+        }
+      ]
     }
   ]
 }

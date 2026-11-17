@@ -195,6 +195,8 @@ def check(built, document_kind: str, account: str | None = None, partial: bool =
     if len(units) <= 1 and len(tops) > 1:
         printed = [n for n in printed if '合計' in (n.get('label') or '')
                    or number(n['text']) not in {*subtotals.values(), *own}]
+        # A 計 of nothing (the 計 of a 廃項 under a 款 that still has others, 板橋区 R8 東武東上線の歳入) totals no 款.
+        printed = [n for n in printed if '合計' in (n.get('label') or '') or number(n['text']) != 0 or not raw_sum]
     if printed:
         # The grand total: a row named 合計 (歳出合計) if any, else the largest printed total
         # (other 計 rows are subtotals).

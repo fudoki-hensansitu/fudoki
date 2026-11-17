@@ -1,0 +1,325 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131105",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6c202834a2185be92f588a653f96650e02f4173801a41415d8440b7150fb3f13"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（単価×件数・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "text_layer": {
+                "polyline_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "titles_on_one_line": true
+          }
+        },
+        "pages": [
+          [
+            26,
+            157
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-ocr-p79",
+          "origin_sha256": "6c202834a2185be92f588a653f96650e02f4173801a41415d8440b7150fb3f13",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              79
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "b6ec00578a39b1dab3ea1187d0ec81dc93fb31ecf885a0d7025526cd8521660e",
+          "bytes": 425054
+        },
+        {
+          "id": "general-initial-ocr-p85",
+          "origin_sha256": "6c202834a2185be92f588a653f96650e02f4173801a41415d8440b7150fb3f13",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              85
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6c648829cc27352c9d0dccccfabf020ab1346eda95e6e3987c5645f5944e1540",
+          "bytes": 375218
+        },
+        {
+          "id": "general-initial-ocr-p91",
+          "origin_sha256": "6c202834a2185be92f588a653f96650e02f4173801a41415d8440b7150fb3f13",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              91
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "327659c9b2aa2220118183aa6ca2145fabb435e4fefa6974aaab7df18344e801",
+          "bytes": 378321
+        },
+        {
+          "id": "general-initial-ocr-4",
+          "origin_sha256": "6c202834a2185be92f588a653f96650e02f4173801a41415d8440b7150fb3f13",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              128,
+              129
+            ],
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "vlm_fallback": false
+          },
+          "sha256": "da0561df08d37cfe1531826c03e00b282b4ba4fc294479794880c275e0bc7309",
+          "bytes": 305441
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6c202834a2185be92f588a653f96650e02f4173801a41415d8440b7150fb3f13"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（単価×件数・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "text_layer": {
+                "polyline_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "titles_on_one_line": true
+          }
+        },
+        "pages": [
+          [
+            360,
+            385
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6c202834a2185be92f588a653f96650e02f4173801a41415d8440b7150fb3f13"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（単価×件数・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "text_layer": {
+                "polyline_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "titles_on_one_line": true
+          }
+        },
+        "pages": [
+          [
+            446,
+            463
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6c202834a2185be92f588a653f96650e02f4173801a41415d8440b7150fb3f13"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（単価×件数・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "text_layer": {
+                "polyline_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "titles_on_one_line": true
+          }
+        },
+        "pages": [
+          [
+            502,
+            529
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ]
+    }
+  ]
+}

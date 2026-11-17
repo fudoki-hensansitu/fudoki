@@ -23,7 +23,7 @@ import { LOGO_G, LOGO_WIDTH } from '../logo'
 import { FEEDBACK } from './feedback'
 import { applyTheme, currentTheme, DEFAULT_THEME, type Theme } from './theme'
 import { ArrowsLeftRightIcon } from '@phosphor-icons/react'
-import { NavContent, useCompareHref } from './nav-content'
+import { NavContent } from './nav-content'
 import { readNavOpen, saveNavOpen } from './nav-state'
 
 
@@ -74,7 +74,7 @@ export const Item = ({ href, label, icon, active, onClick }: { href: string; lab
         render={<NavLink href={href} aria-current={active ? 'page' : undefined} onClick={onClick} />}
         isActive={active}
         tooltip={state === 'collapsed' && !isMobile ? label : undefined}
-        className="h-10 gap-3 px-3 text-sm group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-2.5! [&_svg]:size-5"
+        className="h-10 gap-3 px-3 text-sm group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-3! [&_svg]:size-5"
       >
         {icon}
         <span>{label}</span>
@@ -98,7 +98,7 @@ function ThemeItem({ theme, onPick }: { theme: Theme; onPick: (t: Theme) => void
         <SidebarMenuButton
           render={<DropdownMenuTrigger />}
           tooltip={state === 'collapsed' && !isMobile ? 'テーマ' : undefined}
-          className="h-10 gap-3 px-3 text-sm group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-2.5! [&_svg]:size-5"
+          className="h-10 gap-3 px-3 text-sm group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-3! [&_svg]:size-5"
         >
           <CircleHalfIcon />
           <span>テーマ</span>
@@ -137,7 +137,7 @@ const Social = ({ href, label, icon, className }: { href: string; label: string;
   </a>
 )
 
-const BOTTOM_ITEM = 'flex h-full w-full flex-col items-center justify-center gap-0.5 text-[11px] leading-none text-muted-foreground aria-[current=page]:text-primary data-popup-open:text-foreground [&_svg]:size-5'
+const BOTTOM_ITEM = 'flex h-full w-full flex-col items-center justify-center gap-1 text-xs leading-none text-muted-foreground aria-[current=page]:text-primary data-popup-open:text-foreground [&_svg]:size-5'
 
 /** 下へ読み進めている間は隠し、上へ戻したら出す。隠れている間は html に data-nav-hidden を付け、下に固定した入力などが --bottom-nav で下がる */
 function useHideOnScroll() {
@@ -196,11 +196,10 @@ function SettingsMenu({ theme, onPick, className }: { theme: Theme; onPick: (t: 
 /** 幅の狭い画面では、サイドバーの代わりに画面の下へ並べる。入らないものは「設定」にまとめる */
 function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Theme; onPick: (t: Theme) => void }) {
   const [hidden, setHidden] = useHideOnScroll()
-  const compare = useCompareHref()
   const items = [
     { href: '/', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
     { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
-    { href: compare, label: 'まち比べ', icon: <ArrowsLeftRightIcon />, active: active === 'compare' },
+    { href: '/compare', label: 'まち比べ', icon: <ArrowsLeftRightIcon />, active: active === 'compare' },
   ]
   return (
     <nav

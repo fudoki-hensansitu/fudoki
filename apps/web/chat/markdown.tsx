@@ -14,7 +14,7 @@ function inline(tokens: Token[] | undefined): React.ReactNode[] {
       case 'del':
         return <del key={i}>{inline((t as Tokens.Del).tokens)}</del>
       case 'codespan':
-        return <code key={i} className="rounded bg-muted px-1 py-0.5 text-[0.9em]">{(t as Tokens.Codespan).text}</code>
+        return <code key={i} className="rounded bg-muted px-1 py-1 text-[0.9em]">{(t as Tokens.Codespan).text}</code>
       case 'br':
         return <br key={i} />
       case 'link': {

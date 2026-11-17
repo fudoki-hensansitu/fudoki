@@ -15,7 +15,10 @@ Hallmark は検出すると pick をこれに従わせる。値を変えると�
 画面は **読み物**（紹介 `/about`・利用条件・案内）と **データの面**（ホーム・自治体の頁・アシスタントなどの報告・分析）に分かれる。token と書体は共通で、
 絵の面（網点・大きな字・朱の楕円）を持つのは読み物だけ。データの面は紙・罫線・数字だけで組む。
 **画面はすべてゴシック（`--font-sans`）で組む。** アプリの中（ホーム・自治体の一覧・個別ページ・アシスタント・会話）も紹介（`/about`）も見出しを含めてゴシックにし、階層は大きさと色（前景・`--muted-foreground`）で作る。
-**太さはデータの面では 400〜600 にする。** 本文は 400、ラベル・ボタン・20px 未満の見出しは 500、20px 以上の見出しと要の金額は 600。700 は紹介の見出しだけで、太く詰める。
+**太さはデータの面では 400〜600 にする。** 本文は 400、ラベル・ボタンは 500、見出しと要の金額は 600。700 は紹介の見出しだけで、太く詰める。
+**文字の大きさは段で選ぶ。** 本文は注記 12px（`text-xs`）・補足 14px（`text-sm`）・本文 16px（`text-base`）だけにする。それより大きい文字は、見出しも金額も `Title` の段（h1 28/32・h2 24・h3 20・総額と紋章の代わりの頭文字だけの display 40/48）で組み、見出しでないものは `titleVariants` か `as` で要素を変える。大きさの token は足さず、段は部品（`components/ui`）に寄せる。金額の単位を小さく添えるときは em で書いてよい。
+**余白は 4px の格子にする。** padding・margin・gap は Tailwind の整数の段（1＝4px）で書き、`1.5` のような半端な段や `[22px]` の直書きはしない。位置（top・inset など）の微調整は対象外。
+**この3つと色の決まりは lint（`apps/web/lint/design.js`）で止める。** 対象はデータの面（`apps/web` の TSX）で、紹介（`/about`、`landing.css`）と部品（`components/ui`）は対象外。ホームのレシートの機械の金額のように段の外が要る見せ場は、理由を書いて rule を外す。
 
 ## Tokens
 
@@ -110,6 +113,13 @@ shadcn/ui の語彙。色の役割は次のとおり。
   --shadow-sheet: 0 20px 25px -5px color-mix(in srgb, var(--night) 12%, transparent), 0 8px 10px -6px color-mix(in srgb, var(--night) 10%, transparent);
   --shadow-pill: 0 1px 2px color-mix(in srgb, var(--night) 4%, transparent), 0 6px 20px color-mix(in srgb, var(--night) 6%, transparent);
   --hair: color-mix(in srgb, var(--foreground) 10%, transparent);
+  /* 地図の濃淡（まち比べ）。値の大きさを青丹の濃さ5段で塗る。良し悪しを表さないので1色だけにする。値の無いまちは斜線。4・5段は生成りの文字、1〜3段は墨の文字で、両テーマとも 4.5:1 以上になる濃さにしている */
+  --shade-1: color-mix(in oklab, var(--primary) 10%, var(--background));
+  --shade-2: color-mix(in oklab, var(--primary) 30%, var(--background));
+  --shade-3: color-mix(in oklab, var(--primary) 52%, var(--background));
+  --shade-4: color-mix(in oklab, var(--primary) 85%, var(--background));
+  --shade-5: var(--primary);
+  --shade-none: repeating-linear-gradient(135deg, var(--card) 0 4px, var(--muted) 4px 6px);
   --ease: cubic-bezier(0.4, 0, 0.2, 1);
   --ease-sweep: cubic-bezier(0.87, 0, 0.13, 1);
   --duration: 150ms;
@@ -155,7 +165,7 @@ shadcn/ui の語彙。色の役割は次のとおり。
 ## Components
 
 ```css
-/* 見出しはゴシック。700 は紹介の見出しだけ。データの面の見出しは 600（20px 未満は 500） */
+/* 見出しはゴシック。700 は紹介の見出しだけ。データの面の見出しは 600 */
 .text-heading { font-family: var(--font-sans); font-weight: 700; font-style: normal; letter-spacing: var(--letter-spacing-heading); word-break: auto-phrase; text-wrap: balance; }
 .text-body { font-family: var(--font-sans); font-size: var(--text-body); line-height: var(--line-height-body); letter-spacing: var(--letter-spacing-body); line-break: strict; word-break: auto-phrase; overflow-wrap: break-word; text-wrap: pretty; }
 .num { font-variant-numeric: tabular-nums; letter-spacing: 0; white-space: nowrap; }
@@ -181,6 +191,7 @@ shadcn/ui の語彙。色の役割は次のとおり。
 .nav-pill { border: 0.5px solid var(--border); border-radius: 999px; background: var(--background); box-shadow: var(--shadow-pill); }
 ```
 
+- **見出し**: アプリの中の見出しは `Title`（`components/ui/title.tsx`）の4段だけを使う。h1 28px（sm 以上 32px）・h2 24px・h3 20px・headline 16px（本文の大きさ）で、どれも 600。段は本文から約 1.2 倍ずつ上げ（Apple の Title 3〜Large Title と同じ考え方）、headline は本文と同じ大きさで太さだけ変える。段と要素（h1〜h4）は既定で揃え、文書の構造で要素だけ変えるときは `as` で渡す。札（Card）の見出しは `CardTitle`（h3）。紹介の頁と会話の Markdown は対象外
 - **AI から使う**: 若草の札（角丸 28px）の中に、つなぎ方の手順と実際の操作の録画を並べる。録画は音なし・繰り返しで、表示域に入ったら再生する（クリックで止める・動きを減らす設定では自動で再生しない）。録画の下に「つなぎ方をくわしく見る」のリンクを置く
 - **紹介（`/about`）の構成**: 中央の見出し（「どこへ行った？」を手描きの丸で囲む・鉛筆の落書き）→ 下が切れた自治体の頁の画面と、タブで右半分と緑の札のボタンの色が替わる → 住民の問い → 若草の札3枚（使う・新しく始める・振り返る）→ 方眼の面に浮かぶ札（まちの一年＝予算を組む・使う・振り返る・見直す）と使う人の4列 → 比べる・確かめる → AI から使う → 議員・会派向けの予算・決算委員会の調査の相談 → FAQ → 中央の呼びかけ。地は薄い若草（#f6faf6）、札は濃い若草（#e4f1e6）に粒子と角丸 28px、画面のイメージは白で下を切る。色は landing.css の `.landing` の中だけで持ち、要の色はブランド色（`--primary`）。まだ無いデータ（事業評価の指標など）の画面は架空のデータで組み、「画面はイメージです」を添えて実在の自治体名を付けない
 - **出典の面**: 「確かめる」は、出典の PDF の切り抜きを `--page` の紙に載せ、API が返す印字の位置を朱の囲みで重ねる。例には金額が実際に入っている明細を選ぶ（0 円の科目は使わない）
@@ -200,8 +211,10 @@ shadcn/ui の語彙。色の役割は次のとおり。
 - Assets: 正本は `apps/web/brand/config.json`、生成は `bun run --cwd apps/web build:brand`、出力は `apps/web/public/`（`mark.svg`・`wordmark.svg`・`logo.svg` と各 `-dark.svg`、`favicon.svg`）と画面へ inline にする `apps/web/logo.ts`。docs の public・api の favicon にも同期する。PNG のアイコン（favicon.ico・icon・apple-touch-icon・PWA）は `brand/pwa_icons.py` で描く
 
 ## Motion
-- 動くのは hover・選んだタブの色（150ms）、nav の浮き（300ms ease-out）、紹介の冒頭の札がタブを替えたときに浮き上がる動き（360ms）、FAQ の `+`、AI の節の録画だけ。スクロールに合わせて動かさない。紙・絵は動かさない
-- すべて `prefers-reduced-motion: no-preference` の中に置く
+- 動くのは hover・選んだタブの色（150ms）、nav の浮き（300ms ease-out）、紹介の冒頭の札がタブを替えたときに浮き上がる動き（360ms）、FAQ の `+`、AI の節の録画、ホームのうちのまちの札（下記）、まち比べ（下記）だけ。スクロールに合わせて動かさない。ほかの紙・絵は動かさない
+- ホームのうちのまちの札は、選んだまちのお金を「自分の額」に変える瞬間なので動かす。平らな札で予算と1人あたりを 0 から数え上げ（1.2秒、ease-out）、読み終える間（0.5秒）の後に札が立体のレシートの機械になって据わり（three.js の本体と表示窓の彫りが 450〜550ms で現れ、650ms で持ち上がって据わる）、差し出し口から分野ごとの1人あたりのレシートが上から伸びて出る（1.6秒）。段に合わせて、札とレシートが画面に入るよう頁を一度だけ下へ送る（利用者がホイール・タッチ・キー・ポインタで操作したら送らない）。年度を替えたら数え上げと紙の送り出しをやり直す
+- まち比べは、問いを替えたときにタイルの色が西から東へ移る（300ms ease-out、列ごとに 18ms 遅らせる）。一覧の札は下から 300ms で順に現れ（30ms ずつ、9枚目以降は同時）、押すと 0.985 に縮む。問いの頁の札はまちを選び直すと 200ms で現れ、凡例の縦棒は選んだまちの位置へ 300ms で動く（ドラッグ中は指に付いて動かす）
+- すべて `prefers-reduced-motion: no-preference` の中に置く。reduce ではホームの札も最初からレシートを出した姿で、数え上げ・transition・頁送りをしない
 
 ## 守る規則
 - **画面で集計しない。** 数字は API が返したものをそのまま載せる。同じ数字が2通りに計算されると、いずれ食い違う

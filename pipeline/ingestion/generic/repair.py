@@ -106,26 +106,31 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
     clips: dict[int, tuple | None] = {}
 
     def clip_of(handle):
-        """The clip rectangle of an object (page space), or None when it has none."""
+        """The clip rectangle of an object (page space): the intersection of its clip paths' boxes, as the PDF
+        intersects each clip it sets. () when they do not meet (nothing of the object is drawn), None when it has no
+        clip. A copy of another page's text clipped to two rectangles that do not meet draws nothing, though the box
+        around both meets it (世田谷区の予算書 2023 p54: a line of 説明 read into the 説明 heading)."""
         address = ctypes.cast(handle, ctypes.c_void_p).value
         if address not in clips:
             clip = raw.FPDFPageObj_GetClipPath(handle)
             box = None
-            if clip and raw.FPDFClipPath_CountPaths(clip) > 0:
+            for i in range(raw.FPDFClipPath_CountPaths(clip) if clip else 0):
                 xs, ys = [], []
-                for i in range(raw.FPDFClipPath_CountPaths(clip)):
-                    for j in range(raw.FPDFClipPath_CountPathSegments(clip, i)):
-                        segment = raw.FPDFClipPath_GetPathSegment(clip, i, j)
-                        x, y = ctypes.c_float(), ctypes.c_float()
-                        raw.FPDFPathSegment_GetPoint(segment, x, y)
-                        xs.append(x.value); ys.append(y.value)
-                box = (min(xs), min(ys), max(xs), max(ys)) if xs else None
-            clips[address] = box
+                for j in range(raw.FPDFClipPath_CountPathSegments(clip, i)):
+                    segment = raw.FPDFClipPath_GetPathSegment(clip, i, j)
+                    x, y = ctypes.c_float(), ctypes.c_float()
+                    raw.FPDFPathSegment_GetPoint(segment, x, y)
+                    xs.append(x.value); ys.append(y.value)
+                if xs:
+                    path = (min(xs), min(ys), max(xs), max(ys))
+                    box = path if box is None else (max(box[0], path[0]), max(box[1], path[1]),
+                                                    min(box[2], path[2]), min(box[3], path[3]))
+            clips[address] = box if box is None or (box[0] <= box[2] and box[1] <= box[3]) else ()
         return clips[address]
 
     def inside(box, clip) -> bool:
         # box and clip as (left, bottom, right, top) in PDF space
-        return clip is None or (box[0] < clip[2] and box[2] > clip[0] and box[1] < clip[3] and box[3] > clip[1])
+        return clip is None or clip != () and (box[0] < clip[2] and box[2] > clip[0] and box[1] < clip[3] and box[3] > clip[1])
 
     paths = []
     flat_paths: set[int] = set()
@@ -641,13 +646,19 @@ def repair(pdf_path: Path | None, pages: list[Page], repairs: frozenset = frozen
             report.invisible_error = f'{type(error).__name__}: {error}'
             report.hidden_glyphs = report.hidden_rules = 0
     minus = document_quirk('delta_minus')
+    marks = document_quirk('substituted_glyphs')
+    across = document_quirk('digits_across_rules')
     strokes = document_quirk('glyph_strokes')
     for page in pages:
         if minus is not None:
             minus.module.replace(page)
+        if marks is not None:
+            marks.module.replace(page)
         if strokes is not None:
             strokes.module.drop(page)
         repair_positions(page, report, 'split_at_rules' in repairs)
+        if across is not None:
+            across.module.split(page)
         join_vertical(page, report, 'stacked_rows' in repairs, 'spaced_letters' in repairs)
         if 'justified_names' in repairs:
             load_pattern("repairs", "justified_names").join(page)

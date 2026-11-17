@@ -110,7 +110,7 @@ export async function jurisdictionSearchResponse(env: Env, request: Request): Pr
   }
 }
 
-/** 頁の1年度のデータ。ホームのうちのまちの札（/api/jurisdictions/:code?year=）が読む。年度が無ければ最新の年度と、評価のある最新の年度の評価シート */
+/** 頁の1年度のデータ。ホームのうちのまちの札（/api/jurisdictions/:code?year=）が読む。年度が無ければ最新の年度。款項目と年度の一覧だけ */
 export async function jurisdictionSnapshotResponse(env: Env, request: Request, code: string): Promise<Response> {
   try {
     const yearParam = new URL(request.url).searchParams.get('year') ?? undefined
@@ -121,7 +121,7 @@ export async function jurisdictionSnapshotResponse(env: Env, request: Request, c
     if (!entry) throw new HttpError(404, 'NOT_FOUND', 'この自治体は収録されていません')
     const year = yearParam === undefined ? appYears(entry)[0]?.year : Number(yearParam)
     if (year === undefined || !appYears(entry).some((y) => y.year === year)) throw new HttpError(404, 'NOT_FOUND', 'この年度は頁にありません')
-    return new Response(JSON.stringify(await loadYearSnapshot(env, entry, year, { evaluated: yearParam === undefined })), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': BROWSER_CACHE } })
+    return new Response(JSON.stringify(await loadYearSnapshot(env, entry, year)), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': BROWSER_CACHE } })
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e)
     return errorResponse(new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした'))

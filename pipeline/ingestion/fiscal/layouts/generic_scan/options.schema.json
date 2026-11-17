@@ -33,12 +33,12 @@
         },
         {
           "type": "object",
-          "description": "Without the quirk `explained_projects`: the original starts inside a 目 the volume before opened (多摩市 R2 決算). The 款・項・目 and 事業 rows as in generic_text (ingestion/generic/convert.py `continue_volume`); the 項・目 the first page prints under the ones it does not print go under them.",
+          "description": "Without the quirk `explained_projects`: the original starts inside a 目 the volume before opened (多摩市 R2 決算). The 款・項・目 and 事業 rows as in generic_text (ingestion/generic/convert.py `continue_volume`); the 項・目 the first page prints under the ones it does not print go under them. Only the 款・項 when the original starts at a 目 of a 項 the volume before opened (港区 R7 歳入: the 目 goes under the 項, with no `rows`).",
           "additionalProperties": false,
           "required": ["subjects", "rows"],
           "properties": {
             "subjects": {
-              "type": "array", "minItems": 3, "maxItems": 3,
+              "type": "array", "minItems": 2, "maxItems": 3,
               "items": {
                 "type": "object", "additionalProperties": false, "required": ["code"],
                 "properties": {"code": {"type": "string", "pattern": "^[0-9]+$"}, "name": {"type": "string", "minLength": 1}}
@@ -567,6 +567,7 @@
         ]
       }
     },
+    "parent_corrections": {"description": "原典の印字で番号の無い行（前年度にだけあった科目を括弧で囲んで刷った行など）が、読みでは別の親の下に入るときに、原画で確かめた親へ付け直す。頁・番号・名称で子と親を1つずつ結び付ける（見つからなければ止める）。", "type": "array", "items": {"type": "object", "additionalProperties": false, "properties": {"id": {"type": "string", "minLength": 1}, "page": {"type": "integer", "minimum": 1}, "code": {"type": ["string", "null"]}, "name": {"type": "string", "minLength": 1}, "parent_page": {"type": "integer", "minimum": 1}, "parent_code": {"type": ["string", "null"]}, "parent_name": {"type": "string", "minLength": 1}, "reason": {"type": "string", "minLength": 10}, "axis": {"type": "string", "minLength": 1, "description": "子の軸（科目・節など）。同じ頁に同じ番号・名称の行が軸を変えて2つあるときに子を絞る。"}}, "required": ["id", "page", "code", "name", "parent_page", "parent_code", "parent_name", "reason"]}},
     "name_readings": {
       "description": "OCR が読み落とした名前の印字（額だけを読んだ説明の行の名前等）。原画で確かめた位置（PDF の pt）と名前を宣言して補う。箱に読みがあれば止める。",
       "type": "array",
