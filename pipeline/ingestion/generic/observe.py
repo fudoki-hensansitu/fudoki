@@ -62,6 +62,10 @@ def words(pdf: Path, first: int, last: int, character_map: dict[str, str] | None
         source = re.sub(invalid, lambda hit: escape((character_map or {}).get(hit[0], '')), source)
         if (unmapped := (character_map or {}).get('\ufffd')) is not None:
             source = source.replace('\ufffd', escape(unmapped))  # a glyph Poppler could not map, declared
+        # A font that maps digits to unrelated ideographs (131156 R5 決算書 p17・p269・p270・p278: `0`–`9` to U+3EDC–U+3EE5
+        # and `,` to U+3ED8): the declared characters of CJK Extension A, in the words' text only.
+        if ideographs := {k: v for k, v in (character_map or {}).items() if '\u3400' <= k <= '\u4dbf'}:
+            source = source.translate(str.maketrans(ideographs))
         pages = {}
         for number, page in enumerate(ET.fromstring(source).findall('.//{*}page'), first):
             items = [Word(w.text or '', *(float(w.get(k)) for k in ('xMin', 'yMin', 'xMax', 'yMax')))
