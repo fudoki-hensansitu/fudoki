@@ -2121,7 +2121,8 @@
                   }
                 },
                 "節区分金額": {
-                  "axis_header": "節"
+                  "axis_header": "節",
+                  "heading": "節／金額"
                 }
               },
               "rules": {
