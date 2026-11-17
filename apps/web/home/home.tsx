@@ -137,14 +137,14 @@ function Dashboard({ c }: { c: Ctx }) {
       base={c.base}
       detailHref={detailHref}
       head={
-        <div className="flex items-start gap-4">
+        <div className="flex flex-wrap items-start gap-4">
           <Emblem code={town.code} name={town.name} className="size-14 rounded-2xl border-0 p-2" />
           <div className="min-w-0 flex-1">
             <Title size="h1" as="h2">{town.name}</Title>
             <p className="mt-1 truncate text-sm opacity-80">{c.vision}</p>
           </div>
-          {/* 年度と、そのまちの頁へ進む導線は、見出しの右にまとめて置く */}
-          <div className="flex shrink-0 flex-col items-end gap-2">
+          {/* 年度と、そのまちの頁へ進む導線は、見出しの右にまとめて置く。狭い画面ではまちの名前を詰めないよう、名前の下の1行に並べる */}
+          <div className="flex w-full items-center justify-between gap-2 sm:w-auto sm:shrink-0 sm:flex-col sm:items-end">
             <YearSwitch c={c} onBrand />
             <Link href={detailHref} className="inline-flex items-center gap-2 rounded-full bg-brand-fill px-4 py-2 text-sm font-medium text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover">
               詳細を見る

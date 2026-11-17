@@ -18,9 +18,8 @@ import './receipt.css'
 
 const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
 
-/** delay の後に 0 から to まで数え上げる。reduced-motion では最初から to。
- * to が変わったら（年度の切り替え）描く前に 0 へ戻し、前の年度の額を新しい年度の見出しで見せない */
-/** 数え上げ。下の桁から1桁ずつ回して止め、次の桁へ繰り上がる（動くのはいつも1桁だけ）。返すのは、止まった下の桁の数と、回っている桁の今の数字 */
+/** delay の後の数え上げ。下の桁から1桁ずつ回して止め、次の桁へ繰り上がる（動くのはいつも1桁だけ）。返すのは、止まった下の桁の数と、回っている桁の今の数字。
+ * reduced-motion では最初から止まった形。to が変わったら（年度の切り替え）描く前に最初へ戻し、前の年度の額を新しい年度の見出しで見せない */
 function useCountUp(to: number, delay = 0) {
   const digits = String(Math.max(0, to)).length
   const done = { settled: digits, spin: -1 }
@@ -59,7 +58,8 @@ function Counting({ c }: { c: ReturnType<typeof useCountUp> }) {
     return { ch: k === c.settled && c.spin >= 0 ? String(c.spin) : ch, at: k, i }
   })
   return (
-    <span className="whitespace-nowrap tabular-nums" aria-label={`${text}円`}>
+    <span className="whitespace-nowrap tabular-nums">
+      <span className="sr-only">{text}円</span>
       <span aria-hidden="true">
         {chars.reverse().map(({ ch, at, i }) => (
           <span key={i} className={at > c.settled ? 'invisible' : undefined}>
