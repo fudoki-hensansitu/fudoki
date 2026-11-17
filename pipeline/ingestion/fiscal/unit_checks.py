@@ -42,6 +42,7 @@ JOIN_GAP = 1.0   # points: fragments of one printed number abut; two columns are
 BASELINE = 2.0   # points: words of one printed line
 SPREAD_BASELINE = 4.0  # points: the same row on the other page of a spread, printed a little off
 ALIGN = 2.0      # points: right edges of two numbers printed in one column
+BRACKET_GAP = 5.0  # points: a closing bracket printed after its figure (`2,183,218 )`, 国立市 R7)
 NUMERIC = re.compile(r'[0-9,.△▲\-－―—]*')
 
 
@@ -112,6 +113,10 @@ def printed_totals(scope: dict, nodes: list[dict], amounts: list[dict], directio
                 text = ''.join(item[1] for item in run)
                 right = max(box[2] for box, _ in run)
                 if not AMOUNT_RUN.fullmatch(text) or number(text) is None:
+                    continue
+                # A number closed by a bracket is a line of a stacked cell (`(2,237,371)`, the 前年度 under the total,
+                # 国立市 R8): the total of the phase is the line printed bare.
+                if any(word.startswith((')', '）')) and 0 <= box[0] - right <= BRACKET_GAP for box, word in row):
                     continue
                 # The columns of the number's own page first; when that page prints no 款, those of its other
                 # amounts; when none lines up (a total on a page of its own), every page's columns. The
