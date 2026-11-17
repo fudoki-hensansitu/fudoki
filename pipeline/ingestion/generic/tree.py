@@ -436,6 +436,9 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
             and wide.module.in_name([text(run) for run in money]):
         parts.extend(money)  # the quirk `wide_digits_in_names`: `…議案第３１` / `号、…`, a word of the text
         money = []
+    if money and parts and (vowel := document_quirk('halfwidth_long_vowel')) is not None \
+            and vowel.module.in_name(text(parts[-1]), text(money[0])):
+        parts.append(money.pop(0))  # the quirk `halfwidth_long_vowel`: `ｾ ﾝ ﾀ ｰ`, the mark ends the name
     # Full-width digits without a comma before a half-width grouped amount are part of the name (`…東京２０２４ 1,619,271`).
     while len(money) > 1 and WIDE_DIGITS.fullmatch(text(money[0])) and GROUPED.fullmatch(normalize(text(money[-1]))) \
             and not WIDE_DIGITS.search(text(money[-1])):

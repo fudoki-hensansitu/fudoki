@@ -165,6 +165,7 @@
     "tall_kind_stacks": "ingestion.generic.patterns.quirks.tall_kind_stacks",
     "carry_kind_words": "ingestion.generic.patterns.quirks.carry_kind_words",
     "wide_digits_in_names": "ingestion.generic.patterns.quirks.wide_digits_in_names",
+    "halfwidth_long_vowel": "ingestion.generic.patterns.quirks.halfwidth_long_vowel",
     "traced_glyphs": "ingestion.generic.patterns.quirks.traced_glyphs",
     "zero_kind_lines": "ingestion.generic.patterns.quirks.zero_kind_lines",
     "zero_coded_drops": "ingestion.generic.patterns.quirks.zero_coded_drops",
