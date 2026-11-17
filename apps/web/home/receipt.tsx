@@ -85,10 +85,10 @@ const easeInOut = (p: number) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p 
 
 /** 段に合わせて頁を送り、動かさなくても見えるようにする（カメラの代わり）。上へは戻さない。
  * count: 札の下端が画面の外なら、札の上端を越えない範囲で札が収まる位置へ。
- * print: 紙が伸びるのと同じ長さ・同じ緩急で、札の下端（差し出し口）が画面の上に残る位置まで送り、紙が出てくるのを追う。
+ * print: 紙が伸びるのと同じ長さ・同じ緩急で、刷り終えたレシートの下端が画面の下端に来る位置まで送り、紙が出てくるのを追う。
  * 利用者が自分で送ったら（ホイール・タッチ・キー・ポインタ）、それ以降は動かさない。
  * scroll の event は数えない（レイアウトの補正でも起き、利用者の操作と区別できない） */
-function useFollow(phase: Phase, card: React.RefObject<HTMLElement | null>) {
+function useFollow(phase: Phase, card: React.RefObject<HTMLElement | null>, feed: React.RefObject<HTMLElement | null>) {
   const touched = React.useRef(false)
   const raf = React.useRef(0)
   React.useEffect(() => {
@@ -123,12 +123,12 @@ function useFollow(phase: Phase, card: React.RefObject<HTMLElement | null>) {
       const r = card.current.getBoundingClientRect()
       if (r.bottom > vh) go(window.scrollY + Math.min(r.top - 16, r.bottom - vh + 16), SCROLL_MS, easeInOut)
     }
-    if (phase === 'print' && card.current) {
-      // 紙（receipt.css の rc-print）と同じ緩急で、差し出し口が画面の上から 3 割の位置に来るまで送る
-      const r = card.current.getBoundingClientRect()
-      go(window.scrollY + r.bottom - vh * 0.3, PRINT_MS, (p) => 1 - Math.pow(1 - p, 1.6))
+    if (phase === 'print' && feed.current) {
+      // 紙（receipt.css の rc-print）と同じ緩急で、レシートの最後（合計・バーコード）まで送る。紙は clip-path で伸ばすので、高さは最初から刷り終えた分ある
+      const r = feed.current.getBoundingClientRect()
+      go(window.scrollY + r.bottom - vh + 16, PRINT_MS, (p) => 1 - Math.pow(1 - p, 1.6))
     }
-  }, [phase, card])
+  }, [phase, card, feed])
 }
 
 export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: { name: string; v: YearView; year: number; pop: number | null; base: string; detailHref: string; head: React.ReactNode }) {
@@ -140,7 +140,8 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
   const card = React.useRef<HTMLElement>(null)
   const counted = `${year}:${v.total}`
   const phase = usePhase(counted)
-  useFollow(phase, card)
+  const feed = React.useRef<HTMLDivElement>(null)
+  useFollow(phase, card, feed)
   return (
     <div className="rm" data-phase={phase}>
       <section ref={card} className={`rm-card p-5 text-brand-foreground sm:p-7 ${receipt ? 'pb-12 sm:pb-14' : ''}`}>
@@ -173,7 +174,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
         {receipt ? <div className="rm-slot" aria-hidden="true" /> : null}
       </section>
       {receipt && phase === 'print' ? (
-        <div className="rc-feed">
+        <div ref={feed} className="rc-feed">
           {/* 年度を替えたら刷り直す */}
           <div key={year} className="rc-print rc-run">
           <div className="rc-paper">
