@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils'
 import { Link } from '../nav/link'
 import { Button } from '@/components/ui/button'
 import { QUESTIONS, questionOf, type Question } from './questions'
+import { reiwa } from '../jurisdiction/types'
 import type { CompareMap, MapTown } from '../server/compare-map'
 import { Title } from '@/components/ui/title'
 import { Card, CardTitle } from '@/components/ui/card'
@@ -172,6 +173,12 @@ function Legend({ map, q, scale, selected, onPick }: { map: CompareMap; q: Quest
 
 const failedText = <p className="text-sm text-muted-foreground">今は読み込めません。少し時間をおいてやり直してください。</p>
 
+/** 何年度の決算の値かを、数字を載せている面に書く（頁の値はすべて同じ年度） */
+function YearNote({ year }: { year: number | null }) {
+  if (year == null) return null
+  return <p className="mt-1 text-[13px] text-muted-foreground">値は{reiwa(year)}の決算です。</p>
+}
+
 /** いちばん大きいまちと小さいまち */
 function extremes(towns: MapTown[], slug: string) {
   const has = towns.filter((t) => t.values[slug] != null).sort((a, b) => b.values[slug]! - a.values[slug]!)
@@ -184,6 +191,7 @@ export function CompareList({ map, failed }: { map: CompareMap; failed: boolean 
       <header className="mb-5">
         <Title size="h1">まち比べ</Title>
         <p className="mt-1 text-[15px] text-muted-foreground">まちのお金を1人あたりの金額に直すと、いろいろな見方で比べられます。いまは{map.prefecture || '東京都'}のまちから、少しずつ広げています。</p>
+        <YearNote year={map.year} />
       </header>
       {failed ? failedText : (
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 lg:gap-4">
@@ -247,6 +255,7 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
       <header className="mb-4">
         <Title size="h1">{q.title}</Title>
         <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{q.note}</p>
+        <YearNote year={map.year} />
       </header>
       {failed ? failedText : (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
