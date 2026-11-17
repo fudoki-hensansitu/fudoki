@@ -46,20 +46,25 @@ with account_kinds as (
         coalesce({% if col in ['match_kan', 'match_kou', 'match_moku'] %}{{ fiscal_cofog_name(col) }}{% else %}{{ fiscal_match_text(col) }}{% endif %}, '') as {{ col }}{% if not loop.last %},{% endif %}
     {% endfor %}
     from {{ ref('cofog_rules') }}
+), rule_lists as (
+    -- Split each rule's `|` options once, so the join below compares lists instead of running a subquery per
+    -- (目, rule) pair (68k 目 × 558 rules).
+    select *,
+    {% for col in ['applies_to', 'match_fund', 'match_account_kind', 'match_kan', 'match_kou', 'match_kan_code', 'match_moku', 'match_setsu'] %}
+        string_split({{ col }}, '|') as {{ col }}_options{% if not loop.last %},{% endif %}
+    {% endfor %}
+    from rules
 )
 select m.node_id, m.document_kind, r.rule_id, case when r.tentative and r.status = 'assigned' then 'tentative' else r.status end as cofog_status, r.cofog_code
-from mokus m join rules r on
+from mokus m join rule_lists r on
 {% for rule_col, moku_col in [('applies_to', 'jurisdiction_code'), ('match_fund', 'fund_name'),
     ('match_account_kind', 'account_kind'),
     ('match_kan', 'kan_name'), ('match_kou', 'kou_name'), ('match_kan_code', 'kan_code'),
-    ('match_moku', 'moku_name'), ('match_setsu', 'setsu_name')] %}
-    (r.{{ rule_col }} = '' or exists (
-        select 1 from unnest(string_split(r.{{ rule_col }}, '|')) as options(option)
-        where {% if rule_col == 'match_moku' %}
-            case when r.moku_mode = 'contains' then contains(m.{{ moku_col }}, option)
-                 else m.{{ moku_col }} = option end
-        {% else %}m.{{ moku_col }} = option{% endif %}
-    )){% if not loop.last %} and {% endif %}
+    ('match_setsu', 'setsu_name')] %}
+    (r.{{ rule_col }} = '' or list_contains(r.{{ rule_col }}_options, m.{{ moku_col }})) and
 {% endfor %}
+    (r.match_moku = '' or case when r.moku_mode = 'contains'
+        then list_bool_or(list_transform(r.match_moku_options, lambda option: contains(m.moku_name, option)))
+        else list_contains(r.match_moku_options, m.moku_name) end)
 -- Specific rules precede the shared dictionary, regardless of numeric priority.
 qualify row_number() over (partition by m.node_id, m.document_kind order by (r.applies_to = ''), r.priority) = 1
