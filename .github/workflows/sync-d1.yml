@@ -15,11 +15,9 @@ on:
       - uv.lock
       - pyproject.toml
       - mise.toml
-  # 毎日 04:00 JST（refresh-check の1時間後）に全件を build して同期し、push では流さない共通の変更を出す。
-  # 月曜だけは写しがあっても D1 を全行読んで比べ、写しと D1 のずれ（手での書き込みなど）を直す（--verify-all）
+  # 毎日 04:00 JST（refresh-check の1時間後）に全件を build して同期し、push では流さない共通の変更を出す
   schedule:
-    - cron: '0 19 * * 1-6'
-    - cron: '0 19 * * 0'
+    - cron: '0 19 * * *'
   workflow_dispatch:
     inputs:
       jurisdictions:
@@ -197,7 +195,7 @@ jobs:
         run: echo "sha=$(sha256sum "$RUNNER_TEMP/d1-snapshot/snapshot.duckdb" 2>/dev/null | cut -c1-64)" >> "$GITHUB_OUTPUT"
       - run: >-
           bun run --cwd pipeline publish -- --database-id b9b6f209-083e-45b3-a896-1014a17a15f9 ${{ needs.store.outputs.args }}
-          --snapshot "$RUNNER_TEMP/d1-snapshot/snapshot.duckdb" ${{ github.event.schedule == '0 19 * * 0' && '--verify-all' || '' }}
+          --snapshot "$RUNNER_TEMP/d1-snapshot/snapshot.duckdb"
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           # 全件の build は 4GB だと int_fiscal__rows で DuckDB の上限に当たる。public repo の runner は 16GB
