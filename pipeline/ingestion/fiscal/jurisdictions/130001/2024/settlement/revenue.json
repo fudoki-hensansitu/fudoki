@@ -1,0 +1,1113 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "130001",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "bf65f32e9b1e6a9aa46e02d06282f18748c57e1ced4f20016234a13e235f5844"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考・説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "ward-fiscal-adjustment-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "特別区財政調整会計",
+        "table_id": "ward-fiscal-adjustment-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考・説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "ward-fiscal-adjustment-revenue"
+        }
+      ]
+    },
+    {
+      "id": "local-consumption-tax-settlement-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "地方消費税清算会計",
+        "table_id": "local-consumption-tax-settlement-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考・説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "local-consumption-tax-settlement-revenue"
+        }
+      ]
+    },
+    {
+      "id": "ogasawara-livelihood-reconstruction-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "小笠原諸島生活再建資金会計",
+        "table_id": "ogasawara-livelihood-reconstruction-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考・説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "ogasawara-livelihood-reconstruction-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考・説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "single-parent-welfare-loan-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "母子父子福祉貸付資金会計",
+        "table_id": "single-parent-welfare-loan-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考・説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "single-parent-welfare-loan-revenue"
+        }
+      ]
+    },
+    {
+      "id": "disability-dependants-pension-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "心身障害者扶養年金会計",
+        "table_id": "disability-dependants-pension-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考・説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "disability-dependants-pension-revenue"
+        }
+      ]
+    },
+    {
+      "id": "metropolitan-hospital-loan-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "地方独立行政法人東京都立病院機構貸付等事業会計",
+        "table_id": "metropolitan-hospital-loan-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考・説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "metropolitan-hospital-loan-revenue"
+        }
+      ]
+    },
+    {
+      "id": "sme-equipment-fund-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "中小企業設備導入等資金会計",
+        "table_id": "sme-equipment-fund-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考・説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "sme-equipment-fund-revenue"
+        }
+      ]
+    },
+    {
+      "id": "forestry-improvement-fund-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "林業・木材産業改善資金助成会計",
+        "table_id": "forestry-improvement-fund-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考・説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "forestry-improvement-fund-revenue"
+        }
+      ]
+    },
+    {
+      "id": "coastal-fishery-improvement-fund-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "沿岸漁業改善資金助成会計",
+        "table_id": "coastal-fishery-improvement-fund-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考・説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "coastal-fishery-improvement-fund-revenue"
+        }
+      ]
+    },
+    {
+      "id": "slaughterhouse-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "と場会計",
+        "table_id": "slaughterhouse-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考・説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "slaughterhouse-revenue"
+        }
+      ]
+    },
+    {
+      "id": "metropolitan-housing-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "都営住宅等事業会計",
+        "table_id": "metropolitan-housing-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考・説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "metropolitan-housing-revenue"
+        }
+      ]
+    },
+    {
+      "id": "metropolitan-housing-deposit-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "都営住宅等保証金会計",
+        "table_id": "metropolitan-housing-deposit-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考・説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "metropolitan-housing-deposit-revenue"
+        }
+      ]
+    },
+    {
+      "id": "urban-development-fund-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "都市開発資金会計",
+        "table_id": "urban-development-fund-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考・説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "urban-development-fund-revenue"
+        }
+      ]
+    },
+    {
+      "id": "land-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "用地会計",
+        "table_id": "land-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考・説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-revenue"
+        }
+      ]
+    },
+    {
+      "id": "public-debt-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "公債費会計",
+        "table_id": "public-debt-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考・説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "public-debt-revenue"
+        }
+      ]
+    },
+    {
+      "id": "waterfront-infrastructure-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "臨海都市基盤整備事業会計",
+        "table_id": "waterfront-infrastructure-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考・説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "waterfront-infrastructure-revenue"
+        }
+      ]
+    },
+    {
+      "id": "industrial-water-liquidation-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce6bee769d588f88010e8074e13b3f347f6cdea15c5da681a84b3093e44fc391"
+        }
+      ],
+      "options": {
+        "account": "工業用水道事業清算会計",
+        "table_id": "industrial-water-liquidation-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考・説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "industrial-water-liquidation-revenue"
+        }
+      ]
+    }
+  ]
+}
