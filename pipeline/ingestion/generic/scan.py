@@ -107,6 +107,9 @@ def _split(word: Word, cuts: list[float]) -> list[Word]:
         # as read (`17,585,227,000` boxed 3pt past its cell's right rule, 281000; `0532,413,000` and
         # `130,577,0001,156,707,000` are cut).
         return [word]
+    if (across := document_quirk('two_digit_codes_over_rules')) is not None \
+            and (code := across.module.across(word, inside, across.value)) is not None:
+        return code[:1] + (_split(code[1], cuts) if len(code) > 1 else [])
     after = document_quirk('code_after_amount') if len(inside) == 1 else None
     if (NUMBER.fullmatch(_text(word.text)) and len(_text(word.text)) >= 3
             and all(word.x1 - x < width for x in inside)):

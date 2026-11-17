@@ -133,7 +133,8 @@
           "quirks": {
             "codeless_name_levels": true,
             "codes_across_level_rules": 2.5,
-            "digit_set_codes": 4.4
+            "digit_set_codes": 4.4,
+            "two_digit_codes_over_rules": true
           }
         },
         "pages": [
@@ -312,7 +313,8 @@
           "quirks": {
             "codeless_name_levels": true,
             "codes_across_level_rules": 2.5,
-            "digit_set_codes": 4.4
+            "digit_set_codes": 4.4,
+            "two_digit_codes_over_rules": true
           }
         },
         "pages": [
@@ -406,7 +408,8 @@
           "quirks": {
             "codeless_name_levels": true,
             "codes_across_level_rules": 2.5,
-            "digit_set_codes": 4.4
+            "digit_set_codes": 4.4,
+            "two_digit_codes_over_rules": true
           }
         },
         "pages": [
@@ -414,6 +417,50 @@
             10,
             14
           ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p12-repeated-kou-r22",
+            "page": 12,
+            "observation_id": "p12:full-page:a0:result0:r22",
+            "observed": "高額介護サービス等費",
+            "reason": "物理12頁の科目の欄の頭に、前の頁から続く項（高額介護サービス等費）の名前だけを番号なしで印字し直している。読むと続く頁の目の名前に連なるか番号の無い科目になるので、印字し直した名前の読みは使わない。"
+          },
+          {
+            "id": "p12-repeated-moku-r27",
+            "page": 12,
+            "observation_id": "p12:full-page:a0:result0:r27",
+            "observed": "高額介護サービス等費",
+            "reason": "物理12頁の科目の欄の頭に、前の頁から続く目（高額介護サービス等費）の名前だけを番号なしで印字し直している。読むと続く頁の目の名前に連なるか番号の無い科目になるので、印字し直した名前の読みは使わない。"
+          },
+          {
+            "id": "p13-repeated-kou-r22",
+            "page": 13,
+            "observation_id": "p13:full-page:a0:result0:r22",
+            "observed": "介護予防・生活支援サービス事業",
+            "reason": "物理13頁の科目の欄の頭に、前の頁から続く項（介護予防・生活支援サービス事業費）の名前だけを2行に分けて番号なしで印字し直している。読むと続く頁の目の名前に連なるか番号の無い科目になるので、印字し直した名前の読みは使わない。"
+          },
+          {
+            "id": "p13-repeated-kou-r23",
+            "page": 13,
+            "observation_id": "p13:full-page:a0:result0:r23",
+            "observed": "費",
+            "reason": "物理13頁の科目の欄の頭に、前の頁から続く項（介護予防・生活支援サービス事業費）の名前だけを2行に分けて番号なしで印字し直している。読むと続く頁の目の名前に連なるか番号の無い科目になるので、印字し直した名前の読みは使わない。"
+          },
+          {
+            "id": "p14-repeated-kou-r23",
+            "page": 14,
+            "observation_id": "p14:full-page:a0:result0:r23",
+            "observed": "その他諸費",
+            "reason": "物理14頁の科目の欄の頭に、前の頁から続く項（その他諸費）の名前だけを番号なしで印字し直している。読むと続く頁の目の名前に連なるか番号の無い科目になるので、印字し直した名前の読みは使わない。"
+          },
+          {
+            "id": "p14-repeated-moku-r25",
+            "page": 14,
+            "observation_id": "p14:full-page:a0:result0:r25",
+            "observed": "審查支払手数料",
+            "reason": "物理14頁の科目の欄の頭に、前の頁から続く目（審査支払手数料）の名前だけを番号なしで印字し直している。読むと続く頁の目の名前に連なるか番号の無い科目になるので、印字し直した名前の読みは使わない。"
+          }
         ]
       },
       "expected_tables": [
@@ -503,7 +550,8 @@
           "quirks": {
             "codeless_name_levels": true,
             "codes_across_level_rules": 2.5,
-            "digit_set_codes": 4.4
+            "digit_set_codes": 4.4,
+            "two_digit_codes_over_rules": true
           }
         },
         "pages": [
