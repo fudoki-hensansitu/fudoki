@@ -174,13 +174,6 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
   const [code, pick] = useSelected(map)
   const scale = scaleOf(map.towns, q.slug)
   const t = map.towns.find((x) => x.code === code)
-  const chips = React.useRef<HTMLDivElement>(null)
-  // 狭い幅ではチップが横にはみ出すので、選んだ問いのチップを見える位置へ寄せる
-  React.useEffect(() => {
-    const bar = chips.current
-    const c = bar?.querySelector<HTMLElement>('[aria-current="page"]')
-    if (bar && c) bar.scrollLeft = c.offsetLeft - bar.clientWidth / 2 + c.offsetWidth / 2
-  }, [slug])
   const hrefOf = (s: string) => `/compare/${s}?town=${code}`
   return (
     <main className="mx-auto w-full max-w-6xl px-4 pt-10 pb-28 sm:px-8 sm:pt-14">
@@ -188,20 +181,8 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
         <ArrowLeftIcon className="size-3.5" aria-hidden="true" />
         まち比べ
       </Link>
-      <nav ref={chips} aria-label="問い" className="-mx-4 flex gap-1.5 overflow-x-auto px-4 pb-1 [scrollbar-width:none] lg:mx-0 lg:flex-wrap lg:px-0">
-        {QUESTIONS.map((x) => (
-          <Link
-            key={x.slug}
-            href={hrefOf(x.slug)}
-            aria-current={x.slug === slug ? 'page' : undefined}
-            className="inline-flex h-[34px] shrink-0 items-center rounded-full border bg-background px-3.5 text-sm font-medium transition-colors hover:bg-card aria-[current=page]:border-primary aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground"
-          >
-            {x.short}
-          </Link>
-        ))}
-      </nav>
-      <header className="mt-5 mb-4">
-        <h1 className="text-[22px] leading-[1.4] font-semibold">{q.title}</h1>
+      <header className="mb-4">
+        <h1 className="text-[26px] leading-[1.35] font-semibold sm:text-[30px]">{q.title}</h1>
         <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{q.note}</p>
       </header>
       {failed ? failedText : (
@@ -238,6 +219,21 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
           ) : null}
         </div>
       )}
+      <nav aria-label="ほかの問い" className="mt-10 border-t pt-6">
+        <h2 className="mb-3 text-sm font-semibold text-muted-foreground">ほかの問い</h2>
+        <div className="flex flex-wrap gap-1.5">
+          {QUESTIONS.map((x) => (
+            <Link
+              key={x.slug}
+              href={hrefOf(x.slug)}
+              aria-current={x.slug === slug ? 'page' : undefined}
+              className="inline-flex h-[34px] shrink-0 items-center rounded-full border bg-background px-3.5 text-sm font-medium transition-colors hover:bg-card aria-[current=page]:border-primary aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground"
+            >
+              {x.short}
+            </Link>
+          ))}
+        </div>
+      </nav>
     </main>
   )
 }
