@@ -75,7 +75,7 @@ JURISDICTION_PATHS = (
 )
 # 自治体の列を持つ seed。変わった行の自治体だけを流す（seed_codes）
 SEEDS = re.compile(r'^pipeline/dbt/seeds/.+\.csv$')
-CODE = re.compile(r'\d{6}')
+CODE = re.compile(r'[0-9]{6}')
 
 
 def module_file(name: str) -> Path | None:
@@ -130,7 +130,7 @@ def seed_codes(header: str, diff: list[str]) -> set[str] | None:
     """seed の差分（`git diff --unified=0` の行）の自治体コード。自治体の列が無い seed は None（全件）。
 
     自治体の列は1列目の `jurisdiction_code`、または `applies_to`（cofog_rules の自治体限定の規則。`|` で複数）。
-    変わった行の自治体の列が空（全自治体に効く規則）か、読めない行が1つでもあれば None（全件）。
+    変わった行の自治体の列が空（全自治体に効く規則）か、列の数がヘッダと違う行が1つでもあれば None（全件）。
     """
     columns = next(csv.reader([header]), [])
     if columns[:1] == ['jurisdiction_code']:
@@ -143,7 +143,9 @@ def seed_codes(header: str, diff: list[str]) -> set[str] | None:
     for line in diff:
         if line[:1] in '+-' and not line.startswith(('+++', '---')):
             row = next(csv.reader([line[1:]]), [])
-            values = row[index].split('|') if index < len(row) else ['']
+            if len(row) != len(columns):  # 複数行のセルの続きなど、1行で読めない行
+                return None
+            values = row[index].split('|')
             if not all(CODE.fullmatch(code) for code in values):
                 return None
             codes.update(values)
