@@ -380,6 +380,9 @@ def subject_events(logical: layout.Logical) -> list[tuple]:
                 events.append(((line[0].page, line[0].y0), ('total',)))
             elif code:
                 events.append(((line[0].page, line[0].y0), ('moku', code.group(1))))
+            elif shown[:1] in '(（':
+                # a 目 the year drops, printed in brackets with no code (`(環境性能割交付金)`)
+                events.append(((line[0].page, line[0].y0), ('moku', None)))
     return [event for _, event in sorted(events, key=lambda e: e[0])]
 
 
@@ -401,12 +404,16 @@ def complete_titles(logicals: list[layout.Logical]) -> None:
                         if kou not in kous_of.setdefault(kan, []):
                             kous_of[kan].append(kou)
             elif event[0] == 'moku' and kou is not None and kou not in opened:
-                opened[kou] = event[1] in (zero.module.OPENING_CODES if zero is not None else ('1',))
+                # A 項 the year drops prints no code, nor do its 目 (`項 (環境性能割交付金)` over `(環境性能割交付金)`,
+                # 新宿区 R8 の歳入, the quirk `unnumbered_titles`): its first 目 in brackets opens it.
+                opened[kou] = event[1] in (zero.module.OPENING_CODES if zero is not None else ('1',)) \
+                    or (event[1] is None and kou[1] is None)
             elif event[0] == 'total' and kou is not None:
                 closed.add(kou)
     whole_kou = {k for k in opened if opened[k] and k in closed}
     whole_kan = {k for k, kous in kous_of.items()
-                 if kous and kous[0][1] == '1' and all(k2 in whole_kou for k2 in kous)}
+                 if kous and (kous[0][1] == '1' or (k is None and kous[0][1] is None))
+                 and all(k2 in whole_kou for k2 in kous)}
     kan = None
     for logical in logicals:
         kept = []
