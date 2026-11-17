@@ -34,7 +34,9 @@ from ingestion.generic.layout import (SIGNS, SUBJECT_LEVELS, UNIT_CELL, Band, Gl
 # A leading item number; the separator after it (`1.議会費`, `1．`) is not part of the name.
 # The line a book prints for the subjects it dropped this year, with last year's amounts (`(廃目整理)`, `(廃項整理)`).
 ABOLISHED = re.compile(r'[(（]廃([款項目節])整理[)）]')
-CODE = re.compile(r'^[(（]?([0-9０-９]{1,4})[)）]?(?:[.．](?=[^0-9０-９]|$))?(?=\D|$)')
+# A closing bracket ends the number even when the name starts with a digit (`(7)５歳児健康診査費`); without it the number
+# is followed by a non-digit, and not by a closing bracket (`(7` of `(7)５…` is not a number with the name `)５…`).
+CODE = re.compile(r'^[(（]?([0-9０-９]{1,4})(?:[)）]|(?:[.．](?=[^0-9０-９]|$))?(?=[^0-9)）]|$))')
 UNIT_NOTATION = re.compile(r'[(（]単位[:：][^()（）]*[)）]')
 BARE_CODE = re.compile(r'^[0-9０-９]{1,4}$')
 # A reading in katakana printed in brackets right after a number (`73（ナナサン）`): the number is part of a name.
@@ -257,6 +259,8 @@ BULLET = re.compile(r'^[〇○●◎□■◇◆]')
 SUBJECT_MARK = re.compile(r'^(?:[〇○◯]|[OＯ](?=[^\x00-\x7f０-９Ａ-Ｚａ-ｚ]))\s*')
 # The words that qualify a printed amount as carried over (`一部繰越明許`, `逓次繰越`), printed after it.
 CARRY_OVER_TAG = re.compile(r'[(（]?(?:一部)?(?:繰越明許費?|逓次繰越|事故繰越し?)[)）]?')
+# A rate printed after an amount in a column of its own (`1／2`, a 補助率).
+RATE_TAG = re.compile(r'[0-9]+/[0-9]+')
 # Every parenthesised remark at the end of a name (`委託料（…へ流用△280,000）（…から流用1,815,000）`).
 PAREN_TAIL = re.compile(r'(?:[(（][^()（）]*[)）])+$')
 # A number printed against a counter word (`110番`, `3歳児`, `3階`, `2025年`, `2人目加算`) is a count in a name.
@@ -337,6 +341,18 @@ def _stacked_word(glyph: Glyph) -> Glyph:
     return replace(glyph, text=bare) if bare != glyph.text and bare and is_amount(bare) else glyph
 
 
+def _prolongs_katakana(before: list[Glyph], run: list[Glyph]) -> bool:
+    """`run` is a lone `ー` set one letter space after a katakana ending `before`."""
+    if len(run) != 1 or run[0].text != 'ー' or not before or not re.search(r'[ァ-ヴ]$', before[-1].text):
+        return False
+    size = run[0].y1 - run[0].y0
+    if run[0].x0 - before[-1].x1 <= size:
+        return True
+    # A name spaced out letter by letter (`シ ル バ ー`, 132195 R2 決算): the mark keeps the letters' pitch.
+    pitch = before[-1].x0 - before[-2].x0 if len(before) > 1 and len(before[-2].text) == 1 else None
+    return pitch is not None and abs(run[0].x0 - before[-1].x0 - pitch) <= 1
+
+
 def _split_code(line_text: str) -> tuple[str | None, str]:
     """A leading item number and the name. Numbers start from 1, so a leading 0 is a
     bullet drawn as a digit; bullet marks (〇) mark a level and are not part of the name."""
@@ -415,6 +431,10 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
     # is no part of the item's name or of the amount. The amount stays the line's last run.
     if len(parts) >= 3 and CARRY_OVER_TAG.fullmatch(normalize(text(parts[-1]))) and is_amount(text(parts[-2])):
         parts.pop()
+    # A rate printed in a column after the amount (台東区 当初予算の歳入, a table drawn in characters:
+    # `健康づくり啓発推進 2,925 1／2`): the amount stays the line's last run, and the rate goes with the name.
+    if len(parts) >= 3 and RATE_TAG.fullmatch(normalize(text(parts[-1]))) and is_amount(text(parts[-2])):
+        parts.insert(-1, parts.pop())
     if parts and (short_yen := document_quirk('short_yen_notes')) is not None \
             and (kept := short_yen.module.digits(normalize(text([g for part in parts for g in part])))) is not None:
         return [], [_cut([g for part in parts for g in part], kept)[0]]  # `400円` under a remark: its amount
@@ -423,6 +443,10 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
     while len(parts) > 1 and normalize(text(parts[-1])) == '円' and is_amount(text(parts[-2])):
         parts.pop()
     money = []
+    # A prolonged sound mark after a katakana in a name spaced out to fill its column (`ナ ン バ ー`) is the name's last
+    # character, not a dash for no amount: it stands one letter space after the katakana, where an amount cell is not.
+    if len(parts) > 1 and _prolongs_katakana([g for part in parts[:-1] for g in part], parts[-1]):
+        parts[-2:] = [parts[-2] + parts[-1]]
     while parts and is_amount(text(parts[-1])) and len(parts) > 1:
         if not money and (listed := document_quirk('list_cut')) is not None and listed.module.cut(parts):
             break
@@ -597,8 +621,9 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
         if label and not money and UNIT_NOTATION.fullmatch(line_text):
             continue  # `(単位:円・税抜)` printed over a column names the unit; it is no item of the column
         code, name = _split_code(line_text)
+        gap = narrow.module.GAP if (narrow := document_quirk('narrow_number_gaps')) is not None else 2
         if (code is None and len(label) > 1 and margins is not None and margins & set(_margins(label))
-                and re.fullmatch(r'[0-9]{1,4}', normalize(label[0].text)) and label[1].x0 - label[0].x1 >= 2
+                and re.fullmatch(r'[0-9]{1,4}', normalize(label[0].text)) and label[1].x0 - label[0].x1 >= gap
                 and AGE.match(normalize(text(label[1:]))) and not AGE_WORD.match(normalize(text(label[1:])))):
             # `1` `歳計現金利子`: the number is a word of its own in the column's number margin, so the 歳 after it
             # starts the name and is no age (`1歳6箇月児…`, joined to the number, and `3 歳児健康診査`, where an age
@@ -644,7 +669,7 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
             if year:  # `42025年農林業センサス費` is item `4` and `2025年…`
                 code, name = year.group(1), line_text[len(year.group(1)):]
         spaced = (len(label) > 1 and re.fullmatch(r'[0-9]{1,4}', normalize(label[0].text)) is not None
-                  and label[1].x0 - label[0].x1 >= 2)  # the number is a word of its own, set apart from the name
+                  and label[1].x0 - label[0].x1 >= gap)  # the number is a word of its own, set apart from the name
         if (code is not None and not project and COUNTED.match(line_text) and not YEAR_LED.match(line_text) and not script
                 and not spaced):
             code, name = None, line_text  # `110番非常通報装置`, `3歳児健康診査`: a count, not an item number
@@ -1172,7 +1197,7 @@ def _measure(item: Item, label: list[Glyph], code: str | None, joined: bool = Fa
         item.level = item.level if item.level is not None else len(item.group.bands) - 1
         if code is None and item.group.mode == 'bands' and (at_rule := document_quirk('unnumbered_names_at_rule')) is not None:
             # A dropped subject's name without a number, set on the rule that closes its level's code column.
-            item.level = at_rule.module.level(first.x0, item.group.bands, item.level)
+            item.level = at_rule.module.level(first.x0, item.group.bands, item.level, first.y1 - first.y0)
 
 
 def join_transfer_tails(items_: list[Item], layout: dict | None) -> list[Item]:
@@ -1920,6 +1945,9 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
             note, item.hint, item.role = False, counts.module.HINT, 'annotation'
         mark = next((m for m in ordered_marks
                      if (shape_of(item) == shapes[m] if m in shapes else raw.startswith(normalize(m)))), None)
+        if (not note and (bare := quirk(settings, 'unnumbered_notes')) is not None and item.role in ('node', 'note')
+                and id(item) not in column_amount_items and bare.module.note(item, mark, result[-1] if result else None)):
+            note, item.hint = True, bare.module.KIND
         if note:
             item.hint = whole_names.get(raw) or next((kind for prefix, kind in note_kinds.items() if raw.startswith(prefix)), item.hint)
             if id(item) in column_amount_items:
@@ -2156,7 +2184,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 title = Item(subject, line[0].page, [line], code, name, line[0].x0, level=-1, level_name=level_name,
                              title_depth=SUBJECT_LEVELS.index(level_name) + 1)
                 if amount is not None:
-                    title.amounts.append(amount)
+                    title.amounts.extend(amount if isinstance(amount, list) else [amount])
                 if one_line is not None and before is not None:
                     one_line.module.follow(before, title, line)
                 before = title
@@ -2363,6 +2391,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 first = mine.pop(0)
                 previous.lines += first.lines
                 previous.amounts += first.amounts
+                if previous.role == 'note' and not reads_as_note(previous.name):
+                    # A name that ended its page without an amount was held as a note; with its amount it is an item
+                    # (`大崎ゆうゆうプラザ太陽光発電設備新設工事監理委託` / `418,000` over the page, 131091 決算 R7 p6・p8).
+                    previous.role = 'node'
             elif (previous is not None and mine
                   and (((over := quirk((layout or {}).get(group.axis), 'names_over_pages')) is not None
                         and over.module.runs_on(previous, mine[0]))
@@ -2586,7 +2618,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             if item.group.subject:
                 if item.code is not None and item.role == 'node':
                     opening = False
-                elif opening and item.code is None and item.name and not item.amounts and item.role == 'node':
+                elif (opening and item.code is None and item.name and not item.amounts and item.role == 'node'
+                      and not prints_row_amounts(item, logical)):
                     # A continuation page opens by printing the open headings again, names only (`総務管理費` /
                     # `一般管理費`, without their codes): the open heading of that name, not a new subject.
                     # (one line each, or all in one item when the page sets them close).
@@ -3086,6 +3119,21 @@ def within_row(logical: Logical, previous: Item, item: Item) -> bool:
         return False
     top, bottom = _cell(min(beside, key=lambda b: b.x0), y)
     return item.y0 >= previous.y1 and top - .5 <= item.y0 and item.y1 <= bottom + .5
+
+
+def prints_row_amounts(item: Item, logical: Logical) -> bool:
+    """The subject's row prints amounts in the amount columns. A heading printed again at the top of a continuation page
+    prints its name only; a codeless subject of the same name with amounts of its own is a subject (a 目 the year drops,
+    `ＳＤＧｓ推進費 0 148,882` under the 項 `ＳＤＧｓ推進費`, 131237 当初予算 R5 p184)."""
+    first = item.lines[0] if item.lines else item.glyphs
+    top, bottom = min(g.y0 for g in first), max(g.y1 for g in first)
+    own = []  # the amount columns right after the subject's: a breakdown's columns further right are not its row
+    for band in sorted((b for b in logical.bands if b.x0 >= item.group.x1 - .5 and b.kind is not None), key=lambda b: b.x0):
+        if band.kind != 'amount':
+            break
+        own.append(band)
+    return any(glyph.page == item.page and top <= (glyph.y0 + glyph.y1) / 2 <= bottom and is_amount(glyph.text)
+               for band in own for glyph in band.words)
 
 
 def subject_row(item: Item, logical: Logical) -> tuple[float, float]:

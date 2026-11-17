@@ -96,7 +96,12 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
     """
     import pypdfium2.raw as raw
     page = pdf[number - 1]
-    left, _, _, top = page.get_mediabox()  # Poppler's words are measured from the MediaBox, even when a CropBox is smaller
+    left, bottom, _, top = page.get_mediabox()  # Poppler's words are measured from the MediaBox, even when a CropBox is smaller
+    # A page turned a quarter (`/Rotate 90`, the spreads of 132047's 決算書) is read by Poppler as shown: its x runs up
+    # the page's y and its y along the page's x. pdfium's boxes are in the page's own space.
+    turned = page.get_rotation() == 90
+    view = (lambda l, b, r, t: (b - bottom, l - left, t - bottom, r - left)) if turned else \
+        (lambda l, b, r, t: (l - left, top - t, r - left, top - b))
     textpage = page.get_textpage()
     clips: dict[int, tuple | None] = {}
 
@@ -129,7 +134,7 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
         if raw.FPDFPageObj_GetType(handle) == raw.FPDF_PAGEOBJ_PATH:
             l, b, r, t = (ctypes.c_float() for _ in range(4))
             raw.FPDFPageObj_GetBounds(handle, l, b, r, t)
-            paths.append(((l.value - left, top - t.value, r.value - left, top - b.value),
+            paths.append((view(l.value, b.value, r.value, t.value),
                           inside((l.value, b.value, r.value, t.value), clip_of(handle))))
             if line_clips and not paths[-1][1] and load_pattern("repairs", "line_clips").flat(clip_of(handle)):
                 flat_paths.add(len(paths) - 1)
@@ -159,7 +164,7 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
         char = (character_map or {}).get(chr(code), chr(code))
         if not char:
             continue  # declared to drop (`character_map`)
-        found.append(((l.value - left, top - t.value, r.value - left, top - b.value), char, visible))
+        found.append((view(l.value, b.value, r.value, t.value), char, visible))
         if line_clips and not visible and handle and load_pattern("repairs", "line_clips").flat(clip_of(handle)):
             flat.add(len(found) - 1)
     width = page.get_width()
@@ -636,10 +641,13 @@ def repair(pdf_path: Path | None, pages: list[Page], repairs: frozenset = frozen
             report.invisible_error = f'{type(error).__name__}: {error}'
             report.hidden_glyphs = report.hidden_rules = 0
     minus = document_quirk('delta_minus')
+    marks = document_quirk('substituted_glyphs')
     strokes = document_quirk('glyph_strokes')
     for page in pages:
         if minus is not None:
             minus.module.replace(page)
+        if marks is not None:
+            marks.module.replace(page)
         if strokes is not None:
             strokes.module.drop(page)
         repair_positions(page, report, 'split_at_rules' in repairs)
