@@ -8,7 +8,7 @@
     ... --snapshot <file> [--verify-all]   # 前回の同期の写しと比べて D1 を全行は読まない（serving/sync_d1.py）
 
 既定は `--since`（省略時は origin/main と HEAD の分岐点）から HEAD までの差分で範囲を決める。
-- 取り込みの宣言・出典の選定・1列目が自治体コードの seed の行だけが変わった → その自治体だけ
+- 取り込みの宣言・出典の選定・自治体の列（1列目の jurisdiction_code か applies_to）を持つ seed の行だけが変わった → その自治体だけ
   （build と sync に同じ `--jurisdiction` を渡す。他の自治体の行は消さない）
 - それ以外の marts の入力（dbt のモデル・共通の辞書・build と配信のコードなど）が変わった → 全件
 - 取り込みのコードのうち build が import しないもの（変換器・保存の検査・refresh）と変換器の宣言 → 見ない。
@@ -20,6 +20,7 @@
 """
 import argparse
 import ast
+import csv
 import json
 import re
 import subprocess
@@ -72,9 +73,9 @@ JURISDICTION_PATHS = (
     re.compile(r'^pipeline/ingestion/fiscal/jurisdictions/(\d{6})/\d{4}/.+\.json$'),
     re.compile(r'^pipeline/source_selection/(\d{6})\.json$'),
 )
-# 1列目が自治体コードの seed。変わった行の自治体だけを流す
+# 自治体の列を持つ seed。変わった行の自治体だけを流す（seed_codes）
 SEEDS = re.compile(r'^pipeline/dbt/seeds/.+\.csv$')
-CODE = re.compile(r'\d{6}')
+CODE = re.compile(r'[0-9]{6}')
 
 
 def module_file(name: str) -> Path | None:
@@ -126,16 +127,28 @@ def git(*args: str) -> str:
 
 
 def seed_codes(header: str, diff: list[str]) -> set[str] | None:
-    """seed の差分（`git diff --unified=0` の行）の自治体コード。1列目が自治体コードでない seed は None（全件）。"""
-    if header.split(',', 1)[0] != 'jurisdiction_code':
+    """seed の差分（`git diff --unified=0` の行）の自治体コード。自治体の列が無い seed は None（全件）。
+
+    自治体の列は1列目の `jurisdiction_code`、または `applies_to`（cofog_rules の自治体限定の規則。`|` で複数）。
+    変わった行の自治体の列が空（全自治体に効く規則）か、列の数がヘッダと違う行が1つでもあれば None（全件）。
+    """
+    columns = next(csv.reader([header]), [])
+    if columns[:1] == ['jurisdiction_code']:
+        index = 0
+    elif 'applies_to' in columns:
+        index = columns.index('applies_to')
+    else:
         return None
     codes = set()
     for line in diff:
         if line[:1] in '+-' and not line.startswith(('+++', '---')):
-            code = line[1:].split(',', 1)[0]
-            if not CODE.fullmatch(code):
+            row = next(csv.reader([line[1:]]), [])
+            if len(row) != len(columns):  # 複数行のセルの続きなど、1行で読めない行
                 return None
-            codes.add(code)
+            values = row[index].split('|')
+            if not all(CODE.fullmatch(code) for code in values):
+                return None
+            codes.update(values)
     return codes
 
 
