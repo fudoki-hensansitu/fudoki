@@ -1044,6 +1044,8 @@ def items(group: Group, header: str, margins: set[int] | None = None,
                    and (limit is None or max(g.x1 for g in previous.lines[-1]) >= limit - 4 * (previous.lines[-1][0].y1 - previous.lines[-1][0].y0)))
         # A line led by a mark (`○あそべえ事業 222,656,920` under its heading, 132039) is an item of its own.
         marked = bool(label) and re.match(r'[〇○●◎□■◇◆]', label[0].text) is not None
+        lost = quirk(settings, 'lost_circle_marks')  # a `○` OCR dropped from a line under a `□` heading
+        marked = marked or (lost is not None and lost.module.marked(label, previous))
         left_slack = remainder.module.slack(label) if label and remainder is not None else 3
         wrapped = (previous is not None and code is None and label and not previous.amounts and not marked
                    and not ABOLISHED.fullmatch(label_text)
@@ -2275,6 +2277,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         and not item.amounts and not ABOLISHED.fullmatch(item.name)
                         # (a title with no number is a title of its own: `unnumbered_titles`)
                         and not (item.level == -1 and document_quirk('unnumbered_titles') is not None)
+                        # (a title never runs on into a title of another level: a 項's title with no code, `codeless_titles`)
+                        and not (item.level == -1 and previous.level == -1 and item.title_depth != previous.title_depth)
                         # (a line that opens with a bracket starts an item of its own: `bracketed_subjects`)
                         and not (bracketed is not None and item.lines and bracketed.module.marked(item.lines[0]))
                         # (a name wrapped so that its amount is printed on the last line, none on the code's line: `1 居宅サービス` / `事業費 3,596,885`)
@@ -2307,7 +2311,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                                           lambda item: bracketed is not None and bool(item.lines) and bracketed.module.marked(item.lines[0]))
             if group.mode == "indent":
                 subject_pattern.align(logical, group, kept, alignment)
-                if group.subject and (digit_set := quirk(document, 'digit_set_codes')) is not None:
+                if group.subject and (digit_set := quirk(document, 'digit_set_codes')) is not None \
+                        and quirk(document, 'codes_across_level_rules') is None:  # that quirk sets the subject's codes
                     digit_set.module.align(kept, digit_set.value)
             found[id(group)] = kept
     # A subject name cut at the foot of a page continues without a number or amount at the next page's

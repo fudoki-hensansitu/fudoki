@@ -79,6 +79,400 @@
           "table_id": "general-initial"
         }
       ]
+    },
+    {
+      "id": "kokuho-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "06ce752376ec18f2e0c5f2598f358a12d7264aeccfa5073d6c20e167b6dd37c8"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kokuho-initial-ocr-1",
+          "origin_sha256": "06ce752376ec18f2e0c5f2598f358a12d7264aeccfa5073d6c20e167b6dd37c8",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "12a9fcaec25e44c09c86b8b97f4356f96b8bb1cb4ab1ab6d95a3ad74debe7702",
+          "bytes": 3648832
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "kokuho-initial",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "節／節の説明": {
+                  "kind": "label"
+                }
+              },
+              "rules": {
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "区分": {
+                "pattern": "indent"
+              },
+              "節の説明": {
+                "pattern": "indent",
+                "quirks": {
+                  "under": "区分"
+                }
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                },
+                "quirks": {
+                  "lost_circle_marks": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "one_row_header": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        },
+        "pages": [
+          [
+            5,
+            14
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "kokuho-initial-特定財源",
+            "pages": [
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14
+            ],
+            "box": [
+              219.0,
+              69.5,
+              351.0,
+              77.5
+            ],
+            "text": "特定財源",
+            "reason": "財源内訳の見出し「特定財源」は国都支出金・地方債・その他の3列にまたがる。scan では「その他」の上の横の罫が読めず、OCR が「特定財」と「源」に分けた「源」が下の段の見出しになる。原典の描画で1つの見出しであることを確かめ、上の段の枠に置く。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-initial"
+        }
+      ]
+    },
+    {
+      "id": "kouki-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "85a2b4b02539e3f64aa520adfad5001d43ab34fe26facd0676bd2e9fd52a87bb"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kouki-initial-ocr-1",
+          "origin_sha256": "85a2b4b02539e3f64aa520adfad5001d43ab34fe26facd0676bd2e9fd52a87bb",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              4,
+              5,
+              6
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "d0a3a0f4a8096ed6f3ad0cb62363e9f08e589f38936f340fa770cde1f519f9d8",
+          "bytes": 1221305
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "kouki-initial",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "節／節の説明": {
+                  "kind": "label"
+                }
+              },
+              "rules": {
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "区分": {
+                "pattern": "indent"
+              },
+              "節の説明": {
+                "pattern": "indent",
+                "quirks": {
+                  "under": "区分"
+                }
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                },
+                "quirks": {
+                  "lost_circle_marks": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "one_row_header": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        },
+        "pages": [
+          [
+            4,
+            6
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "kouki-initial-特定財源",
+            "pages": [
+              4,
+              5,
+              6
+            ],
+            "box": [
+              219.0,
+              69.5,
+              351.0,
+              77.5
+            ],
+            "text": "特定財源",
+            "reason": "財源内訳の見出し「特定財源」は国都支出金・地方債・その他の3列にまたがる。scan では「その他」の上の横の罫が読めず、OCR が「特定財」と「源」に分けた「源」が下の段の見出しになる。原典の描画で1つの見出しであることを確かめ、上の段の枠に置く。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-initial"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6da3ef3e82739ce3d233b40b33ae43271b55a57e5a58e40fb7586c07988d4f1b"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kaigo-initial-ocr-1",
+          "origin_sha256": "6da3ef3e82739ce3d233b40b33ae43271b55a57e5a58e40fb7586c07988d4f1b",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "06fde1bdaec0612477f2814eea4045832e848ce84a23a549b37cfb89b719848a",
+          "bytes": 2641541
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "kaigo-initial",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "節／節の説明": {
+                  "kind": "label"
+                }
+              },
+              "rules": {
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "区分": {
+                "pattern": "indent"
+              },
+              "節の説明": {
+                "pattern": "indent",
+                "quirks": {
+                  "under": "区分"
+                }
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                },
+                "quirks": {
+                  "lost_circle_marks": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "one_row_header": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        },
+        "pages": [
+          [
+            6,
+            12
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "kaigo-initial-特定財源",
+            "pages": [
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "box": [
+              219.0,
+              69.5,
+              351.0,
+              77.5
+            ],
+            "text": "特定財源",
+            "reason": "財源内訳の見出し「特定財源」は国都支出金・地方債・その他の3列にまたがる。scan では「その他」の上の横の罫が読めず、OCR が「特定財」と「源」に分けた「源」が下の段の見出しになる。原典の描画で1つの見出しであることを確かめ、上の段の枠に置く。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-initial"
+        }
+      ]
     }
   ]
 }

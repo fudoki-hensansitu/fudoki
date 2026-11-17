@@ -142,8 +142,10 @@ def titles(logical: layout.Logical, heading: str | list[str] | None) -> list[tup
     """The 款・項 titles above the frame, top to bottom: level, code, name, name glyphs and (heading, amount glyphs)
     (a list of them when the headings are declared as a list)."""
     found = []
+    codeless = document_quirk('codeless_titles')
     # `outside` holds each page's own coordinates: the lines of a spread are read page by page.
     pages = sorted({g.page for g in logical.outside})
+    entries = []  # (title, text, name glyphs, amount glyphs)
     for line in (line for page in pages for line in lines([g for g in logical.outside if g.page == page])):
         if any(logical.below_foot(g) for g in line):
             continue  # the page's foot (`（款） 1 議会費 （項） 1 議会費` under the frame of a right-hand page)
@@ -152,15 +154,19 @@ def titles(logical: layout.Logical, heading: str | list[str] | None) -> list[tup
             while len(parts) > 1 and is_amount(normalize(text(parts[-1]))):
                 amounts.insert(0, parts.pop())
             name = [g for part in parts for g in part]
-            found_title = title(name)
-            if found_title is None:
-                continue
-            level, code, label = found_title
-            if isinstance(heading, list):  # the headings of the amounts in the order printed (杉並区の歳入)
-                amount = list(zip(heading, amounts)) or None
-            else:
-                amount = (heading, amounts[0]) if amounts and heading else None
-            found.append((level, code, label, name, amount))
+            entries.append((title(name), normalize(text(name)), name, amounts))
+    # A dropped 款・項's title prints no code (`codeless_titles`).
+    titled = codeless.module.assign([(t, v, n, bool(a)) for t, v, n, a in entries]) if codeless is not None and entries \
+        else [e[0] for e in entries]
+    for found_title, (_, _, name, amounts) in zip(titled, entries):
+        if found_title is None:
+            continue
+        level, code, label = found_title
+        if isinstance(heading, list):  # the headings of the amounts in the order printed (杉並区の歳入)
+            amount = list(zip(heading, amounts)) or None
+        else:
+            amount = (heading, amounts[0]) if amounts and heading else None
+        found.append((level, code, label, name, amount))
     return found
 
 
@@ -373,16 +379,23 @@ def between_tables(logical: layout.Logical, verticals: dict, full: dict) -> list
             if above and below:
                 candidates.append((band, word, (band.page, above[-1], below[0])))
     moved = []
+    codeless = document_quirk('codeless_titles')
     for stretch in dict.fromkeys(c[2] for c in candidates):
         inside = [(band, word) for band, word, at in candidates if at == stretch]
         glyphs = [Glyph(w.text, *w.original, w.page, 0) for _, w in inside]
         last = None
+        entries = []
         for line in lines(glyphs):
             parts = runs(line)
+            amounted = len(parts) > 1 and is_amount(normalize(text(parts[-1])))
             while len(parts) > 1 and is_amount(normalize(text(parts[-1]))):
                 parts.pop()
             name = [g for part in parts for g in part]
-            if title(name) is not None or PAGE_INDEX.match(normalize(text(name))):
+            entries.append((title(name), normalize(text(name)), name, amounted, line))
+        # A dropped 款・項's title prints no code (`codeless_titles`).
+        titled = codeless.module.assign([e[:4] for e in entries]) if codeless is not None and entries else [e[0] for e in entries]
+        for found, (_, value, _, _, line) in zip(titled, entries):
+            if found is not None or PAGE_INDEX.match(value):
                 last = max(g.y1 for g in line)  # (the index over the next table of a right-hand page: no title, not a row)
         if last is not None:
             moved.extend((band, word) for band, word in inside if (word.y0 + word.y1) / 2 <= last)
