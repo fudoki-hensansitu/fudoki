@@ -183,9 +183,9 @@ function Strip({ mode, children }: { mode: 'grow' | 'still'; children: React.Rea
 
 /** 落とす紙を横に切った帯の数。多いほど丸まりが滑らかになる */
 const FALL_BANDS = 24
-/** 帯ごとの曲がり（度）。下の端ほど強く曲げ、全体で2回りほど巻く。帯ごとに少しねじり、写真のレシートのように横へ流れる螺旋にする */
-const bend = (i: number) => 58 * Math.pow(i / FALL_BANDS, 1.4)
-const twist = (i: number) => (i % 2 ? 1.2 : 0.8) * (i / FALL_BANDS) * 4
+/** 帯ごとの曲がり（度）。紙全体で2回り巻く。帯ごとに少しねじり、横へ流れる螺旋にする（切ったレシートが丸まって落ちる姿） */
+const BEND = 720 / FALL_BANDS
+const TWIST = 2.2
 
 /** 切り離した前のレシート。差し出し口で切れて少し沈み、下の端から丸まりながら落ちて消える。
  * 紙を横の帯に切り、帯を入れ子にして一つ前の帯の下端を軸に曲げる（曲がりが積み重なって、紙が巻く）。紙の裏は白い */
@@ -200,28 +200,30 @@ function Fall({ height, children }: { height: number; children: React.ReactNode 
       el.animate(
         [
           { transform: 'translateY(0) rotateZ(0deg)', opacity: 1 },
-          { transform: 'translateY(14px) rotateZ(0deg)', opacity: 1, offset: 0.12 },
-          { transform: 'translateY(140px) rotateZ(-4deg)', opacity: 1, offset: 0.55 },
-          { transform: 'translateY(520px) rotateZ(-10deg)', opacity: 0 },
+          { transform: 'translateY(12px) rotateZ(0deg)', opacity: 1, offset: 0.08 },
+          { transform: 'translateY(36px) rotateZ(-3deg)', opacity: 1, offset: 0.62 },
+          { transform: 'translateY(460px) rotateZ(-14deg)', opacity: 0 },
         ],
         opts,
       ),
     ]
-    let turned = 0
+    // 下の端の帯から先に曲げ、紙が下から巻き上がって丸まる。巻き終えたら（全体の 6 割ほど）落ちる
+    const roll = { duration: FALL_MS * 0.5, easing: 'cubic-bezier(0.4, 0, 0.2, 1)', fill: 'forwards' } as const
     el.querySelectorAll<HTMLElement>('[data-band]').forEach((b) => {
       const i = Number(b.dataset.band)
-      turned += bend(i)
+      if (i === 0) return
+      const delay = (1 - i / FALL_BANDS) * FALL_MS * 0.12
+      anims.push(b.animate([{ transform: 'rotateX(0deg) rotateZ(0deg)' }, { transform: `rotateX(${BEND}deg) rotateZ(${TWIST}deg)` }], { ...roll, delay }))
       // 巻いた角度に合わせて陰を付ける（光に背を向けた帯ほど暗い）
-      const shade = (0.22 * (1 - Math.cos((turned * Math.PI) / 180))) / 2
-      anims.push(b.animate([{ transform: 'rotateX(0deg) rotateZ(0deg)' }, { transform: `rotateX(${bend(i)}deg) rotateZ(${twist(i)}deg)` }], { ...opts, easing: 'cubic-bezier(0.3, 0, 0.3, 1)', delay: (1 - i / FALL_BANDS) * FALL_MS * 0.15 }))
+      const shade = (0.2 * (1 - Math.cos((BEND * i * Math.PI) / 180))) / 2
       const dim = b.querySelector<HTMLElement>(':scope > .rc-band-dim')
-      if (dim) anims.push(dim.animate([{ opacity: 0 }, { opacity: shade }], { ...opts, easing: 'ease-in' }))
+      if (dim) anims.push(dim.animate([{ opacity: 0 }, { opacity: shade }], { ...roll, delay }))
     })
     return () => anims.forEach((a) => a.cancel())
   }, [height])
   const band = (i: number): React.ReactNode => (
     <div data-band={i} className="rc-band" style={{ height: h, top: i ? h : 0 }}>
-      <div className="rc-band-face" style={{ height: h }}>
+      <div className="rc-band-face" style={{ height: h + 1 }}>
         <div style={{ marginTop: -i * h }}>{children}</div>
       </div>
       <div className="rc-band-back" />
@@ -357,7 +359,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, shareOf, 
         {receipt ? <div className="rm-slot" aria-hidden="true" /> : null}
       </section>
       {pop ? (
-        <div ref={feed} className="rc-feed">
+        <div ref={feed} className="rc-feed" style={falling && !printed ? { minHeight: falling.height } : undefined}>
           <div className="rc-print">
             {printed ? (
               <Strip key={printed.key} mode={printed.key === printing ? 'grow' : 'still'}>
