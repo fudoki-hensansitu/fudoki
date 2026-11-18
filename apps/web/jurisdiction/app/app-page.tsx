@@ -516,19 +516,16 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
       {total && revenueDoc ? <IncomeFlow doc={revenueDoc} revenue={current?.revenue} phase={phase} expTotal={total.yen} fields={v.fields} pop={d.pop} openField={openField} /> : null}
       {total ? <FieldsSection phase={phase} /> : null}
       {total ? (
-        <div>
-          <div className="mb-3 flex items-center justify-between gap-3">
-            <Title size="h3" as="h2">お金の流れ</Title>
-            <ToggleGroup aria-label="お金の流れの見せ方" value={[view]} onValueChange={(v) => { if (v[0]) setView(v[0] as typeof view) }} spacing={0} className="grid shrink-0 grid-cols-2 rounded-full bg-secondary p-1">
-              <ToggleGroupItem value="sankey" className="w-full rounded-full! px-3">
-                <ArrowsSplitIcon aria-hidden="true" className="-rotate-90" />サンキー
-              </ToggleGroupItem>
-              <ToggleGroupItem value="table" className="w-full rounded-full! px-3">
-                <TableIcon aria-hidden="true" />テーブル
-              </ToggleGroupItem>
-            </ToggleGroup>
-          </div>
-          <p className="text-sm leading-[1.7] text-muted-foreground">{view === 'table' ? `${current?.revenue?.length ? '歳出と歳入' : '歳出'}の款・項・目・節を、行を押して開けます。割合は総額に占める割合です。` : current?.revenue?.length ? '歳入（左）と歳出（右）が、款から項・目へとどう分かれていくかを示しています。' : '歳出が、款から項・目へとどう分かれていくかを示しています。'}会計を選ぶと、その会計の流れに切り替わります。</p>
+        <div className="flex items-center justify-between gap-3">
+          <Title size="h3" as="h2">お金の流れ</Title>
+          <ToggleGroup aria-label="お金の流れの見せ方" value={[view]} onValueChange={(v) => { if (v[0]) setView(v[0] as typeof view) }} spacing={0} className="grid shrink-0 grid-cols-2 rounded-full bg-secondary p-1">
+            <ToggleGroupItem value="sankey" className="w-full rounded-full! px-3">
+              <ArrowsSplitIcon aria-hidden="true" className="-rotate-90" />サンキー
+            </ToggleGroupItem>
+            <ToggleGroupItem value="table" className="w-full rounded-full! px-3">
+              <TableIcon aria-hidden="true" />テーブル
+            </ToggleGroupItem>
+          </ToggleGroup>
         </div>
       ) : null}
       {total ? <AccountCards accounts={accounts} account={account} setAccount={setAccount} /> : null}
