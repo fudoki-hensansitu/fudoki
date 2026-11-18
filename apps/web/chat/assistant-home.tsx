@@ -84,7 +84,7 @@ export function AssistantHome({ sitekey }: { sitekey: string }) {
                       {e.icon}
                       {e.title}
                     </span>
-                    <span className="text-sm leading-relaxed text-muted-foreground">「{e.question}」</span>
+                    <span className="text-base leading-relaxed text-muted-foreground">「{e.question}」</span>
                   </button>
                 </li>
               ))}

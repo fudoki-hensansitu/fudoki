@@ -162,7 +162,7 @@ export function Landing() {
               <Title size="headline" as="h3" className="mt-4">
                 {s.title}
               </Title>
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{s.body}</p>
+              <p className="mt-2 text-base leading-relaxed text-muted-foreground">{s.body}</p>
             </li>
           ))}
         </ol>

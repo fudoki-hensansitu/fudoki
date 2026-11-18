@@ -153,7 +153,7 @@ function Section({ title, drills, total, query, onQuery }: { title: string; dril
         <Input type="search" value={query} onChange={(e) => onQuery(e.target.value)} placeholder={`${title}の${levels}の名前で探す`} className="h-9 rounded-full pl-9" aria-label={`${title}を名前で探す`} />
       </div>
       <div ref={wrap} style={term ? { minHeight } : undefined}>
-      <Table className="text-sm" aria-label={`${title}（${levels}）`}>
+      <Table aria-label={`${title}（${levels}）`}>
         <TableHeader>
           {table.getHeaderGroups().map((g) => (
             <TableRow key={g.id} className="hover:bg-transparent">

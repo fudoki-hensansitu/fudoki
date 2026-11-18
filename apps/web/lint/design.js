@@ -1,5 +1,5 @@
 // DESIGN.md から外れた色・余白・文字の大きさ・太さを見つける oxlint の JS plugin。色の値は styles/tokens.css（DESIGN.md の Tokens）にだけ置き、画面は token の名前で塗る。
-// 余白は 4px の格子、文字は Title の段と text-xs・text-sm・text-base だけ、太さは 600 まで
+// 余白は 4px の格子、文字は Title の段と text-xs・text-sm・text-base だけ（表と段落は本文の text-base）、太さは 600 まで
 const UTILITY = String.raw`(?:bg|text|border(?:-[xytrblse])?|ring|ring-offset|inset-ring|fill|stroke|outline|decoration|divide|from|via|to|shadow|inset-shadow|drop-shadow|caret|accent|placeholder)`
 const PALETTE = 'slate|gray|zinc|neutral|stone|taupe|mauve|mist|olive|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose'
 const TOKEN = String.raw`(?:background|foreground|card|popover|primary|secondary|muted|accent|destructive|border|input|ring|brand|emblem|sidebar|chart|hair|page|paper|night|shu|ai|kincha|sakura)(?:-[a-z0-9-]+)?`
@@ -47,7 +47,42 @@ const rule = ({ pattern, message }) => ({
   },
 })
 
+// 本文は 16px（text-base）。表の中身と、行間を本文の段で組む段落（p）は本文なので、補足・注記の大きさ（text-sm・text-xs）にしない。
+// 表は部品（components/ui/table）の既定が本文の大きさなので、使う側で小さくしない
+const SMALL = new RegExp(`${EDGE_L}text-(?:xs|sm)${EDGE_R}`)
+const TABLE = new Set(['Table', 'TableHeader', 'TableBody', 'TableFooter', 'TableRow', 'TableHead', 'TableCell', 'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td'])
+const BODY_LEADING = new RegExp(`${EDGE_L}leading-(?:relaxed|loose|\\[1\\.[6-9]\\]|body)${EDGE_R}`)
+// className の式から文字列を集める。cn(...) の引数・三項・&& の枝も読む
+const strings = (e) => {
+  if (!e) return []
+  switch (e.type) {
+    case 'Literal': return typeof e.value === 'string' ? [e.value] : []
+    case 'TemplateLiteral': return e.quasis.map((q) => q.value.cooked ?? q.value.raw)
+    case 'JSXExpressionContainer': return strings(e.expression)
+    case 'CallExpression': return e.arguments.flatMap(strings)
+    case 'ConditionalExpression': return [...strings(e.consequent), ...strings(e.alternate)]
+    case 'LogicalExpression': return [...strings(e.left), ...strings(e.right)]
+    default: return []
+  }
+}
+const classText = (attr) => strings(attr.value).join(' ') || null
+const bodyText = {
+  create(context) {
+    return {
+      JSXOpeningElement(node) {
+        const name = node.name.type === 'JSXIdentifier' ? node.name.name : null
+        const attr = node.attributes.find((a) => a.type === 'JSXAttribute' && a.name.name === 'className')
+        const text = attr ? classText(attr) : null
+        const small = text ? SMALL.exec(text) : null
+        if (!small) return
+        if (name && TABLE.has(name)) context.report({ node: attr, message: `表の中身は本文の大きさ（16px）にする。補足・注記の大きさにしない（DESIGN.md）: ${small[0]}` })
+        else if (name === 'p' && small[0] === 'text-sm' && BODY_LEADING.test(text)) context.report({ node: attr, message: `本文の行間で組む段落は本文の大きさ（text-base）にする。補足なら行間を本文の段にしない（DESIGN.md）: ${small[0]}` })
+      },
+    }
+  },
+}
+
 export default {
   meta: { name: 'design' },
-  rules: Object.fromEntries(Object.entries(PATTERNS).map(([name, spec]) => [name, rule(spec)])),
+  rules: { ...Object.fromEntries(Object.entries(PATTERNS).map(([name, spec]) => [name, rule(spec)])), 'body-text': bodyText },
 }

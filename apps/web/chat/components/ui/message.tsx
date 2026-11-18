@@ -21,7 +21,7 @@ function Message({
       data-slot="message"
       data-align={align}
       className={cn(
-        "text-sm gap-2 group/message relative flex w-full min-w-0 data-[align=end]:flex-row-reverse",
+        "text-base gap-2 group/message relative flex w-full min-w-0 data-[align=end]:flex-row-reverse",
         className
       )}
       {...props}
