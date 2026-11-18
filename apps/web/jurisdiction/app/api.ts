@@ -199,8 +199,8 @@ export type ProjectFull = {
   cofog?: string | null
   /** 予算書の入れ子で上にある事業。目の直下の事業から1つ上の事業までの順（目の直下の事業は空）。年度を指さずに読んだときだけ持つ */
   ancestors?: { id: string; name: string }[]
-  /** 年度ごとの評価（この事業につないだ評価シートの A〜D。新しい方から5年度）。年度を指さずに読んだときだけ持つ */
-  grades?: Record<string, NonNullable<Sheet['grade']>>
+  /** 年度ごとの評価（この事業につないだ評価シートの A〜D と、そのシートの出典の URL（PDF の頁つき）。新しい方から5年度）。年度を指さずに読んだときだけ持つ */
+  grades?: Record<string, { grade: NonNullable<Sheet['grade']>; href?: string }>
   /** 年度ごとの当初予算（b）・決算（s）の事業の行が印字された出典の URL（PDF は頁つき）。年度を指さずに読んだときだけ持つ */
   src?: Record<string, { b?: string; s?: string }>
 }
@@ -244,11 +244,11 @@ export async function readProjectFull(call: ApiCall, id: string, at?: { year: nu
   }
 }
 
-/** 事業につないだ評価シートの、年度ごとの評価。読めなければ空 */
+/** 事業につないだ評価シートの、年度ごとの評価と、そのシートが載る出典の頁。読めなければ空 */
 async function gradesOf(call: ApiCall, span: { min: number; max: number }, id: string): Promise<NonNullable<ProjectFull['grades']>> {
   const sheets = await readSheetsOfProjects(call, span, [id]).catch(() => [])
   const out: NonNullable<ProjectFull['grades']> = {}
-  for (const s of sheets) if (s.grade && s.projects.includes(id)) out[String(s.fy)] ??= s.grade
+  for (const s of sheets) if (s.grade && s.projects.includes(id)) out[String(s.fy)] ??= { grade: s.grade, ...(s.url ? { href: `${s.url}#page=${s.page}` } : {}) }
   return out
 }
 
