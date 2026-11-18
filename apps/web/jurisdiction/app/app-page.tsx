@@ -524,7 +524,7 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
                 <ArrowsSplitIcon aria-hidden="true" className="-rotate-90" />サンキー
               </ToggleGroupItem>
               <ToggleGroupItem value="table" className="w-full rounded-full! px-3">
-                <TableIcon aria-hidden="true" />表
+                <TableIcon aria-hidden="true" />テーブル
               </ToggleGroupItem>
             </ToggleGroup>
           </div>

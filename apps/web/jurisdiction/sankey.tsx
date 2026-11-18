@@ -20,25 +20,56 @@ const GAP = 14
 
 const amountText = (yen: number, missing?: boolean) => (missing ? '金額未記載' : formatYen(yen))
 
-const fit = (values: number[], slot: number, gap: number, height: number) => {
+/** 名前の1行の高さ */
+const lineOf = (size: number) => Math.round(size * 1.25)
+/** 名前を切らずに、1行 chars 文字までで折る（全角を1文字として数える）。行の長さはなるべく揃え、行数が増えないなら「・」の後ろで折る */
+export const wrapName = (name: string, chars: number) => {
+  const n = Math.max(1, chars)
+  const out: string[] = []
+  let rest = Array.from(name)
+  while (rest.length > n) {
+    const lines = Math.ceil(rest.length / n)
+    const dot = rest.slice(0, n).lastIndexOf('・')
+    const cut = dot > 0 && rest.length - dot - 1 <= n * (lines - 1) ? dot + 1 : Math.ceil(rest.length / lines)
+    out.push(rest.slice(0, cut).join(''))
+    rest = rest.slice(cut)
+  }
+  out.push(rest.join(''))
+  return out
+}
+/** 名前の行数に応じた段の高さ。1行は slot、2行目からは1行の高さずつ足す */
+export const slotsFor = (names: string[][], slot: number, size: number) => names.map((lines) => slot + (lines.length - 1) * lineOf(size))
+/** 折った名前。y を行のまとまりの真ん中にする */
+export function NameText({ x, y, lines, size, anchor }: { x: number; y: number; lines: string[]; size: number; anchor?: 'start' | 'end' }) {
+  const lh = lineOf(size)
+  return (
+    <text x={x} y={y} data-name="" textAnchor={anchor} className="fill-foreground" fontSize={size}>
+      {lines.map((line, i) => <tspan key={i} x={x} dy={i ? lh : size * 0.35 - ((lines.length - 1) * lh) / 2}>{line}</tspan>)}
+    </text>
+  )
+}
+
+const at = (slot: number | number[], i: number) => (typeof slot === 'number' ? slot : slot[i]!)
+
+export const fit = (values: number[], slot: number | number[], gap: number, height: number) => {
   // 帯の倍率は金額の和に反比例する（東京都の約9兆円で 1e-11 ほど）。上限を和で割っておかないと、40回の二分探索の刻みが倍率より粗くなり帯の太さが0になる
   let low = 0
   let high = height / Math.max(1, values.reduce((sum, value) => sum + value, 0))
   for (let i = 0; i < 40; i++) {
     const mid = (low + high) / 2
-    const used = values.reduce((sum, value) => sum + Math.max(value * mid + LEAD, slot) + gap, 0)
+    const used = values.reduce((sum, value, i) => sum + Math.max(value * mid + LEAD, at(slot, i)) + gap, 0)
     if (used > height) high = mid
     else low = mid
   }
   return low
 }
 
-const layout = (values: number[], scale: number, slot: number, gap: number) => {
+export const layout = (values: number[], scale: number, slot: number | number[], gap: number) => {
   let top = 0
-  return values.map((value) => {
+  return values.map((value, i) => {
     const height = Math.max(value * scale, 0)
     // 棒の上に割合の分（LEAD）を空け、残りの中ほどに棒を置く
-    const size = Math.max(height + LEAD, slot)
+    const size = Math.max(height + LEAD, at(slot, i))
     const node = { top, size, y: top + LEAD + (size - LEAD - height) / 2, height }
     top += size + gap
     return node
@@ -52,21 +83,29 @@ const ribbon = (xa: number, ya: number, ha: number, xb: number, yb: number, hb: 
 
 const end = (nodes: { top: number; size: number }[]) => (nodes.length ? nodes[nodes.length - 1]!.top + nodes[nodes.length - 1]!.size : 0)
 
-/** 款・項の金額から、列の位置と各段の高さを決める。高さ（total）は幅に依らない */
-const geometry = (kanValues: number[], kouValues: number[], width: number, height: number) => {
+/** 款・項の金額と名前から、列の位置・名前の折り方と各段の高さを決める。名前を折る分だけ段が高くなる */
+const geometry = (kanValues: number[], kouValues: number[], width: number, height: number, kanNames?: string[], kouNames?: string[]) => {
   const narrow = width < 560
-  // 狭い画面の款の名前は9文字まで（10.5px）。棒との間（GAP）を足して収まる幅を取る
-  const left = narrow ? 114 : 180
-  const right = narrow ? 170 : 260
-  // ラベルの最小の高さだけで指定の高さを超えると帯の太さが0になるので、そのときは図を縦に伸ばして帯の分を残す
-  const floor = (n: number, slot: number, gap: number) => n * (slot + gap) + BAND_ROOM
-  const room = Math.max(height, floor(kanValues.length, KAN_SLOT, KAN_GAP), floor(kouValues.length, KOU_SLOT, KOU_GAP))
-  const scale = Math.min(fit(kanValues, KAN_SLOT, KAN_GAP, room), fit(kouValues, KOU_SLOT, KOU_GAP, room))
-  const kans = layout(kanValues, scale, KAN_SLOT, KAN_GAP)
-  const kouNodes = layout(kouValues, scale, KOU_SLOT, KOU_GAP)
+  // 名前は切らずに折るので、狭い画面では名前の欄を細くして帯に幅を回す（款は1行7文字、項は10文字ほど）
+  const left = narrow ? 92 : 180
+  const right = narrow ? 124 : 260
   const x0 = left
   const x1 = Math.max(width - right - BAR, x0 + BAR + 40)
-  return { narrow, x0, x1, kans, kouNodes, total: Math.max(end(kans), end(kouNodes), 40) }
+  const kanSize = narrow ? 10.5 : 13
+  const kouSize = narrow ? 10.5 : 12
+  // 幅を測る前は1行として高さを取る
+  const wrapAll = (names: string[] | undefined, n: number, room: number, size: number) => Array.from({ length: n }, (_, i) => (width ? wrapName(names?.[i] ?? '', Math.floor(room / size)) : ['']))
+  const kanLines = wrapAll(kanNames, kanValues.length, x0 - GAP - 2, kanSize)
+  const kouLines = wrapAll(kouNames, kouValues.length, width - x1 - BAR - GAP - 4, kouSize)
+  const kanSlots = slotsFor(kanLines, KAN_SLOT, kanSize)
+  const kouSlots = slotsFor(kouLines, KOU_SLOT, kouSize)
+  // ラベルの最小の高さだけで指定の高さを超えると帯の太さが0になるので、そのときは図を縦に伸ばして帯の分を残す
+  const floor = (slots: number[], gap: number) => slots.reduce((sum, slot) => sum + slot + gap, 0) + BAND_ROOM
+  const room = Math.max(height, floor(kanSlots, KAN_GAP), floor(kouSlots, KOU_GAP))
+  const scale = Math.min(fit(kanValues, kanSlots, KAN_GAP, room), fit(kouValues, kouSlots, KOU_GAP, room))
+  const kans = layout(kanValues, scale, kanSlots, KAN_GAP)
+  const kouNodes = layout(kouValues, scale, kouSlots, KOU_GAP)
+  return { narrow, x0, x1, kans, kouNodes, kanLines, kouLines, kanSize, kouSize, total: Math.max(end(kans), end(kouNodes), 40) }
 }
 
 // タブへ移ると、すぐ描いた頁を loader が読み終えた頁で作り直す。同じ図を少し前に描いたなら、作り直した図では帯を伸ばし直さない（FieldsSection の grownAt と同じ）
@@ -121,8 +160,7 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
   const pct = (yen: number, missing?: boolean) => formatShare(yen, base, missing) ?? '—'
   const width = useWidth(ref)
   const kous = flows.flatMap((flow, kanIndex) => flow.kou.map((kou, kouIndex) => ({ kanIndex, kouIndex, kou })))
-  const { narrow, x0, x1, kans, kouNodes, total } = geometry(flows.map((flow) => Math.max(0, flow.kan.yen)), kous.map(({ kou }) => Math.max(0, kou.yen)), width, height)
-  const cut = (name: string, n: number) => (Array.from(name).length > n ? `${Array.from(name).slice(0, n - 1).join('')}…` : name)
+  const { narrow, x0, x1, kans, kouNodes, kanLines, kouLines, kanSize, kouSize, total } = geometry(flows.map((flow) => Math.max(0, flow.kan.yen)), kous.map(({ kou }) => Math.max(0, kou.yen)), width, height, flows.map((flow) => flow.kan.name), kous.map(({ kou }) => kou.name))
   const offsets = new Map<number, number>()
   // 左右を逆にするときは、x を図の幅から引き、棒は右端から、文字の寄せも逆にする
   const X = (x: number) => (mirror ? width - x : x)
@@ -158,13 +196,12 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
           </g>
           {flows.map((flow, i) => {
             const node = kans[i]!
-            const label = narrow ? cut(flow.kan.name, 9) : flow.kan.name
             return (
               <AmountTip key={flow.kan.id} name={flow.kan.name} yen={flow.kan.yen} missing={flow.kan.amountMissing} side={kanSide} render={<g {...(onSelect ? pick(() => onSelect(i)) : {})} aria-label={`${flow.kan.name} ${amountText(flow.kan.yen, flow.kan.amountMissing)}${onSelect ? '、内訳を見る' : ''}`} />}>
                 <rect x={left(0, x0 + BAR)} y={node.top} width={x0 + BAR} height={node.size} className="fill-transparent" />
                 <rect x={left(x0, BAR)} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-primary" />
                 <text x={X(x0 + BAR / 2)} y={node.y - 3} textAnchor="middle" className="fill-primary font-semibold tabular-nums" fontSize={narrow ? 10 : 11}>{pct(flow.kan.yen, flow.kan.amountMissing)}</text>
-                <text x={X(x0 - GAP)} y={node.y + Math.max(node.height, 2) / 2} dy="0.35em" data-name="" textAnchor={endAnchor} className="fill-foreground" fontSize={narrow ? 10.5 : 13}>{label}</text>
+                <NameText x={X(x0 - GAP)} y={node.y + Math.max(node.height, 2) / 2} lines={kanLines[i]!} size={kanSize} anchor={endAnchor} />
               </AmountTip>
             )
           })}
@@ -176,9 +213,7 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
                 <rect x={left(x1, width - x1)} y={node.top} width={width - x1} height={node.size} className="fill-transparent" />
                 <rect x={left(x1, BAR)} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-primary" />
                 <text x={X(x1 + BAR / 2)} y={node.y - 3} textAnchor="middle" className="fill-primary font-semibold tabular-nums" fontSize={narrow ? 10 : 11}>{pct(kou.yen, kou.amountMissing)}</text>
-                <text x={X(x1 + BAR + GAP)} y={node.y + Math.max(node.height, 2) / 2} dy="0.35em" data-name="" textAnchor={start} className="fill-foreground" fontSize={narrow ? 10.5 : 12}>
-                  {cut(kou.name, Math.max(6, Math.floor((width - x1 - BAR - GAP - 8) / (narrow ? 10.5 : 12))))}
-                </text>
+                <NameText x={X(x1 + BAR + GAP)} y={node.y + Math.max(node.height, 2) / 2} lines={kouLines[i]!} size={kouSize} anchor={start} />
                 </g>
               </AmountTip>
             )
