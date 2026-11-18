@@ -130,6 +130,7 @@ function Dashboard({ c }: { c: Ctx }) {
   const detailHref = c.year === c.years.at(-1) ? c.town.path : flowHref(c)
   return (
     <ReceiptMachine
+      code={town.code}
       name={town.name}
       v={v}
       year={year}
@@ -253,8 +254,6 @@ export function Home({ listed, featured }: HomeProps) {
   else {
     body = (
       <>
-        {/* ほかのまちを見る導線。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
-        <OtherTowns className="mb-3" />
         {/* 札の上の行。左端に「私のまち」、右上にリセット（住んでいるまちを選び直す）を添える（2026-11-18 yuito） */}
         <div className="mb-2 flex items-baseline justify-between">
           <p className="text-sm font-medium text-muted-foreground">私のまち</p>
@@ -265,6 +264,8 @@ export function Home({ listed, featured }: HomeProps) {
         <WithCtx key={town!.code} town={town!} vision={vision} snap={snap}>
           {(c) => <Dashboard c={c} />}
         </WithCtx>
+        {/* ほかのまちを見る導線。レシートを読み終えた下に置く（2026-11-18 yuito）。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
+        <OtherTowns className="mt-4" />
       </>
     )
   }

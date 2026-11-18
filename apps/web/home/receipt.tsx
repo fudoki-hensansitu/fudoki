@@ -4,7 +4,7 @@
 // 1人あたりは予算を人口で割った額（払った税金の額ではない）。分野の行の和が合計に合うよう、大きい端数から1円ずつ足して丸める
 import * as React from 'react'
 import { encode } from 'uqr'
-import { CheckIcon, LinkIcon, XLogoIcon } from '@phosphor-icons/react'
+import { ArrowRightIcon, CheckIcon, LinkIcon, XLogoIcon } from '@phosphor-icons/react'
 import { Link } from '../nav/link'
 import { cn } from '@/lib/utils'
 import { titleVariants } from '@/components/ui/title'
@@ -13,6 +13,7 @@ import type { YearView } from '../jurisdiction/app/data'
 import { OTHER_FRAME } from '../jurisdiction/domains'
 import { FieldIcon } from './parts'
 import { perHeadParts } from './per-head'
+import { withUnits } from './units'
 import { COUNT_MS, PRINT_MS, READ_MS, SCROLL_MS } from './motion'
 import './receipt.css'
 
@@ -20,19 +21,6 @@ const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-r
 
 /** 右端の桁が転がる長さ（ms）。左の桁ほど長く、左端は COUNT_MS で着地する */
 const ROLL_MIN = 700
-
-/** 額を兆・億・万の単位で区切った文字（9,606億8,000万円 の「円」の前まで）。0 の区切りは出さない。端数は丸めない */
-const withUnits = (yen: number) => {
-  const units = ['', '万', '億', '兆']
-  let n = Math.max(0, Math.floor(yen))
-  const parts: string[] = []
-  for (let i = 0; n > 0 && i < units.length; i++) {
-    const g = i === units.length - 1 ? n : n % 10000
-    if (g) parts.unshift(`${g.toLocaleString('ja-JP')}${units[i]}`)
-    n = i === units.length - 1 ? 0 : Math.floor(n / 10000)
-  }
-  return parts.join('') || '0'
-}
 
 /** 数え上げ（オドメーター）。桁ごとに 0〜9 の帯を縦に転がし、減速して自分の数字に着地させる。右の桁ほど早く着地し、左の桁ほど長く・多く転がる。
  * 動きは CSS の animation だけ（receipt.css の .rm-reel）。key（年度と額）を替えて描き直すと転がし直す。reduced-motion では最初から着地した額。
@@ -73,8 +61,8 @@ function Odometer({ to, delay = 0 }: { to: number; delay?: number }) {
 /** 相対の url を、いま開いている origin に付けて外から開ける形にする */
 const absolute = (url: string) => (typeof location === 'undefined' ? url : new URL(url, location.origin).href)
 
-/** シェアで添えるリンク。受け取った人がホームで自分のまちを選ぶように、ホームだけにする（2026-11-17 yuito） */
-const HOME_URL = 'https://fudoki.dev/'
+/** シェアで添えるリンク。受け取った人がホームで自分のまちを選ぶようにホームへ向け、?town=&year= は OG 画像（そのまちのその年度の札とレシート）を選ぶためだけに付ける（2026-11-17・11-18 yuito） */
+const shareUrl = (code: string, year: number) => `https://fudoki.dev/?${new URLSearchParams({ town: code, year: String(year) })}`
 /** X に添える文言（2026-11-17 yuito） */
 const SHARE_TEXT = '私のお金はどこへ行った？ | 風土記'
 
@@ -84,10 +72,10 @@ const canShareImage = () => {
   return navigator.canShare({ files: [new File([''], 'receipt.png', { type: 'image/png' })] })
 }
 
-/** シェアのボタン。X に投稿するボタンと、ホームのリンクをコピーするボタンを、アイコンだけで並べる。
- * 共有シートで画像を渡せる端末（スマホ）では、X のボタンで共有シート（Web Share API）を開き、レシートの画像・文言・ホームのリンクを渡す（2026-11-18 yuito）。
+/** シェアのボタン。X に投稿するボタンと、リンクをコピーするボタンを、アイコンだけで並べる。
+ * 共有シートで画像を渡せる端末（スマホ）では、X のボタンで共有シート（Web Share API）を開き、レシートの画像・文言・リンクを渡す（2026-11-18 yuito）。
  * 共有は押した直後に呼ばないと断られるので、画像は紙を刷り終えたあとに先に作っておく。作れていないときと PC では X の投稿画面を開く */
-function Share() {
+function Share({ url }: { url: string }) {
   const [copied, setCopied] = React.useState(false)
   const timer = React.useRef<ReturnType<typeof setTimeout>>(undefined)
   const root = React.useRef<HTMLDivElement>(null)
@@ -113,17 +101,17 @@ function Share() {
     }
   }, [])
   const copy = async () => {
-    if (!(await navigator.clipboard.writeText(HOME_URL).then(() => true, () => false))) return
+    if (!(await navigator.clipboard.writeText(url).then(() => true, () => false))) return
     setCopied(true)
     clearTimeout(timer.current)
     timer.current = setTimeout(() => setCopied(false), 2000)
   }
-  const intent = `https://x.com/intent/post?${new URLSearchParams({ text: SHARE_TEXT, url: HOME_URL })}`
+  const intent = `https://x.com/intent/post?${new URLSearchParams({ text: SHARE_TEXT, url })}`
   const post = (e: React.MouseEvent) => {
     const file = image.current
     if (!file || !navigator.canShare?.({ files: [file] })) return
     e.preventDefault()
-    navigator.share({ files: [file], text: `${SHARE_TEXT} ${HOME_URL}` }).catch((err: unknown) => {
+    navigator.share({ files: [file], text: `${SHARE_TEXT} ${url}` }).catch((err: unknown) => {
       // 利用者が閉じたときは何もしない。共有に失敗したら X の投稿画面を開く
       if (!(err instanceof DOMException && err.name === 'AbortError')) window.open(intent, '_blank', 'noopener')
     })
@@ -408,7 +396,7 @@ let printedId = 0
 /** href（QR の行き先）と pop（1人あたりで割る人口）は、その紙を刷ったときの年度のもの。年度を替えても前の紙は前の年度のまま */
 type Printed = { id: number; key: string; year: number; v: YearView; href: string; pop: number }
 
-export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: { name: string; v: YearView; year: number; pop: number | null; base: string; detailHref: string; head: React.ReactNode }) {
+export function ReceiptMachine({ code, name, v, year, pop, base, detailHref, head }: { code: string; name: string; v: YearView; year: number; pop: number | null; base: string; detailHref: string; head: React.ReactNode }) {
   const settled = v.word === '決算'
   const what = `${yearName(year)}の${settled ? '決算' : '予算'}`
   const counted = `${year}:${v.total}`
@@ -500,8 +488,13 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
       {/* 読み取るとまちの頁を開く QR と、このレシートをシェアするボタン（X とリンクのコピー。リンクはホーム） */}
       <div className="mt-5 flex items-center justify-center gap-5">
         <Qr url={r.href} />
-        <Share />
+        <Share url={shareUrl(code, r.year)} />
       </div>
+      {/* 読み終えたところから、そのまま詳しい頁へ進めるように、紙の一番下に詳細を見るを置く（2026-11-18 yuito） */}
+      <Link href={r.href} className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-brand px-4 py-3 text-sm font-medium text-brand-foreground transition-opacity hover:opacity-90">
+        詳細を見る
+        <ArrowRightIcon className="size-4" />
+      </Link>
     </div>
     )
   }
