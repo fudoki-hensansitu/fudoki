@@ -259,8 +259,8 @@ export function Home({ listed, featured }: HomeProps) {
   else if (!town) body = <AskTown listed={listed} onPick={(e) => set(toTown(e))} />
   else {
     body = (
-      // 刷り出すレシートと他のまちの節の場所を、はじめから画面1枚ぶん取っておき、刷り終える前に頁の末尾（footer）が見えないようにする（2026-11-18 yuito）
-      <div className="min-h-svh">
+      // 刷り出すレシートと他のまちの節の場所を、はじめから画面1.5枚ぶん取っておき、札へ頁を送っても刷り終える前に頁の末尾（footer）が見えないようにする（2026-11-18 yuito）
+      <div className="min-h-[150svh]">
         {/* リセットはまちの札の右上に添える（住んでいるまちを選び直す） */}
         <div className="mb-2 flex justify-end">
           <button type="button" onClick={reset} className="text-sm text-muted-foreground hover:text-foreground">

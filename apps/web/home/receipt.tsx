@@ -26,8 +26,8 @@ function useLatest<T>(value: T) {
 
 const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
 
-/** 札の要素を出す時刻（と長さ）を animation に渡す */
-const beat = (delay: number, duration?: number): React.CSSProperties => ({ animationDelay: `${delay}ms`, ...(duration ? { animationDuration: `${duration}ms` } : {}) })
+/** 札の要素を出す時刻を animation に渡す */
+const beat = (delay: number): React.CSSProperties => ({ animationDelay: `${delay}ms` })
 
 /** 右端の桁が転がる長さ（ms）。左の桁ほど長く、左端は COUNT_MS で着地する */
 const ROLL_MIN = 700
@@ -523,10 +523,10 @@ export function ReceiptMachine({ code, name, v, year, pop, base, detailHref, hea
     <div className="rm">
       <section ref={card} className={`rm-card p-5 text-brand-foreground sm:p-7 ${receipt ? 'pb-12 sm:pb-14' : ''}`}>
         {head}
-        {/* 予算と1人あたりを同じ大きさでいちばん大きく出す。見出し → 金額 → 見出し → 金額の順に一つずつ出し、1人あたりを出している間は予算を沈めて、目をいつも一つに向ける（motion.ts の BEAT、2026-11-18 yuito）。
+        {/* 予算と1人あたりを同じ大きさでいちばん大きく出す。見出し → 金額 → 見出し → 金額の順に一つずつ出し、目をいつも一つに向ける（数えている間に他を薄くはしない）（motion.ts の BEAT、2026-11-18 yuito）。
             数え直すたびに key で描き直して頭から出し直す */}
         <dl key={counted} className="mt-5 grid gap-4 sm:mt-6 sm:gap-5">
-          <div className={pop ? 'rm-dim' : undefined} style={pop ? beat(BEAT.label2, BEAT.done - BEAT.label2) : undefined}>
+          <div>
             {/* oxlint-disable-next-line design/text-size, design/space-step -- うちのまちの札は画面幅に合わせて見出しと金額を伸ばす見せ場なので、段の外を許す（見出しの大きさは 2026-11-17 yuito） */}
             <dt className="rm-in text-[clamp(17px,4.6vw,22px)] opacity-80" style={beat(BEAT.label1)}>{what}</dt>
             {/* oxlint-disable-next-line design/text-size, design/space-step -- うちのまちの札は画面幅に合わせて見出しと金額を伸ばす見せ場なので、段の外を許す（見出しの大きさは 2026-11-17 yuito） */}

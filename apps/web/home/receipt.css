@@ -140,13 +140,6 @@
 @keyframes rm-in {
   from { opacity: 0; transform: translateY(12px); }
 }
-/* 1人あたりを出している間は予算を沈め、出し終えたら戻す（長さと時刻は style で渡す） */
-.rm-dim {
-  animation: rm-dim 2000ms ease-in-out both;
-}
-@keyframes rm-dim {
-  15%, 80% { opacity: 0.4; }
-}
 /* 札の下端の差し出し口。紙（.rc-print）より少し広い溝で、中心が .rc-feed の上端に来る（下から 22px） */
 .rm-slot {
   position: absolute;
@@ -174,7 +167,7 @@
   height: 88px;
 }
 @media (prefers-reduced-motion: reduce) {
-  .rm-in, .rm-dim {
+  .rm-in {
     animation: none;
   }
 }
