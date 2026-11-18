@@ -1,4 +1,5 @@
-// まとめタブの財政の状況（借金と貯金・事業に回ったお金・財政の指標）。総務省「市町村別決算状況調」の普通会計（PageData.finance）から描く。
+// まとめタブの財政の状況（借金と貯金・事業に回ったお金・財政の指標）。普通会計の決算（PageData.finance）から描く。
+// 市区町村は総務省「市町村別決算状況調」、都道府県は地方財政状況調査（e-Stat の社会・人口統計体系）で、都道府県には基金・実質赤字比率・連結実質赤字比率が無い
 // 開いた年度までの最新の決算の年度を出し、推移はそこまでの5年。評価の言葉や色は付けず、項目の意味だけを書く
 import * as React from 'react'
 import { cn } from '@/lib/utils'
@@ -97,8 +98,15 @@ function DebtSide({ label, term, yen, people, spark, children, say }: { label: s
   )
 }
 
+const DEBT_SAY = '地方債は、自治体が学校・道路・ごみ処理施設など長く使うものを建てるときに借りるお金です。何十年かけて返すので、その施設を使う世代みんなで負担します。地方債現在高は、年度末にまだ返していない残りの額です。'
+
+/** 借金と貯金。基金の無い年度（都道府県）は借金だけを出す */
 function DebtAndFunds({ at, rows, people }: { at: LocalFinance; rows: LocalFinance[]; people: number | null }) {
-  if (at.localBondBalance == null || at.fundBalance == null) return null
+  if (at.localBondBalance == null) return null
+  const debt = (
+    <DebtSide label="借金" term="地方債現在高" yen={at.localBondBalance} people={people} spark={<Spark points={series(rows, (f) => f.localBondBalance)} format={okuText} full />} say={DEBT_SAY} />
+  )
+  if (at.fundBalance == null) return <div className="@xl:max-w-[50%] @xl:pr-6">{debt}</div>
   const kinds = [
     ['財政調整基金', at.fiscalAdjustmentFund],
     ['減債基金', at.debtReductionFund],
@@ -106,10 +114,7 @@ function DebtAndFunds({ at, rows, people }: { at: LocalFinance; rows: LocalFinan
   ] as const
   return (
     <div className="grid gap-5 @xl:grid-cols-2 @xl:gap-0">
-      <div className="@xl:pr-6">
-        <DebtSide label="借金" term="地方債現在高" yen={at.localBondBalance} people={people} spark={<Spark points={series(rows, (f) => f.localBondBalance)} format={okuText} full />}
-          say="地方債は、自治体が学校・道路・ごみ処理施設など長く使うものを建てるときに借りるお金です。何十年かけて返すので、その施設を使う世代みんなで負担します。地方債現在高は、年度末にまだ返していない残りの額です。" />
-      </div>
+      <div className="@xl:pr-6">{debt}</div>
       <div className="border-t pt-5 @xl:border-t-0 @xl:border-l @xl:pt-0 @xl:pl-6">
         <DebtSide label="貯金" term="基金" yen={at.fundBalance} people={people} spark={<Spark points={series(rows, (f) => f.fundBalance)} format={okuText} full />}
           say="基金は、自治体が目的を決めて積み立てているお金です。使い道を決めていない財政調整基金は、災害や税収が減った年に取り崩します。ほかに、借金の返済や施設の建て替えなどに充てる基金があります。">
@@ -187,7 +192,7 @@ function FreeMoney({ at, rows, people }: { at: LocalFinance; rows: LocalFinance[
 
 const ratio = (n: number | null) => (n == null ? '－' : pctText(n))
 
-function OtherNumbers({ at, rows }: { at: LocalFinance; rows: LocalFinance[] }) {
+function OtherNumbers({ at, rows, prefecture }: { at: LocalFinance; rows: LocalFinance[]; prefecture: boolean }) {
   const items: { key: string; name: string; term: string; answer: React.ReactNode; body: React.ReactNode }[] = []
   const row = (body: string, spark: React.ReactNode) => (
     <div className="grid items-start gap-4 @3xl:grid-cols-[minmax(0,1fr)_auto] @3xl:gap-10">
@@ -210,16 +215,17 @@ function OtherNumbers({ at, rows }: { at: LocalFinance; rows: LocalFinance[] }) 
   if (at.realBalance != null)
     items.push({ key: 'balance', name: '実質収支', term: '1年の収入から支出と翌年度に回す分を引いた残り', answer: <Amt yen={at.realBalance} />,
       body: row(`入ったお金から使ったお金と翌年度に回す分を引いた残り。${at.realBalanceRatio != null ? `標準財政規模（自治体が標準的に見込める1年の収入）の ${at.realBalanceRatio.toFixed(1)}% です。` : ''}`, <Spark points={series(rows, (f) => f.realBalance)} format={okuText} zero />) })
-  const kenzen = [
+  // 都道府県は社会・人口統計体系に実質赤字比率・連結実質赤字比率が無いので、残りの2つだけを並べる
+  const kenzen = ([
     ['実質赤字比率', at.realDeficitRatio, '一般会計などの赤字の大きさ'],
     ['連結実質赤字比率', at.consolidatedRealDeficitRatio, '国保・下水道なども合わせた赤字の大きさ'],
     ['実質公債費比率', at.realDebtServiceRatio, '毎年の借金の返済の重さ'],
     ['将来負担比率', at.futureBurdenRatio, '将来払うお金の重さ'],
-  ] as const
-  items.push({ key: 'kenzen', name: '健全化判断比率', term: '法律で毎年公表する、赤字や借金の重さの4つの比率', answer: at.realDebtServiceRatio != null ? <>実質公債費比率 {n(at.realDebtServiceRatio.toFixed(1), '%')}</> : null,
+  ] as const).slice(prefecture ? 2 : 0)
+  items.push({ key: 'kenzen', name: '健全化判断比率', term: prefecture ? '法律で毎年公表する、赤字や借金の重さの比率のうち借金の2つ' : '法律で毎年公表する、赤字や借金の重さの4つの比率', answer: at.realDebtServiceRatio != null ? <>実質公債費比率 {n(at.realDebtServiceRatio.toFixed(1), '%')}</> : null,
     body: (
       <>
-        <div className="grid grid-cols-2 gap-2 @3xl:grid-cols-4">
+        <div className={cn('grid grid-cols-2 gap-2', !prefecture && '@3xl:grid-cols-4')}>
           {kenzen.map(([name, v, means]) => (
             <div key={name} className="flex flex-col gap-1 rounded-xl border bg-background p-3">
               <span className={cn(titleVariants({ size: 'h3' }), 'font-normal tabular-nums text-foreground')}>{ratio(v)}</span>
@@ -228,7 +234,7 @@ function OtherNumbers({ at, rows }: { at: LocalFinance; rows: LocalFinance[] }) 
             </div>
           ))}
         </div>
-        <p className="mt-3">「－」は、その比率が計算上ゼロ以下で数字が出ないこと（赤字が無い、将来払うお金よりそのための備えが多い）。法律（財政健全化法）で毎年公表する4つの数字です。</p>
+        <p className="mt-3">「－」は、その比率が計算上ゼロ以下で数字が出ないこと（赤字が無い、将来払うお金よりそのための備えが多い）。法律（財政健全化法）で毎年公表する{prefecture ? '数字のうち、借金に関わる2つです' : '4つの数字です'}。</p>
       </>
     ) })
   return (
@@ -252,8 +258,8 @@ function OtherNumbers({ at, rows }: { at: LocalFinance; rows: LocalFinance[] }) 
   )
 }
 
-/** 開いた年度までの最新の決算の年度の、借金と貯金・事業に回ったお金・財政の指標。決算状況調に載らない自治体（都道府県）は何も出さない */
-export function FinanceSections({ finance, year, people }: { finance: LocalFinance[] | undefined; year: number; people: number | null }) {
+/** 開いた年度までの最新の決算の年度の、借金と貯金・事業に回ったお金・財政の指標。中身の無い節は出さない */
+export function FinanceSections({ finance, year, people, prefecture }: { finance: LocalFinance[] | undefined; year: number; people: number | null; prefecture: boolean }) {
   const upTo = (finance ?? []).filter((f) => f.year <= year)
   const at = upTo.at(-1)
   if (!at) return null
@@ -262,17 +268,21 @@ export function FinanceSections({ finance, year, people }: { finance: LocalFinan
   const card = 'rounded-2xl bg-card p-5'
   return (
     <>
-      <section>
-        <Head title="借金と貯金" tag={tag} />
-        <div className={card}><DebtAndFunds at={at} rows={rows} people={people} /></div>
-      </section>
-      <section>
-        <Head title="事業に回ったお金" tag={tag} />
-        <div className={card}><FreeMoney at={at} rows={rows} people={people} /></div>
-      </section>
+      {at.localBondBalance != null ? (
+        <section>
+          <Head title={at.fundBalance != null ? '借金と貯金' : '借金'} tag={tag} />
+          <div className={card}><DebtAndFunds at={at} rows={rows} people={people} /></div>
+        </section>
+      ) : null}
+      {freeOf(at) != null ? (
+        <section>
+          <Head title="事業に回ったお金" tag={tag} />
+          <div className={card}><FreeMoney at={at} rows={rows} people={people} /></div>
+        </section>
+      ) : null}
       <section>
         <Head title="財政の指標" tag={tag} />
-        <OtherNumbers at={at} rows={rows} />
+        <OtherNumbers at={at} rows={rows} prefecture={prefecture} />
       </section>
     </>
   )

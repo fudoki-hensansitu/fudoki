@@ -1,4 +1,4 @@
-// 市町村の決算の指標（総務省「市町村別決算状況調」の普通会計）。web の D1（fudoki-web の local_finance、scripts/sync-data/local_finance.py が入れる）から読む。
+// 自治体の決算の指標（普通会計。市区町村は総務省「市町村別決算状況調」、都道府県は地方財政状況調査）。web の D1（fudoki-web の local_finance、scripts/sync-data/local_finance.py が入れる）から読む。
 // D1 が無い（手元の試験）か読めないときは空で返し、頁は財政の状況の節を出さずに描く
 import type { LocalFinance } from '../jurisdiction/types'
 import type { Env } from './env'
@@ -32,7 +32,7 @@ const COLUMNS = {
   specified_purpose_fund_yen: 'specifiedPurposeFund',
 } as const satisfies Record<string, Exclude<keyof LocalFinance, 'year'>>
 
-/** 自治体の決算の指標（年度の古い順）。都道府県は決算状況調に載らないので空 */
+/** 自治体の決算の指標（年度の古い順）。都道府県は社会・人口統計体系にある年度だけで、基金などの列は null */
 export async function loadLocalFinance(env: Env, code: string): Promise<LocalFinance[]> {
   const statement = env.DB?.prepare(SQL).bind(code)
   if (!statement?.all) return []
