@@ -1,8 +1,9 @@
 // 紙の DOM（.rc-paper）を canvas に写す。押し出された前のレシートを続いた1本の紙として描く立体（ribbon3d.ts）の絵に使う
 
-/** 紙の DOM（.rc-paper）を canvas に写す。scale は 1 CSS px あたりの画素（既定は画面の倍率、2 まで）。shade なら紙の頭に差し出し口の影を描く。字は1字ずつ、画面と同じ書体・色・位置に書く。点線・破線・アイコン・QR も同じ位置に描く */
-export async function paperCanvas(el: HTMLElement, { scale, shade = true }: { scale?: number; shade?: boolean } = {}): Promise<HTMLCanvasElement> {
-  const box = el.getBoundingClientRect()
+/** 紙の DOM（.rc-paper）を canvas に写す。skip に当たる要素（シェアの画像ではボタン）は写さず、height を渡すと紙の上からその高さで切る。scale は 1 CSS px あたりの画素（既定は画面の倍率、2 まで）。shade なら紙の頭に差し出し口の影を描く。字は1字ずつ、画面と同じ書体・色・位置に書く。点線・破線・アイコン・QR も同じ位置に描く */
+export async function paperCanvas(el: HTMLElement, { scale, shade = true, skip, height }: { scale?: number; shade?: boolean; skip?: string; height?: number } = {}): Promise<HTMLCanvasElement> {
+  const full = el.getBoundingClientRect()
+  const box = height === undefined ? full : { left: full.left, top: full.top, width: full.width, height: Math.min(height, full.height) }
   const dpr = scale ?? Math.min(window.devicePixelRatio || 1, 2)
   const canvas = document.createElement('canvas')
   canvas.width = Math.ceil(box.width * dpr)
@@ -58,11 +59,19 @@ export async function paperCanvas(el: HTMLElement, { scale, shade = true }: { sc
       return
     }
     if (!(node instanceof Element)) return
+    if (skip && node.matches(skip)) return
     const s = getComputedStyle(node)
     if (s.display === 'none' || s.visibility === 'hidden') return
     const r = node.getBoundingClientRect()
     const x = r.left - box.left
     const y = r.top - box.top
+    // 地の色を持つ部品（紙の下の詳細を見るのボタン）は角の丸みごと塗る
+    if (node !== el && !/^(transparent|rgba\(.*,\s*0\))$/.test(s.backgroundColor)) {
+      g.fillStyle = s.backgroundColor
+      g.beginPath()
+      g.roundRect(x, y, r.width, r.height, Math.min(parseFloat(s.borderTopLeftRadius) || 0, r.height / 2))
+      g.fill()
+    }
     if (s.borderTopStyle === 'dashed') line(x, y, x + r.width, s.borderTopColor, [3, 3])
     if (s.borderBottomStyle === 'dotted') line(x, y + r.height - 1, x + r.width, s.borderBottomColor, [1, 2])
     if (node instanceof SVGSVGElement) {

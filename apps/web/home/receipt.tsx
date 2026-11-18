@@ -89,7 +89,12 @@ function Share({ url }: { url: string }) {
       const el = root.current?.closest('.rc-ribbon') ? null : root.current?.closest<HTMLElement>('.rc-paper')
       if (!el) return
       void import('./snap')
-        .then(({ paperCanvas }) => paperCanvas(el, { scale: 2, shade: false }))
+        // ボタン（シェア・詳細を見る）は写さず、QR の下で切る
+        .then(({ paperCanvas }) => {
+          const qr = el.querySelector('.rc-qr')
+          const height = qr ? qr.getBoundingClientRect().bottom - el.getBoundingClientRect().top + 34 : undefined
+          return paperCanvas(el, { scale: 2, shade: false, skip: '[data-snap-skip]', height })
+        })
         .then((c) => new Promise<Blob | null>((ok) => c.toBlob(ok, 'image/png')))
         .then((b) => {
           if (alive && b) image.current = new File([b], 'fudoki-receipt.png', { type: 'image/png' })
@@ -118,7 +123,7 @@ function Share({ url }: { url: string }) {
   }
   const round = 'inline-flex size-10 items-center justify-center rounded-full border border-border transition-colors hover:bg-card'
   return (
-    <div ref={root} className="flex items-center gap-2">
+    <div ref={root} data-snap-skip className="flex items-center gap-2">
       <a href={intent} onClick={post} target="_blank" rel="noopener noreferrer" aria-label="Xでシェア" className={round}>
         <XLogoIcon className="size-5" />
       </a>
@@ -491,7 +496,7 @@ export function ReceiptMachine({ code, name, v, year, pop, base, detailHref, hea
         <Share url={shareUrl(code, r.year)} />
       </div>
       {/* 読み終えたところから、そのまま詳しい頁へ進めるように、紙の一番下に詳細を見るを置く（2026-11-18 yuito） */}
-      <Link href={r.href} className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-brand px-4 py-3 text-sm font-medium text-brand-foreground transition-opacity hover:opacity-90">
+      <Link href={r.href} data-snap-skip className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-brand px-4 py-3 text-sm font-medium text-brand-foreground transition-opacity hover:opacity-90">
         詳細を見る
         <ArrowRightIcon className="size-4" />
       </Link>
