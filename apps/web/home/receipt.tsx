@@ -14,7 +14,7 @@ import { OTHER_FRAME } from '../jurisdiction/domains'
 import { FieldIcon } from './parts'
 import { perHeadParts } from './per-head'
 import { withUnits } from './units'
-import { BEAT, COUNT_MS, PRINT_MS, READ_MS, SCROLL_MS } from './motion'
+import { BEAT, COUNT_MS, FOLLOW_MS, PRINT_MS, READ_MS, SCROLL_MS } from './motion'
 import './receipt.css'
 
 /** 最新の値を持つ ref（effect の依存に入れずに最新の callback を呼ぶ） */
@@ -228,12 +228,12 @@ function useFollow(phase: Phase, printing: string | null, card: React.RefObject<
       if (r.bottom > vh) go(window.scrollY + Math.min(r.top - 16, r.bottom - vh + 16), SCROLL_MS, easeInOut)
     }
     if (printing && feed.current) {
-      // 紙と同じ長さで、刷り終えたときのレシートの最後（合計・QR コード・詳細）まで送る。出だしはゆっくりで差し出し口のあたりを見せる。
+      // 刷り終えたときのレシートの最後（合計・QR コード・詳細）まで送る。紙より長くかけて後から追い、出だしはゆっくりで差し出し口のあたりを見せる。
       // 末端の下に少し余白を残し、そこへ出てくる他のまちの節に気づけるようにする。
       // 紙は高さを 0 から伸ばすので、刷り終えた高さは中身の高さ（paperHeight）から求める
       const f = feed.current
       const latest = f.querySelector<HTMLElement>('[data-latest]')
-      if (latest) go(window.scrollY + f.getBoundingClientRect().top + paperHeight(latest) + FEED_PAD - vh + END_ROOM, PRINT_MS, FOLLOW_EASE)
+      if (latest) go(window.scrollY + f.getBoundingClientRect().top + paperHeight(latest) + FEED_PAD - vh + END_ROOM, FOLLOW_MS, FOLLOW_EASE)
     }
   }, [phase, printing, card, feed])
 }
@@ -242,8 +242,8 @@ function useFollow(phase: Phase, printing: string | null, card: React.RefObject<
 const PRINT_EASE_CSS = 'cubic-bezier(0.3, 0.1, 0.45, 1)'
 /** 紙を追って送ったあと、レシートの末端の下に残す余白（px）。他のまちの節の見出しが覗く */
 const END_ROOM = 160
-/** 紙を追う頁送りの緩急。出だしはゆっくり送って差し出し口のあたりを見せ、紙が伸びきるころに末端まで送る（2026-11-18 yuito） */
-const FOLLOW_EASE = (p: number) => (p < 0.5 ? 8 * p ** 4 : 1 - (-2 * p + 2) ** 4 / 2)
+/** 紙を追う頁送りの緩急。出だしと終わりをゆっくりにし、途中も急がない（sine。山でも平均の 1.6 倍ほど）。出だしは差し出し口のあたりを見せる（2026-11-18 yuito） */
+const FOLLOW_EASE = (p: number) => (1 - Math.cos(Math.PI * p)) / 2
 /** .rc-feed の下の余白（receipt.css） */
 const FEED_PAD = 28
 

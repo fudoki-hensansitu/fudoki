@@ -18,7 +18,9 @@ export const BEAT = {
 }
 /** 数え上げを読み終えてから紙を送り始めるまでの間 */
 export const READ_MS = 900
-/** 紙を送る（receipt.css の rc-print と同じ）。頁もこの長さで紙を追って送る */
+/** 紙を送る（receipt.css の rc-print と同じ） */
 export const PRINT_MS = 3600
+/** 紙を追って頁をレシートの末端まで送る。紙（PRINT_MS）と同時に終えず、後から追う（2026-11-18 yuito） */
+export const FOLLOW_MS = 6000
 /** 札を画面に入れるために頁を送る */
 export const SCROLL_MS = 1400
