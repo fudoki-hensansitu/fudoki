@@ -19,12 +19,12 @@ import './receipt.css'
 const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
 
 /** delay の後に 0 から to まで数え上げる（全部の桁が回り、下の桁ほど速く回って繰り上がる）。reduced-motion では最初から to。
- * to が変わったら（年度の切り替え）描く前に 0 へ戻し、前の年度の額を新しい年度の見出しで見せない */
-function useCountUp(to: number, delay = 0) {
+ * key が変わったら（年度の切り替え。額が同じでも）描く前に 0 へ戻して数え直し、前の年度の額を新しい年度の見出しで見せない */
+function useCountUp(to: number, key: string, delay = 0) {
   const [n, setN] = React.useState(() => (reduced() ? to : 0))
-  const [from, setFrom] = React.useState(to)
-  if (from !== to) {
-    setFrom(to)
+  const [from, setFrom] = React.useState(key)
+  if (from !== key) {
+    setFrom(key)
     setN(reduced() ? to : 0)
   }
   React.useEffect(() => {
@@ -38,7 +38,7 @@ function useCountUp(to: number, delay = 0) {
     }
     raf = requestAnimationFrame(step)
     return () => cancelAnimationFrame(raf)
-  }, [to])
+  }, [key])
   return n
 }
 
@@ -361,8 +361,8 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
     setOlder(!keep ? [] : printed && height > 0 ? [{ r: printed, height }, ...older].slice(0, 3) : older)
     setPrinted(null)
   }
-  const total = useCountUp(v.total)
-  const per = useCountUp(pop ? Math.round(v.total / pop) : 0, COUNT_MS)
+  const total = useCountUp(v.total, counted)
+  const per = useCountUp(pop ? Math.round(v.total / pop) : 0, counted, COUNT_MS)
   const receipt = pop ? perHeadParts(v.fields, v.total, pop) : null
   const card = React.useRef<HTMLElement>(null)
   const phase = usePhase(counted)
