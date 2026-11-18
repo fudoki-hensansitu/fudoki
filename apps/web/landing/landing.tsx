@@ -25,11 +25,11 @@ const primaryButton = 'inline-flex items-center gap-2 rounded-full bg-primary px
 const textLink = 'inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline'
 
 /** 実際の画面の画像。テーマに合わせてライト・ダークの片方を出す（about.css）。隠れた方は読み上げられないので、どちらにも同じ alt を付ける */
-function Shot({ name, width, height, alt, className }: { name: string; width: number; height: number; alt: string; className?: string }) {
+function Shot({ name, width, height, alt, className, eager }: { name: string; width: number; height: number; alt: string; className?: string; eager?: boolean }) {
   return (
     <span className={cn('block', className)}>
-      <img className="shot-light block h-auto w-full" src={`/about/${name}-light.webp`} width={width} height={height} alt={alt} loading="lazy" decoding="async" />
-      <img className="shot-dark hidden h-auto w-full" src={`/about/${name}-dark.webp`} width={width} height={height} alt={alt} loading="lazy" decoding="async" />
+      <img className="shot-light block h-auto w-full" src={`/about/${name}-light.webp`} width={width} height={height} alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async" />
+      <img className="shot-dark hidden h-auto w-full" src={`/about/${name}-dark.webp`} width={width} height={height} alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async" />
     </span>
   )
 }
@@ -120,8 +120,8 @@ export function Landing() {
   return (
     <main className="mx-auto flex min-h-svh w-full max-w-5xl flex-col px-4 pt-12 pb-28 sm:px-8 sm:pt-20 md:pb-10">
       {/* 冒頭: 困りごと（見出しの問い）→ できるようになること → ボタン */}
-      <header className="grid items-center gap-10 md:grid-cols-2">
-        <div>
+      <header>
+        <div className="max-w-2xl">
           <Title size="display" as="h1" className="leading-tight">
             私のお金は
             <br />
@@ -136,9 +136,10 @@ export function Landing() {
           </div>
           <p className="mt-4 text-sm text-muted-foreground">登録なし・無料</p>
         </div>
-        <div className="about-rise mx-auto w-full max-w-sm">
-          <Shot name="receipt" width={1664} height={2400} alt="品川区の札とレシート。R8年度の予算 2,369億1,400万円を1人あたりに直すと 56万9,993円で、福祉・子育て 288,905円、教育 75,332円など分野ごとに並ぶ" className="max-h-[560px] overflow-hidden rounded-3xl" />
-        </div>
+        {/* 冒頭の絵はお金の流れの図（2026-11-18 yuito。レシートより「どこへ行った？」に答える） */}
+        <Frame className="about-rise mt-12 p-4 sm:p-6">
+          <Shot eager name="sankey" width={2080} height={954} alt="品川区 R8年度予算のお金の流れの図。特別区税 28%・特別区交付金 22% などの入るお金が一般会計を通り、福祉・子育て 51%・教育 13% などへ分かれる" />
+        </Frame>
       </header>
 
       {/* 困りごと */}
@@ -171,7 +172,7 @@ export function Landing() {
       <section className="mt-28 grid gap-20" aria-label="風土記でできること">
         <Benefit title="税金がどの事業に回ったか、追える" body="税金や国・都からのお金が、福祉や教育に分かれ、一つ一つの事業に届くまでを、図と表でたどれます。">
           <Frame className="p-4 sm:p-6">
-            <Shot name="sankey" width={2080} height={954} alt="品川区 R8年度予算のお金の流れの図。特別区税 28%・特別区交付金 22% などの入るお金が一般会計を通り、福祉・子育て 51%・教育 13% などへ分かれる" />
+            <Shot name="projects" width={2144} height={1040} alt="品川区 R8年度の事業の一覧。私立保育園費 224億円、学校施設建設費 117億円など、お金のかかる順に分野と当初予算が並ぶ" />
           </Frame>
         </Benefit>
         <Benefit flip title="隣のまちと比べられる" body="1人あたりいくら使ったか、借金や貯金はどれくらいか。問いを選ぶと、まちごとの答えが地図に並びます。">
