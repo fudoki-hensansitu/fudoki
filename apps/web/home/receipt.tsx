@@ -29,9 +29,6 @@ const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-r
 /** 札の要素を出す時刻を animation に渡す */
 const beat = (delay: number): React.CSSProperties => ({ animationDelay: `${delay}ms` })
 
-/** 見比べ用（2026-11-18 yuito）: URL に ?land=left を付けると、左の桁から着地させる。既定は右の桁から */
-const landFromLeft = () => typeof location !== 'undefined' && new URLSearchParams(location.search).get('land') === 'left'
-
 /** 札の金額の幅（em）。少し広めに、数字 0.68・カンマ 0.32・単位（兆億万、左右の余白込み）0.85・末尾の円 0.75 で見積もる */
 const amountEm = (yen: number) => [...withUnits(yen)].reduce((w, ch) => w + (ch === ',' ? 0.32 : ch >= '0' && ch <= '9' ? 0.68 : 0.85), 0.75)
 
@@ -43,7 +40,6 @@ const ROLL_MIN = 700
  * 読み上げには決まった額だけを渡す */
 function Odometer({ to, delay = 0 }: { to: number; delay?: number }) {
   const final = withUnits(to)
-  const left = landFromLeft()
   const n = final.replace(/\D/g, '').length
   let k = n
   return (
@@ -55,7 +51,7 @@ function Odometer({ to, delay = 0 }: { to: number; delay?: number }) {
           if (ch < '0' || ch > '9') return <small key={i} className="mx-1 text-[0.55em]">{ch}</small>
           // k は末尾から数えた桁の位置。r は右端 0 から左端 1
           k--
-          const r = n > 1 ? (left ? n - 1 - k : k) / (n - 1) : 1
+          const r = n > 1 ? k / (n - 1) : 1
           const steps = (1 + Math.round(r * 2)) * 10 + Number(ch)
           const style = { '--to': `${-steps}em`, animationDuration: `${Math.round(ROLL_MIN + (COUNT_MS - ROLL_MIN) * r)}ms`, animationDelay: `${delay}ms` } as React.CSSProperties
           return (
