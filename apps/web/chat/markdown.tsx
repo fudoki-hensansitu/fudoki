@@ -64,7 +64,7 @@ function blocks(tokens: Token[]): React.ReactNode[] {
         const align = (a: 'left' | 'right' | 'center' | null) => ALIGN[a ?? 'left']
         return (
           <div key={i} className="overflow-x-auto">
-            <table className="w-full border-collapse text-sm">
+            <table className="w-full border-collapse">
               <thead>
                 <tr>
                   {table.header.map((c, j) => (

@@ -194,7 +194,7 @@ export function CompareList({ map, failed }: { map: CompareMap; failed: boolean 
     <main className="mx-auto w-full max-w-6xl px-4 pt-10 pb-28 sm:px-8 sm:pt-14">
       <header className="mb-5">
         <Title size="h1">まち比べ</Title>
-        <p className="mt-1 text-sm text-muted-foreground">まちのお金を1人あたりの金額に直すと、いろいろな見方で比べられます。いまは{map.prefecture || '東京都'}のまちから、少しずつ広げています。</p>
+        <p className="mt-1 text-base leading-relaxed text-muted-foreground">まちのお金を1人あたりの金額に直すと、いろいろな見方で比べられます。いまは{map.prefecture || '東京都'}のまちから、少しずつ広げています。</p>
       </header>
       {failed ? failedText : (
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 lg:gap-4">
@@ -258,8 +258,8 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
       </Link>
       <header className="mb-4">
         <Title size="h1">{q.title}</Title>
-        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{q.note}</p>
-        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">※{q.caveat}</p>
+        <p className="mt-1 text-base leading-relaxed text-muted-foreground">{q.note}</p>
+        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">※{q.caveat}</p>
       </header>
       {failed ? failedText : (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">

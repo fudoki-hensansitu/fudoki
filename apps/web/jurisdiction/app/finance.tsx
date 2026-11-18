@@ -93,7 +93,7 @@ function DebtSide({ label, term, yen, people, spark, children, say }: { label: s
       <div className="mb-2"><PerHead yen={yen} people={people} /></div>
       {spark}
       {children}
-      <p className="mt-2 text-sm leading-[1.7] text-muted-foreground">{say}</p>
+      <p className="mt-2 text-base leading-[1.7] text-muted-foreground">{say}</p>
     </div>
   )
 }
@@ -112,7 +112,7 @@ function DebtAndFunds({ at, rows, people, prefecture }: { at: LocalFinance; rows
     return (
       <div className="flex flex-col gap-3 @xl:max-w-[50%] @xl:pr-6">
         {debt}
-        <p className="text-sm leading-[1.7] text-muted-foreground">貯金（基金）の残高は、この資料に載っていないため出していません。</p>
+        <p className="text-base leading-[1.7] text-muted-foreground">貯金（基金）の残高は、この資料に載っていないため出していません。</p>
       </div>
     )
   const kinds = [
@@ -128,7 +128,7 @@ function DebtAndFunds({ at, rows, people, prefecture }: { at: LocalFinance; rows
           say="基金は、自治体が目的を決めて積み立てているお金です。使い道を決めていない財政調整基金は、災害や税収が減った年に取り崩します。ほかに、借金の返済や施設の建て替えなどに充てる基金があります。">
           <ul className="mt-2 max-w-[360px] border-t">
             {kinds.map(([name, yen]) => (
-              <li key={name} className="flex justify-between gap-3 border-b py-2 text-sm">
+              <li key={name} className="flex justify-between gap-3 border-b py-2">
                 <span>{name}</span>
                 <Amt yen={yen} />
               </li>
@@ -193,7 +193,7 @@ function FreeMoney({ at, rows, people }: { at: LocalFinance; rows: LocalFinance[
         { name: '事業に回るお金', yen: free, fill: 'bg-primary' },
         ...parts.map(([name, yen], i) => ({ name, yen: yen ?? 0, fill: DUTY_FILLS[i]! })),
       ]} />
-      <p className="text-sm leading-[1.7] text-muted-foreground">毎年決まって出ていくのは、法律で決まった給付（扶助費）、職員の給与（人件費）、借金の返済（公債費）の3つ（義務的経費）。残りが、学校や道路をつくる・直す、委託や補助金など、自治体が年ごとに決める事業に回ります。ただし国保などの会計への繰出金のように、この中にも毎年続くものがあります。</p>
+      <p className="text-base leading-[1.7] text-muted-foreground">毎年決まって出ていくのは、法律で決まった給付（扶助費）、職員の給与（人件費）、借金の返済（公債費）の3つ（義務的経費）。残りが、学校や道路をつくる・直す、委託や補助金など、自治体が年ごとに決める事業に回ります。ただし国保などの会計への繰出金のように、この中にも毎年続くものがあります。</p>
     </div>
   )
 }
@@ -259,7 +259,7 @@ function OtherNumbers({ at, rows, prefecture }: { at: LocalFinance; rows: LocalF
               {x.answer ? <span className={cn(titleVariants({ size: 'h3' }), 'shrink-0 font-normal text-primary @xl:text-right')}>{x.answer}</span> : null}
             </span>
           </AccordionTrigger>
-          <AccordionContent className="px-3 pb-5 text-sm leading-[1.7] text-muted-foreground">{x.body}</AccordionContent>
+          <AccordionContent className="px-3 pb-5 text-base leading-[1.7] text-muted-foreground">{x.body}</AccordionContent>
         </AccordionItem>
       ))}
     </Accordion>

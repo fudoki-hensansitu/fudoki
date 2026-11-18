@@ -9,7 +9,8 @@
     "design/color-opacity": "error",
     "design/space-step": "error",
     "design/text-size": "error",
-    "design/font-weight": "error"
+    "design/font-weight": "error",
+    "design/body-text": "error"
   },
   // 色の値を持ってよいもの: shadcn の部品、token の値（tokens.ts）、CSS 変数が届かない出力（OGP・PWA・ロゴ）。
   "ignorePatterns": ["chat/components/ui/**", "tokens.ts", "server/og.ts", "server/og-receipt.ts", "server/og-site.ts", "pwa.ts", "logo.ts"]

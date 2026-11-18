@@ -173,7 +173,7 @@ function TabHead({ title, children }: { title: string; children: React.ReactNode
         <Title size="h2">{title}</Title>
         <TabYear />
       </div>
-      <p className="mt-2 text-sm leading-[1.7] text-muted-foreground">{children}</p>
+      <p className="mt-2 text-base leading-[1.7] text-muted-foreground">{children}</p>
     </div>
   )
 }
@@ -301,8 +301,6 @@ function ProjectNameCell({ p }: { p: Proj }) {
       {/* 押せることとフォーカスは事業名のリンクが持つ（行を押しても同じく詳細を開く）。目を事業の代わりにした行（moku:）は押せない */}
       {p.id.startsWith('moku:') ? <span>{p.name}</span> : <ProjectLink id={p.id}>{p.name}</ProjectLink>}
       {ended || v.isNew(p) ? <span className="ml-2 inline-flex align-middle">{ended ? <Mark kind="stop" label="やめた事業" className="size-5" /> : <Mark kind="new" label="新しく始める事業" className="size-5" />}</span> : null}
-      {/* 狭い幅で事業名の下に添える分野は、事業名より控えめな色にする */}
-      <span className="flex items-center gap-1 text-muted-foreground @3xl:hidden"><FieldIcon id={v.fieldOf(p)} className="size-4 shrink-0" />{[fieldName(v, v.fieldOf(p)), 'grade' in p && p.grade ? `評価 ${p.grade}` : null].filter(Boolean).join(' · ')}</span>
     </span>
   )
 }
@@ -311,7 +309,7 @@ function ProjectFieldCell({ p }: { p: Proj }) {
   return <span className="inline-flex items-center gap-2"><FieldIcon id={v.fieldOf(p)} className="size-4 shrink-0 text-muted-foreground" />{fieldName(v, v.fieldOf(p))}</span>
 }
 
-/** 事業の表（shadcn の data table）。並びは api が返した金額の多い順のまま。行を押すと詳細を開く。文字は見出しも中身もすべて同じ大きさ・同じ色にする（狭い画面で名前の下に出す分野だけは薄い色） */
+/** 事業の表（shadcn の data table）。並びは api が返した金額の多い順のまま。行を押すと詳細を開く。文字は見出しも中身もすべて本文の大きさ・同じ色にする */
 function ProjectTable({ rows, ended }: { rows: Proj[]; /** やめた事業は前の年度の額を出す */ ended?: boolean }) {
   const { v, openProject } = useApp()
   const by = ended ? v.year - 1 : v.year
@@ -329,7 +327,7 @@ function ProjectTable({ rows, ended }: { rows: Proj[]; /** やめた事業は前
   const table = useTable({ features: projectFeatures, columns, data, getRowId: (p) => p.id })
   const cls = (meta: unknown) => (meta as { className?: string } | undefined)?.className
   return (
-    <Table className="text-sm">
+    <Table>
       <TableHeader>
         {table.getHeaderGroups().map((g) => (
           <TableRow key={g.id} className="hover:bg-transparent">
@@ -578,7 +576,7 @@ function FieldsSection({ phase }: { phase: 'initial' | 'settlement' }) {
         {phase === 'initial' ? '何に使う？' : '何に使った？'}<span className="ml-2 text-sm font-normal text-muted-foreground">歳出</span>
         <Amt yen={v.total} className="ml-2 font-medium text-primary" />
       </Title>
-      <p className="mb-3 text-sm leading-[1.7] text-muted-foreground">税金を主な財源にする基本の会計（一般会計）の歳出を、使い道の分野ごとに分けています。</p>
+      <p className="mb-3 text-base leading-[1.7] text-muted-foreground">税金を主な財源にする基本の会計（一般会計）の歳出を、使い道の分野ごとに分けています。</p>
       {/* 棒の長さは一番大きい分野を満たんにし、割合の数字は合計に対する比のまま出す */}
       <div className="grid gap-x-8 @3xl:grid-flow-col @3xl:grid-cols-2 @3xl:grid-rows-(--rows)" style={{ '--rows': `repeat(${Math.ceil(v.fields.length / 2)}, auto)` } as React.CSSProperties}>
         {v.fields.map((f, i) => <FieldRow key={f.id} f={f} i={i} max={max} grow={grow} onClick={() => openField(f.id)} />)}
@@ -789,10 +787,10 @@ function GradeLink({ grade, href, label }: { grade?: string; href?: string; labe
 
 /** 年度ごとの表の額。出典の頁が分かれば、額から公式の資料（その頁）を開く */
 function SourceAmt({ yen, href, label }: { yen: number | null | undefined; href?: string; label: string }) {
-  if (yen == null || !href) return <Amt yen={yen} className="text-sm" />
+  if (yen == null || !href) return <Amt yen={yen} />
   return (
     <a href={href} target="_blank" rel="noopener" aria-label={`${label}（${yenText(yen)}）`} className="inline-flex items-center gap-1 text-foreground no-underline hover:text-primary hover:underline">
-      <Amt yen={yen} className="text-sm" />
+      <Amt yen={yen} />
       <ArrowSquareOutIcon className="size-3 text-muted-foreground" aria-hidden="true" />
     </a>
   )
@@ -825,9 +823,9 @@ function ProjectPageBody({ id }: { id: string }) {
       </div>
       <DetailSection icon={CalendarBlankIcon} title="年度ごと">
         {/* 評価シートのある年度は、その年度の行に評価（A〜D）を並べる。評価が一つも無ければ列を出さない */}
-        <div className={cn('grid max-w-xl text-sm', graded ? 'grid-cols-[auto_1fr_1fr_auto]' : 'grid-cols-[auto_1fr_1fr]')}>
-          <span className="py-2 text-xs" /><span className="py-2 text-right text-xs text-muted-foreground">当初予算</span><span className="px-1 py-2 text-right text-xs text-muted-foreground">決算</span>
-          {graded ? <span className="px-2 py-2 text-center text-xs text-muted-foreground">評価</span> : null}
+        <div className={cn('grid max-w-xl text-base', graded ? 'grid-cols-[auto_1fr_1fr_auto]' : 'grid-cols-[auto_1fr_1fr]')}>
+          <span className="py-2" /><span className="py-2 text-right text-muted-foreground">当初予算</span><span className="px-1 py-2 text-right text-muted-foreground">決算</span>
+          {graded ? <span className="px-2 py-2 text-center text-muted-foreground">評価</span> : null}
           {rows.map((y) => (
             <div key={y} className={cn('col-span-full grid grid-cols-subgrid', y === year && 'bg-card')}>
               <Separator className="col-span-full" />
@@ -843,7 +841,7 @@ function ProjectPageBody({ id }: { id: string }) {
         <DetailSection icon={TreeStructureIcon} title="内訳">
           {/* 内訳の一つ一つも年度をまたぐ事業なので、押すとその事業の頁へ移る。額はその事業の最新の年度のもの */}
           <Infinite items={p.kids} step={10} list={(kids) => (
-            <Table className="text-sm">
+            <Table>
               <TableHeader>
                 <TableRow className="hover:bg-transparent">
                   <TableHead className="h-9 font-normal">事業名</TableHead>
