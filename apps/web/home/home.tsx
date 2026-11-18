@@ -247,7 +247,7 @@ export function Home({ listed, featured }: HomeProps) {
   const snap = useSnapshot(ready && town ? town.code : null)
   const vision = town ? featured.find((f) => f.code === town.code)?.vision : undefined
   // 住んでいるまちを外す（選び直す）
-  /** レシートを刷り終えたか。刷り終えてから他のまちの節を出す（2026-11-18 yuito）。年度を替えて刷り直しても出したまま、まちを選び直したら隠す */
+  /** レシートの末端まで見たか。レシートの末端まで頁が送られてから他のまちの節を出す（2026-11-18 yuito）。年度を替えて刷り直しても出したまま、まちを選び直したら隠す */
   const [printed, setPrinted] = React.useState(false)
   const reset = () => {
     setPrinted(false)
@@ -270,7 +270,7 @@ export function Home({ listed, featured }: HomeProps) {
         <WithCtx key={town!.code} town={town!} vision={vision} snap={snap}>
           {(c) => <Dashboard c={c} onPrinted={() => setPrinted(true)} />}
         </WithCtx>
-        {/* ほかのまちを見る導線。レシートとは別の節として見出しと大きな検索欄を置き、レシートを刷り終えてから出す（2026-11-18 yuito）。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
+        {/* ほかのまちを見る導線。レシートとは別の節として見出しと大きな検索欄を置き、レシートの末端まで頁が送られてから出す（2026-11-18 yuito）。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
         {printed ? (
           <section className="ob-slide mt-16" aria-labelledby="other-towns">
             <Title size="h2" id="other-towns" className="mb-4">他のまちの使い道を見る</Title>
