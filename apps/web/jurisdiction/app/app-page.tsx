@@ -168,7 +168,8 @@ function TabYear() {
 /** まとめ以外のタブの頭。その言葉の意味の一文と、年度の切り替え。見出しはタブ名のくり返しになるので画面に出さず、読み上げと検索のためだけに残す */
 function TabHead({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="mb-5 flex items-center justify-between gap-3">
+    // 狭い画面は一文を横の切り替えに押されて細く折れるので、切り替えを上に置いて一文を全幅にする
+    <div className="mb-5 flex items-center justify-between gap-3 max-md:flex-col-reverse max-md:items-start">
       <Title size="h2" className="sr-only">{title}</Title>
       <p className="min-w-0 text-sm leading-[1.7] text-muted-foreground">{children}</p>
       <TabYear />
