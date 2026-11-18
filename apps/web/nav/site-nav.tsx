@@ -1,7 +1,7 @@
 // 全ページの左に置くサイドバー（shadcn の Sidebar）。pages/layout.tsx が置き、頁の間を移っても描き直さない
 import * as React from 'react'
 import { Link } from './link'
-import { ChatIcon, CircleHalfIcon, DesktopIcon, GearSixIcon, GithubLogoIcon, HouseIcon, MoonIcon, PlugIcon, RobotIcon, SidebarSimpleIcon, SunIcon, XLogoIcon } from '@phosphor-icons/react'
+import { ChatIcon, CircleHalfIcon, DesktopIcon, GearSixIcon, GithubLogoIcon, HouseIcon, MagnifyingGlassIcon, MoonIcon, PlugIcon, RobotIcon, SidebarSimpleIcon, SunIcon, XLogoIcon } from '@phosphor-icons/react'
 import {
   Sidebar,
   SidebarContent,
@@ -25,6 +25,7 @@ import { applyTheme, currentTheme, DEFAULT_THEME, type Theme } from './theme'
 import { ArrowsLeftRightIcon } from '@phosphor-icons/react'
 import { NavContent } from './nav-content'
 import { readNavOpen, saveNavOpen } from './nav-state'
+import { TownPalette } from './town-palette'
 
 
 export const NAV_SECTIONS = ['home', 'assistant', 'compare'] as const
@@ -193,6 +194,20 @@ function SettingsMenu({ theme, onPick, className }: { theme: Theme; onPick: (t: 
   )
 }
 
+/** 下の帯の「探す」。サイドバーの「まちを探す」と同じパレットを開く */
+function SearchItem({ className }: { className: string }) {
+  const [open, setOpen] = React.useState(false)
+  return (
+    <>
+      <button type="button" onClick={() => setOpen(true)} aria-haspopup="dialog" data-popup-open={open || undefined} className={className}>
+        <MagnifyingGlassIcon />
+        探す
+      </button>
+      <TownPalette open={open} onOpenChange={setOpen} />
+    </>
+  )
+}
+
 /** 幅の狭い画面では、サイドバーの代わりに画面の下へ並べる。入らないものは「設定」にまとめる */
 function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Theme; onPick: (t: Theme) => void }) {
   const [hidden, setHidden] = useHideOnScroll()
@@ -211,14 +226,22 @@ function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Them
     >
       {/* 上にだけ線を引いて中身と分ける。下端は画面の端なので線を引かない */}
       <Separator />
-      <ul className="grid h-14 grid-cols-4">
+      <ul className="grid h-14 grid-cols-5">
         {items.map((i) => (
-          <li key={i.href}>
-            <NavLink href={i.href} aria-current={i.active ? 'page' : undefined} className={BOTTOM_ITEM}>
-              {i.icon}
-              {i.label}
-            </NavLink>
-          </li>
+          <React.Fragment key={i.href}>
+            <li>
+              <NavLink href={i.href} aria-current={i.active ? 'page' : undefined} className={BOTTOM_ITEM}>
+                {i.icon}
+                {i.label}
+              </NavLink>
+            </li>
+            {/* 探すはホームの隣（サイドバーで頭にあるのと同じ順） */}
+            {i.href === '/' ? (
+              <li>
+                <SearchItem className={BOTTOM_ITEM} />
+              </li>
+            ) : null}
+          </React.Fragment>
         ))}
         <li>
           <SettingsMenu theme={theme} onPick={onPick} className={BOTTOM_ITEM} />
