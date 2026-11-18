@@ -1,5 +1,5 @@
 // まとめタブの財政の状況（借金と貯金・事業に回ったお金・財政の指標）。普通会計の決算（PageData.finance）から描く。
-// 市区町村は総務省「市町村別決算状況調」、都道府県は地方財政状況調査（e-Stat の社会・人口統計体系）で、都道府県には基金・実質赤字比率・連結実質赤字比率が無い
+// 市区町村は総務省「市町村別決算状況調」、都道府県は地方財政状況調査（e-Stat の社会・人口統計体系）。社会・人口統計体系に列が無いので、都道府県の基金・実質赤字比率・連結実質赤字比率は null
 // 開いた年度までの最新の決算の年度を出し、推移はそこまでの5年。評価の言葉や色は付けず、項目の意味だけを書く
 import * as React from 'react'
 import { cn } from '@/lib/utils'
@@ -100,7 +100,7 @@ function DebtSide({ label, term, yen, people, spark, children, say }: { label: s
 
 const DEBT_SAY = '地方債は、自治体が学校・道路・ごみ処理施設など長く使うものを建てるときに借りるお金です。何十年かけて返すので、その施設を使う世代みんなで負担します。地方債現在高は、年度末にまだ返していない残りの額です。'
 
-/** 借金と貯金。基金の無い年度（都道府県）は借金だけを出す */
+/** 借金と貯金。出典に基金の現在高が無い年度（都道府県）は借金だけを出し、貯金を出さない理由を添える */
 function DebtAndFunds({ at, rows, people, prefecture }: { at: LocalFinance; rows: LocalFinance[]; people: number | null; prefecture: boolean }) {
   if (at.localBondBalance == null) return null
   // 都道府県の値（社会・人口統計体系の D3105）は、一部事務組合が発行した地方債も含む
@@ -108,7 +108,13 @@ function DebtAndFunds({ at, rows, people, prefecture }: { at: LocalFinance; rows
   const debt = (
     <DebtSide label="借金" term="地方債現在高" yen={at.localBondBalance} people={people} spark={<Spark points={series(rows, (f) => f.localBondBalance)} format={okuText} full />} say={say} />
   )
-  if (at.fundBalance == null) return <div className="@xl:max-w-[50%] @xl:pr-6">{debt}</div>
+  if (at.fundBalance == null)
+    return (
+      <div className="flex flex-col gap-3 @xl:max-w-[50%] @xl:pr-6">
+        {debt}
+        <p className="text-sm leading-[1.7] text-muted-foreground">貯金（基金）の残高は、この資料に載っていないため出していません。</p>
+      </div>
+    )
   const kinds = [
     ['財政調整基金', at.fiscalAdjustmentFund],
     ['減債基金', at.debtReductionFund],
