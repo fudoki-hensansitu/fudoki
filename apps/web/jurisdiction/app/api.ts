@@ -179,6 +179,8 @@ async function readSheetsOfProjects(call: ApiCall, years: { min: number; max: nu
 /** 事業の詳細: 年度ごとの額と、開いた年度の中の事業 */
 export type ProjectFull = {
   id: string
+  /** 事業の自治体コード。事業の頁の canonical を、その事業の自治体の path にする */
+  code: string
   name: string
   dept: string | null
   path: (string | null)[]
@@ -233,6 +235,7 @@ export async function readProjectFull(call: ApiCall, id: string, at?: { year: nu
       ])
   return {
     id,
+    code: p.project.jurisdiction_code,
     name: clean(p.project.name),
     dept: deptOf(latest?.name ?? p.project.name),
     path: latest ? [latest.kan_name, latest.kou_name, latest.moku_name] : [],

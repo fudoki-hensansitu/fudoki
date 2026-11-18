@@ -19,8 +19,17 @@ export const loader = defineHandler<Props>(async (c) => {
   }
 })
 
+const TITLE = 'まち比べ — 風土記'
+const DESCRIPTION = 'まちのお金を1人あたりの金額に直して、借金・貯金・分野ごとの使い方などを、東京都のまちどうしで比べられます。'
+const CANONICAL = 'https://fudoki.dev/compare'
+
 export const head = defineHead(() => ({
-  title: 'まち比べ — 風土記',
-  link: [{ rel: 'canonical', href: 'https://fudoki.dev/compare' }],
-  meta: [{ name: 'description', content: 'まちのお金を1人あたりの金額に直して、借金・貯金・分野ごとの使い方などを、東京都のまちどうしで比べられます。' }],
+  title: TITLE,
+  link: [{ rel: 'canonical', href: CANONICAL }],
+  meta: [
+    { name: 'description', content: DESCRIPTION },
+    { property: 'og:title', content: TITLE },
+    { property: 'og:description', content: DESCRIPTION },
+    { property: 'og:url', content: CANONICAL },
+  ],
 }))

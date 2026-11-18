@@ -5,6 +5,8 @@ import { assetPath } from './assets'
 import { jurisdictionPath } from './path'
 import { appPageYears, formatYen, hasDocument, TAB_SLUGS, type PageData, type PageTab } from './types'
 import { DOMAIN_FRAMES, OTHER_FRAME } from './domains'
+import { QUESTIONS } from '../compare/questions'
+import type { ProjectFull } from './app/api'
 
 const ORIGIN = 'https://fudoki.dev'
 /** 風土記のデータを配る条件（利用規約）。構造化データの Dataset の license に書く */
@@ -70,7 +72,8 @@ const amountsOf = (d: PageData, year: number, opened?: Opened) => ({
   settlement: opened?.year === year && opened.kind === 'settlement' ? opened.yen : d.headline?.settlement?.year === year ? d.headline.settlement.yen : null,
 })
 
-/** 頁の title。「◯◯区の予算と決算（令和8年度）｜風土記」のように、何の頁か・年度・サイト名だけにする。検索語の「◯◯区 予算」「◯◯区 決算」「令和8年度」を入れる */
+/** 頁の title。「◯◯区の予算と決算（令和8年度）｜予算書・決算書を事業の単位で｜風土記」のように、何の頁か・年度・並べている資料・サイト名にする。
+ * 検索語の「◯◯区 予算」「◯◯区 決算」「◯◯区 予算書」「令和8年度」を入れる */
 export function pageTitle(d: PageData, year: number, section?: Section, opened?: Opened): string {
   const y = reiwaFull(year)
   const subject = (() => {
@@ -82,7 +85,9 @@ export function pageTitle(d: PageData, year: number, section?: Section, opened?:
     }
     return section.tab === 'projects' ? 'の事業一覧' : section.tab === 'money' ? 'の当初予算' : 'の決算'
   })()
-  return `${d.name}${subject}（${y}）｜風土記`
+  // 「◯◯区 予算書」「◯◯市 決算書」で探す人が多いので、頁が並べている資料の名前を添える（事業一覧は予算書・決算書の両方から作る）
+  const docs = section?.tab === 'money' ? '予算書' : section?.tab === 'settled' ? '決算書' : subject === 'の予算' ? '予算書' : subject === 'の決算' ? '決算書' : '予算書・決算書'
+  return `${d.name}${subject}（${y}）｜${docs}を事業の単位で｜風土記`
 }
 
 /** 頁の説明文。検索結果に出るので、金額は API の値だけで書く（人口や仮の値は入れない）。タブ・分野の頁はその頁に何があるかを書く */
@@ -178,13 +183,43 @@ export function pageHead(d: PageData, year?: number, section?: Section, opened?:
   return head(title, description, canonical, { meta, script: [{ type: 'application/ld+json', innerHTML: inlineJson([ld, breadcrumb]) }] })
 }
 
+/** 事業の頁（/tokyo/shinagawa/projects/<project_id>）の head。事業は年度をまたぐので、題には事業の最新の年度を書き、
+ * 説明文はその年度の決算（無ければ当初予算）の額と、担当の課・款項目を書く。canonical は年度の段の無い事業の頁 */
+export function projectHead(d: PageData, p: ProjectFull): Head {
+  const latest = Object.keys(p.y).map(Number).sort((a, b) => b - a)[0]
+  const at = latest === undefined ? undefined : p.y[String(latest)]
+  const y = latest === undefined ? '' : reiwaFull(latest)
+  const title = `${d.name}の${p.name}${y ? `（${y}）` : ''}｜風土記`
+  const amount = at?.s != null ? `${y}決算は約${formatYen(at.s)}${at.b != null ? `（当初予算は約${formatYen(at.b)}）` : ''}。` : at?.b != null ? `${y}当初予算は約${formatYen(at.b)}。` : ''
+  const where = [p.dept ? `担当は${p.dept}` : null, p.path.filter(Boolean).length ? `科目は${p.path.filter(Boolean).join('・')}` : null].filter(Boolean).join('、')
+  const description = `${d.name}の${p.name}。${amount}${where ? `${where}。` : ''}年度ごとの予算・決算を、予算書・決算書の頁と並べて見られます。`
+  const canonical = `${ORIGIN}${jurisdictionPath(d.code)}/${TAB_SLUGS.projects}/${encodeURIComponent(p.id)}`
+  const parent = d.prefecturePath ? [{ name: d.prefecture, path: d.prefecturePath }] : []
+  const breadcrumb = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [{ name: '風土記', path: '/' }, ...parent, { name: d.name, path: jurisdictionPath(d.code) }, { name: p.name, path: `${jurisdictionPath(d.code)}/${TAB_SLUGS.projects}/${encodeURIComponent(p.id)}` }].map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: `${ORIGIN}${c.path}` })),
+  }
+  // OG 画像は自治体の最新の頁と同じもの（紋章と最新の決算の分野があるときだけ。pageHead と同じ条件）
+  const own = d.emblem && (d.headline?.settlement?.areas.length ?? 0) > 0
+  const meta = own ? [{ property: 'og:image', content: `${ORIGIN}${assetPath(d.code, 'og.png')}` }] : []
+  return head(title, description, canonical, { meta, script: [{ type: 'application/ld+json', innerHTML: inlineJson(breadcrumb) }] })
+}
+
+/** 事業の頁で中身を読めなかったとき（API に繋がらない・待ちきれない）の head。題・説明は事業のタブのものだが、canonical は事業の頁自身にする */
+export const projectFallbackHead = (d: PageData, id: string): Head => {
+  const h = pageHead(d, undefined, { tab: 'projects' })
+  const canonical = `${ORIGIN}${jurisdictionPath(d.code)}/${TAB_SLUGS.projects}/${encodeURIComponent(id)}`
+  return { ...h, meta: h.meta.map((m) => (m.property === 'og:url' ? { ...m, content: canonical } : m)), link: h.link.map((l) => (l.rel === 'canonical' ? { ...l, href: canonical } : l)) }
+}
+
 /** 収録がまだ無い自治体。検索の対象にはしない */
 export const emptyHead = (e: CatalogEntry): Head =>
   head(`${e.name}｜風土記`, `${e.name}の歳出は風土記にまだ収録されていません。`, `${ORIGIN}${jurisdictionPath(e.code)}`, { meta: [{ name: 'robots', content: 'noindex' }] })
 
-/** sitemap。まとめ（/tokyo/shinagawa）と各年度のタブの頁（/tokyo/shinagawa/2026/projects）を載せる。years は頁で選べる年度（新しい順） */
+/** sitemap。入口・まち比べ（/compare と問いの頁）と、まとめ（/tokyo/shinagawa）と各年度のタブの頁（/tokyo/shinagawa/2026/projects）を載せる。years は頁で選べる年度（新しい順） */
 export const sitemapXml = (entries: CatalogEntry[], yearsOf: (e: CatalogEntry) => number[] = (e) => [...e.settlementYears].sort((a, b) => b - a)) =>
-  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${ORIGIN}/</loc></url><url><loc>${ORIGIN}/assistant</loc></url><url><loc>${ORIGIN}/about</loc></url>${entries
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${ORIGIN}/</loc></url><url><loc>${ORIGIN}/assistant</loc></url><url><loc>${ORIGIN}/about</loc></url><url><loc>${ORIGIN}/compare</loc></url>${QUESTIONS.map((q) => `<url><loc>${ORIGIN}/compare/${q.slug}</loc></url>`).join('')}${entries
     .filter((e) => e.settlementYears.length > 0)
     .flatMap((e) => {
       const base = jurisdictionPath(e.code)
