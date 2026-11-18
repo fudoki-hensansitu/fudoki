@@ -255,8 +255,9 @@ export function Home({ listed, featured }: HomeProps) {
       <>
         {/* ほかのまちを見る導線。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
         <OtherTowns className="mb-3" />
-        {/* リセットはまちの札の右上に添える（住んでいるまちを選び直す） */}
-        <div className="mb-2 flex justify-end">
+        {/* 札の上の行。左端に「私のまち」、右上にリセット（住んでいるまちを選び直す）を添える（2026-11-18 yuito） */}
+        <div className="mb-2 flex items-baseline justify-between">
+          <p className="text-sm font-medium text-muted-foreground">私のまち</p>
           <button type="button" onClick={reset} className="text-sm text-muted-foreground hover:text-foreground">
             リセット
           </button>
