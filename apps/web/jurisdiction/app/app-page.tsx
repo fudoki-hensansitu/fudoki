@@ -291,7 +291,7 @@ function ProjectLink({ id, children }: { id: string; children: React.ReactNode }
   )
 }
 
-/** 事業の名前の欄。新しく始める・やめた事業の印は事業名の後ろに付け、狭い幅（詳細を横に開いたときも）では分野を下に添える（広い幅は別の列） */
+/** 事業の名前の欄。新しく始める・やめた事業の印は事業名の後ろに付ける。分野・評価は広い幅の列だけに出し、狭い幅では名前の下に添えない（情報が増えないため） */
 function ProjectNameCell({ p }: { p: Proj }) {
   const { v } = useApp()
   const ended = v.isEnded(p)

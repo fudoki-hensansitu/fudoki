@@ -52,17 +52,20 @@ const rule = ({ pattern, message }) => ({
 const SMALL = new RegExp(`${EDGE_L}text-(?:xs|sm)${EDGE_R}`)
 const TABLE = new Set(['Table', 'TableHeader', 'TableBody', 'TableFooter', 'TableRow', 'TableHead', 'TableCell', 'table', 'thead', 'tbody', 'tfoot', 'tr', 'th', 'td'])
 const BODY_LEADING = new RegExp(`${EDGE_L}leading-(?:relaxed|loose|\\[1\\.[6-9]\\]|body)${EDGE_R}`)
-const classText = (attr) => {
-  const v = attr.value
-  if (!v) return null
-  if (v.type === 'Literal') return typeof v.value === 'string' ? v.value : null
-  if (v.type === 'JSXExpressionContainer') {
-    const e = v.expression
-    if (e.type === 'Literal' && typeof e.value === 'string') return e.value
-    if (e.type === 'TemplateLiteral') return e.quasis.map((q) => q.value.cooked ?? q.value.raw).join(' ')
+// className の式から文字列を集める。cn(...) の引数・三項・&& の枝も読む
+const strings = (e) => {
+  if (!e) return []
+  switch (e.type) {
+    case 'Literal': return typeof e.value === 'string' ? [e.value] : []
+    case 'TemplateLiteral': return e.quasis.map((q) => q.value.cooked ?? q.value.raw)
+    case 'JSXExpressionContainer': return strings(e.expression)
+    case 'CallExpression': return e.arguments.flatMap(strings)
+    case 'ConditionalExpression': return [...strings(e.consequent), ...strings(e.alternate)]
+    case 'LogicalExpression': return [...strings(e.left), ...strings(e.right)]
+    default: return []
   }
-  return null
 }
+const classText = (attr) => strings(attr.value).join(' ') || null
 const bodyText = {
   create(context) {
     return {
