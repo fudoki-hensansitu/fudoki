@@ -54,13 +54,13 @@ function Section({ title, drills, total }: { title: string; drills: Drill[]; tot
             return (
               <TableRow key={r.key} className={cn(r.depth > 0 && 'text-sm', r.depth === 3 && 'text-muted-foreground')}>
                 <TableCell className="py-2 pl-0 whitespace-normal">
-                  <div className="flex items-center gap-1" style={{ paddingLeft: `${r.depth * 1.25}rem` }}>
+                  <div className="flex items-center gap-1" style={{ paddingLeft: `${r.depth}rem` }}>
                     {r.hasChildren ? (
                       <button type="button" onClick={() => toggle(r.key)} aria-expanded={expanded} aria-label={`${r.name}の${LEVELS[r.depth + 1]}を${expanded ? '閉じる' : '開く'}`} className="-my-1 inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring">
                         <CaretRightIcon aria-hidden="true" className={cn('size-4 transition-transform duration-200', expanded && 'rotate-90')} />
                       </button>
                     ) : (
-                      <span className="size-7 shrink-0" aria-hidden="true" />
+                      <span className="w-7 shrink-0" aria-hidden="true" />
                     )}
                     <span className="min-w-0 leading-snug [overflow-wrap:anywhere]">
                       <span className="mr-2 text-xs text-muted-foreground">{LEVELS[r.depth]}</span>
@@ -68,8 +68,8 @@ function Section({ title, drills, total }: { title: string; drills: Drill[]; tot
                     </span>
                   </div>
                 </TableCell>
-                <TableCell className={cn('py-2 text-right align-top tabular-nums', r.depth === 0 && 'font-semibold text-primary')}>{r.missing ? <span className="text-xs text-muted-foreground">金額未記載</span> : formatYen(r.yen)}</TableCell>
-                <TableCell className="py-2 pr-0 text-right align-top text-xs tabular-nums text-muted-foreground">{formatShare(r.yen, total, r.missing) ?? ''}</TableCell>
+                <TableCell className={cn('py-2 text-right tabular-nums', r.depth === 0 && 'font-semibold text-primary')}>{r.missing ? <span className="text-xs text-muted-foreground">金額未記載</span> : formatYen(r.yen)}</TableCell>
+                <TableCell className="py-2 pr-0 text-right text-xs tabular-nums text-muted-foreground">{formatShare(r.yen, total, r.missing) ?? ''}</TableCell>
               </TableRow>
             )
           })}
