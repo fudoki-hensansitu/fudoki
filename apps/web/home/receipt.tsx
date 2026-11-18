@@ -21,9 +21,6 @@ const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-r
 /** 右端の桁が転がる長さ（ms）。左の桁ほど長く、左端は COUNT_MS で着地する */
 const ROLL_MIN = 700
 
-/** 数え上げ（オドメーター）。桁ごとに 0〜9 の帯を縦に転がし、減速して自分の数字に着地させる。右の桁ほど早く着地し、左の桁ほど長く・多く転がる。
- * 動きは CSS の animation だけ（receipt.css の .rm-reel）。key（年度と額）を替えて描き直すと転がし直す。reduced-motion では最初から着地した額。
- * 読み上げには決まった額だけを渡す */
 /** 額を兆・億・万の単位で区切った文字（9,606億8,000万円 の「円」の前まで）。0 の区切りは出さない。端数は丸めない */
 const withUnits = (yen: number) => {
   const units = ['', '万', '億', '兆']
@@ -37,6 +34,9 @@ const withUnits = (yen: number) => {
   return parts.join('') || '0'
 }
 
+/** 数え上げ（オドメーター）。桁ごとに 0〜9 の帯を縦に転がし、減速して自分の数字に着地させる。右の桁ほど早く着地し、左の桁ほど長く・多く転がる。
+ * 動きは CSS の animation だけ（receipt.css の .rm-reel）。key（年度と額）を替えて描き直すと転がし直す。reduced-motion では最初から着地した額。
+ * 読み上げには決まった額だけを渡す */
 function Odometer({ to, delay = 0 }: { to: number; delay?: number }) {
   const final = withUnits(to)
   const n = final.replace(/\D/g, '').length
