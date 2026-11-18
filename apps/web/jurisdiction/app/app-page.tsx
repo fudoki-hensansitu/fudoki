@@ -11,7 +11,7 @@ import {
   CaretRightIcon,
   DotsThreeCircleIcon,
   FileDashedIcon,
-  FlowArrowIcon,
+  ArrowsSplitIcon,
   TableIcon,
   FirstAidKitIcon,
   GlobeIcon,
@@ -474,11 +474,11 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
         <div>
           <div className="mb-3 flex items-center justify-between gap-3">
             <Title size="h3" as="h2">お金の流れ</Title>
-            <ToggleGroup aria-label="お金の流れの見せ方" value={[view]} onValueChange={(v) => { if (v[0]) setView(v[0] as typeof view) }} spacing={0} className="shrink-0 rounded-full bg-secondary p-1">
-              <ToggleGroupItem value="sankey" className="rounded-full! px-3">
-                <FlowArrowIcon aria-hidden="true" />サンキー
+            <ToggleGroup aria-label="お金の流れの見せ方" value={[view]} onValueChange={(v) => { if (v[0]) setView(v[0] as typeof view) }} spacing={0} className="grid shrink-0 grid-cols-2 rounded-full bg-secondary p-1">
+              <ToggleGroupItem value="sankey" className="w-full rounded-full! px-3">
+                <ArrowsSplitIcon aria-hidden="true" className="-rotate-90" />サンキー
               </ToggleGroupItem>
-              <ToggleGroupItem value="table" className="rounded-full! px-3">
+              <ToggleGroupItem value="table" className="w-full rounded-full! px-3">
                 <TableIcon aria-hidden="true" />表
               </ToggleGroupItem>
             </ToggleGroup>
