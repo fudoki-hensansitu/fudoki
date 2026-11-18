@@ -92,7 +92,7 @@ export const formatPeople = (people: number) => (people >= 1e4 ? `${(people / 1e
 /** 基準日（2026-01-01）を「2026年1月1日」に */
 export const formatAsOf = (asOf: string) => asOf.replace(/^(\d+)-0?(\d+)-0?(\d+)$/, '$1年$2月$3日')
 
-/** 市町村の決算の指標の1年度（総務省「市町村別決算状況調」の普通会計）。金額は円、比率は %。出典の「-」（該当なし）は null */
+/** 自治体の決算の指標の1年度（普通会計。市区町村は総務省「市町村別決算状況調」、都道府県は地方財政状況調査で、標準財政規模・実質赤字比率・連結実質赤字比率・基金は null）。金額は円、比率は %。出典の「-」（該当なし）は null */
 export interface LocalFinance {
   year: number
   /** 歳出総額 */

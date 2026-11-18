@@ -605,8 +605,8 @@ function Overview() {
         ) : null}
       </section>
 
-      {/* 借金と貯金・事業に回ったお金・財政の指標（総務省の決算状況調。web の D1 から loader が頁のデータに入れる） */}
-      <FinanceSections finance={page.finance} year={v.year} people={page.population?.people ?? null} />
+      {/* 借金と貯金・事業に回ったお金・財政の指標（市区町村は決算状況調、都道府県は地方財政状況調査。web の D1 から loader が頁のデータに入れる） */}
+      <FinanceSections finance={page.finance} year={v.year} population={page.population} prefecture={page.code.slice(2, 5) === '000'} />
       <Elsewhere />
     </div>
   )
