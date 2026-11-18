@@ -124,8 +124,17 @@ function YearSwitch({ c, onBrand }: { c: Ctx; onBrand?: boolean }) {
   )
 }
 
+/** 住んでいるまちを外して選び直す。緑の札の上に置くので、地の文字色を薄めて控えめにする（ダークでも AA の 4.5:1 を保つ 80%） */
+function ResetButton({ onReset, className }: { onReset: () => void; className?: string }) {
+  return (
+    <button type="button" onClick={onReset} className={cn('text-sm opacity-80 transition-opacity hover:opacity-100', className)}>
+      リセット
+    </button>
+  )
+}
+
 /** うちのまちの札（レシートの機械）。予算と1人あたりを数え上げ、分野ごとの1人あたりのレシートを出す */
-function Dashboard({ c, onPrinted }: { c: Ctx; onPrinted: () => void }) {
+function Dashboard({ c, onPrinted, onReset }: { c: Ctx; onPrinted: () => void; onReset: () => void }) {
   const { v, d, year, town } = c
   const detailHref = c.year === c.years.at(-1) ? c.town.path : flowHref(c)
   return (
@@ -145,13 +154,18 @@ function Dashboard({ c, onPrinted }: { c: Ctx; onPrinted: () => void }) {
             <Title size="h1" as="h2">{town.name}</Title>
             <p className="mt-1 truncate text-sm opacity-80">{c.vision}</p>
           </div>
+          {/* 住んでいるまちを選び直すリセットは札の中に置く。広くない画面では見出しの行の右上、広い画面では「詳細」の下（2026-11-18 yuito） */}
+          <ResetButton onReset={onReset} className="self-start lg:hidden" />
           {/* 年度と、そのまちの頁へ進む導線は、紋章・まちの名前と同じ1行に中心を揃えて右に並べる。広くない画面ではまちの名前を詰めないよう、名前の下の1行に並べる */}
-          <div className="flex w-full items-center justify-between gap-2 lg:w-auto lg:shrink-0">
+          <div className="flex w-full items-center justify-between gap-2 lg:w-auto lg:shrink-0 lg:items-start">
             <YearSwitch c={c} onBrand />
-            <Link href={detailHref} className="inline-flex items-center gap-2 rounded-full border border-brand-fill bg-brand-fill px-4 py-2 text-sm font-medium text-brand-fill-foreground transition-colors hover:border-brand-fill-hover hover:bg-brand-fill-hover">
-              詳細
-              <ArrowRightIcon className="size-4" />
-            </Link>
+            <div className="flex flex-col items-end gap-2">
+              <Link href={detailHref} className="inline-flex items-center gap-2 rounded-full border border-brand-fill bg-brand-fill px-4 py-2 text-sm font-medium text-brand-fill-foreground transition-colors hover:border-brand-fill-hover hover:bg-brand-fill-hover">
+                詳細
+                <ArrowRightIcon className="size-4" />
+              </Link>
+              <ResetButton onReset={onReset} className="max-lg:hidden" />
+            </div>
           </div>
         </div>
       }
@@ -172,11 +186,22 @@ function Loading() {
 }
 
 /** うちのまちのデータが揃うまでの出し分け。揃ったら children に渡す */
-function WithCtx({ town, vision, snap, children }: { town: Town; vision?: string; snap: ReturnType<typeof useSnapshot>; children: (c: Ctx) => React.ReactNode }) {
+function WithCtx({ town, vision, snap, onReset, children }: { town: Town; vision?: string; snap: ReturnType<typeof useSnapshot>; onReset: () => void; children: (c: Ctx) => React.ReactNode }) {
   const { d, failed, year, setYear } = snap
-  if (failed) return <p className="text-sm text-muted-foreground">今はこのまちのデータを読み込めません。少し時間をおいて開き直してください。</p>
-  if (!d || year == null) return <Loading />
-  if (!d.years[String(year)]) return <p className="text-sm text-muted-foreground">このまちの予算・決算は、まだ収録していません。</p>
+  // 札を出せないとき（読めない・読み込み中・未収録）も住んでいるまちを選び直せるよう、札の外の右上にリセットを残す
+  const withReset = (node: React.ReactNode) => (
+    <>
+      <div className="mb-2 flex justify-end">
+        <button type="button" onClick={onReset} className="text-sm text-muted-foreground hover:text-foreground">
+          リセット
+        </button>
+      </div>
+      {node}
+    </>
+  )
+  if (failed) return withReset(<p className="text-sm text-muted-foreground">今はこのまちのデータを読み込めません。少し時間をおいて開き直してください。</p>)
+  if (!d || year == null) return withReset(<Loading />)
+  if (!d.years[String(year)]) return withReset(<p className="text-sm text-muted-foreground">このまちの予算・決算は、まだ収録していません。</p>)
   return <>{children(buildCtx(town, d, year, setYear, vision))}</>
 }
 
@@ -278,14 +303,8 @@ export function Home({ listed, featured }: HomeProps) {
     body = (
       // 刷り出すレシートと他のまちの節の場所を、はじめから画面1.5枚ぶん取っておき、札へ頁を送っても刷り終える前に頁の末尾（footer）が見えないようにする（2026-11-18 yuito）
       <div className="min-h-[150svh]">
-        {/* リセットはまちの札の右上に添える（住んでいるまちを選び直す） */}
-        <div className="mb-2 flex justify-end">
-          <button type="button" onClick={reset} className="text-sm text-muted-foreground hover:text-foreground">
-            リセット
-          </button>
-        </div>
-        <WithCtx key={town!.code} town={town!} vision={vision} snap={snap}>
-          {(c) => <Dashboard c={c} onPrinted={() => setPrinted(true)} />}
+        <WithCtx key={town!.code} town={town!} vision={vision} snap={snap} onReset={reset}>
+          {(c) => <Dashboard c={c} onPrinted={() => setPrinted(true)} onReset={reset} />}
         </WithCtx>
         {/* ほかのまちを見る導線。レシートとは別の節として見出しと大きな検索欄を置き、レシートの末端まで頁が送られてから出す（2026-11-18 yuito）。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
         {printed ? (

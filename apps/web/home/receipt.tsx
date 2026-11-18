@@ -29,6 +29,12 @@ const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-r
 /** 札の要素を出す時刻を animation に渡す */
 const beat = (delay: number): React.CSSProperties => ({ animationDelay: `${delay}ms` })
 
+/** 見比べ用（2026-11-18 yuito）: URL に ?land=left を付けると、左の桁から着地させる。既定は右の桁から */
+const landFromLeft = () => typeof location !== 'undefined' && new URLSearchParams(location.search).get('land') === 'left'
+
+/** 札の金額の幅（em）。少し広めに、数字 0.68・カンマ 0.32・単位（兆億万、左右の余白込み）0.85・末尾の円 0.75 で見積もる */
+const amountEm = (yen: number) => [...withUnits(yen)].reduce((w, ch) => w + (ch === ',' ? 0.32 : ch >= '0' && ch <= '9' ? 0.68 : 0.85), 0.75)
+
 /** 右端の桁が転がる長さ（ms）。左の桁ほど長く、左端は COUNT_MS で着地する */
 const ROLL_MIN = 700
 
@@ -37,6 +43,7 @@ const ROLL_MIN = 700
  * 読み上げには決まった額だけを渡す */
 function Odometer({ to, delay = 0 }: { to: number; delay?: number }) {
   const final = withUnits(to)
+  const left = landFromLeft()
   const n = final.replace(/\D/g, '').length
   let k = n
   return (
@@ -48,7 +55,7 @@ function Odometer({ to, delay = 0 }: { to: number; delay?: number }) {
           if (ch < '0' || ch > '9') return <small key={i} className="mx-1 text-[0.55em]">{ch}</small>
           // k は末尾から数えた桁の位置。r は右端 0 から左端 1
           k--
-          const r = n > 1 ? k / (n - 1) : 1
+          const r = n > 1 ? (left ? n - 1 - k : k) / (n - 1) : 1
           const steps = (1 + Math.round(r * 2)) * 10 + Number(ch)
           const style = { '--to': `${-steps}em`, animationDuration: `${Math.round(ROLL_MIN + (COUNT_MS - ROLL_MIN) * r)}ms`, animationDelay: `${delay}ms` } as React.CSSProperties
           return (
@@ -550,12 +557,13 @@ export function ReceiptMachine({ code, name, v, year, pop, base, detailHref, hea
         {head}
         {/* 予算と1人あたりを同じ大きさでいちばん大きく出す。見出し → 金額 → 見出し → 金額の順に一つずつ出し、目をいつも一つに向ける（数えている間に他を薄くはしない）（motion.ts の BEAT、2026-11-18 yuito）。
             数え直すたびに key で描き直して頭から出し直す */}
-        <dl key={counted} className="mt-5 grid gap-4 sm:mt-6 sm:gap-5">
+        {/* 金額は札の幅に収まる大きさにする（円の端数まである決算は長い）。予算と1人あたりは同じ大きさに揃えるので、長い方で決める */}
+        <dl key={counted} className="mt-5 grid gap-4 [container-type:inline-size] sm:mt-6 sm:gap-5" style={{ '--amount-em': Math.max(amountEm(v.total), pop ? amountEm(perTo) : 0) } as React.CSSProperties}>
           <div>
             {/* oxlint-disable-next-line design/text-size, design/space-step -- うちのまちの札は画面幅に合わせて見出しと金額を伸ばす見せ場なので、段の外を許す（見出しの大きさは 2026-11-17 yuito） */}
             <dt className="rm-in text-[clamp(17px,4.6vw,22px)] opacity-80" style={beat(BEAT.label1)}>{what}</dt>
             {/* oxlint-disable-next-line design/text-size, design/space-step -- うちのまちの札は画面幅に合わせて見出しと金額を伸ばす見せ場なので、段の外を許す（見出しの大きさは 2026-11-17 yuito） */}
-            <dd className="rm-in mt-2 text-[clamp(28px,8vw,60px)] leading-none font-semibold" style={beat(BEAT.amount1)}>
+            <dd className="rm-in mt-2 text-[min(clamp(28px,8vw,60px),100cqi/var(--amount-em))] leading-none font-semibold" style={beat(BEAT.amount1)}>
               <Odometer to={v.total} delay={BEAT.amount1} />
             </dd>
           </div>
@@ -564,7 +572,7 @@ export function ReceiptMachine({ code, name, v, year, pop, base, detailHref, hea
               {/* oxlint-disable-next-line design/text-size, design/space-step -- うちのまちの札は画面幅に合わせて見出しと金額を伸ばす見せ場なので、段の外を許す（見出しの大きさは 2026-11-17 yuito） */}
               <dt className="text-[clamp(17px,4.6vw,22px)] opacity-80">1人あたりに直すと</dt>
               {/* oxlint-disable-next-line design/text-size, design/space-step -- うちのまちの札は画面幅に合わせて見出しと金額を伸ばす見せ場なので、段の外を許す（見出しの大きさは 2026-11-17 yuito） */}
-              <dd className="rm-in mt-2 text-[clamp(28px,8vw,60px)] leading-none font-semibold" style={beat(BEAT.amount2)}>
+              <dd className="rm-in mt-2 text-[min(clamp(28px,8vw,60px),100cqi/var(--amount-em))] leading-none font-semibold" style={beat(BEAT.amount2)}>
                 <Odometer to={perTo} delay={BEAT.amount2} />
               </dd>
             </div>
