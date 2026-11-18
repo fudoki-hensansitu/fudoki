@@ -29,7 +29,6 @@ const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-r
 /** 札の要素を出す時刻を animation に渡す */
 const beat = (delay: number): React.CSSProperties => ({ animationDelay: `${delay}ms` })
 
-
 /** 札の金額の幅（em）。少し広めに、数字 0.68・カンマ 0.32・単位（兆億万、左右の余白込み）0.85・末尾の円 0.75 で見積もる */
 const amountEm = (yen: number) => [...withUnits(yen)].reduce((w, ch) => w + (ch === ',' ? 0.32 : ch >= '0' && ch <= '9' ? 0.68 : 0.85), 0.75)
 
