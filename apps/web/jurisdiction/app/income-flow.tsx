@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { cn } from '@/lib/utils'
 import { AmountTip } from '../amount-tip'
-import { useFlowSeen } from '../sankey'
+import { NameText, fit, layout, slotsFor, useFlowSeen, wrapName } from '../sankey'
 import { formatShare, type Drill, type RevenueDoc } from '../types'
 import { Amt } from './amount'
 import { titleVariants } from '@/components/ui/title'
@@ -24,27 +24,6 @@ const RIBBON_FILL: Record<Tone, string> = { in: 'fill-(--kincha)/20', out: 'fill
 const SHARE_FILL: Record<Tone, string> = { in: 'fill-(--kincha-ink)', out: 'fill-primary', rest: 'fill-muted-foreground' }
 
 
-const fit = (values: number[], slot: number, gap: number, height: number) => {
-  let low = 0
-  let high = height / Math.max(1, values.reduce((s, v) => s + v, 0))
-  for (let i = 0; i < 40; i++) {
-    const mid = (low + high) / 2
-    const used = values.reduce((s, v) => s + Math.max(v * mid + LEAD, slot) + gap, 0)
-    if (used > height) high = mid
-    else low = mid
-  }
-  return low
-}
-const layout = (values: number[], scale: number, slot: number, gap: number) => {
-  let top = 0
-  return values.map((v) => {
-    const height = Math.max(v * scale, 0)
-    const size = Math.max(height + LEAD, slot)
-    const node = { top, size, y: top + LEAD + (size - LEAD - height) / 2, height }
-    top += size + gap
-    return node
-  })
-}
 const ribbon = (xa: number, ya: number, xb: number, yb: number, h: number) => {
   const mid = (xa + xb) / 2
   return `M${xa} ${ya}C${mid} ${ya},${mid} ${yb},${xb} ${yb}L${xb} ${yb + h}C${mid} ${yb + h},${mid} ${ya + h},${xa} ${ya + h}Z`
@@ -69,17 +48,25 @@ export function MoneyFlow({ incoming, outgoing, heads, name }: { incoming: Node[
   const { seen, still } = useFlowSeen(ref, `${heads.join()}:${incoming.reduce((t, n) => t + n.yen, 0)}:${outgoing.reduce((t, n) => t + n.yen, 0)}`)
   const width = useWidth(ref)
   const narrow = width < 560
-  // 名前の欄は一番長い名前の幅だけ取り、残りを帯に回す（名前は全角なので文字数×文字の大きさで足りる）
-  const nameWidth = (ns: Node[], size: number) => Math.max(0, ...ns.map((n) => Math.min(Array.from(n.label).length, narrow ? 10 : 99))) * size + GAP + 4
-  const x0 = Math.min(nameWidth(incoming, narrow ? 10.5 : 13), width * 0.3)
-  const x2 = Math.max(width - Math.min(nameWidth(outgoing, narrow ? 10.5 : 12), width * 0.32) - BAR, x0 + 2 * BAR + 80)
+  const inSize = narrow ? 10.5 : 13
+  const outSize = narrow ? 10.5 : 12
+  // 名前の欄は一番長い名前の幅だけ取り、残りを帯に回す（名前は全角なので文字数×文字の大きさで足りる）。狭い画面では6文字で折って帯に幅を回す
+  const nameWidth = (ns: Node[], size: number) => Math.max(0, ...ns.map((n) => Math.min(Array.from(n.label).length, narrow ? 6 : 99))) * size + GAP + 4
+  const x0 = Math.min(nameWidth(incoming, inSize), width * 0.3)
+  const x2 = Math.max(width - Math.min(nameWidth(outgoing, outSize), width * 0.32) - BAR, x0 + 2 * BAR + 80)
   const x1 = (x0 + x2) / 2
+  // 名前は切らずに、欄の幅で折る。幅を測る前は1行として高さを取る
+  const inLines = incoming.map((n) => (width ? wrapName(n.label, Math.floor((x0 - GAP - 4) / inSize)) : [n.label]))
+  const outLines = outgoing.map((n) => (width ? wrapName(n.label, Math.floor((width - x2 - BAR - GAP - 4) / outSize)) : [n.label]))
+  const inSlots = slotsFor(inLines, IN_SLOT, inSize)
+  const outSlots = slotsFor(outLines, OUT_SLOT, outSize)
   const inGap = 6
   const outGap = 4
-  const room = Math.max(380, incoming.length * (IN_SLOT + inGap) + 160, outgoing.length * (OUT_SLOT + outGap) + 160)
-  const scale = Math.min(fit(incoming.map((n) => n.yen), IN_SLOT, inGap, room), fit(outgoing.map((n) => n.yen), OUT_SLOT, outGap, room))
-  const ins = layout(incoming.map((n) => n.yen), scale, IN_SLOT, inGap)
-  const outs = layout(outgoing.map((n) => n.yen), scale, OUT_SLOT, outGap)
+  const sum = (slots: number[], gap: number) => slots.reduce((s, slot) => s + slot + gap, 0)
+  const room = Math.max(380, sum(inSlots, inGap) + 160, sum(outSlots, outGap) + 160)
+  const scale = Math.min(fit(incoming.map((n) => n.yen), inSlots, inGap, room), fit(outgoing.map((n) => n.yen), outSlots, outGap, room))
+  const ins = layout(incoming.map((n) => n.yen), scale, inSlots, inGap)
+  const outs = layout(outgoing.map((n) => n.yen), scale, outSlots, outGap)
   const end = (xs: { top: number; size: number }[]) => (xs.length ? xs[xs.length - 1]!.top + xs[xs.length - 1]!.size : 0)
   const total = Math.max(end(ins), end(outs), 40)
   // 一般会計の棒は入る総額の高さで、図の中ほどに置く
@@ -88,7 +75,6 @@ export function MoneyFlow({ incoming, outgoing, heads, name }: { incoming: Node[
   let inOffset = 0
   let outOffset = 0
   const share = (n: Node) => (n.base ? (formatShare(n.yen, n.base) ?? '') : '')
-  const label = (n: Node) => (narrow && Array.from(n.label).length > 10 ? `${Array.from(n.label).slice(0, 9).join('')}…` : n.label)
   const pick = (fn?: () => void) => (fn ? { role: 'button', tabIndex: 0, className: 'cursor-pointer outline-none [&:hover_text[data-name]]:underline [&:focus-visible_rect]:fill-ring', onClick: fn, onKeyDown: (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn() } } } : {})
   return (
     <div ref={ref} className="relative w-full" style={{ height: total + HEAD }}>
@@ -123,7 +109,7 @@ export function MoneyFlow({ incoming, outgoing, heads, name }: { incoming: Node[
                   <rect x={0} y={node.top} width={x0 + BAR} height={node.size} className="fill-transparent" />
                   <rect x={x0} y={node.y} width={BAR} height={h} rx={2} className={BAR_FILL[n.tone]} />
                   <text x={x0 + BAR / 2} y={node.y - 3} textAnchor="middle" className={cn('font-semibold tabular-nums', SHARE_FILL[n.tone])} fontSize={narrow ? 10 : 11}>{share(n)}</text>
-                  <text x={x0 - GAP} y={node.y + h / 2} dy="0.35em" data-name="" textAnchor="end" className="fill-foreground" fontSize={narrow ? 10.5 : 13}>{label(n)}</text>
+                  <NameText x={x0 - GAP} y={node.y + h / 2} lines={inLines[i]!} size={inSize} anchor="end" />
                 </AmountTip>
               )
             })}
@@ -136,7 +122,7 @@ export function MoneyFlow({ incoming, outgoing, heads, name }: { incoming: Node[
                     <rect x={x2} y={node.top} width={width - x2} height={node.size} className="fill-transparent" />
                     <rect x={x2} y={node.y} width={BAR} height={h} rx={2} className={BAR_FILL[n.tone]} />
                     <text x={x2 + BAR / 2} y={node.y - 3} textAnchor="middle" className={cn('font-semibold tabular-nums', SHARE_FILL[n.tone])} fontSize={narrow ? 10 : 11}>{share(n)}</text>
-                    <text x={x2 + BAR + GAP} y={node.y + h / 2} dy="0.35em" data-name="" className="fill-foreground" fontSize={narrow ? 10.5 : 12}>{label(n)}</text>
+                    <NameText x={x2 + BAR + GAP} y={node.y + h / 2} lines={outLines[i]!} size={outSize} />
                   </g>
                 </AmountTip>
               )
