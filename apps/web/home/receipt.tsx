@@ -509,9 +509,9 @@ export function ReceiptMachine({ code, name, v, year, pop, base, detailHref, hea
         <Qr url={r.href} />
         <Share url={shareUrl(code, r.year)} />
       </div>
-      {/* 読み終えたところから、そのまま詳しい頁へ進めるように、紙の一番下に詳細を見るを置く（2026-11-18 yuito） */}
+      {/* 読み終えたところから、そのまま詳しい頁へ進めるように、紙の一番下に「<まち>の詳細」を置く（2026-11-18 yuito） */}
       <Link href={r.href} data-snap-skip className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-brand px-4 py-3 text-sm font-medium text-brand-foreground transition-opacity hover:opacity-90">
-        詳細を見る
+        {name}の詳細
         <ArrowRightIcon className="size-4" />
       </Link>
     </div>

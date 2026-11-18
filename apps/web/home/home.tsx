@@ -260,9 +260,8 @@ export function Home({ listed, featured }: HomeProps) {
   else {
     body = (
       <>
-        {/* 札の上の行。左端に「私のまち」、右上にリセット（住んでいるまちを選び直す）を添える（2026-11-18 yuito） */}
-        <div className="mb-2 flex items-baseline justify-between">
-          <p className="text-sm font-medium text-muted-foreground">私のまち</p>
+        {/* リセットはまちの札の右上に添える（住んでいるまちを選び直す） */}
+        <div className="mb-2 flex justify-end">
           <button type="button" onClick={reset} className="text-sm text-muted-foreground hover:text-foreground">
             リセット
           </button>
