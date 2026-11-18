@@ -11,6 +11,8 @@ import {
   CaretRightIcon,
   DotsThreeCircleIcon,
   FileDashedIcon,
+  ArrowsSplitIcon,
+  TableIcon,
   FirstAidKitIcon,
   GlobeIcon,
   HandHeartIcon,
@@ -52,6 +54,7 @@ import { Link } from '../../nav/link'
 import { CutIcon, DoneIcon, FixIcon, JoinIcon, KeepIcon, LawIcon, MaybeStopIcon, NewIcon, PlanIcon, SizeIcon, StopIcon, UpIcon } from '../fresh-icons'
 import { YearPicker } from '../year-picker'
 import { Flow } from '../flow'
+import { FlowTable, type FlowQuery } from '../flow-table'
 import { COFOG_NAMES } from '@fudoki/fiscal/cofog-master'
 import { DOMAIN_FRAMES, OTHER_FRAME, frameOf } from '../domains'
 import { rememberJurisdiction } from '../../home/recent'
@@ -417,7 +420,7 @@ const withSetsu = (flow: PageFlow, byMoku: Record<string, Setsu[]>): PageFlow =>
   return { ...flow, drills: drills(flow.drills), loose: flow.loose.map(moku), ...(flow.revenue ? { revenue: drills(flow.revenue) } : {}) }
 }
 
-function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
+function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開いているタブか。スマホは隣のタブも描くので、URL を書き換えるのは開いているタブだけにする */ active: boolean }) {
   const { v, d, res, page, flow, flowFailed, pickAccount, setsu: setsuProp, openField } = useApp()
   const y = d.years[String(v.year)]
   const total: YearTotal | undefined = y?.kind === phase ? { year: v.year, yen: y.total, kan: [] } : undefined
@@ -455,6 +458,29 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
   // 会計の総額は頁のデータの資料のもの。別の資料のタブ（スマホで隣に並ぶタブ）では使わない
   const special = account === GENERAL || !total ? undefined : accounts.find((x) => x.name === account)
   const picked: YearTotal | undefined = special ? { year: v.year, yen: special.yen, kan: [] } : total
+  // お金の流れの見せ方（初めはサンキー図）と表の探す語は URL に持つ（?flow=table・歳出の ?exp_q=・歳入の ?rev_q=）。履歴は積まない
+  const [view, setView] = React.useState<'sankey' | 'table'>('sankey')
+  const [flowQuery, setFlowQuery] = React.useState<FlowQuery>({ expenditure: '', revenue: '' })
+  // URL を読み終えるまでは書き換えない（読む前の初めの値で URL の探す語を消さないように）
+  const [urlRead, setUrlRead] = React.useState(false)
+  React.useEffect(() => {
+    const q = new URLSearchParams(location.search)
+    const found = { expenditure: q.get('exp_q') ?? '', revenue: q.get('rev_q') ?? '' }
+    setFlowQuery(found)
+    if (q.get('flow') === 'table' || found.expenditure || found.revenue) setView('table')
+    setUrlRead(true)
+  }, [])
+  React.useEffect(() => {
+    if (!active || !urlRead) return
+    const q = new URLSearchParams(location.search)
+    const set = (k: string, x: string) => (x ? q.set(k, x) : q.delete(k))
+    const table = view === 'table'
+    set('flow', table ? 'table' : '')
+    set('exp_q', table ? flowQuery.expenditure.trim() : '')
+    set('rev_q', table ? flowQuery.revenue.trim() : '')
+    const next = location.pathname + (q.size ? `?${q}` : '') + location.hash
+    if (next !== location.pathname + location.search + location.hash) history.replaceState(history.state, '', next)
+  }, [active, urlRead, view, flowQuery])
   return (
     <div className="flex flex-col gap-3">
       <TabHead title={label === '決算' ? '決算' : '予算'}>
@@ -467,12 +493,24 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
       {total ? <FieldsSection phase={phase} /> : null}
       {total ? (
         <div>
-          <Title size="h3" as="h2" className="mb-3">お金の流れ</Title>
-          <p className="text-sm leading-[1.7] text-muted-foreground">{current?.revenue?.length ? '歳入（左）と歳出（右）が、款から項・目へとどう分かれていくかを示しています。' : '歳出が、款から項・目へとどう分かれていくかを示しています。'}会計を選ぶと、その会計の流れに切り替わります。</p>
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <Title size="h3" as="h2">お金の流れ</Title>
+            <ToggleGroup aria-label="お金の流れの見せ方" value={[view]} onValueChange={(v) => { if (v[0]) setView(v[0] as typeof view) }} spacing={0} className="grid shrink-0 grid-cols-2 rounded-full bg-secondary p-1">
+              <ToggleGroupItem value="sankey" className="w-full rounded-full! px-3">
+                <ArrowsSplitIcon aria-hidden="true" className="-rotate-90" />サンキー
+              </ToggleGroupItem>
+              <ToggleGroupItem value="table" className="w-full rounded-full! px-3">
+                <TableIcon aria-hidden="true" />表
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </div>
+          <p className="text-sm leading-[1.7] text-muted-foreground">{view === 'table' ? `${current?.revenue?.length ? '歳出と歳入' : '歳出'}の款・項・目・節を、行を押して開けます。割合は総額に占める割合です。` : current?.revenue?.length ? '歳入（左）と歳出（右）が、款から項・目へとどう分かれていくかを示しています。' : '歳出が、款から項・目へとどう分かれていくかを示しています。'}会計を選ぶと、その会計の流れに切り替わります。</p>
         </div>
       ) : null}
       {total ? <AccountCards accounts={accounts} account={account} setAccount={setAccount} /> : null}
-      {picked ? (
+      {picked && view === 'table' ? (
+        <FlowTable key={`${v.year}-${phase}-${account}`} flows={flows} revenue={current?.revenue} total={picked.yen} query={flowQuery} onQuery={(k, x) => setFlowQuery((f) => ({ ...f, [k]: x }))} onRetry={flowFailed && !drills ? () => void router.refresh({ preserveState: true, preserveScroll: true }) : undefined} />
+      ) : picked ? (
         <Flow key={`${v.year}-${phase}-${account}`} flows={flows} revenue={current?.revenue} total={picked} onRetry={flowFailed && !drills ? () => void router.refresh({ preserveState: true, preserveScroll: true }) : undefined} bare natural className="scroll-mt-16 @4xl:scroll-mt-16" />
       ) : recorded ? (
         <Skeleton className="h-[480px] rounded-xl" />
@@ -890,7 +928,13 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     if (t !== at.current.tab || projectOfPath()) move(pageHref(at.current.year, t) + query, { push })
   }
   /** 流れの会計を変える。一般会計は ?account= を付けない */
-  const pickAccount = (account: string) => move(pageHref(year, at.current.tab) + (account === GENERAL ? '' : `?${new URLSearchParams({ account })}`))
+  // 会計を替えても、お金の流れの見せ方と表の探す語（?flow・?exp_q・?rev_q）は引き継ぐ
+  const pickAccount = (account: string) => {
+    const now = new URLSearchParams(location.search)
+    const q = new URLSearchParams([...now].filter(([k]) => ['flow', 'exp_q', 'rev_q'].includes(k)))
+    if (account !== GENERAL) q.set('account', account)
+    move(pageHref(year, at.current.tab) + (q.size ? `?${q}` : ''))
+  }
   // 予算・決算のタブの頁を読み終えたのに流れが無ければ、API に繋がらなかった
   const flowFailed = (initialTab === 'money' || initialTab === 'settled') && !flow && navigation.state === 'idle'
   // 絞り込みを変えたら一覧を読み直す。読み終えるまで前の一覧を出したままにする
@@ -1068,7 +1112,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   )
 
   const panel = (key: TabKey) =>
-    !v ? null : key === 'overview' ? <Overview /> : key === 'money' ? <MoneyTab key={v.year} phase="initial" /> : key === 'settled' ? <MoneyTab key={v.year} phase="settlement" /> : <ProjectsTab filter={filter} setFilter={setFilter} fields={fields} setFields={setFields} q={query} setQ={setQuery} />
+    !v ? null : key === 'overview' ? <Overview /> : key === 'money' ? <MoneyTab key={v.year} phase="initial" active={tab === key} /> : key === 'settled' ? <MoneyTab key={v.year} phase="settlement" active={tab === key} /> : <ProjectsTab filter={filter} setFilter={setFilter} fields={fields} setFields={setFields} q={query} setQ={setQuery} />
 
   return (
     <div className="@container">
