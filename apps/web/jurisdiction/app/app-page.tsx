@@ -461,14 +461,17 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
   // お金の流れの見せ方（初めはサンキー図）と表の探す語は URL に持つ（?flow=table・歳出の ?exp_q=・歳入の ?rev_q=）。履歴は積まない
   const [view, setView] = React.useState<'sankey' | 'table'>('sankey')
   const [flowQuery, setFlowQuery] = React.useState<FlowQuery>({ expenditure: '', revenue: '' })
+  // URL を読み終えるまでは書き換えない（読む前の初めの値で URL の探す語を消さないように）
+  const [urlRead, setUrlRead] = React.useState(false)
   React.useEffect(() => {
     const q = new URLSearchParams(location.search)
     const found = { expenditure: q.get('exp_q') ?? '', revenue: q.get('rev_q') ?? '' }
     setFlowQuery(found)
     if (q.get('flow') === 'table' || found.expenditure || found.revenue) setView('table')
+    setUrlRead(true)
   }, [])
   React.useEffect(() => {
-    if (!active) return
+    if (!active || !urlRead) return
     const q = new URLSearchParams(location.search)
     const set = (k: string, x: string) => (x ? q.set(k, x) : q.delete(k))
     const table = view === 'table'
@@ -477,7 +480,7 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
     set('rev_q', table ? flowQuery.revenue.trim() : '')
     const next = location.pathname + (q.size ? `?${q}` : '') + location.hash
     if (next !== location.pathname + location.search + location.hash) history.replaceState(history.state, '', next)
-  }, [active, view, flowQuery])
+  }, [active, urlRead, view, flowQuery])
   return (
     <div className="flex flex-col gap-3">
       <TabHead title={label === '決算' ? '決算' : '予算'}>
