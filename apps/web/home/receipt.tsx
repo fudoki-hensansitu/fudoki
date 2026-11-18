@@ -18,58 +18,28 @@ import './receipt.css'
 
 const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
 
-/** delay の後の数え上げ。下の桁から1桁ずつ回して止め、次の桁へ繰り上がる（動くのはいつも1桁だけ）。返すのは、止まった下の桁の数と、回っている桁の今の数字。
- * reduced-motion では最初から止まった形。to が変わったら（年度の切り替え）描く前に最初へ戻し、前の年度の額を新しい年度の見出しで見せない */
+/** delay の後に 0 から to まで数え上げる（全部の桁が回り、下の桁ほど速く回って繰り上がる）。reduced-motion では最初から to。
+ * to が変わったら（年度の切り替え）描く前に 0 へ戻し、前の年度の額を新しい年度の見出しで見せない */
 function useCountUp(to: number, delay = 0) {
-  const digits = String(Math.max(0, to)).length
-  const done = { settled: digits, spin: -1 }
-  const [state, setState] = React.useState(() => (reduced() ? done : { settled: 0, spin: 0 }))
+  const [n, setN] = React.useState(() => (reduced() ? to : 0))
   const [from, setFrom] = React.useState(to)
   if (from !== to) {
     setFrom(to)
-    setState(reduced() ? done : { settled: 0, spin: 0 })
+    setN(reduced() ? to : 0)
   }
   React.useEffect(() => {
-    if (reduced()) return setState(done)
+    if (reduced()) return setN(to)
     let raf = 0
     const t0 = performance.now() + delay
     const step = (t: number) => {
       const p = Math.max(0, Math.min(1, (t - t0) / COUNT_MS))
-      const at = p * digits
-      const settled = Math.min(digits, Math.floor(at))
-      // 回っている桁は 0 から2周して、止まる数字に落ち着く
-      const spin = settled < digits ? Math.floor((at - settled) * 20) % 10 : -1
-      setState((s) => (s.settled === settled && s.spin === spin ? s : { settled, spin }))
+      setN(Math.round(to * (1 - Math.pow(1 - p, 3))))
       if (p < 1) raf = requestAnimationFrame(step)
     }
     raf = requestAnimationFrame(step)
     return () => cancelAnimationFrame(raf)
   }, [to])
-  return { to, ...state }
-}
-
-/** 数え上げの途中の金額。まだ回っていない上の桁は場所だけ取って隠す（数字が横へずれないように） */
-function Counting({ c }: { c: ReturnType<typeof useCountUp> }) {
-  const text = c.to.toLocaleString('ja-JP')
-  let k = -1
-  const chars = [...text].reverse().map((ch, i) => {
-    if (ch < '0' || ch > '9') return { ch, at: k + 0.5, i }
-    k++
-    return { ch: k === c.settled && c.spin >= 0 ? String(c.spin) : ch, at: k, i }
-  })
-  return (
-    <span className="whitespace-nowrap tabular-nums">
-      <span className="sr-only">{text}円</span>
-      <span aria-hidden="true">
-        {chars.reverse().map(({ ch, at, i }) => (
-          <span key={i} className={at > c.settled ? 'invisible' : undefined}>
-            {ch}
-          </span>
-        ))}
-        <small className="ml-1 text-[0.55em]">円</small>
-      </span>
-    </span>
-  )
+  return n
 }
 
 /** 相対の url を、いま開いている origin に付けて外から開ける形にする */
@@ -479,7 +449,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
             <dt className="text-[clamp(17px,4.6vw,22px)] opacity-80">{what}</dt>
             {/* oxlint-disable-next-line design/text-size, design/space-step -- うちのまちの札は画面幅に合わせて見出しと金額を伸ばす見せ場なので、段の外を許す（見出しの大きさは 2026-11-17 yuito） */}
             <dd className="mt-2 text-[clamp(28px,8vw,60px)] leading-none font-semibold">
-              <Counting c={total} />
+              <Yen n={total} />
             </dd>
           </div>
           {pop ? (
@@ -489,7 +459,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
             <dt className="text-[clamp(17px,4.6vw,22px)] opacity-80">1人あたりに直すと</dt>
               {/* oxlint-disable-next-line design/text-size, design/space-step -- うちのまちの札は画面幅に合わせて見出しと金額を伸ばす見せ場なので、段の外を許す（見出しの大きさは 2026-11-17 yuito） */}
             <dd className="mt-2 text-[clamp(28px,8vw,60px)] leading-none font-semibold">
-                <Counting c={per} />
+                <Yen n={per} />
               </dd>
             </div>
           ) : null}

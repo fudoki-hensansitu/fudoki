@@ -1,20 +1,26 @@
 /* ホームのうちのまちの札（レジに見立てる）と、その下端の差し出し口から出てくるレシート。
  * 紙は札のすぐ下に敷き、差し出し口の線から下だけを見せる（.rc-feed が切り口）。紙は高さを伸ばして末端（合計・QR）から見せ、刷り直すときは切らずに続けて刷り、
- * 押し出された前の紙は立体（receipt.tsx の Ribbon）で垂らし、下で折り返してレシートの裏を上へ戻す */
+ * 押し出された前の紙は立体（receipt.tsx の Ribbon）で垂らし、下で折り返してレシートの裏を上へ戻し、札の裏へ潜らせる。
+ * 重なりは、前の紙の立体 < 札 < 今のレシート。そのために .rm だけを重なりの区切りにし、間の .rc-feed・.rc-print では区切らない */
+.rm {
+  position: relative;
+  isolation: isolate;
+}
 .rc-feed {
   position: relative;
   /* 上端を札の差し出し口の溝の中心に重ねる（.rm-slot の bottom + 高さの半分） */
   margin-top: -22px;
   overflow: hidden;
   padding: 0 0 28px;
-  /* 紙は差し出し口から札の手前に垂れる。差し出し口より上は切る */
-  z-index: 1;
 }
-/* 紙の影。紙は下端を mask で切るので、影は外側の箱に drop-shadow で付ける */
 .rc-print {
   position: relative;
   margin-inline: auto;
   width: min(440px, calc(100% - 40px));
+}
+/* 紙の影。紙は下端を mask で切るので、影は紙の入れ物に drop-shadow で付ける（.rc-print に付けると重なりが区切られ、立体を札の裏へ回せない） */
+.rc-strip,
+.rc-ribbon-dom {
   filter: drop-shadow(0 1px 1px rgba(43, 39, 35, 0.12)) drop-shadow(0 8px 16px rgba(43, 39, 35, 0.1));
 }
 .rc-paper {
@@ -52,7 +58,7 @@
   flex-direction: column;
   justify-content: flex-end;
   overflow: hidden;
-  /* 折り返して戻る前の紙（.rc-ribbon）は、今のレシートの裏を通る */
+  /* 今のレシートは札の手前に出る。折り返して戻る前の紙（.rc-ribbon）は、その裏を通る */
   position: relative;
   z-index: 1;
 }
@@ -64,6 +70,8 @@
 .rc-ribbon-canvas {
   position: absolute;
   top: 0;
+  /* 立体は札（.rm-card）より奥に置く。戻る紙は札の下端で札の裏へ潜って見えなくなる */
+  z-index: -1;
 }
 /* 立体を描くまで、いちばん新しい前の紙を DOM のまま同じ場所に出す */
 .rc-ribbon-dom {
