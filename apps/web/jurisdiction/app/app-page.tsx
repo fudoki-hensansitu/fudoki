@@ -443,12 +443,14 @@ const withSetsu = (flow: PageFlow, byMoku: Record<string, Setsu[]>): PageFlow =>
 }
 
 function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開いているタブか。スマホは隣のタブも描くので、URL を書き換えるのは開いているタブだけにする */ active: boolean }) {
-  const { v, d, res, page, flow, flowFailed, pickAccount, setsu: setsuProp, openField } = useApp()
+  const { v, d, res, page, flow, flowFailed, pickAccount, setsu: setsuProp, openField, setYear, yearHref } = useApp()
   const y = d.years[String(v.year)]
   const total: YearTotal | undefined = y?.kind === phase ? { year: v.year, yen: y.total, kan: [] } : undefined
   // 収録はあるが、今の頁のデータが別の資料（スマホで隣のタブを開いた頁など）なら、タブへ移って loader が読むまで待つ
   const recorded = hasDocument(page, v.year, phase)
   const label = phase === 'initial' ? '当初予算' : '決算'
+  // 収録の無い年度から移る先。同じ資料を収録している一番近い年度（同じ近さなら新しい方）
+  const nearby = recorded ? undefined : (phase === 'initial' ? page.initialYears : page.settlementYears).toSorted((a, b) => Math.abs(a - v.year) - Math.abs(b - v.year) || b - a)[0]
   const revenueDoc = page.revenue?.find((r) => r.year === v.year && r.kind === phase && r.total > 0)
   // 会計ごとの総額（頁のデータに入っている）。一般会計を先頭に並べ、押した会計の流れを下に出す。押したらすぐ札を選び、流れは移った頁の loader が読む
   const [account, setAccountState] = React.useState(flow?.account ?? GENERAL)
@@ -545,6 +547,11 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
             <EmptyTitle className="text-base">{reiwa(v.year)}の{label}はまだ収録していません</EmptyTitle>
           </EmptyHeader>
           <EmptyContent>
+            {nearby !== undefined ? (
+              <Button nativeButton={false} render={<a href={yearHref(nearby)} />} onClick={(e) => { if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; e.preventDefault(); setYear(nearby) }} className="rounded-full px-4 no-underline">
+                {reiwa(nearby)}の{label}を見る
+              </Button>
+            ) : null}
             <RequestTown className="text-sm text-muted-foreground">{label}の収録をリクエストする</RequestTown>
           </EmptyContent>
         </Empty>
