@@ -25,5 +25,17 @@ export const loader = defineHandler<Props>(async (c) => {
 
 export const head = defineHead<Props>((_c, props) => {
   const q = questionOf(props.slug)
-  return { title: `${q?.title ?? 'まち比べ'} — まち比べ — 風土記`, link: [{ rel: 'canonical', href: `https://fudoki.dev/compare/${props.slug}` }], meta: [{ name: 'description', content: q?.note ?? '' }] }
+  const title = `${q?.title ?? 'まち比べ'} — まち比べ — 風土記`
+  const canonical = `https://fudoki.dev/compare/${props.slug}`
+  const description = q?.note ?? ''
+  return {
+    title,
+    link: [{ rel: 'canonical', href: canonical }],
+    meta: [
+      { name: 'description', content: description },
+      { property: 'og:title', content: title },
+      { property: 'og:description', content: description },
+      { property: 'og:url', content: canonical },
+    ],
+  }
 })

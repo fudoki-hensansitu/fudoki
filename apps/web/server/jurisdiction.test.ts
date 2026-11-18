@@ -107,6 +107,8 @@ describe('自治体の個別ページ', () => {
     const xml = await sitemap.text()
     expect(xml).not.toContain('https://fudoki.dev/jurisdictions')
     expect(xml).toContain('https://fudoki.dev/assistant')
+    expect(xml).toContain('<loc>https://fudoki.dev/compare</loc>')
+    expect(xml).toContain('<loc>https://fudoki.dev/compare/debt-per-person</loc>')
   })
 })
 

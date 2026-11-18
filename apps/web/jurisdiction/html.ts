@@ -5,6 +5,7 @@ import { assetPath } from './assets'
 import { jurisdictionPath } from './path'
 import { appPageYears, formatYen, hasDocument, TAB_SLUGS, type PageData, type PageTab } from './types'
 import { DOMAIN_FRAMES, OTHER_FRAME } from './domains'
+import { QUESTIONS } from '../compare/questions'
 
 const ORIGIN = 'https://fudoki.dev'
 /** 風土記のデータを配る条件（利用規約）。構造化データの Dataset の license に書く */
@@ -182,9 +183,9 @@ export function pageHead(d: PageData, year?: number, section?: Section, opened?:
 export const emptyHead = (e: CatalogEntry): Head =>
   head(`${e.name}｜風土記`, `${e.name}の歳出は風土記にまだ収録されていません。`, `${ORIGIN}${jurisdictionPath(e.code)}`, { meta: [{ name: 'robots', content: 'noindex' }] })
 
-/** sitemap。まとめ（/tokyo/shinagawa）と各年度のタブの頁（/tokyo/shinagawa/2026/projects）を載せる。years は頁で選べる年度（新しい順） */
+/** sitemap。入口・まち比べ（/compare と問いの頁）と、まとめ（/tokyo/shinagawa）と各年度のタブの頁（/tokyo/shinagawa/2026/projects）を載せる。years は頁で選べる年度（新しい順） */
 export const sitemapXml = (entries: CatalogEntry[], yearsOf: (e: CatalogEntry) => number[] = (e) => [...e.settlementYears].sort((a, b) => b - a)) =>
-  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${ORIGIN}/</loc></url><url><loc>${ORIGIN}/assistant</loc></url><url><loc>${ORIGIN}/about</loc></url>${entries
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${ORIGIN}/</loc></url><url><loc>${ORIGIN}/assistant</loc></url><url><loc>${ORIGIN}/about</loc></url><url><loc>${ORIGIN}/compare</loc></url>${QUESTIONS.map((q) => `<url><loc>${ORIGIN}/compare/${q.slug}</loc></url>`).join('')}${entries
     .filter((e) => e.settlementYears.length > 0)
     .flatMap((e) => {
       const base = jurisdictionPath(e.code)
