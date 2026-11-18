@@ -16,6 +16,7 @@ import {
 } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Skeleton } from '@/components/ui/skeleton'
 import { Title } from '@/components/ui/title'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
@@ -61,7 +62,21 @@ function Section({ title, drills, total, query, onQuery }: { title: string; dril
   // 開いた行は、探していないときと探しているときで分けて持つ。探し始めると当てはまる行の親をすべて開き、探し終えると前に開いていた行に戻す
   const [expanded, setExpanded] = React.useState<ExpandedState>({})
   const [found, setFound] = React.useState<ExpandedState>(true)
-  const term = query.trim()
+  // 打つたびに絞り直さず、打ち終えて少し待ってから絞る。URL から来た語はすぐ使う
+  const [term, setTerm] = React.useState(() => query.trim())
+  // 絞ると行が減って下の要素が上がるので、絞り始める前の表の高さ（画面の高さまで）を保つ
+  const wrap = React.useRef<HTMLDivElement>(null)
+  const [minHeight, setMinHeight] = React.useState<number>()
+  React.useEffect(() => {
+    const next = query.trim()
+    if (next === term) return
+    const t = setTimeout(() => {
+      if (!term && next && wrap.current) setMinHeight(Math.min(wrap.current.offsetHeight, window.innerHeight))
+      if (!next) setMinHeight(undefined)
+      setTerm(next)
+    }, 250)
+    return () => clearTimeout(t)
+  }, [query, term])
   React.useEffect(() => setFound(true), [term])
   const columns = React.useMemo(() => column.columns([
     column.accessor('name', {
@@ -110,6 +125,7 @@ function Section({ title, drills, total, query, onQuery }: { title: string; dril
         <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
         <Input type="search" value={query} onChange={(e) => onQuery(e.target.value)} placeholder={`${title}の${levels}の名前で探す`} className="h-9 rounded-full pl-9" aria-label={`${title}を名前で探す`} />
       </div>
+      <div ref={wrap} style={term ? { minHeight } : undefined}>
       <Table className="text-sm" aria-label={`${title}（${levels}）`}>
         <TableHeader>
           {table.getHeaderGroups().map((g) => (
@@ -137,6 +153,7 @@ function Section({ title, drills, total, query, onQuery }: { title: string; dril
           ))}
         </TableBody>
       </Table>
+      </div>
     </section>
   )
 }
@@ -159,7 +176,14 @@ export function FlowTable({ flows, revenue, total, query, onQuery, onRetry }: {
       <Button variant="outline" onClick={onRetry}>もう一度読み込む</Button>
     </div>
   )
-  if (!flows) return <p role="status" className="py-6 text-sm text-muted-foreground">読み込んでいます…</p>
+  // 読み込み中は、表と同じくらいの高さの skeleton を敷いて、読み終えたときに下の要素がずれないようにする
+  if (!flows) return (
+    <div role="status" aria-label="お金の流れを読み込んでいます" className="flex flex-col gap-2">
+      <Skeleton className="h-6 w-16 rounded-md" />
+      <Skeleton className="h-9 rounded-full" />
+      {Array.from({ length: 10 }, (_, i) => <Skeleton key={i} className="h-10 rounded-md" />)}
+    </div>
+  )
   const revenueTotal = (revenue ?? []).reduce((s, d) => s + (d.kan.amountMissing ? 0 : d.kan.yen), 0)
   return (
     <div className="flex flex-col gap-8">

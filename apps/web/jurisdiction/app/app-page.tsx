@@ -385,7 +385,11 @@ function FieldRow({ f, i, max, onClick, grow = true }: { f: YearView['fields'][n
 }
 
 // タブのスワイプは、横に動かせる中身（Carousel・横スクロールの列・表）の上では始めない。始めると中身より先にタブが動く
+// マウスで押して動かすのは文字を選ぶ操作なので、タブのスワイプは指でだけ始める（マウスではタブを押して移る）。指でも、文字を選んでいる間は始めない
 function startsTabSwipe(api: NonNullable<CarouselApi>, evt: MouseEvent | TouchEvent) {
+  if (!('touches' in evt)) return false
+  const selection = window.getSelection()
+  if (selection && !selection.isCollapsed) return false
   const root = api.rootNode()
   for (let el = evt.target instanceof Element ? evt.target : null; el && el !== root; el = el.parentElement) {
     if (el instanceof HTMLElement && el.dataset.slot === 'carousel') return false
