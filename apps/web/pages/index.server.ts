@@ -3,9 +3,14 @@ import { defineHandler, defineHead } from 'void'
 import type { HomeProps } from '../home/home'
 import { VISIONS } from '../jurisdiction/visions'
 import { catalog, homeEntries, pageYearsOf } from '../server/jurisdiction-routes'
+import { appYears } from '../server/app-data'
+import { reiwa } from '../jurisdiction/types'
 import type { Env } from '../server/env'
 
-export type Props = HomeProps
+/** og はシェアされたリンク（?town=<自治体コード>&year=<年度>）のまちと年度。head の OG 画像だけに使い、頁の中身（住んでいるまち）は変えない（2026-11-18 yuito） */
+export type Props = HomeProps & { og?: { code: string; name: string; year: number } }
+
+const ORIGIN = 'https://fudoki.dev'
 
 const TITLE = '風土記 — 私のお金はどこへ行った？'
 const DESCRIPTION = '私のお金はどこへ行った？ 風土記は、自治体が何にいくら使い、どう振り返ったかを、事業ごとにわかりやすく見せるサイトです。ほかのまちと同じ物差しで比べられ、出典の資料まで辿れます。'
@@ -29,18 +34,39 @@ export const loader = defineHandler<Props>(async (c) => {
       const evalYear = j.evaluationYears.filter((y) => years.includes(y)).at(-1)
       return e ? [{ code: j.code, name: e.name, path: e.path, prefecture: e.prefecture, vision: VISIONS[j.code]?.text, ...(evalYear !== undefined ? { evalYear } : {}) }] : []
     })
+  // シェアされたリンクのまちと年度。収録と年度を確かめ、head の OG 画像をそのまちのその年度の札とレシートにする
+  const q = new URL(c.req.url)
+  const code = q.searchParams.get('town') ?? ''
+  const yearText = q.searchParams.get('year') ?? ''
+  const j = /^\d{6}$/.test(code) ? jurisdictions.find((x) => x.code === code) : undefined
+  const e = j ? entries.find((x) => x.code === code) : undefined
+  const years = j ? appYears(j).map((y) => y.year) : []
+  const year = /^\d{4}$/.test(yearText) && years.includes(Number(yearText)) ? Number(yearText) : years[0]
+  const og = e && year !== undefined ? { code, name: e.name, year } : undefined
   // 自治体の一覧そのものは渡さない（名前で探す欄はサーバーに少しずつ聞く）
-  return { listed: entries.length > 0, featured }
+  return { listed: entries.length > 0, featured, ...(og ? { og } : {}) }
 })
 
-export const head = defineHead(() => ({
-  title: TITLE,
-  meta: [
-    { name: 'description', content: DESCRIPTION },
-    { property: 'og:title', content: TITLE },
-    { property: 'og:description', content: DESCRIPTION },
-    { property: 'og:url', content: 'https://fudoki.dev/' },
-  ],
-  link: [{ rel: 'canonical', href: 'https://fudoki.dev/' }],
-  script: [{ type: 'application/ld+json', innerHTML: JSON.stringify(ORGANIZATION) }],
-}))
+export const head = defineHead<Props>((_c, props) => {
+  const s = props.og
+  // シェアされたリンクは、題と OG 画像をそのまちのその年度の札とレシートにする（canonical はホームのまま）。
+  // 人口が無くレシートを描けないまちの画像は、全頁共通の OG 画像へ回す（routes/jurisdictions/[code]/receipt.png.ts）
+  const title = s ? `${s.name}の1人あたりのレシート（${reiwa(s.year)}）｜風土記` : TITLE
+  const og = s
+    ? [
+        { property: 'og:image', content: `${ORIGIN}/jurisdictions/${s.code}/receipt.png?year=${s.year}` },
+        { property: 'og:url', content: `${ORIGIN}/?town=${s.code}&year=${s.year}` },
+      ]
+    : [{ property: 'og:url', content: `${ORIGIN}/` }]
+  return {
+    title,
+    meta: [
+      { name: 'description', content: DESCRIPTION },
+      { property: 'og:title', content: title },
+      { property: 'og:description', content: DESCRIPTION },
+      ...og,
+    ],
+    link: [{ rel: 'canonical', href: `${ORIGIN}/` }],
+    script: [{ type: 'application/ld+json', innerHTML: JSON.stringify(ORGANIZATION) }],
+  }
+})

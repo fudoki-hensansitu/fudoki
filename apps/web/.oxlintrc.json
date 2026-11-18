@@ -12,5 +12,5 @@
     "design/font-weight": "error"
   },
   // 色の値を持ってよいもの: shadcn の部品、token の値（tokens.ts）、CSS 変数が届かない出力（OGP・PWA・ロゴ）。
-  "ignorePatterns": ["chat/components/ui/**", "tokens.ts", "server/og.ts", "pwa.ts", "logo.ts"]
+  "ignorePatterns": ["chat/components/ui/**", "tokens.ts", "server/og.ts", "server/og-receipt.ts", "pwa.ts", "logo.ts"]
 }
