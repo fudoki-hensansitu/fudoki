@@ -16,6 +16,7 @@ import {
 } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Title } from '@/components/ui/title'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import { formatShare, formatYen, type Drill } from './types'
@@ -64,7 +65,7 @@ function Section({ title, drills, total, query, onQuery }: { title: string; dril
   React.useEffect(() => setFound(true), [term])
   const columns = React.useMemo(() => column.columns([
     column.accessor('name', {
-      header: () => <>{title}<span className="ml-2">{levels.replaceAll('・', ' → ')}</span></>,
+      header: () => levels.replaceAll('・', ' → '),
       filterFn: 'includesString',
       cell: (c) => {
         const row = c.row
@@ -101,8 +102,10 @@ function Section({ title, drills, total, query, onQuery }: { title: string; dril
     onExpandedChange: (u) => (term ? setFound : setExpanded)(u),
   })
   const rows = table.getRowModel().rows
+  const headingId = React.useId()
   return (
-    <section aria-label={title} className="flex flex-col gap-2">
+    <section aria-labelledby={headingId} className="flex flex-col gap-2">
+      <Title id={headingId} size="headline" as="h3">{title}</Title>
       <div className="relative">
         <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
         <Input type="search" value={query} onChange={(e) => onQuery(e.target.value)} placeholder={`${title}の${levels}の名前で探す`} className="h-9 rounded-full pl-9" aria-label={`${title}を名前で探す`} />
