@@ -47,6 +47,7 @@ export function Picker({ onPick, placeholder, plain }: { onPick: (e: MapEntry) =
           <ComboboxCollection>
             {(e: MapEntry) => (
               <ComboboxItem key={e.code} value={e}>
+                <Emblem code={e.code} name={e.name} className="size-8 rounded-lg p-1" />
                 {e.name}
                 <small className="text-xs text-muted-foreground">{e.kind === '都道府県' ? '都道府県' : e.prefecture}</small>
               </ComboboxItem>

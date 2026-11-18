@@ -125,25 +125,34 @@ function YearSwitch({ c, onBrand }: { c: Ctx; onBrand?: boolean }) {
 }
 
 /** うちのまちの札（レシートの機械）。予算と1人あたりを数え上げ、分野ごとの1人あたりのレシートを出す */
-function Dashboard({ c }: { c: Ctx }) {
+function Dashboard({ c, onPrinted }: { c: Ctx; onPrinted: () => void }) {
   const { v, d, year, town } = c
+  const detailHref = c.year === c.years.at(-1) ? c.town.path : flowHref(c)
   return (
     <ReceiptMachine
+      onPrinted={onPrinted}
+      code={town.code}
       name={town.name}
       v={v}
       year={year}
       pop={d.pop ?? null}
       base={c.base}
-      detailHref={c.year === c.years.at(-1) ? c.town.path : flowHref(c)}
+      detailHref={detailHref}
       head={
-        <div className="flex items-start gap-4">
+        <div className="flex flex-wrap items-center gap-4 lg:items-start">
           <Emblem code={town.code} name={town.name} className="size-14 rounded-2xl border-0 p-2" />
           <div className="min-w-0 flex-1">
             <Title size="h1" as="h2">{town.name}</Title>
             <p className="mt-1 truncate text-sm opacity-80">{c.vision}</p>
           </div>
-          {/* 年度は数字の頭に効くので上に、頁へ進む導線は数字を読んだあとの下に置く */}
-          <YearSwitch c={c} onBrand />
+          {/* 年度と、そのまちの頁へ進む導線は、紋章・まちの名前と同じ1行に中心を揃えて右に並べる。広くない画面ではまちの名前を詰めないよう、名前の下の1行に並べる */}
+          <div className="flex w-full items-center justify-between gap-2 lg:w-auto lg:shrink-0">
+            <YearSwitch c={c} onBrand />
+            <Link href={detailHref} className="inline-flex items-center gap-2 rounded-full border border-brand-fill bg-brand-fill px-4 py-2 text-sm font-medium text-brand-fill-foreground transition-colors hover:border-brand-fill-hover hover:bg-brand-fill-hover">
+              詳細
+              <ArrowRightIcon className="size-4" />
+            </Link>
+          </div>
         </div>
       }
     />
@@ -173,31 +182,48 @@ function WithCtx({ town, vision, snap, children }: { town: Town; vision?: string
 
 /** まちを選ぶ前のホームで、緑の札の下に置く。他のまちを名前で探す欄と、見本のまち（事業評価か都市像のあるまち）を都市像と並べて開けるようにする。住んでいるまちは変えない */
 function FeaturedTowns({ featured, listed }: { featured: Featured[]; listed: boolean }) {
-  const items = featured.slice(0, 6).map((f) => ({ ...f, href: f.path }))
-  if (!items.length && !listed) return null
+  if (!featured.length && !listed) return null
   return (
     <section className="mt-10" aria-labelledby="featured-towns">
       <Title size="h3" as="h2" id="featured-towns" className="mb-3">他のまちを見る</Title>
       {/* 住んでいるまちは変えずに、そのまちの頁を開く（緑の札の「住んでいるまちを選ぶ」とは別の、地のままの検索欄） */}
       <OtherTowns className="mb-3" />
-      <ul className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
-        {items.map((t) => (
-          <li key={t.code}>
-            <Link href={t.href} className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground no-underline transition-colors hover:bg-card">
-              <Emblem code={t.code} name={t.name} />
-              <span className="min-w-0 flex-1">
-                <span className="block text-base font-medium">
-                  {t.name}
-                  <span className="ml-2 text-xs font-normal text-muted-foreground">{t.prefecture}</span>
-                </span>
-                {t.vision ? <span className="block truncate text-xs text-muted-foreground">{t.vision}</span> : null}
-              </span>
-              <ArrowRightIcon className="size-4 shrink-0 text-muted-foreground" />
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <TownList featured={featured} />
     </section>
+  )
+}
+
+/** 見本のまち（事業評価か都市像のあるまち）を6つまで、紋章・都市像と並べて開けるようにする。except のまち（住んでいるまち）は外す。
+ * reveal では、一覧の近くまで頁を送ったときに一つずつふわっと出す（2026-11-18 yuito） */
+function TownList({ featured, except, reveal = false }: { featured: Featured[]; except?: string; reveal?: boolean }) {
+  const items = featured.filter((f) => f.code !== except).slice(0, 6)
+  const ref = React.useRef<HTMLUListElement>(null)
+  const [seen, setSeen] = React.useState(!reveal)
+  React.useEffect(() => {
+    if (seen || !ref.current) return
+    const io = new IntersectionObserver(([e]) => e?.isIntersecting && setSeen(true), { rootMargin: '0px 0px -10% 0px' })
+    io.observe(ref.current)
+    return () => io.disconnect()
+  }, [seen])
+  if (!items.length) return null
+  return (
+    <ul ref={ref} className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
+      {items.map((t, i) => (
+        <li key={t.code} className={reveal ? (seen ? 'ob-fade' : 'opacity-0') : undefined} style={reveal ? { animationDelay: `${i * 80}ms` } : undefined}>
+          <Link href={t.path} className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground no-underline transition-colors hover:bg-card">
+            <Emblem code={t.code} name={t.name} />
+            <span className="min-w-0 flex-1">
+              <span className="block text-base font-medium">
+                {t.name}
+                <span className="ml-2 text-xs font-normal text-muted-foreground">{t.prefecture}</span>
+              </span>
+              {t.vision ? <span className="block truncate text-xs text-muted-foreground">{t.vision}</span> : null}
+            </span>
+            <ArrowRightIcon className="size-4 shrink-0 text-muted-foreground" />
+          </Link>
+        </li>
+      ))}
+    </ul>
   )
 }
 
@@ -238,31 +264,44 @@ export function Home({ listed, featured }: HomeProps) {
   const snap = useSnapshot(ready && town ? town.code : null)
   const vision = town ? featured.find((f) => f.code === town.code)?.vision : undefined
   // 住んでいるまちを外す（選び直す）
-  const reset = () => set(null)
+  /** レシートの末端まで見たか。レシートの末端まで頁が送られてから他のまちの節を出す（2026-11-18 yuito）。年度を替えて刷り直しても出したまま、まちを選び直したら隠す */
+  const [printed, setPrinted] = React.useState(false)
+  const reset = () => {
+    setPrinted(false)
+    set(null)
+  }
   let body: React.ReactNode
   if (!ready) body = <Loading />
   // 選んだ時点でそのまちに決める（要点を見せてから決めさせない、2026-11-17 yuito）
   else if (!town) body = <AskTown listed={listed} onPick={(e) => set(toTown(e))} />
   else {
     body = (
-      <>
-        {/* ほかのまちを見る導線。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
-        <OtherTowns className="mb-3" />
+      // 刷り出すレシートと他のまちの節の場所を、はじめから画面1.5枚ぶん取っておき、札へ頁を送っても刷り終える前に頁の末尾（footer）が見えないようにする（2026-11-18 yuito）
+      <div className="min-h-[150svh]">
         {/* リセットはまちの札の右上に添える（住んでいるまちを選び直す） */}
         <div className="mb-2 flex justify-end">
           <button type="button" onClick={reset} className="text-sm text-muted-foreground hover:text-foreground">
             リセット
           </button>
         </div>
-        <WithCtx town={town!} vision={vision} snap={snap}>
-          {(c) => <Dashboard c={c} />}
+        <WithCtx key={town!.code} town={town!} vision={vision} snap={snap}>
+          {(c) => <Dashboard c={c} onPrinted={() => setPrinted(true)} />}
         </WithCtx>
-      </>
+        {/* ほかのまちを見る導線。レシートとは別の節として見出しと大きな検索欄を置き、レシートの末端まで頁が送られてから出す（2026-11-18 yuito）。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
+        {printed ? (
+          <section className="ob-fade mt-16" aria-labelledby="other-towns">
+            <Title size="h2" id="other-towns" className="mb-4">他のまちの使い道を見る</Title>
+            <OtherTowns large className="mb-4" />
+            {/* 探す語が浮かばなくても開けるよう、見本のまちを6つ並べる（2026-11-18 yuito） */}
+            <TownList featured={featured} except={town!.code} reveal />
+          </section>
+        ) : null}
+      </div>
     )
   }
   const featuredTowns = ready && !town ? <FeaturedTowns featured={featured} listed={listed} /> : null
   return (
-    <main className="mx-auto flex min-h-[calc(100svh-56px)] w-full max-w-4xl flex-col px-4 pt-10 pb-28 sm:px-8 sm:pt-14 md:min-h-svh md:pb-10">
+    <main className={`mx-auto flex min-h-[calc(100svh-56px)] w-full max-w-4xl flex-col px-4 pt-10 pb-28 sm:px-8 sm:pt-14 md:min-h-svh md:pb-10`}>
       <Intro mode={!ready ? 'hidden' : town ? 'compact' : 'full'} />
       {body}
       {featuredTowns}
