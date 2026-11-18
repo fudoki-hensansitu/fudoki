@@ -1,18 +1,23 @@
 // お金の流れの表（shadcn の data table）。款 → 項 → 目 → 節を入れ子の行にし、行を押すと子を開け閉めする。データにある段まで（款だけのまちは款だけ）。
 // 歳出と歳入は別の表で、それぞれ名前で探せる（探す語は呼ぶ側が URL に持つ）。探している間は、当てはまる行とその親だけを開いて出す。
 // 金額は API が返した円をそのまま出し、割合はその歳出・歳入の総額に占める割合だけを画面で求める
+// 金額の見出しを押すと、同じ親の中で金額の多い順→少ない順→出典の順に並べ替える。金額未記載の行はいつも後ろに置く
 import * as React from 'react'
-import { CaretRightIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
+import { ArrowDownIcon, ArrowUpIcon, ArrowsDownUpIcon, CaretRightIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
 import {
   columnFilteringFeature,
   createColumnHelper,
   createExpandedRowModel,
   createFilteredRowModel,
+  createSortedRowModel,
   filterFn_includesString,
   rowExpandingFeature,
+  rowSortingFeature,
+  sortFn_basic,
   tableFeatures,
   useTable,
   type ExpandedState,
+  type SortingState,
 } from '@tanstack/react-table'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -48,9 +53,12 @@ const toNodes = (drills: Drill[]): Node[] =>
 const features = tableFeatures({
   columnFilteringFeature,
   rowExpandingFeature,
+  rowSortingFeature,
   filteredRowModel: createFilteredRowModel(),
+  sortedRowModel: createSortedRowModel(),
   expandedRowModel: createExpandedRowModel(),
   filterFns: { includesString: filterFn_includesString },
+  sortFns: { basic: sortFn_basic },
 })
 const column = createColumnHelper<typeof features, Node>()
 const cls = (meta: unknown) => (meta as { className?: string } | undefined)?.className
@@ -78,6 +86,7 @@ function Section({ title, drills, total, query, onQuery }: { title: string; dril
     return () => clearTimeout(t)
   }, [query, term])
   React.useEffect(() => setFound(true), [term])
+  const [sorting, setSorting] = React.useState<SortingState>([])
   const columns = React.useMemo(() => column.columns([
     column.accessor('name', {
       header: () => levels.replaceAll('・', ' → '),
@@ -101,9 +110,26 @@ function Section({ title, drills, total, query, onQuery }: { title: string; dril
           </div>
         )
       },
+      enableSorting: false,
       meta: { className: 'w-full pl-0 whitespace-normal' },
     }),
-    column.accessor('yen', { header: '金額', cell: (c) => (c.row.original.missing ? '金額未記載' : formatYen(c.getValue())), meta: { className: 'text-right tabular-nums' } }),
+    column.accessor((n) => (n.missing ? undefined : n.yen), {
+      id: 'yen',
+      header: (h) => {
+        const sorted = h.column.getIsSorted()
+        const Icon = sorted === 'desc' ? ArrowDownIcon : sorted === 'asc' ? ArrowUpIcon : ArrowsDownUpIcon
+        return (
+          <button type="button" onClick={h.column.getToggleSortingHandler()} className="-mx-1 inline-flex items-center gap-1 rounded-md px-1 whitespace-nowrap focus-visible:outline-2 focus-visible:outline-ring">
+            金額<Icon aria-hidden="true" className="size-3.5" />
+          </button>
+        )
+      },
+      cell: (c) => (c.row.original.missing ? '金額未記載' : formatYen(c.row.original.yen)),
+      sortFn: 'basic',
+      sortDescFirst: true,
+      sortUndefined: 'last',
+      meta: { className: 'text-right tabular-nums' },
+    }),
     column.display({ id: 'share', header: '割合', cell: (c) => formatShare(c.row.original.yen, total, c.row.original.missing) ?? '', meta: { className: 'pr-0 text-right tabular-nums' } }),
   ]), [title, levels, depth, total])
   const table = useTable({
@@ -113,8 +139,9 @@ function Section({ title, drills, total, query, onQuery }: { title: string; dril
     getRowId: (n) => n.id,
     getSubRows: (n) => n.subRows,
     filterFromLeafRows: true,
-    state: { columnFilters: term ? [{ id: 'name', value: term }] : [], expanded: term ? found : expanded },
+    state: { columnFilters: term ? [{ id: 'name', value: term }] : [], expanded: term ? found : expanded, sorting },
     onExpandedChange: (u) => (term ? setFound : setExpanded)(u),
+    onSortingChange: setSorting,
   })
   const rows = table.getRowModel().rows
   const headingId = React.useId()
@@ -131,7 +158,7 @@ function Section({ title, drills, total, query, onQuery }: { title: string; dril
           {table.getHeaderGroups().map((g) => (
             <TableRow key={g.id} className="hover:bg-transparent">
               {g.headers.map((h) => (
-                <TableHead key={h.id} className={cn('h-9 font-normal text-muted-foreground', cls(h.column.columnDef.meta))}>
+                <TableHead key={h.id} aria-sort={!h.column.getCanSort() ? undefined : h.column.getIsSorted() === 'desc' ? 'descending' : h.column.getIsSorted() === 'asc' ? 'ascending' : 'none'} className={cn('h-9 font-normal text-muted-foreground', cls(h.column.columnDef.meta))}>
                   {h.isPlaceholder ? null : <table.FlexRender header={h} />}
                 </TableHead>
               ))}
