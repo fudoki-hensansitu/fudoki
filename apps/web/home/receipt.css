@@ -109,6 +109,30 @@
   border-radius: 24px;
   background: var(--brand);
 }
+/* 数え上げの桁（receipt.tsx の Odometer）。見えない数字で幅と行の高さ・ベースラインを取り、その上に 0〜9 の帯を重ねて縦に転がす。
+ * 切り取りは clip-path にする（overflow: hidden だと inline-block のベースラインが下端に移り、円と揃わない） */
+.rm-digit {
+  position: relative;
+  display: inline-block;
+  clip-path: inset(0);
+}
+.rm-reel {
+  position: absolute;
+  inset: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  animation: rm-roll 1600ms cubic-bezier(0.2, 0.6, 0.2, 1) both;
+}
+@keyframes rm-roll {
+  to { transform: translateY(var(--to)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rm-reel {
+    animation: none;
+    transform: translateY(var(--to));
+  }
+}
 /* 1人あたりは予算を数え終えてから出す（motion.ts の COUNT_MS 待つ）。場所は最初から取っておき、頁を揺らさない */
 .rm-per {
   animation: rm-per-in 500ms ease-out 1600ms both;

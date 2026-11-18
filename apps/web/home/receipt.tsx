@@ -18,54 +18,43 @@ import './receipt.css'
 
 const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
 
-/** delay の後の数え上げ。全部の桁が回り、末尾の桁から順に止まって額が決まる（左の桁ほど長く回る）。返すのは、今見せる数字の並び（桁区切りつき）。
- * reduced-motion では最初から止まった額。key が変わったら（年度の切り替え。額が同じでも）描く前に回し直し、前の年度の額を新しい年度の見出しで見せない */
-function useCountUp(to: number, key: string, delay = 0) {
-  const final = Math.max(0, to).toLocaleString('ja-JP')
-  const digits = final.replace(/\D/g, '').length
-  /** 止まった末尾の桁の数と、回っている桁の数字を決める時刻 */
-  const [state, setState] = React.useState(() => ({ settled: reduced() ? digits : 0, tick: 0 }))
-  const [from, setFrom] = React.useState(key)
-  if (from !== key) {
-    setFrom(key)
-    setState({ settled: reduced() ? digits : 0, tick: 0 })
-  }
-  React.useEffect(() => {
-    if (reduced()) return setState({ settled: digits, tick: 0 })
-    let raf = 0
-    const t0 = performance.now() + delay
-    const step = (t: number) => {
-      const p = Math.max(0, Math.min(1, (t - t0) / COUNT_MS))
-      const settled = Math.min(digits, Math.floor((1 - Math.pow(1 - p, 2)) * digits))
-      // 回っている桁は 1 秒に 20 回ほど数字を替える
-      const tick = Math.max(0, Math.floor((t - t0) / 50))
-      setState((s) => (s.settled === settled && s.tick === tick ? s : { settled, tick }))
-      if (p < 1) raf = requestAnimationFrame(step)
-    }
-    raf = requestAnimationFrame(step)
-    return () => cancelAnimationFrame(raf)
-  }, [key])
-  let k = digits
-  return [...final]
-    .map((ch) => {
-      if (ch < '0' || ch > '9') return ch
-      k--
-      // k は末尾から数えた桁の位置。止まっていない桁は、桁ごとにずらした数字を回す
-      return k < state.settled ? ch : String((state.tick + k * 3) % 10)
-    })
-    .join('')
-}
+/** 右端の桁が転がる長さ（ms）。左の桁ほど長く、左端は COUNT_MS で着地する */
+const ROLL_MIN = 700
 
-/** 数え上げの途中の額。読み上げには決まった額だけを渡す */
-const Counting = ({ to, text }: { to: number; text: string }) => (
-  <span className="whitespace-nowrap tabular-nums">
-    <span className="sr-only">{Math.max(0, to).toLocaleString('ja-JP')}円</span>
-    <span aria-hidden="true">
-      {text}
-      <small className="ml-1 text-[0.55em]">円</small>
+/** 数え上げ（オドメーター）。桁ごとに 0〜9 の帯を縦に転がし、減速して自分の数字に着地させる。右の桁ほど早く着地し、左の桁ほど長く・多く転がる。
+ * 動きは CSS の animation だけ（receipt.css の .rm-reel）。key（年度と額）を替えて描き直すと転がし直す。reduced-motion では最初から着地した額。
+ * 読み上げには決まった額だけを渡す */
+function Odometer({ to, delay = 0 }: { to: number; delay?: number }) {
+  const final = Math.max(0, to).toLocaleString('ja-JP')
+  const n = final.replace(/\D/g, '').length
+  let k = n
+  return (
+    <span className="whitespace-nowrap tabular-nums">
+      <span className="sr-only">{final}円</span>
+      <span aria-hidden="true">
+        {[...final].map((ch, i) => {
+          if (ch < '0' || ch > '9') return <span key={i}>{ch}</span>
+          // k は末尾から数えた桁の位置。r は右端 0 から左端 1
+          k--
+          const r = n > 1 ? k / (n - 1) : 1
+          const steps = (1 + Math.round(r * 2)) * 10 + Number(ch)
+          const style = { '--to': `${-steps}em`, animationDuration: `${Math.round(ROLL_MIN + (COUNT_MS - ROLL_MIN) * r)}ms`, animationDelay: `${delay}ms` } as React.CSSProperties
+          return (
+            <span key={i} className="rm-digit">
+              <span className="invisible">{ch}</span>
+              <span className="rm-reel" style={style}>
+                {Array.from({ length: steps + 1 }, (_, j) => (
+                  <span key={j}>{j % 10}</span>
+                ))}
+              </span>
+            </span>
+          )
+        })}
+        <small className="ml-1 text-[0.55em]">円</small>
+      </span>
     </span>
-  </span>
-)
+  )
+}
 
 /** 相対の url を、いま開いている origin に付けて外から開ける形にする */
 const absolute = (url: string) => (typeof location === 'undefined' ? url : new URL(url, location.origin).href)
@@ -387,9 +376,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
     setOlder(!keep ? [] : printed && height > 0 ? [{ r: printed, height }, ...older].slice(0, 3) : older)
     setPrinted(null)
   }
-  const total = useCountUp(v.total, counted)
   const perTo = pop ? Math.round(v.total / pop) : 0
-  const per = useCountUp(perTo, counted, COUNT_MS)
   const receipt = pop ? perHeadParts(v.fields, v.total, pop) : null
   const card = React.useRef<HTMLElement>(null)
   const phase = usePhase(counted)
@@ -476,7 +463,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
             <dt className="text-[clamp(17px,4.6vw,22px)] opacity-80">{what}</dt>
             {/* oxlint-disable-next-line design/text-size, design/space-step -- うちのまちの札は画面幅に合わせて見出しと金額を伸ばす見せ場なので、段の外を許す（見出しの大きさは 2026-11-17 yuito） */}
             <dd className="mt-2 text-[clamp(28px,8vw,60px)] leading-none font-semibold">
-              <Counting to={v.total} text={total} />
+              <Odometer key={counted} to={v.total} />
             </dd>
           </div>
           {pop ? (
@@ -486,7 +473,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
             <dt className="text-[clamp(17px,4.6vw,22px)] opacity-80">1人あたりに直すと</dt>
               {/* oxlint-disable-next-line design/text-size, design/space-step -- うちのまちの札は画面幅に合わせて見出しと金額を伸ばす見せ場なので、段の外を許す（見出しの大きさは 2026-11-17 yuito） */}
             <dd className="mt-2 text-[clamp(28px,8vw,60px)] leading-none font-semibold">
-                <Counting to={perTo} text={per} />
+                <Odometer to={perTo} delay={COUNT_MS} />
               </dd>
             </div>
           ) : null}
