@@ -11,6 +11,8 @@ import {
   CaretRightIcon,
   DotsThreeCircleIcon,
   FileDashedIcon,
+  FlowArrowIcon,
+  TableIcon,
   FirstAidKitIcon,
   GlobeIcon,
   HandHeartIcon,
@@ -52,6 +54,7 @@ import { Link } from '../../nav/link'
 import { CutIcon, DoneIcon, FixIcon, JoinIcon, KeepIcon, LawIcon, MaybeStopIcon, NewIcon, PlanIcon, SizeIcon, StopIcon, UpIcon } from '../fresh-icons'
 import { YearPicker } from '../year-picker'
 import { Flow } from '../flow'
+import { FlowTable } from '../flow-table'
 import { COFOG_NAMES } from '@fudoki/fiscal/cofog-master'
 import { DOMAIN_FRAMES, OTHER_FRAME, frameOf } from '../domains'
 import { rememberJurisdiction } from '../../home/recent'
@@ -455,6 +458,8 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
   // 会計の総額は頁のデータの資料のもの。別の資料のタブ（スマホで隣に並ぶタブ）では使わない
   const special = account === GENERAL || !total ? undefined : accounts.find((x) => x.name === account)
   const picked: YearTotal | undefined = special ? { year: v.year, yen: special.yen, kan: [] } : total
+  // お金の流れの見せ方。初めはサンキー図
+  const [view, setView] = React.useState<'sankey' | 'table'>('sankey')
   return (
     <div className="flex flex-col gap-3">
       <TabHead title={label === '決算' ? '決算' : '予算'}>
@@ -467,12 +472,24 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
       {total ? <FieldsSection phase={phase} /> : null}
       {total ? (
         <div>
-          <Title size="h3" as="h2" className="mb-3">お金の流れ</Title>
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <Title size="h3" as="h2">お金の流れ</Title>
+            <ToggleGroup aria-label="お金の流れの見せ方" value={[view]} onValueChange={(v) => { if (v[0]) setView(v[0] as typeof view) }} spacing={0} className="shrink-0 rounded-full bg-secondary p-1">
+              <ToggleGroupItem value="sankey" className="rounded-full! px-3">
+                <FlowArrowIcon aria-hidden="true" />サンキー
+              </ToggleGroupItem>
+              <ToggleGroupItem value="table" className="rounded-full! px-3">
+                <TableIcon aria-hidden="true" />表
+              </ToggleGroupItem>
+            </ToggleGroup>
+          </div>
           <p className="text-sm leading-[1.7] text-muted-foreground">{current?.revenue?.length ? '歳入（左）と歳出（右）が、款から項・目へとどう分かれていくかを示しています。' : '歳出が、款から項・目へとどう分かれていくかを示しています。'}会計を選ぶと、その会計の流れに切り替わります。</p>
         </div>
       ) : null}
       {total ? <AccountCards accounts={accounts} account={account} setAccount={setAccount} /> : null}
-      {picked ? (
+      {picked && view === 'table' ? (
+        <FlowTable key={`${v.year}-${phase}-${account}`} flows={flows} revenue={current?.revenue} total={picked.yen} />
+      ) : picked ? (
         <Flow key={`${v.year}-${phase}-${account}`} flows={flows} revenue={current?.revenue} total={picked} onRetry={flowFailed && !drills ? () => void router.refresh({ preserveState: true, preserveScroll: true }) : undefined} bare natural className="scroll-mt-16 @4xl:scroll-mt-16" />
       ) : recorded ? (
         <Skeleton className="h-[480px] rounded-xl" />
