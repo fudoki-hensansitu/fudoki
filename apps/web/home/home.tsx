@@ -259,7 +259,8 @@ export function Home({ listed, featured }: HomeProps) {
   else if (!town) body = <AskTown listed={listed} onPick={(e) => set(toTown(e))} />
   else {
     body = (
-      <>
+      // 刷り出すレシートと他のまちの節の場所を、はじめから画面1枚ぶん取っておき、刷り終える前に頁の末尾（footer）が見えないようにする（2026-11-18 yuito）
+      <div className="min-h-svh">
         {/* リセットはまちの札の右上に添える（住んでいるまちを選び直す） */}
         <div className="mb-2 flex justify-end">
           <button type="button" onClick={reset} className="text-sm text-muted-foreground hover:text-foreground">
@@ -271,12 +272,12 @@ export function Home({ listed, featured }: HomeProps) {
         </WithCtx>
         {/* ほかのまちを見る導線。レシートとは別の節として見出しと大きな検索欄を置き、レシートを刷り終えてから出す（2026-11-18 yuito）。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
         {printed ? (
-          <section className="mt-16" aria-labelledby="other-towns">
-            <Title size="h2" id="other-towns" className="ob-rise mb-4">他のまちのお金も見る</Title>
+          <section className="ob-slide mt-16" aria-labelledby="other-towns">
+            <Title size="h2" id="other-towns" className="mb-4">他のまちの使い道を見る</Title>
             <OtherTowns large />
           </section>
         ) : null}
-      </>
+      </div>
     )
   }
   const featuredTowns = ready && !town ? <FeaturedTowns featured={featured} listed={listed} /> : null

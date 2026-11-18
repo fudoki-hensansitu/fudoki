@@ -116,7 +116,7 @@ function LocateResult({ loc, onPick, onRetry, onClose }: { loc: Locate; onPick: 
 export function OtherTowns({ className, large = false }: { className?: string; large?: boolean }) {
   const [open, setOpen] = React.useState(false)
   return (
-    <div className={cn('ob-rise', className)}>
+    <div className={cn(!large && 'ob-rise', className)}>
       <button
         type="button"
         onClick={() => setOpen(true)}
