@@ -268,7 +268,7 @@ export function Landing() {
       {/* 終わりの呼びかけ */}
       <section className="mt-28 rounded-3xl bg-brand px-6 py-12 text-center text-brand-foreground sm:py-16" aria-labelledby="cta-h">
         <Title size="h2" id="cta-h">
-          あなたのまちのレシートを見てみよう
+          うちのまちの使い道を見てみよう
         </Title>
         <Link className="mt-8 inline-flex items-center gap-2 rounded-full bg-brand-fill px-6 py-3 text-base font-medium text-brand-fill-foreground transition-colors duration-150 hover:bg-brand-fill-hover" href={HOME_PATH}>
           うちのまちの使い道を見る
