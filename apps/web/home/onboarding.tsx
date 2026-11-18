@@ -122,7 +122,7 @@ export function OtherTowns({ className }: { className?: string }) {
         className="flex h-12 w-full items-center gap-3 rounded-full border border-border bg-background px-4 text-left text-sm text-muted-foreground transition-colors hover:bg-card"
       >
         <MagnifyingGlassIcon className="size-5 shrink-0" aria-hidden="true" />
-        まちを探す
+        他のまちを探す
       </button>
       <TownPalette open={open} onOpenChange={setOpen} />
     </section>
