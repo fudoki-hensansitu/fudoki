@@ -112,7 +112,7 @@ function LocateResult({ loc, onPick, onRetry, onClose }: { loc: Locate; onPick: 
 }
 
 /** ほかのまちを見る検索。住んでいるまちを選んだあとのホームに出し、選んだまちの頁へ移るだけ（住んでいるまちは変えない）。
- * large ではレシートの下の別の節として大きく出し、影を付けてレシートとは別の物に見せる（2026-11-18 yuito） */
+ * large ではレシートの下の別の節として大きく出し、アシスタントの入力欄と同じ影を付けてレシートとは別の物に見せる（2026-11-18 yuito） */
 export function OtherTowns({ className, large = false }: { className?: string; large?: boolean }) {
   const [open, setOpen] = React.useState(false)
   return (
@@ -122,7 +122,8 @@ export function OtherTowns({ className, large = false }: { className?: string; l
         onClick={() => setOpen(true)}
         className={cn(
           'flex w-full items-center gap-3 rounded-full border border-border bg-background px-4 text-left text-muted-foreground transition-colors hover:bg-card',
-          large ? 'h-14 px-5 text-base shadow-lg' : 'h-12 text-sm',
+          // 影はアシスタントの入力欄（chat/composer.tsx）と同じ（2026-11-18 yuito）
+          large ? 'h-14 px-5 text-base shadow-[var(--shadow-pill)]' : 'h-12 text-sm',
         )}
       >
         <MagnifyingGlassIcon className={cn('shrink-0', large ? 'size-6' : 'size-5')} aria-hidden="true" />

@@ -149,7 +149,7 @@ function Dashboard({ c, onPrinted }: { c: Ctx; onPrinted: () => void }) {
           <div className="flex w-full items-center justify-between gap-2 lg:w-auto lg:shrink-0">
             <YearSwitch c={c} onBrand />
             <Link href={detailHref} className="inline-flex items-center gap-2 rounded-full border border-brand-fill bg-brand-fill px-4 py-2 text-sm font-medium text-brand-fill-foreground transition-colors hover:border-brand-fill-hover hover:bg-brand-fill-hover">
-              詳細を見る
+              詳細
               <ArrowRightIcon className="size-4" />
             </Link>
           </div>
@@ -193,14 +193,23 @@ function FeaturedTowns({ featured, listed }: { featured: Featured[]; listed: boo
   )
 }
 
-/** 見本のまち（事業評価か都市像のあるまち）を6つまで、紋章・都市像と並べて開けるようにする。except のまち（住んでいるまち）は外す */
-function TownList({ featured, except }: { featured: Featured[]; except?: string }) {
+/** 見本のまち（事業評価か都市像のあるまち）を6つまで、紋章・都市像と並べて開けるようにする。except のまち（住んでいるまち）は外す。
+ * reveal では、一覧の近くまで頁を送ったときに一つずつふわっと出す（2026-11-18 yuito） */
+function TownList({ featured, except, reveal = false }: { featured: Featured[]; except?: string; reveal?: boolean }) {
   const items = featured.filter((f) => f.code !== except).slice(0, 6)
+  const ref = React.useRef<HTMLUListElement>(null)
+  const [seen, setSeen] = React.useState(!reveal)
+  React.useEffect(() => {
+    if (seen || !ref.current) return
+    const io = new IntersectionObserver(([e]) => e?.isIntersecting && setSeen(true), { rootMargin: '0px 0px -10% 0px' })
+    io.observe(ref.current)
+    return () => io.disconnect()
+  }, [seen])
   if (!items.length) return null
   return (
-    <ul className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
-      {items.map((t) => (
-        <li key={t.code}>
+    <ul ref={ref} className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
+      {items.map((t, i) => (
+        <li key={t.code} className={reveal ? (seen ? 'ob-fade' : 'opacity-0') : undefined} style={reveal ? { animationDelay: `${i * 80}ms` } : undefined}>
           <Link href={t.path} className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground no-underline transition-colors hover:bg-card">
             <Emblem code={t.code} name={t.name} />
             <span className="min-w-0 flex-1">
@@ -280,11 +289,11 @@ export function Home({ listed, featured }: HomeProps) {
         </WithCtx>
         {/* ほかのまちを見る導線。レシートとは別の節として見出しと大きな検索欄を置き、レシートの末端まで頁が送られてから出す（2026-11-18 yuito）。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
         {printed ? (
-          <section className="ob-slide mt-16" aria-labelledby="other-towns">
+          <section className="ob-fade mt-16" aria-labelledby="other-towns">
             <Title size="h2" id="other-towns" className="mb-4">他のまちの使い道を見る</Title>
             <OtherTowns large className="mb-4" />
             {/* 探す語が浮かばなくても開けるよう、見本のまちを6つ並べる（2026-11-18 yuito） */}
-            <TownList featured={featured} except={town!.code} />
+            <TownList featured={featured} except={town!.code} reveal />
           </section>
         ) : null}
       </div>
