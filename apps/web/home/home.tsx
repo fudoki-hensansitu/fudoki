@@ -2,12 +2,12 @@
 // 住んでいるまちを決めていないときは、住んでいるまちを選ぶ欄（onboarding.tsx）を出し、選んだ時点でそのまちに決めて札を出す。うちのまちは1つで、ブラウザ（localStorage）にだけ置く
 // データは自治体の頁と同じ1年度の分（server/app-data.ts）を /api/jurisdictions/:code で読み、yearView で年度ごとに見る
 import * as React from 'react'
-import { ArrowRightIcon, ArrowSquareOutIcon, CaretDownIcon } from '@phosphor-icons/react'
+import { ArrowRightIcon, CaretDownIcon } from '@phosphor-icons/react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { FEEDBACK } from '../nav/feedback'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { Link } from '../nav/link'
+import { Footer } from '../nav/footer'
 import { Emblem } from './town-picker'
 import type { MapEntry } from '../jurisdiction/index-table'
 import { yearView, type Snapshot, type YearView } from '../jurisdiction/app/data'
@@ -249,38 +249,6 @@ function TownList({ featured, except, reveal = false }: { featured: Featured[]; 
         </li>
       ))}
     </ul>
-  )
-}
-
-const DOCS = 'https://docs.fudoki.dev'
-
-/** 頁の末尾。風土記について・利用規約・プライバシーポリシーへはここから辿る（前のホームと同じ並び） */
-function Footer() {
-  const ext = 'inline-flex items-center gap-1 hover:text-foreground'
-  return (
-    <footer className="mt-auto flex pt-12 flex-wrap items-center justify-between gap-4 text-xs text-muted-foreground">
-      <span>© 2026 風土記</span>
-      <span className="flex flex-wrap gap-x-5 gap-y-2">
-        <Link href="/about" className="hover:text-foreground">
-          風土記について
-        </Link>
-        <a href={`${DOCS}/terms`} target="_blank" rel="noopener" className={ext}>
-          利用規約
-          <ArrowSquareOutIcon aria-hidden="true" className="size-3" />
-        </a>
-        <a href={`${DOCS}/privacy`} target="_blank" rel="noopener" className={ext}>
-          プライバシーポリシー
-          <ArrowSquareOutIcon aria-hidden="true" className="size-3" />
-        </a>
-        <a href={FEEDBACK} target="_blank" rel="noopener" className={ext}>
-          フィードバック
-          <ArrowSquareOutIcon aria-hidden="true" className="size-3" />
-        </a>
-        <a href="mailto:support@fudoki.dev" className="hover:text-foreground">
-          お問い合わせ
-        </a>
-      </span>
-    </footer>
   )
 }
 
