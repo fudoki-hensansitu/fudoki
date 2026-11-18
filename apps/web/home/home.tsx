@@ -182,31 +182,39 @@ function WithCtx({ town, vision, snap, children }: { town: Town; vision?: string
 
 /** まちを選ぶ前のホームで、緑の札の下に置く。他のまちを名前で探す欄と、見本のまち（事業評価か都市像のあるまち）を都市像と並べて開けるようにする。住んでいるまちは変えない */
 function FeaturedTowns({ featured, listed }: { featured: Featured[]; listed: boolean }) {
-  const items = featured.slice(0, 6).map((f) => ({ ...f, href: f.path }))
-  if (!items.length && !listed) return null
+  if (!featured.length && !listed) return null
   return (
     <section className="mt-10" aria-labelledby="featured-towns">
       <Title size="h3" as="h2" id="featured-towns" className="mb-3">他のまちを見る</Title>
       {/* 住んでいるまちは変えずに、そのまちの頁を開く（緑の札の「住んでいるまちを選ぶ」とは別の、地のままの検索欄） */}
       <OtherTowns className="mb-3" />
-      <ul className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
-        {items.map((t) => (
-          <li key={t.code}>
-            <Link href={t.href} className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground no-underline transition-colors hover:bg-card">
-              <Emblem code={t.code} name={t.name} />
-              <span className="min-w-0 flex-1">
-                <span className="block text-base font-medium">
-                  {t.name}
-                  <span className="ml-2 text-xs font-normal text-muted-foreground">{t.prefecture}</span>
-                </span>
-                {t.vision ? <span className="block truncate text-xs text-muted-foreground">{t.vision}</span> : null}
-              </span>
-              <ArrowRightIcon className="size-4 shrink-0 text-muted-foreground" />
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <TownList featured={featured} />
     </section>
+  )
+}
+
+/** 見本のまち（事業評価か都市像のあるまち）を6つまで、紋章・都市像と並べて開けるようにする。except のまち（住んでいるまち）は外す */
+function TownList({ featured, except }: { featured: Featured[]; except?: string }) {
+  const items = featured.filter((f) => f.code !== except).slice(0, 6)
+  if (!items.length) return null
+  return (
+    <ul className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
+      {items.map((t) => (
+        <li key={t.code}>
+          <Link href={t.path} className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground no-underline transition-colors hover:bg-card">
+            <Emblem code={t.code} name={t.name} />
+            <span className="min-w-0 flex-1">
+              <span className="block text-base font-medium">
+                {t.name}
+                <span className="ml-2 text-xs font-normal text-muted-foreground">{t.prefecture}</span>
+              </span>
+              {t.vision ? <span className="block truncate text-xs text-muted-foreground">{t.vision}</span> : null}
+            </span>
+            <ArrowRightIcon className="size-4 shrink-0 text-muted-foreground" />
+          </Link>
+        </li>
+      ))}
+    </ul>
   )
 }
 
@@ -274,7 +282,9 @@ export function Home({ listed, featured }: HomeProps) {
         {printed ? (
           <section className="ob-slide mt-16" aria-labelledby="other-towns">
             <Title size="h2" id="other-towns" className="mb-4">他のまちの使い道を見る</Title>
-            <OtherTowns large />
+            <OtherTowns large className="mb-4" />
+            {/* 探す語が浮かばなくても開けるよう、見本のまちを6つ並べる（2026-11-18 yuito） */}
+            <TownList featured={featured} except={town!.code} />
           </section>
         ) : null}
       </div>
