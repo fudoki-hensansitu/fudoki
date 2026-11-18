@@ -18,10 +18,17 @@
   margin-inline: auto;
   width: min(440px, calc(100% - 40px));
 }
-/* 紙の影。紙は下端を mask で切るので、影は紙の入れ物に drop-shadow で付ける（.rc-print に付けると重なりが区切られ、立体を札の裏へ回せない） */
+/* 紙の影。紙は下端を mask で切るので、影は紙の入れ物と立体の canvas に drop-shadow で付ける（.rc-print に付けると重なりが区切られ、立体を札の裏へ回せない）。
+ * canvas は z-index: -1 のままなので、filter で重なりが区切られても札の裏にいる */
 .rc-strip,
-.rc-ribbon-dom {
+.rc-ribbon-dom,
+.rc-ribbon-canvas {
   filter: drop-shadow(0 1px 1px rgba(43, 39, 35, 0.12)) drop-shadow(0 8px 16px rgba(43, 39, 35, 0.1));
+}
+/* 下に前の紙が続いているときは、今の紙の影を継ぎ目に落とさない（左右だけに付ける。下は前の紙が影を持つ） */
+.rc-strip.rc-joined {
+  filter: none;
+  box-shadow: -10px 0 14px -10px rgba(43, 39, 35, 0.22), 10px 0 14px -10px rgba(43, 39, 35, 0.22);
 }
 .rc-paper {
   position: relative;
