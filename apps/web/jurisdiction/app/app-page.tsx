@@ -711,6 +711,18 @@ function ProjectCrumbs({ label, close, open, ancestors }: { label: string; close
   )
 }
 
+/** 年度ごとの表の評価（A〜D）。評価シートの出典が分かれば、評価からそのシートの頁を開く */
+function GradeLink({ grade, href, label }: { grade?: string; href?: string; label: string }) {
+  if (!grade) return null
+  if (!href) return <>{grade}</>
+  return (
+    <a href={href} target="_blank" rel="noopener" aria-label={`${label}（評価 ${grade}）`} className="inline-flex items-center gap-1 text-foreground no-underline hover:text-primary hover:underline">
+      {grade}
+      <ArrowSquareOutIcon className="size-3 text-muted-foreground" aria-hidden="true" />
+    </a>
+  )
+}
+
 /** 年度ごとの表の額。出典の頁が分かれば、額から公式の資料（その頁）を開く */
 function SourceAmt({ yen, href, label }: { yen: number | null | undefined; href?: string; label: string }) {
   if (yen == null || !href) return <Amt yen={yen} className="text-sm" />
@@ -757,7 +769,7 @@ function ProjectPageBody({ id }: { id: string }) {
               <span className="px-1 py-2">{r(y)}</span>
               <span className="py-2 text-right"><SourceAmt yen={p.y[String(y)]?.b} href={p.src?.[String(y)]?.b} label={`${r(y)}年度の当初予算の出典`} /></span>
               <span className="px-1 py-2 text-right"><SourceAmt yen={p.y[String(y)]?.s} href={p.src?.[String(y)]?.s} label={`${r(y)}年度の決算の出典`} /></span>
-              {graded ? <span className="px-2 py-2 text-center">{p.grades?.[String(y)] ?? ''}</span> : null}
+              {graded ? <span className="px-2 py-2 text-center"><GradeLink grade={p.grades?.[String(y)]} href={p.gradeSrc?.[String(y)]} label={`${r(y)}年度の事業評価の評価シート`} /></span> : null}
             </div>
           ))}
         </div>
