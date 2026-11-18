@@ -83,7 +83,7 @@ def rules() -> tuple[tuple[str, str, re.Pattern | None], ...]:
 # --- 1. invisible glyphs -----------------------------------------------------
 
 def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, character_map: dict[str, str] | None = None,
-            line_clips: bool = False, em_boxes: bool = False):
+            line_clips: bool = False, em_boxes: bool = False, white_cover: bool = False):
     """(box, character, visible) of every drawn character, in Poppler's top-left coordinates.
 
     Visibility belongs to the text object that draws the character: visible
@@ -92,7 +92,8 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
     object's own bounds are too, so either the character box or the object's bounds meeting it is visible
     (281000 draws each page as a form scaled from 72×72).
     `line_clips` (the repair `line_clips`): `patterns/repairs/line_clips.py`. `em_boxes` (the repair `em_boxes`): a
-    character's box is its em square, not its ink (`patterns/repairs/em_boxes.py`).
+    character's box is its em square, not its ink (`patterns/repairs/em_boxes.py`). `white_cover` (the repair
+    `white_cover`): a character a later white filled path covers is hidden (`patterns/repairs/white_cover.py`).
     """
     import pypdfium2.raw as raw
     page = pdf[number - 1]
@@ -140,13 +141,20 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
 
     paths = []
     flat_paths: set[int] = set()
+    cover = load_pattern("repairs", "white_cover") if white_cover else None
+    order: dict[int, int] = {}  # the place of each top-level object in the drawing order
+    covers: list = []
     for index in range(raw.FPDFPage_CountObjects(page.raw)):
         handle = raw.FPDFPage_GetObject(page.raw, index)
+        if cover is not None:
+            order[ctypes.cast(handle, ctypes.c_void_p).value] = index
         if raw.FPDFPageObj_GetType(handle) == raw.FPDF_PAGEOBJ_PATH:
             l, b, r, t = (ctypes.c_float() for _ in range(4))
             raw.FPDFPageObj_GetBounds(handle, l, b, r, t)
             paths.append((view(l.value, b.value, r.value, t.value),
                           inside((l.value, b.value, r.value, t.value), clip_of(handle))))
+            if cover is not None and paths[-1][1] and cover.covers(raw, handle):
+                covers.append((index, (l.value, b.value, r.value, t.value)))
             if line_clips and not paths[-1][1] and load_pattern("repairs", "line_clips").flat(clip_of(handle)):
                 flat_paths.add(len(paths) - 1)
     found = []
@@ -168,6 +176,8 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
         # The character box is in page space; compare it, not the object's bounds,
         # with the clip (object bounds come back in another space on some PDFs).
         visible = inside((l.value, b.value, r.value, t.value), clip_of(handle)) if handle else True
+        if visible and covers and handle and (at := order.get(ctypes.cast(handle, ctypes.c_void_p).value)) is not None:
+            visible = not cover.hidden((l.value, b.value, r.value, t.value), at, covers)
         if not visible and form_clips:
             ol, ob, orr, ot = (ctypes.c_float() for _ in range(4))
             raw.FPDFPageObj_GetBounds(handle, ol, ob, orr, ot)
@@ -293,7 +303,7 @@ def drop_invisible(pdf_path: Path, pages: list[Page], report: Report, repairs: f
     pdf = pdfium.PdfDocument(str(pdf_path))
     try:
         read = lambda number: _glyphs(pdf, number, 'opening_cell' in repairs, form_clips, character_map, 'line_clips' in repairs,
-                                      'em_boxes' in repairs)
+                                      'em_boxes' in repairs, 'white_cover' in repairs)
         cached = {page.number: read(page.number) for page in pages} if 'line_clips' in repairs else {}
         offset = load_pattern("repairs", "line_clips").offset([found for found, _ in cached.values()]) if cached else 0.0
         for page in pages:
