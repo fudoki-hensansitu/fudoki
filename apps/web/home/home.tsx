@@ -137,7 +137,7 @@ function Dashboard({ c }: { c: Ctx }) {
       base={c.base}
       detailHref={detailHref}
       head={
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex flex-wrap items-center gap-4 lg:items-start">
           <Emblem code={town.code} name={town.name} className="size-14 rounded-2xl border-0 p-2" />
           <div className="min-w-0 flex-1">
             <Title size="h1" as="h2">{town.name}</Title>
