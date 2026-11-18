@@ -200,7 +200,10 @@ export function projectHead(d: PageData, p: ProjectFull): Head {
     '@type': 'BreadcrumbList',
     itemListElement: [{ name: '風土記', path: '/' }, ...parent, { name: d.name, path: jurisdictionPath(d.code) }, { name: p.name, path: `${jurisdictionPath(d.code)}/${TAB_SLUGS.projects}/${encodeURIComponent(p.id)}` }].map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: `${ORIGIN}${c.path}` })),
   }
-  return head(title, description, canonical, { script: [{ type: 'application/ld+json', innerHTML: inlineJson(breadcrumb) }] })
+  // OG 画像は自治体の最新の頁と同じもの（紋章と最新の決算の分野があるときだけ。pageHead と同じ条件）
+  const own = d.emblem && (d.headline?.settlement?.areas.length ?? 0) > 0
+  const meta = own ? [{ property: 'og:image', content: `${ORIGIN}${assetPath(d.code, 'og.png')}` }] : []
+  return head(title, description, canonical, { meta, script: [{ type: 'application/ld+json', innerHTML: inlineJson(breadcrumb) }] })
 }
 
 /** 収録がまだ無い自治体。検索の対象にはしない */
