@@ -12,7 +12,8 @@ import type { Env, Fetcher, RateLimiter } from './env'
 import type { OgInput } from './og'
 import { appYears, loadFieldSubjects, loadYearSnapshot } from './app-data'
 import { loadCatalog, loadCatalogEntry, loadSettlementSummary, searchCatalog, type CatalogEntry } from './jurisdiction'
-import { FudokiApiError } from './fudoki-api'
+import { apiCall, FudokiApiError } from './fudoki-api'
+import { TAB_SLUGS } from '../jurisdiction/types'
 
 // 応答は CDN（Void の ISR、void.config.ts の routing.revalidate）に置く。Worker の中には置かず、毎回 API から組む。
 // 自治体の一覧だけは、1つの頁を組むあいだに何度も引くので、同じ isolate の中で1分だけ使い回す
@@ -71,6 +72,44 @@ export async function sitemapResponse(env: Env): Promise<Response> {
     return new Response(sitemapXml(await catalog(env), pageYearsOf), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
   } catch {
     return new Response(sitemapXml([]), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'no-store' } })
+  }
+}
+
+/** 事業の sitemap に載せる、自治体ごとの事業の数の上限（最新の年度の金額の大きい順）。検索の1頁の上限と同じ */
+const PROJECT_SITEMAP_SIZE = 1000
+const XML_HEADERS = { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=3600' }
+const xmlEscape = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
+/** 事業の sitemap の目次（/sitemap-projects.xml）。収録のある自治体ごとの事業の sitemap（/jurisdictions/<code>/sitemap.xml）を並べる */
+export async function projectSitemapIndexResponse(env: Env): Promise<Response> {
+  try {
+    const entries = (await catalog(env)).filter((e) => e.settlementYears.length > 0)
+    const body = entries.map((e) => `<sitemap><loc>https://fudoki.dev/jurisdictions/${e.code}/sitemap.xml</loc></sitemap>`).join('')
+    return new Response(`<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${body}</sitemapindex>\n`, { headers: XML_HEADERS })
+  } catch {
+    return new Response('風土記の API に繋がりませんでした\n', { status: 502, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } })
+  }
+}
+
+/** 自治体の事業の sitemap（/jurisdictions/<code>/sitemap.xml）。頁で選べる最新の年度の事業を、金額の大きい順に PROJECT_SITEMAP_SIZE 件まで載せる。
+ * 収録の無い自治体は 404 */
+export async function projectSitemapResponse(env: Env, code: string): Promise<Response> {
+  try {
+    const entry = await loadCatalogEntry(env, code)
+    const latest = entry && entry.settlementYears.length > 0 ? appYears(entry)[0] : undefined
+    if (!entry || !latest) return new Response('Not Found\n', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
+    const r = await apiCall(env)('search_projects', {
+      fiscal_year: { min: latest.year, max: latest.year },
+      where: { jurisdiction_code: { eq: [code] } },
+      order_by: [{ column: latest.kind === 'initial' ? 'budget_yen' : 'settled_yen', desc: true }],
+      page_size: PROJECT_SITEMAP_SIZE,
+    } as never)
+    const base = `https://fudoki.dev${jurisdictionPath(code)}/${TAB_SLUGS.projects}/`
+    const ids = [...new Set(r.project_years.map((y) => y.project_id))]
+    const body = ids.map((id) => `<url><loc>${xmlEscape(base + encodeURIComponent(id))}</loc></url>`).join('')
+    return new Response(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${body}</urlset>\n`, { headers: XML_HEADERS })
+  } catch {
+    return new Response('風土記の API に繋がりませんでした\n', { status: 502, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } })
   }
 }
 

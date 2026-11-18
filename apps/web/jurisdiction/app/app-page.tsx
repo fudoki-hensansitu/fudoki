@@ -49,6 +49,7 @@ import { RequestTown } from '../../nav/request-town'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { cn } from '@/lib/utils'
 import { Link } from '../../nav/link'
+import { jurisdictionPath } from '../path'
 import { CutIcon, DoneIcon, FixIcon, JoinIcon, KeepIcon, LawIcon, MaybeStopIcon, NewIcon, PlanIcon, SizeIcon, StopIcon, UpIcon } from '../fresh-icons'
 import { YearPicker } from '../year-picker'
 import { Flow } from '../flow'
@@ -270,6 +271,24 @@ function ProjectList({ q, head, render }: { q: ListQuery; head?: (page: ListPage
 const projectFeatures = tableFeatures({})
 const projectColumn = createColumnHelper<typeof projectFeatures, Proj & { rank: number }>()
 
+/** 事業の頁の URL（/tokyo/shinagawa/projects/<project_id>）。事業は年度をまたぐので年度の段を持たない */
+const projectHref = (code: string, id: string) => `${jurisdictionPath(code)}/${TAB_SLUGS.projects}/${encodeURIComponent(id)}`
+
+/** 事業の頁へのリンク。検索エンジンが辿れるよう href を持たせ、ふつうに押したときは行の onClick（画面の中で開く）に任せる。
+ * 修飾キー・中ボタンで押したときはブラウザに任せ（新しいタブ）、行の onClick に渡さない */
+function ProjectLink({ id, children }: { id: string; children: React.ReactNode }) {
+  const { page } = useApp()
+  return (
+    <a
+      href={projectHref(page.code, id)}
+      onClick={(e) => (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey ? e.stopPropagation() : e.preventDefault())}
+      className="rounded-sm text-left text-foreground no-underline outline-none focus-visible:ring-2 focus-visible:ring-primary"
+    >
+      {children}
+    </a>
+  )
+}
+
 /** 事業の名前の欄。新しく始める・やめた事業の印は事業名の後ろに付け、狭い幅（詳細を横に開いたときも）では分野を下に添える（広い幅は別の列） */
 function ProjectNameCell({ p }: { p: Proj }) {
   const { v } = useApp()
@@ -277,8 +296,8 @@ function ProjectNameCell({ p }: { p: Proj }) {
   return (
     // 文節で折り返す設定のままだと、長い事業名が狭い幅で列を押し広げるので、収まらないときは文節の途中でも折り返す
     <span className="block [overflow-wrap:anywhere]">
-      {/* 押せることとフォーカスは事業名のボタンが持つ（行を押しても同じく詳細を開く） */}
-      <button type="button" className="rounded-sm text-left outline-none focus-visible:ring-2 focus-visible:ring-primary">{p.name}</button>
+      {/* 押せることとフォーカスは事業名のリンクが持つ（行を押しても同じく詳細を開く）。目を事業の代わりにした行（moku:）は押せない */}
+      {p.id.startsWith('moku:') ? <span>{p.name}</span> : <ProjectLink id={p.id}>{p.name}</ProjectLink>}
       {ended || v.isNew(p) ? <span className="ml-2 inline-flex align-middle">{ended ? <Mark kind="stop" label="やめた事業" className="size-5" /> : <Mark kind="new" label="新しく始める事業" className="size-5" />}</span> : null}
       {/* 狭い幅で事業名の下に添える分野は、事業名より控えめな色にする */}
       <span className="flex items-center gap-1 text-muted-foreground @3xl:hidden"><FieldIcon id={v.fieldOf(p)} className="size-4 shrink-0" />{[fieldName(v, v.fieldOf(p)), 'grade' in p && p.grade ? `評価 ${p.grade}` : null].filter(Boolean).join(' · ')}</span>
@@ -687,11 +706,11 @@ type ProjectHistory = { project: string; depth?: number; fromList?: boolean }
 const projectLatestKey = (id: string) => `project-latest:${id}`
 
 /** 事業の頁の戻る先。事業のタブと、入れ子の上にある事業をすべてパンくずに並べ、押すとそこへ戻る */
-function ProjectBack({ res, id, label, close, open }: { res: Resources; id: string; label: string; close: () => void; open: (id: string) => void }) {
+function ProjectBack({ res, id, code, label, close, open }: { res: Resources; id: string; code: string; label: string; close: () => void; open: (id: string) => void }) {
   const p = React.use(res.get(projectLatestKey(id), () => projectLatest(id)))
-  return <ProjectCrumbs label={label} close={close} open={open} ancestors={p === FAILED ? [] : (p.ancestors ?? [])} />
+  return <ProjectCrumbs code={code} label={label} close={close} open={open} ancestors={p === FAILED ? [] : (p.ancestors ?? [])} />
 }
-function ProjectCrumbs({ label, close, open, ancestors }: { label: string; close: () => void; open: (id: string) => void; ancestors: NonNullable<ProjectFull['ancestors']> }) {
+function ProjectCrumbs({ code, label, close, open, ancestors }: { code: string; label: string; close: () => void; open: (id: string) => void; ancestors: NonNullable<ProjectFull['ancestors']> }) {
   return (
     <Breadcrumb className="min-w-0">
       <BreadcrumbList className="flex-nowrap text-sm sm:text-base">
@@ -702,7 +721,7 @@ function ProjectCrumbs({ label, close, open, ancestors }: { label: string; close
           <React.Fragment key={a.id}>
             <BreadcrumbSeparator />
             <BreadcrumbItem className="min-w-[3em]">
-              <BreadcrumbLink render={<button type="button" onClick={() => open(a.id)} />} className="min-w-0 cursor-pointer truncate">{a.name}</BreadcrumbLink>
+              <BreadcrumbLink href={projectHref(code, a.id)} onClick={(e) => { if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; e.preventDefault(); open(a.id) }} className="min-w-0 cursor-pointer truncate">{a.name}</BreadcrumbLink>
             </BreadcrumbItem>
           </React.Fragment>
         ))}
@@ -737,8 +756,9 @@ function SourceAmt({ yen, href, label }: { yen: number | null | undefined; href?
 /** 事業の頁（/tokyo/shinagawa/projects/<project_id>）。一覧の行・評価シート・分野の頁の事業から開く。事業は年度をまたぐので年度の段を持たず、
  * 金額は年度ごとの表で出す（大きな金額は出さない）。内訳（中の事業）は事業の最新の年度（決算があれば決算）のもの */
 function ProjectPage({ id }: { id: string }) {
+  const { res } = useApp()
   return (
-    <ClientSuspense fallback={<RowsSkeleton n={4} />}>
+    <ClientSuspense fallback={<RowsSkeleton n={4} />} ready={!!res.peek(projectLatestKey(id))}>
       <ProjectPageBody id={id} />
     </ClientSuspense>
   )
@@ -790,7 +810,7 @@ function ProjectPageBody({ id }: { id: string }) {
                 {kids.map((k, i) => (
                   <TableRow key={k.id ?? i} onClick={() => k.id && openProject(k.id)} className="cursor-pointer hover:bg-card">
                     <TableCell className="whitespace-normal py-3 [overflow-wrap:anywhere]">
-                      <button type="button" className="rounded-sm text-left outline-none focus-visible:ring-2 focus-visible:ring-primary">{k.name}</button>
+                      {k.id ? <ProjectLink id={k.id}>{k.name}</ProjectLink> : k.name}
                     </TableCell>
                     <TableCell className="py-3 text-muted-foreground">{k.fy != null ? `${r(k.fy)} ${k.kind === 'initial' ? '当初予算' : '決算'}` : ''}</TableCell>
                     <TableCell className="py-3 text-right tabular-nums">{k.yen == null ? '—' : yenText(k.yen)}</TableCell>
@@ -858,7 +878,7 @@ const projectOfPath = () => {
 /** 事業の頁の URL の段 */
 const projectSegment = (id: string) => `projects/${encodeURIComponent(id)}`
 
-export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, setsu, sitekey, initialProject, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; /** loader が defer で渡す残り（評価シート・お金のかかる事業・新しく始めた事業） */ extras?: Promise<YearExtras>; /** loader が defer で渡す流れの節 */ setsu?: Promise<Record<string, Setsu[]>>; sitekey: string; /** 事業の頁（/2026/projects/<project_id>）で開いた事業 */ initialProject?: string; initialTab?: TabKey }) {
+export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, setsu, sitekey, initialProject, initialProjectFull, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; /** loader が defer で渡す残り（評価シート・お金のかかる事業・新しく始めた事業） */ extras?: Promise<YearExtras>; /** loader が defer で渡す流れの節 */ setsu?: Promise<Record<string, Setsu[]>>; sitekey: string; /** 事業の頁（/2026/projects/<project_id>）で開いた事業 */ initialProject?: string; /** 事業の頁で loader が読んだ事業の中身（サーバーでも事業の頁を描く） */ initialProjectFull?: ProjectFull; initialTab?: TabKey }) {
   // 最初の画面に要らない分（評価シート・お金のかかる事業・新しく始めた事業）は loader が defer で流し、使う部分が Full（Suspense と use()）で待つ
   const d = base
   const vision = data.vision?.text
@@ -868,6 +888,8 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   const navigation = useNavigation()
   // 事業の一覧の1頁目は、一覧の key で置き場に入れる（続きの頁を足した一覧は上書きしない）
   for (const [k, page] of Object.entries(d.lists)) if (!res.peek(k)) res.set(k, page)
+  // 事業の頁の中身は、loader が読んだ分を置き場に入れ、サーバーでも本文とパンくずを描く
+  if (initialProjectFull && !res.peek(projectLatestKey(initialProjectFull.id))) res.set(projectLatestKey(initialProjectFull.id), initialProjectFull)
   React.useEffect(() => rememberJurisdiction({ code: data.code, name: data.name, path: basePath() }), [data.code, data.name])
   const year = d.year
   // 年度・タブは頁の URL で、移るたびに loader が頁のデータを読み直す。タブは押したらすぐ切り替え、届いた頁のタブに合わせ直す
@@ -1086,8 +1108,8 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
             {projectPage ? (
               <div className="relative z-10 flex h-12 min-w-0 flex-1 items-center sm:h-[52px]">
                 {/* 入れ子の事業は上の事業をパンくずに並べる。分かるまでは事業のタブへ戻るボタンを出しておく */}
-                <ClientSuspense fallback={<ProjectCrumbs label="事業" close={closeProject} open={openProject} ancestors={[]} />}>
-                  <ProjectBack res={res} id={projectPage} label="事業" close={closeProject} open={openProject} />
+                <ClientSuspense fallback={<ProjectCrumbs code={data.code} label="事業" close={closeProject} open={openProject} ancestors={[]} />} ready={!!res.peek(projectLatestKey(projectPage))}>
+                  <ProjectBack res={res} id={projectPage} code={data.code} label="事業" close={closeProject} open={openProject} />
                 </ClientSuspense>
               </div>
             ) : (

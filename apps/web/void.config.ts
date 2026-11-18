@@ -48,6 +48,9 @@ export default defineConfig({
       '/compare': 3600,
       '/compare/*': 3600,
       '/sitemap.xml': 3600,
+      // 事業の sitemap（目次と自治体ごと）。事業は取り込みのときだけ変わるので1日置く
+      '/sitemap-projects.xml': 86400,
+      '/jurisdictions/*/sitemap.xml': 86400,
       // 自治体の OG 画像（routes/jurisdictions/[code]/og.png.ts）。最新の決算の金額から描く。同じ下にある紋章の SVG（静的資産）は外す
       '/jurisdictions/*/og.png': 86400,
     },

@@ -3,7 +3,7 @@
 import { HTTPException } from 'hono/http-exception'
 import { defer } from 'void'
 import type { Context } from 'hono'
-import { emptyHead, pageHead, type Head } from '../../jurisdiction/html'
+import { emptyHead, pageHead, projectHead, type Head } from '../../jurisdiction/html'
 import { appPageYears, hasDocument, TAB_SLUGS, tabOfSlug, type Headline, type PageData, type PageFlow, type PageTab } from '../../jurisdiction/types'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../../jurisdiction/domains'
 import { PREFECTURE_MAPS } from '../../jurisdiction/map.generated'
@@ -19,6 +19,8 @@ import type { Setsu } from '../../jurisdiction/types'
 import { siteKey } from '../../server/site-key'
 import { loadLocalFinance } from '../../server/local-finance'
 import { loadRevenue } from '../../server/revenue'
+import { readProjectFull, type ProjectFull } from '../../jurisdiction/app/api'
+import { apiCall, FudokiApiError } from '../../server/fudoki-api'
 
 export const notFound = () => new Response('Not Found\n', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
 export const unavailable = () => new Response('風土記の API に繋がりませんでした。少し待ってからもう一度開いてください。\n', { status: 502, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } })
@@ -30,6 +32,8 @@ export type JurisdictionProps = JurisdictionView & {
   year?: number
   /** 事業の頁（/tokyo/nakano/projects/<project_id>）のときの事業の ID。事業は年度をまたぐので年度の段を持たない。本文のデータは最新の年度、タブは事業のタブ */
   project?: string
+  /** 事業の頁の中身（年度を指さずに読んだ詳細）。サーバーで本文・題まで描くために渡す。API に繋がらなければ無く、画面が取る */
+  projectFull?: ProjectFull
   /** タブの頁（/tokyo/nakano/2026/projects）のときのタブ */
   tab?: Exclude<PageTab, 'overview'>
   /** 開いた年度の款項目・評価シート・事業の一覧の1頁目。サーバーで本文まで描くために渡す。API に繋がらなければ無く、画面が取る */
@@ -109,7 +113,23 @@ export async function projectProps(c: Context, path: string, segment: string): P
     throw new HTTPException(404, { res: notFound() })
   }
   if (!PROJECT_SEGMENT.test(project)) throw new HTTPException(404, { res: notFound() })
-  return { ...(await jurisdictionProps(c, path)), tab: 'projects', project }
+  const env = c.env as unknown as Env
+  const [props, projectFull] = await Promise.all([
+    jurisdictionProps(c, path),
+    within(readProjectFull(apiCall(env), project), SNAPSHOT_WAIT_MS).catch((e: unknown) => {
+      // 収録に無い事業は 404（検索に「中身の無い頁」を載せない）。API に繋がらない・待ちきれないときは中身なしで返し、画面が読む
+      if (e instanceof FudokiApiError && (e.status === 404 || e.status === 400)) throw new HTTPException(404, { res: notFound() })
+      return undefined
+    }),
+  ])
+  // 別の自治体の事業の ID は、その事業の自治体の頁へ 301（同じ事業を複数の URL に載せない）
+  if (projectFull && props.kind === 'page' && projectFull.code !== props.data.code)
+    throw new HTTPException(301, { res: new Response(null, { status: 301, headers: { Location: `${jurisdictionPath(projectFull.code)}/${TAB_SLUGS.projects}/${encodeURIComponent(project)}` } }) })
+  if (!projectFull) {
+    c.header('x-revalidate', '0')
+    c.header('Cache-Control', 'no-store')
+  }
+  return { ...props, tab: 'projects', project, ...(projectFull ? { projectFull } : {}) }
 }
 
 /** タブの頁（/tokyo/nakano/projects、/tokyo/nakano/2024/budget）。タブの名前が違えば 404。予算・決算のタブは収録の無い年度にもあり、画面が「まだ収録していない」と出す */
@@ -224,6 +244,7 @@ const areasOfFields = (fields: Record<string, number>) =>
 /** 分野の頁とタブの頁は、題・説明文・canonical をその頁のものにする */
 export const jurisdictionHead = (p: JurisdictionProps): Head => {
   if (p.kind !== 'page') return emptyHead(p.entry)
+  if (p.projectFull) return projectHead(p.data, p.projectFull)
   const year = p.year ?? appPageYears(p.data)[0]
   const opened = year === undefined ? undefined : p.snapshot?.years[String(year)]
   return pageHead(p.data, p.year, p.tab ? { tab: p.tab } : undefined, opened && year !== undefined ? { year, kind: opened.kind, yen: opened.total, originTitle: opened.originTitle, areas: areasOfFields(opened.fields) } : undefined)

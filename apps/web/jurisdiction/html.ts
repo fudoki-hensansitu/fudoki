@@ -6,6 +6,7 @@ import { jurisdictionPath } from './path'
 import { appPageYears, formatYen, hasDocument, TAB_SLUGS, type PageData, type PageTab } from './types'
 import { DOMAIN_FRAMES, OTHER_FRAME } from './domains'
 import { QUESTIONS } from '../compare/questions'
+import type { ProjectFull } from './app/api'
 
 const ORIGIN = 'https://fudoki.dev'
 /** 風土記のデータを配る条件（利用規約）。構造化データの Dataset の license に書く */
@@ -177,6 +178,26 @@ export function pageHead(d: PageData, year?: number, section?: Section, opened?:
   const own = !past && d.emblem && (d.headline?.settlement?.areas.length ?? 0) > 0
   const meta = own ? [{ property: 'og:image', content: `${ORIGIN}${assetPath(d.code, 'og.png')}` }] : []
   return head(title, description, canonical, { meta, script: [{ type: 'application/ld+json', innerHTML: inlineJson([ld, breadcrumb]) }] })
+}
+
+/** 事業の頁（/tokyo/shinagawa/projects/<project_id>）の head。事業は年度をまたぐので、題には事業の最新の年度を書き、
+ * 説明文はその年度の決算（無ければ当初予算）の額と、担当の課・款項目を書く。canonical は年度の段の無い事業の頁 */
+export function projectHead(d: PageData, p: ProjectFull): Head {
+  const latest = Object.keys(p.y).map(Number).sort((a, b) => b - a)[0]
+  const at = latest === undefined ? undefined : p.y[String(latest)]
+  const y = latest === undefined ? '' : reiwaFull(latest)
+  const title = `${d.name}の${p.name}${y ? `（${y}）` : ''}｜風土記`
+  const amount = at?.s != null ? `${y}決算は約${formatYen(at.s)}${at.b != null ? `（当初予算は約${formatYen(at.b)}）` : ''}。` : at?.b != null ? `${y}当初予算は約${formatYen(at.b)}。` : ''
+  const where = [p.dept ? `担当は${p.dept}` : null, p.path.filter(Boolean).length ? `科目は${p.path.filter(Boolean).join('・')}` : null].filter(Boolean).join('、')
+  const description = `${d.name}の${p.name}。${amount}${where ? `${where}。` : ''}年度ごとの予算・決算を、予算書・決算書の頁と並べて見られます。`
+  const canonical = `${ORIGIN}${jurisdictionPath(d.code)}/${TAB_SLUGS.projects}/${encodeURIComponent(p.id)}`
+  const parent = d.prefecturePath ? [{ name: d.prefecture, path: d.prefecturePath }] : []
+  const breadcrumb = {
+    '@context': 'https://schema.org',
+    '@type': 'BreadcrumbList',
+    itemListElement: [{ name: '風土記', path: '/' }, ...parent, { name: d.name, path: jurisdictionPath(d.code) }, { name: p.name, path: `${jurisdictionPath(d.code)}/${TAB_SLUGS.projects}/${encodeURIComponent(p.id)}` }].map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: `${ORIGIN}${c.path}` })),
+  }
+  return head(title, description, canonical, { script: [{ type: 'application/ld+json', innerHTML: inlineJson(breadcrumb) }] })
 }
 
 /** 収録がまだ無い自治体。検索の対象にはしない */
