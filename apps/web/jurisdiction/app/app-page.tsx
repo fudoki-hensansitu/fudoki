@@ -420,7 +420,7 @@ const withSetsu = (flow: PageFlow, byMoku: Record<string, Setsu[]>): PageFlow =>
   return { ...flow, drills: drills(flow.drills), loose: flow.loose.map(moku), ...(flow.revenue ? { revenue: drills(flow.revenue) } : {}) }
 }
 
-function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
+function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開いているタブか。スマホは隣のタブも描くので、URL を書き換えるのは開いているタブだけにする */ active: boolean }) {
   const { v, d, res, page, flow, flowFailed, pickAccount, setsu: setsuProp, openField } = useApp()
   const y = d.years[String(v.year)]
   const total: YearTotal | undefined = y?.kind === phase ? { year: v.year, yen: y.total, kan: [] } : undefined
@@ -468,6 +468,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
     if (q.get('flow') === 'table' || found.expenditure || found.revenue) setView('table')
   }, [])
   React.useEffect(() => {
+    if (!active) return
     const q = new URLSearchParams(location.search)
     const set = (k: string, x: string) => (x ? q.set(k, x) : q.delete(k))
     const table = view === 'table'
@@ -476,7 +477,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
     set('rev_q', table ? flowQuery.revenue.trim() : '')
     const next = location.pathname + (q.size ? `?${q}` : '') + location.hash
     if (next !== location.pathname + location.search + location.hash) history.replaceState(history.state, '', next)
-  }, [view, flowQuery])
+  }, [active, view, flowQuery])
   return (
     <div className="flex flex-col gap-3">
       <TabHead title={label === '決算' ? '決算' : '予算'}>
@@ -1102,7 +1103,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   )
 
   const panel = (key: TabKey) =>
-    !v ? null : key === 'overview' ? <Overview /> : key === 'money' ? <MoneyTab key={v.year} phase="initial" /> : key === 'settled' ? <MoneyTab key={v.year} phase="settlement" /> : <ProjectsTab filter={filter} setFilter={setFilter} fields={fields} setFields={setFields} q={query} setQ={setQuery} />
+    !v ? null : key === 'overview' ? <Overview /> : key === 'money' ? <MoneyTab key={v.year} phase="initial" active={tab === key} /> : key === 'settled' ? <MoneyTab key={v.year} phase="settlement" active={tab === key} /> : <ProjectsTab filter={filter} setFilter={setFilter} fields={fields} setFields={setFields} q={query} setQ={setQuery} />
 
   return (
     <div className="@container">
