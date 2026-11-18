@@ -504,12 +504,12 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
               </ToggleGroupItem>
             </ToggleGroup>
           </div>
-          <p className="text-sm leading-[1.7] text-muted-foreground">{current?.revenue?.length ? '歳入（左）と歳出（右）が、款から項・目へとどう分かれていくかを示しています。' : '歳出が、款から項・目へとどう分かれていくかを示しています。'}会計を選ぶと、その会計の流れに切り替わります。</p>
+          <p className="text-sm leading-[1.7] text-muted-foreground">{view === 'table' ? `${current?.revenue?.length ? '歳出と歳入' : '歳出'}の款・項・目・節を、行を押して開けます。割合は総額に占める割合です。` : current?.revenue?.length ? '歳入（左）と歳出（右）が、款から項・目へとどう分かれていくかを示しています。' : '歳出が、款から項・目へとどう分かれていくかを示しています。'}会計を選ぶと、その会計の流れに切り替わります。</p>
         </div>
       ) : null}
       {total ? <AccountCards accounts={accounts} account={account} setAccount={setAccount} /> : null}
       {picked && view === 'table' ? (
-        <FlowTable key={`${v.year}-${phase}-${account}`} flows={flows} revenue={current?.revenue} total={picked.yen} query={flowQuery} onQuery={(k, x) => setFlowQuery((f) => ({ ...f, [k]: x }))} />
+        <FlowTable key={`${v.year}-${phase}-${account}`} flows={flows} revenue={current?.revenue} total={picked.yen} query={flowQuery} onQuery={(k, x) => setFlowQuery((f) => ({ ...f, [k]: x }))} onRetry={flowFailed && !drills ? () => void router.refresh({ preserveState: true, preserveScroll: true }) : undefined} />
       ) : picked ? (
         <Flow key={`${v.year}-${phase}-${account}`} flows={flows} revenue={current?.revenue} total={picked} onRetry={flowFailed && !drills ? () => void router.refresh({ preserveState: true, preserveScroll: true }) : undefined} bare natural className="scroll-mt-16 @4xl:scroll-mt-16" />
       ) : recorded ? (

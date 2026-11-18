@@ -14,6 +14,7 @@ import {
   useTable,
   type ExpandedState,
 } from '@tanstack/react-table'
+import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
@@ -140,14 +141,22 @@ function Section({ title, drills, total, query, onQuery }: { title: string; dril
 export type FlowQuery = { expenditure: string; revenue: string }
 
 /** 歳出の表と、あれば一般会計の歳入の表。total は歳出の総額。探す語は歳出・歳入で別に持つ */
-export function FlowTable({ flows, revenue, total, query, onQuery }: {
+export function FlowTable({ flows, revenue, total, query, onQuery, onRetry }: {
   flows: Drill[] | undefined
   revenue?: Drill[]
   total: number
   query: FlowQuery
   onQuery: (key: keyof FlowQuery, q: string) => void
+  /** 読めなかったときに読み直す。あれば「読めませんでした」とボタンを出す */
+  onRetry?: () => void
 }) {
-  if (!flows) return <p role="status" className="py-6 text-sm text-muted-foreground">読み込んでいます</p>
+  if (!flows && onRetry) return (
+    <div role="alert" className="flex flex-wrap items-center gap-2 py-6 text-sm text-destructive">
+      <p>お金の流れを読み込めませんでした。</p>
+      <Button variant="outline" onClick={onRetry}>もう一度読み込む</Button>
+    </div>
+  )
+  if (!flows) return <p role="status" className="py-6 text-sm text-muted-foreground">読み込んでいます…</p>
   const revenueTotal = (revenue ?? []).reduce((s, d) => s + (d.kan.amountMissing ? 0 : d.kan.yen), 0)
   return (
     <div className="flex flex-col gap-8">
