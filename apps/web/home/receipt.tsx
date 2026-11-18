@@ -457,7 +457,7 @@ export function ReceiptMachine({ code, name, v, year, pop, base, detailHref, hea
     for (const id of pictures.keys()) if (!live.has(id)) pictures.delete(id)
   }, [printed, older])
   useFollow(phase, printing, card, feed)
-  // 紙を刷り終えたら（人口が無く紙を刷らないまちは数え終えたら）知らせる。ホームはそのあとに他のまちを探す欄を浮かべる
+  // 紙を刷り終えたら（人口が無く紙を刷らないまちは数え終えたら）知らせる。ホームはそのあとにレシートの下へ他のまちの節を出す
   const done = useLatest(onPrinted)
   React.useEffect(() => {
     if (!printing && !(phase === 'print' && !pop)) return
