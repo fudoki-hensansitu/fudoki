@@ -10,6 +10,9 @@ import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, Fetcher, RateLimiter } from './env'
 import type { OgInput } from './og'
+import type { ReceiptOgInput } from './og-receipt'
+import { yearView } from '../jurisdiction/app/data'
+import { perHeadParts } from '../home/per-head'
 import { appYears, loadFieldSubjects, loadYearSnapshot } from './app-data'
 import { loadCatalog, loadCatalogEntry, loadSettlementSummary, searchCatalog, type CatalogEntry } from './jurisdiction'
 import { FudokiApiError } from './fudoki-api'
@@ -63,6 +66,19 @@ export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<
     logoSvg,
     ...(emblem.author ? { credit: `紋章の SVG 化: ${emblem.author} / ${emblem.license}` } : {}),
   }
+}
+
+/** ホームのレシートの OG 画像の中身（routes/jurisdictions/[code]/receipt.png.ts）。年度を省けば頁の最新の年度。収録・人口・その年度が無ければ null */
+export async function receiptOgInput(env: Env, code: string, year?: number): Promise<ReceiptOgInput | null> {
+  const entry = await loadCatalogEntry(env, code)
+  if (!entry) return null
+  const y = year ?? appYears(entry)[0]?.year
+  if (y === undefined || !appYears(entry).some((x) => x.year === y)) return null
+  const d = await loadYearSnapshot(env, entry, y)
+  if (!d.pop || !d.years[String(y)]) return null
+  const v = yearView(d)
+  const { sum, parts } = perHeadParts(v.fields, v.total, d.pop)
+  return { name: entry.name, year: y, settled: v.word === '決算', total: v.total, perHead: sum, rows: v.fields.map((f, i) => ({ name: f.name, yen: parts[i]! })) }
 }
 
 /** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口・一覧・アシスタントだけで答える */

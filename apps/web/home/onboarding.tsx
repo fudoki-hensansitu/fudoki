@@ -111,32 +111,36 @@ function LocateResult({ loc, onPick, onRetry, onClose }: { loc: Locate; onPick: 
   )
 }
 
-/** ほかのまちを見る検索。住んでいるまちを選んだあとのホームに出し、選んだまちの頁へ移るだけ（住んでいるまちは変えない） */
-export function OtherTowns({ className }: { className?: string }) {
+/** ほかのまちを見る検索。住んでいるまちを選んだあとのホームに出し、選んだまちの頁へ移るだけ（住んでいるまちは変えない）。
+ * large ではレシートの下の別の節として大きく出し、アシスタントの入力欄と同じ影を付けてレシートとは別の物に見せる（2026-11-18 yuito） */
+export function OtherTowns({ className, large = false }: { className?: string; large?: boolean }) {
   const [open, setOpen] = React.useState(false)
   return (
-    <section className={cn('ob-rise', className)} aria-label="ほかのまちを見る">
+    <div className={cn(!large && 'ob-rise', className)}>
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex h-12 w-full items-center gap-3 rounded-full border border-border bg-background px-4 text-left text-sm text-muted-foreground transition-colors hover:bg-card"
+        className={cn(
+          'flex w-full items-center gap-3 rounded-full border border-border bg-background px-4 text-left text-muted-foreground transition-colors hover:bg-card',
+          // 影はアシスタントの入力欄（chat/composer.tsx）と同じ（2026-11-18 yuito）
+          large ? 'h-14 px-5 text-base shadow-[var(--shadow-pill)]' : 'h-12 text-sm',
+        )}
       >
-        <MagnifyingGlassIcon className="size-5 shrink-0" aria-hidden="true" />
-        まちを探す
+        <MagnifyingGlassIcon className={cn('shrink-0', large ? 'size-6' : 'size-5')} aria-hidden="true" />
+        他のまちを探す
       </button>
       <TownPalette open={open} onOpenChange={setOpen} />
-    </section>
+    </div>
   )
 }
 
 /**
- * 頁の見出しと説明。サーバーの HTML にも載せるため、まちの有無に関わらず描く。
+ * 頁の見出し。サーバーの HTML にも載せるため、まちの有無に関わらず描く。
  * まちを選ぶ前は大きく、選んだあと（ダッシュボード）はロゴのマークと1行の小さめの見出しにする。読み込み中は読み上げだけに残す
  */
 export function Intro({ mode }: { mode: 'full' | 'compact' | 'hidden' }) {
   const title = '私のお金はどこへ行った？'
-  const lead = '住んでいるまちが何にいくら使い、どう振り返ったかを、事業ごとに見られます。'
-  // まちを選ぶ前もあとも同じ見出しと説明。浮き上がりはまちを選ぶ前だけ
+  // まちを選ぶ前もあとも同じ見出し。浮き上がりはまちを選ぶ前だけ
   const shown = mode !== 'hidden'
   return (
     <header className={shown ? cn('mb-7 sm:mb-8', mode === 'full' && 'ob-rise') : 'sr-only'}>
@@ -144,7 +148,6 @@ export function Intro({ mode }: { mode: 'full' | 'compact' | 'hidden' }) {
         {shown ? <Mark className="size-9 shrink-0 text-primary sm:size-11" /> : null}
         <Title size="h1">{title}</Title>
       </div>
-      <p className="mt-2 text-sm text-muted-foreground">{lead}</p>
     </header>
   )
 }
