@@ -4,7 +4,7 @@
 import * as React from 'react'
 import { cn } from '@/lib/utils'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
-import { reiwa, type LocalFinance } from '../types'
+import { reiwa, type LocalFinance, type Population } from '../types'
 import { Amt, yenParts } from './amount'
 import { Title, titleVariants } from '@/components/ui/title'
 
@@ -259,10 +259,12 @@ function OtherNumbers({ at, rows, prefecture }: { at: LocalFinance; rows: LocalF
 }
 
 /** 開いた年度までの最新の決算の年度の、借金と貯金・事業に回ったお金・財政の指標。中身の無い節は出さない */
-export function FinanceSections({ finance, year, people, prefecture }: { finance: LocalFinance[] | undefined; year: number; people: number | null; prefecture: boolean }) {
+export function FinanceSections({ finance, year, population, prefecture }: { finance: LocalFinance[] | undefined; year: number; population: Population | null; prefecture: boolean }) {
   const upTo = (finance ?? []).filter((f) => f.year <= year)
   const at = upTo.at(-1)
   if (!at) return null
+  // 1人あたりは、決算の年度の翌々年の1月1日までの人口で割る。それより新しい人口しか無い年度（都道府県の R4 など）は出さない
+  const people = population && Number(population.asOf.slice(0, 4)) - at.year <= 2 ? population.people : null
   const rows = upTo.slice(-YEARS)
   const tag = <Tag>{reiwa(at.year)} 決算 · 普通会計 · 総務省</Tag>
   const card = 'rounded-2xl bg-card p-5'

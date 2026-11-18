@@ -80,7 +80,7 @@ where fiscal_year >= {SINCE}
 
 # 都道府県。area は5桁の地域コードなので、実質収支の表の6桁の団体コードに引き当てる
 PREFECTURE_QUERY = f"""
-select b.lg_code, s.year, s.cat01, s.unit, s.value
+select b.lg_code, s.area, s.year, s.cat01, s.unit, s.value
 from e_stat.ssds.d_pref_administration s
 join e_stat.local_finance.settlement_balance b
   on b.entity_kind = 'prefecture' and b.area_code = s.area and b.fiscal_year = s.year
@@ -143,15 +143,19 @@ def read_prefectures() -> list[tuple]:
         balances = {(code, year): (real, total) for code, year, real, total in con.execute(PREFECTURE_BALANCE_QUERY).fetchall()}
     by_cat = {c: name for name, (c, _) in PREFECTURE_COLUMNS.items()}
     merged: dict[tuple[str, int], dict[str, object]] = {}
-    for code, year, cat, unit, number in cells:
+    for code, area, year, cat, unit, number in cells:
+        if code[:5] != area:
+            raise ValueError(f'{year}: 団体コード {code} が地域コード {area} と合いません')
         name = by_cat[cat]
         kind = PREFECTURE_COLUMNS[name][1]
         if unit not in (PREFECTURE_UNITS[kind] if kind == 'ratio' else (PREFECTURE_UNITS[kind],)):
             raise ValueError(f'{year} {code}: {name} の単位が違います: {unit}')
         row = merged.setdefault((code, year), {})
-        if name in row:
-            raise ValueError(f'{year} {code}: {name} が2つあります')
-        row[name] = None if number is None else round(number * 1000) if kind == 'yen' else round(number, 3)
+        v = None if number is None else round(number * 1000) if kind == 'yen' else round(number, 3)
+        # 社会・人口統計体系は同じ項目・地域・年度の行が重なることがある。値が同じなら1つとして読む
+        if name in row and row[name] != v:
+            raise ValueError(f'{year} {code}: {name} が2つあり値が違います')
+        row[name] = v
     rows = []
     for (code, year), row in sorted(merged.items()):
         if missing := [n for n in PREFECTURE_COLUMNS if n not in row]:
@@ -167,6 +171,8 @@ def read_prefectures() -> list[tuple]:
 
 def check_prefectures(rows: list[tuple]) -> None:
     """47の都道府県が、SINCE から PREFECTURE_REQUIRED_THROUGH まで揃うこと"""
+    if not rows:
+        raise ValueError('Queria から都道府県の決算の指標の行が1つも読めませんでした')
     years = set(range(SINCE, max(PREFECTURE_REQUIRED_THROUGH, *(r[1] for r in rows)) + 1))
     for year in sorted(years):
         got = [r for r in rows if r[1] == year]
