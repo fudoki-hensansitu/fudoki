@@ -101,10 +101,12 @@ function DebtSide({ label, term, yen, people, spark, children, say }: { label: s
 const DEBT_SAY = '地方債は、自治体が学校・道路・ごみ処理施設など長く使うものを建てるときに借りるお金です。何十年かけて返すので、その施設を使う世代みんなで負担します。地方債現在高は、年度末にまだ返していない残りの額です。'
 
 /** 借金と貯金。基金の無い年度（都道府県）は借金だけを出す */
-function DebtAndFunds({ at, rows, people }: { at: LocalFinance; rows: LocalFinance[]; people: number | null }) {
+function DebtAndFunds({ at, rows, people, prefecture }: { at: LocalFinance; rows: LocalFinance[]; people: number | null; prefecture: boolean }) {
   if (at.localBondBalance == null) return null
+  // 都道府県の値（社会・人口統計体系の D3105）は、一部事務組合が発行した地方債も含む
+  const say = prefecture ? `${DEBT_SAY}この額には、都道府県が加わる一部事務組合が借りた分も含みます。` : DEBT_SAY
   const debt = (
-    <DebtSide label="借金" term="地方債現在高" yen={at.localBondBalance} people={people} spark={<Spark points={series(rows, (f) => f.localBondBalance)} format={okuText} full />} say={DEBT_SAY} />
+    <DebtSide label="借金" term="地方債現在高" yen={at.localBondBalance} people={people} spark={<Spark points={series(rows, (f) => f.localBondBalance)} format={okuText} full />} say={say} />
   )
   if (at.fundBalance == null) return <div className="@xl:max-w-[50%] @xl:pr-6">{debt}</div>
   const kinds = [
@@ -273,7 +275,7 @@ export function FinanceSections({ finance, year, population, prefecture }: { fin
       {at.localBondBalance != null ? (
         <section>
           <Head title={at.fundBalance != null ? '借金と貯金' : '借金'} tag={tag} />
-          <div className={card}><DebtAndFunds at={at} rows={rows} people={people} /></div>
+          <div className={card}><DebtAndFunds at={at} rows={rows} people={people} prefecture={prefecture} /></div>
         </section>
       ) : null}
       {freeOf(at) != null ? (
