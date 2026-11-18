@@ -22,12 +22,20 @@ const amountText = (yen: number, missing?: boolean) => (missing ? '金額未記�
 
 /** 名前の1行の高さ */
 const lineOf = (size: number) => Math.round(size * 1.25)
-/** 名前を切らずに、1行 chars 文字までで折る（全角を1文字として数える）。行の長さはなるべく揃える */
+/** 名前を切らずに、1行 chars 文字までで折る（全角を1文字として数える）。行の長さはなるべく揃え、行数が増えないなら「・」の後ろで折る */
 export const wrapName = (name: string, chars: number) => {
-  const cs = Array.from(name)
-  const lines = Math.max(1, Math.ceil(cs.length / Math.max(1, chars)))
-  const per = Math.ceil(cs.length / lines)
-  return Array.from({ length: lines }, (_, i) => cs.slice(i * per, (i + 1) * per).join(''))
+  const n = Math.max(1, chars)
+  const out: string[] = []
+  let rest = Array.from(name)
+  while (rest.length > n) {
+    const lines = Math.ceil(rest.length / n)
+    const dot = rest.slice(0, n).lastIndexOf('・')
+    const cut = dot > 0 && rest.length - dot - 1 <= n * (lines - 1) ? dot + 1 : Math.ceil(rest.length / lines)
+    out.push(rest.slice(0, cut).join(''))
+    rest = rest.slice(cut)
+  }
+  out.push(rest.join(''))
+  return out
 }
 /** 名前の行数に応じた段の高さ。1行は slot、2行目からは1行の高さずつ足す */
 export const slotsFor = (names: string[][], slot: number, size: number) => names.map((lines) => slot + (lines.length - 1) * lineOf(size))
