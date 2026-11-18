@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "vite build && bun scripts/static-assets.ts",
+    "og:site": "bun scripts/og-site.ts",
     "build:brand": "uv run --no-project --exclude-newer 2026-09-26 --with fonttools==4.66.0 --with brotli==1.2.0 python brand/build.py",
     "deploy": "bun run build && cf deploy --prebuilt",
     "zaraz": "bun scripts/zaraz.ts",
