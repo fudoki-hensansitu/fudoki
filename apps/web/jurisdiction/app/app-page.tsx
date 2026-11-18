@@ -928,7 +928,13 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     if (t !== at.current.tab || projectOfPath()) move(pageHref(at.current.year, t) + query, { push })
   }
   /** 流れの会計を変える。一般会計は ?account= を付けない */
-  const pickAccount = (account: string) => move(pageHref(year, at.current.tab) + (account === GENERAL ? '' : `?${new URLSearchParams({ account })}`))
+  // 会計を替えても、お金の流れの見せ方と表の探す語（?flow・?exp_q・?rev_q）は引き継ぐ
+  const pickAccount = (account: string) => {
+    const now = new URLSearchParams(location.search)
+    const q = new URLSearchParams([...now].filter(([k]) => ['flow', 'exp_q', 'rev_q'].includes(k)))
+    if (account !== GENERAL) q.set('account', account)
+    move(pageHref(year, at.current.tab) + (q.size ? `?${q}` : ''))
+  }
   // 予算・決算のタブの頁を読み終えたのに流れが無ければ、API に繋がらなかった
   const flowFailed = (initialTab === 'money' || initialTab === 'settled') && !flow && navigation.state === 'idle'
   // 絞り込みを変えたら一覧を読み直す。読み終えるまで前の一覧を出したままにする
