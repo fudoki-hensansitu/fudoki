@@ -165,15 +165,13 @@ function TabYear() {
     </div>
   )
 }
-/** まとめ以外のタブの頭。見出しと、その言葉の意味の一文と、年度の切り替え */
+/** まとめ以外のタブの頭。その言葉の意味の一文と、年度の切り替え。見出しはタブ名のくり返しになるので画面に出さず、読み上げと検索のためだけに残す */
 function TabHead({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="mb-5">
-      <div className="flex items-center justify-between gap-3">
-        <Title size="h2">{title}</Title>
-        <TabYear />
-      </div>
-      <p className="mt-2 text-sm leading-[1.7] text-muted-foreground">{children}</p>
+    <div className="mb-5 flex items-center justify-between gap-3">
+      <Title size="h2" className="sr-only">{title}</Title>
+      <p className="min-w-0 text-sm leading-[1.7] text-muted-foreground">{children}</p>
+      <TabYear />
     </div>
   )
 }
@@ -1124,9 +1122,9 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
         {emblem ? <img src={emblem} alt="" className="size-full min-h-0 min-w-0 object-contain" /> : <span className={cn(titleVariants({ size: 'display' }), 'font-normal text-foreground')}>{data.name[0]}</span>}
       </div>
       <div className="flex min-w-0 flex-col gap-2">
-        {/* 年度の切り替えは、まとめ以外のタブの見出しの横に置く（まとめには置かない） */}
-        {/* 見出しは検索の題（「品川区の予算と決算」）と揃える。自治体名を大きく、後ろは控えめに添える */}
-        <Title size="h2" as="h1" className="min-w-0 font-normal">{data.name}<span className="ml-1 text-base text-muted-foreground">の予算と決算</span></Title>
+        {/* 年度の切り替えは、まとめ以外のタブの頭に置く（まとめには置かない） */}
+        {/* 見出しは自治体名だけ。「の予算と決算」は検索の題（title）にだけ持つ */}
+        <Title size="h2" as="h1" className="min-w-0 font-normal">{data.name}</Title>
         {vision ? <p className="text-base leading-snug">{vision}</p> : null}
         <div className="mt-1 flex flex-wrap gap-x-3 gap-y-2 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
           <span className="inline-flex items-center gap-1 sm:gap-2"><MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" />{data.prefecturePath ? <Button variant="link" size="inline" nativeButton={false} render={<Link href={data.prefecturePath} />}>{data.prefecture}</Button> : data.prefecture}</span>
