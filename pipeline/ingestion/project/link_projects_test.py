@@ -4,10 +4,10 @@ import unittest
 from ingestion.project.link_projects import link
 
 
-def row(detail_id, year, names, parent=None, kind='initial'):
+def row(detail_id, year, names, parent=None, kind='initial', order=0):
     """(detail_id, parent_detail_id, *KEY, name, print_order)。会計・款・項・目は全部同じ"""
     return (detail_id, parent, '131091', year, kind, '一般会計', '民生費', '児童福祉費', '保育園費',
-            json.dumps(names, ensure_ascii=False), names[-1], 0)
+            json.dumps(names, ensure_ascii=False), names[-1], order)
 
 
 class LinkPreviousTest(unittest.TestCase):
@@ -83,3 +83,22 @@ class BuildYearsTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class ProjectIdTest(unittest.TestCase):
+    def ids(self, rows):
+        return {d: p for d, p, _ in link(rows)}
+
+    def test_過去の年度を足しても事業IDは変わらない(self):
+        later = [row('b', 2025, ['保育園費']), row('b1', 2025, ['保育園費', '園舎改修'], 'b')]
+        before = self.ids(later)
+        after = self.ids([row('a', 2024, ['保育園費']), row('a1', 2024, ['保育園費', '園舎改修'], 'a'), *later])
+        self.assertEqual(before['b1'], after['b1'])
+        self.assertEqual(after['a1'], after['b1'])
+
+    def test_同じ鍵の事業のIDは行の並びに左右されない(self):
+        rows = [row('a', 2025, ['保育園費']), row('a1', 2025, ['保育園費', '運営費'], 'a', order=1),
+                row('a2', 2025, ['保育園費', '運営費'], 'a', order=2)]
+        ids = self.ids(rows)
+        self.assertEqual(ids, self.ids(rows[::-1]))
+        self.assertNotEqual(ids['a1'], ids['a2'])
