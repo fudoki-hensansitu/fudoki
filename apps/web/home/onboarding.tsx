@@ -130,13 +130,12 @@ export function OtherTowns({ className }: { className?: string }) {
 }
 
 /**
- * 頁の見出しと説明。サーバーの HTML にも載せるため、まちの有無に関わらず描く。
+ * 頁の見出し。サーバーの HTML にも載せるため、まちの有無に関わらず描く。
  * まちを選ぶ前は大きく、選んだあと（ダッシュボード）はロゴのマークと1行の小さめの見出しにする。読み込み中は読み上げだけに残す
  */
 export function Intro({ mode }: { mode: 'full' | 'compact' | 'hidden' }) {
   const title = '私のお金はどこへ行った？'
-  const lead = '住んでいるまちが何にいくら使い、どう振り返ったかを、事業ごとに見られます。'
-  // まちを選ぶ前もあとも同じ見出しと説明。浮き上がりはまちを選ぶ前だけ
+  // まちを選ぶ前もあとも同じ見出し。浮き上がりはまちを選ぶ前だけ
   const shown = mode !== 'hidden'
   return (
     <header className={shown ? cn('mb-7 sm:mb-8', mode === 'full' && 'ob-rise') : 'sr-only'}>
@@ -144,7 +143,6 @@ export function Intro({ mode }: { mode: 'full' | 'compact' | 'hidden' }) {
         {shown ? <Mark className="size-9 shrink-0 text-primary sm:size-11" /> : null}
         <Title size="h1">{title}</Title>
       </div>
-      <p className="mt-2 text-sm text-muted-foreground">{lead}</p>
     </header>
   )
 }
