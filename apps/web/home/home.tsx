@@ -247,7 +247,7 @@ export function Home({ listed, featured }: HomeProps) {
   const snap = useSnapshot(ready && town ? town.code : null)
   const vision = town ? featured.find((f) => f.code === town.code)?.vision : undefined
   // 住んでいるまちを外す（選び直す）
-  /** レシートを刷り終えたか。刷り終えてから他のまちを探す欄を画面の下に浮かべる（2026-11-18 yuito）。年度を替えて刷り直しても出したまま、まちを選び直したら隠す */
+  /** レシートを刷り終えたか。刷り終えてから他のまちの節を出す（2026-11-18 yuito）。年度を替えて刷り直しても出したまま、まちを選び直したら隠す */
   const [printed, setPrinted] = React.useState(false)
   const reset = () => {
     setPrinted(false)
@@ -269,14 +269,19 @@ export function Home({ listed, featured }: HomeProps) {
         <WithCtx key={town!.code} town={town!} vision={vision} snap={snap}>
           {(c) => <Dashboard c={c} onPrinted={() => setPrinted(true)} />}
         </WithCtx>
-        {/* ほかのまちを見る導線。レシートとは別の物として画面の下に浮かべ、レシートを刷り終えてから出す（2026-11-18 yuito）。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
-        {printed ? <OtherTowns floating /> : null}
+        {/* ほかのまちを見る導線。レシートとは別の節として見出しと大きな検索欄を置き、レシートを刷り終えてから出す（2026-11-18 yuito）。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
+        {printed ? (
+          <section className="mt-16" aria-labelledby="other-towns">
+            <Title size="h2" id="other-towns" className="ob-rise mb-4">他のまちのお金も見る</Title>
+            <OtherTowns large />
+          </section>
+        ) : null}
       </>
     )
   }
   const featuredTowns = ready && !town ? <FeaturedTowns featured={featured} listed={listed} /> : null
   return (
-    <main className={`mx-auto flex min-h-[calc(100svh-56px)] w-full max-w-4xl flex-col px-4 pt-10 pb-28 sm:px-8 sm:pt-14 md:min-h-svh ${printed ? 'md:pb-28' : 'md:pb-10'}`}>
+    <main className={`mx-auto flex min-h-[calc(100svh-56px)] w-full max-w-4xl flex-col px-4 pt-10 pb-28 sm:px-8 sm:pt-14 md:min-h-svh md:pb-10`}>
       <Intro mode={!ready ? 'hidden' : town ? 'compact' : 'full'} />
       {body}
       {featuredTowns}
