@@ -54,7 +54,7 @@ import { Link } from '../../nav/link'
 import { CutIcon, DoneIcon, FixIcon, JoinIcon, KeepIcon, LawIcon, MaybeStopIcon, NewIcon, PlanIcon, SizeIcon, StopIcon, UpIcon } from '../fresh-icons'
 import { YearPicker } from '../year-picker'
 import { Flow } from '../flow'
-import { FlowTable } from '../flow-table'
+import { FlowTable, type FlowQuery } from '../flow-table'
 import { COFOG_NAMES } from '@fudoki/fiscal/cofog-master'
 import { DOMAIN_FRAMES, OTHER_FRAME, frameOf } from '../domains'
 import { rememberJurisdiction } from '../../home/recent'
@@ -458,8 +458,25 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
   // 会計の総額は頁のデータの資料のもの。別の資料のタブ（スマホで隣に並ぶタブ）では使わない
   const special = account === GENERAL || !total ? undefined : accounts.find((x) => x.name === account)
   const picked: YearTotal | undefined = special ? { year: v.year, yen: special.yen, kan: [] } : total
-  // お金の流れの見せ方。初めはサンキー図
+  // お金の流れの見せ方（初めはサンキー図）と表の探す語は URL に持つ（?flow=table・歳出の ?exp_q=・歳入の ?rev_q=）。履歴は積まない
   const [view, setView] = React.useState<'sankey' | 'table'>('sankey')
+  const [flowQuery, setFlowQuery] = React.useState<FlowQuery>({ expenditure: '', revenue: '' })
+  React.useEffect(() => {
+    const q = new URLSearchParams(location.search)
+    const found = { expenditure: q.get('exp_q') ?? '', revenue: q.get('rev_q') ?? '' }
+    setFlowQuery(found)
+    if (q.get('flow') === 'table' || found.expenditure || found.revenue) setView('table')
+  }, [])
+  React.useEffect(() => {
+    const q = new URLSearchParams(location.search)
+    const set = (k: string, x: string) => (x ? q.set(k, x) : q.delete(k))
+    const table = view === 'table'
+    set('flow', table ? 'table' : '')
+    set('exp_q', table ? flowQuery.expenditure.trim() : '')
+    set('rev_q', table ? flowQuery.revenue.trim() : '')
+    const next = location.pathname + (q.size ? `?${q}` : '') + location.hash
+    if (next !== location.pathname + location.search + location.hash) history.replaceState(history.state, '', next)
+  }, [view, flowQuery])
   return (
     <div className="flex flex-col gap-3">
       <TabHead title={label === '決算' ? '決算' : '予算'}>
@@ -488,7 +505,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
       ) : null}
       {total ? <AccountCards accounts={accounts} account={account} setAccount={setAccount} /> : null}
       {picked && view === 'table' ? (
-        <FlowTable key={`${v.year}-${phase}-${account}`} flows={flows} revenue={current?.revenue} total={picked.yen} />
+        <FlowTable key={`${v.year}-${phase}-${account}`} flows={flows} revenue={current?.revenue} total={picked.yen} query={flowQuery} onQuery={(k, x) => setFlowQuery((f) => ({ ...f, [k]: x }))} />
       ) : picked ? (
         <Flow key={`${v.year}-${phase}-${account}`} flows={flows} revenue={current?.revenue} total={picked} onRetry={flowFailed && !drills ? () => void router.refresh({ preserveState: true, preserveScroll: true }) : undefined} bare natural className="scroll-mt-16 @4xl:scroll-mt-16" />
       ) : recorded ? (
