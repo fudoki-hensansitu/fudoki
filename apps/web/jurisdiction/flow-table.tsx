@@ -43,33 +43,33 @@ function Section({ title, drills, total }: { title: string; drills: Drill[]; tot
       <Table aria-label={`${title}（${LEVELS.slice(0, depth + 1).join('・')}）`}>
         <TableHeader>
           <TableRow className="hover:bg-transparent">
-            <TableHead className="w-full pl-0 text-muted-foreground">{title}<span className="ml-2 text-xs font-normal">{LEVELS.slice(0, depth + 1).join(' → ')}</span></TableHead>
-            <TableHead className="text-right text-muted-foreground">金額</TableHead>
-            <TableHead className="pr-0 text-right text-muted-foreground">割合</TableHead>
+            <TableHead className="w-full pl-0 text-sm text-muted-foreground">{title}<span className="ml-2 font-normal">{LEVELS.slice(0, depth + 1).join(' → ')}</span></TableHead>
+            <TableHead className="text-right text-sm text-muted-foreground">金額</TableHead>
+            <TableHead className="pr-0 text-right text-sm text-muted-foreground">割合</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {rows.map((r) => {
             const expanded = r.hasChildren && open.has(r.key)
             return (
-              <TableRow key={r.key} className={cn(r.depth > 0 && 'text-sm', r.depth === 3 && 'text-muted-foreground')}>
+              <TableRow key={r.key} onClick={r.hasChildren ? () => toggle(r.key) : undefined} className={cn('text-sm text-foreground', r.hasChildren && 'cursor-pointer')}>
                 <TableCell className="py-2 pl-0 whitespace-normal">
                   <div className="flex items-center gap-1" style={{ paddingLeft: `${r.depth}rem` }}>
                     {r.hasChildren ? (
-                      <button type="button" onClick={() => toggle(r.key)} aria-expanded={expanded} aria-label={`${r.name}の${LEVELS[r.depth + 1]}を${expanded ? '閉じる' : '開く'}`} className="-my-1 inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring">
+                      <button type="button" onClick={(e) => { e.stopPropagation(); toggle(r.key) }} aria-expanded={expanded} aria-label={`${r.name}の${LEVELS[r.depth + 1]}を${expanded ? '閉じる' : '開く'}`} className="-my-1 inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring">
                         <CaretRightIcon aria-hidden="true" className={cn('size-4 transition-transform duration-200', expanded && 'rotate-90')} />
                       </button>
                     ) : depth > 0 ? (
                       <span className="w-7 shrink-0" aria-hidden="true" />
                     ) : null}
                     <span className="min-w-0 leading-snug [overflow-wrap:anywhere]">
-                      <span className="mr-2 text-xs text-muted-foreground">{LEVELS[r.depth]}</span>
-                      {r.hasChildren ? <button type="button" onClick={() => toggle(r.key)} tabIndex={-1} className="text-left hover:underline">{r.name}</button> : r.name}
+                      <span className="mr-2 text-muted-foreground">{LEVELS[r.depth]}</span>
+                      {r.name}
                     </span>
                   </div>
                 </TableCell>
-                <TableCell className={cn('py-2 text-right tabular-nums', r.depth === 0 && 'font-semibold text-primary')}>{r.missing ? <span className="text-xs text-muted-foreground">金額未記載</span> : formatYen(r.yen)}</TableCell>
-                <TableCell className="py-2 pr-0 text-right text-xs tabular-nums text-muted-foreground">{formatShare(r.yen, total, r.missing) ?? ''}</TableCell>
+                <TableCell className="py-2 text-right tabular-nums">{r.missing ? '金額未記載' : formatYen(r.yen)}</TableCell>
+                <TableCell className="py-2 pr-0 text-right tabular-nums">{formatShare(r.yen, total, r.missing) ?? ''}</TableCell>
               </TableRow>
             )
           })}
