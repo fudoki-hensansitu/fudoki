@@ -3,6 +3,7 @@
 // 金額はホームと同じ perHeadParts で割り、分野の和が合計に合う。描き方（書体・PNG にする）は自治体の OG 画像（og.ts・og-render.ts）と同じ
 import { reiwa } from '../jurisdiction/types'
 import { withUnits } from '../home/units'
+import { LOGO_G } from '../logo'
 import { OG_FONT, OG_HEIGHT, OG_WIDTH } from './og'
 
 const BRAND = '#2f5d43'
@@ -71,7 +72,9 @@ export function receiptOgSvg(o: ReceiptOgInput): string {
     `<rect x="${LEFT}" y="330" width="480" height="1" fill="${ON_BRAND}" fill-opacity="0.18"/>` +
     text('1人あたりに直すと', 26, LEFT + 2, 386, ON_BRAND, 'start', 0.02, 0.8) +
     yenUnits(o.perHead, 60, LEFT, 458, ON_BRAND) +
-    text('私のお金はどこへ行った？　風土記', 22, LEFT + 2, 574, ON_BRAND, 'start', 0.06, 0.7)
+    // 風土記のロゴ（画面のロゴと同じ形。朱の札だけ朱、ほかは生成り）と、その右に問いかけ
+    `<g transform="translate(${LEFT - 2} 536) scale(1.3)" color="${ON_BRAND}">${LOGO_G.replace(/style="fill:var\(--shu, (#[0-9a-f]+)\)"/i, 'fill="$1"')}</g>` +
+    text('私のお金はどこへ行った？', 22, LEFT + 206, 568, ON_BRAND, 'start', 0.06, 0.7)
 
   // 紙の中身。行の高さは分野の数で決め、合計が画像の下端より上に収まるようにする
   const x0 = PAPER_X + PAD
