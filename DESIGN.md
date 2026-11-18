@@ -16,7 +16,7 @@ Hallmark は検出すると pick をこれに従わせる。値を変えると�
 絵の面（網点・大きな字・朱の楕円）を持つのは読み物だけ。データの面は紙・罫線・数字だけで組む。
 **画面はすべてゴシック（`--font-sans`）で組む。** アプリの中（ホーム・自治体の一覧・個別ページ・アシスタント・会話）も紹介（`/about`）も見出しを含めてゴシックにし、階層は大きさと色（前景・`--muted-foreground`）で作る。
 **太さは 400〜600 にする。** 本文は 400、ラベル・ボタンは 500、見出しと要の金額は 600。紹介（`/about`）もアプリと同じ太さで組む（2026-11-18 に LP をアプリの見た目に揃えた）。
-**文字の大きさは段で選ぶ。** 本文は注記 12px（`text-xs`）・補足 14px（`text-sm`）・本文 16px（`text-base`）だけにする。それより大きい文字は、見出しも金額も `Title` の段（h1 28/32・h2 24・h3 20・総額と紋章の代わりの頭文字だけの display 40/48）で組み、見出しでないものは `titleVariants` か `as` で要素を変える。大きさの token は足さず、段は部品（`components/ui`）に寄せる。金額の単位を小さく添えるときは em で書いてよい。
+**文字の大きさは段で選ぶ。** 本文は注記 12px（`text-xs`）・補足 14px（`text-sm`）・本文 16px（`text-base`）だけにする。それより大きい文字は、見出しも金額も `Title` の段（h1 28/32・h2 24・h3 20・総額・紋章の代わりの頭文字・紹介の冒頭の見出しだけの display 40/48）で組み、見出しでないものは `titleVariants` か `as` で要素を変える。大きさの token は足さず、段は部品（`components/ui`）に寄せる。金額の単位を小さく添えるときは em で書いてよい。
 **余白は 4px の格子にする。** padding・margin・gap は Tailwind の整数の段（1＝4px）で書き、`1.5` のような半端な段や `[22px]` の直書きはしない。位置（top・inset など）の微調整は対象外。
 **この3つと色の決まりは lint（`apps/web/lint/design.js`）で止める。** 対象は `apps/web` の TSX（紹介 `/about` も含む）で、部品（`components/ui`）は対象外。ホームのレシートの機械の金額のように段の外が要る見せ場は、理由を書いて rule を外す。
 
@@ -166,7 +166,7 @@ shadcn/ui の語彙。色の役割は次のとおり。
 
 ```css
 /* 見出しはゴシック。画面の見出しは Title の 600 */
-.text-heading { font-family: var(--font-sans); font-weight: 700; font-style: normal; letter-spacing: var(--letter-spacing-heading); word-break: auto-phrase; text-wrap: balance; }
+.text-heading { font-family: var(--font-sans); font-weight: 600; font-style: normal; letter-spacing: var(--letter-spacing-heading); word-break: auto-phrase; text-wrap: balance; }
 .text-body { font-family: var(--font-sans); font-size: var(--text-body); line-height: var(--line-height-body); letter-spacing: var(--letter-spacing-body); line-break: strict; word-break: auto-phrase; overflow-wrap: break-word; text-wrap: pretty; }
 .num { font-variant-numeric: tabular-nums; letter-spacing: 0; white-space: nowrap; }
 .eyebrow { font: 600 13px/1.4 var(--font-sans); letter-spacing: .08em; color: var(--primary); }
@@ -191,10 +191,10 @@ shadcn/ui の語彙。色の役割は次のとおり。
 .nav-pill { border: 0.5px solid var(--border); border-radius: 999px; background: var(--background); box-shadow: var(--shadow-pill); }
 ```
 
-- **見出し**: アプリの中の見出しは `Title`（`components/ui/title.tsx`）の4段だけを使う。h1 28px（sm 以上 32px）・h2 24px・h3 20px・headline 16px（本文の大きさ）で、どれも 600。段は本文から約 1.2 倍ずつ上げ（Apple の Title 3〜Large Title と同じ考え方）、headline は本文と同じ大きさで太さだけ変える。段と要素（h1〜h4）は既定で揃え、文書の構造で要素だけ変えるときは `as` で渡す。札（Card）の見出しは `CardTitle`（h3）。紹介の頁と会話の Markdown は対象外
-- **AI から使う**: 若草の札（角丸 28px）の中に、つなぎ方の手順と実際の操作の録画を並べる。録画は音なし・繰り返しで、表示域に入ったら再生する（クリックで止める・動きを減らす設定では自動で再生しない）。録画の下に「つなぎ方をくわしく見る」のリンクを置く
+- **見出し**: アプリの中の見出しは `Title`（`components/ui/title.tsx`）の4段だけを使う。h1 28px（sm 以上 32px）・h2 24px・h3 20px・headline 16px（本文の大きさ）で、どれも 600。段は本文から約 1.2 倍ずつ上げ（Apple の Title 3〜Large Title と同じ考え方）、headline は本文と同じ大きさで太さだけ変える。段と要素（h1〜h4）は既定で揃え、文書の構造で要素だけ変えるときは `as` で渡す。札（Card）の見出しは `CardTitle`（h3）。紹介の頁もこの段で組み、冒頭の見出しだけ display を使う。会話の Markdown は対象外
+- **聞く（紹介の AI の節）**: 左に見出し・文と「アシスタントに聞く」「いつもの AI につなぐ」（docs）のリンク、右に実際の操作の録画。録画は音なし・繰り返しで、再生の操作盤は出さず、表示域に入ったら再生する（押すと再生・停止、動きを減らす設定では自動で再生しない）
 - **紹介（`/about`）の構成**: アプリと同じ白地・ゴシック・`Title` の段で組む LP。marketingskills の copywriting の LP の型に沿い、冒頭（問いの見出し・できるようになること・「うちのまちの使い道を見る」、横にホームの札とレシートの画面）→ 困りごと（公開されているのに読めない）→ やり方3つ → できるようになること3つ（お金の流れ・まち比べ・出典の頁。どれも実際の画面）→ 聞く（アシスタント・いつもの AI と録画）→ 議員・会派向けの予算・決算委員会の調査の相談 → よくある質問 → 緑の面の呼びかけ。見出しは機能の名前でなく、読んだ人ができるようになることにする。タブ・dialog などの切り替える部品は置かない。画面の絵は本番の画面の画像（`public/about/<名前>-light|dark.webp`）で、テーマに合わせて片方を出す（`landing/about.css`）。画面が変わったら撮り直す
-- **出典の面**: 「確かめる」は、出典の PDF の切り抜きを `--page` の紙に載せ、API が返す印字の位置を朱の囲みで重ねる。例には金額が実際に入っている明細を選ぶ（0 円の科目は使わない）
+- **出典の面**: 紹介の「資料のどこにあるか」は、出典の PDF の切り抜きを白地の枠に載せ、API が返す印字の位置をブランド色（`--primary`）の囲みで重ねる。例には金額が実際に入っている明細を選ぶ（0 円の科目は使わない）
 - **コピーに作業の記録を書かない**: 取得日・更新日・件数など、時点で変わる値や作業の経緯は画面に載せない
 - **自治体の個別ページ（`/:都道府県/:名称`）**: 見出し・金額・本文はすべて `--font-sans` のゴシック体にし、ロゴはホームと同じ SVG を使う。流れ図は全款・全項を初期表示し、目・節も全款を同じ深さへ展開する。グラフを主役にするため、データの面でもブランド色とアクセントを使う（Tokens の色の役割）。款・分野ごとの色分けはしない。数字は `shadcn/ui` の chart（recharts）と自前の流れ図で描き、収録していない年度は「未収録」と書く。API にまだ無い値（特色・将来推計）は仮の値で、数字の隣に「仮」を付け、検索エンジンへ渡す HTML には入れない
 - **FAQ**: 罫線の上にゴシックの問い、`+` が開くと 45° 回る。答えは `--muted-foreground`

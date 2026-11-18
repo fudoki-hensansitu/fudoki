@@ -6,7 +6,7 @@ import { ArrowRightIcon, ArrowSquareOutIcon, EnvelopeSimpleIcon } from '@phospho
 import { Link } from '../nav/link'
 import { Title } from '@/components/ui/title'
 import { cn } from '@/lib/utils'
-import { Footer } from '../home/home'
+import { Footer } from '../nav/footer'
 import { HOME } from '../home-data'
 
 const DOCS = 'https://docs.fudoki.dev'
@@ -24,12 +24,12 @@ const markStyle = { left: pct(mx0 - 3 - cx0, cx1 - cx0), top: pct(my0 - 3 - cy0,
 const primaryButton = 'inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-base font-medium text-primary-foreground transition-opacity duration-150 hover:opacity-90'
 const textLink = 'inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-4 hover:underline'
 
-/** 実際の画面の画像。テーマに合わせてライト・ダークの片方を出す（about.css） */
+/** 実際の画面の画像。テーマに合わせてライト・ダークの片方を出す（about.css）。隠れた方は読み上げられないので、どちらにも同じ alt を付ける */
 function Shot({ name, width, height, alt, className }: { name: string; width: number; height: number; alt: string; className?: string }) {
   return (
     <span className={cn('block', className)}>
       <img className="shot-light block h-auto w-full" src={`/about/${name}-light.webp`} width={width} height={height} alt={alt} loading="lazy" decoding="async" />
-      <img className="shot-dark hidden h-auto w-full" src={`/about/${name}-dark.webp`} width={width} height={height} alt="" aria-hidden="true" loading="lazy" decoding="async" />
+      <img className="shot-dark hidden h-auto w-full" src={`/about/${name}-dark.webp`} width={width} height={height} alt={alt} loading="lazy" decoding="async" />
     </span>
   )
 }
@@ -116,7 +116,7 @@ function Benefit({ title, body, children, flip }: { title: string; body: React.R
   )
 }
 
-export function Landing({ count }: { count: number | null }) {
+export function Landing() {
   return (
     <main className="mx-auto flex min-h-svh w-full max-w-5xl flex-col px-4 pt-12 pb-28 sm:px-8 sm:pt-20 md:pb-10">
       {/* 冒頭: 困りごと（見出しの問い）→ できるようになること → ボタン */}
@@ -134,7 +134,7 @@ export function Landing({ count }: { count: number | null }) {
               <ArrowRightIcon className="size-4" aria-hidden="true" />
             </Link>
           </div>
-          <p className="mt-4 text-sm text-muted-foreground">登録なし・無料{count ? ` · ${count}自治体を収録` : ''}</p>
+          <p className="mt-4 text-sm text-muted-foreground">登録なし・無料</p>
         </div>
         <div className="about-rise mx-auto w-full max-w-sm">
           <Shot name="receipt" width={1664} height={2400} alt="品川区の札とレシート。R8年度の予算 2,369億1,400万円を1人あたりに直すと 56万9,993円で、福祉・子育て 288,905円、教育 75,332円など分野ごとに並ぶ" className="max-h-[560px] overflow-hidden rounded-3xl" />
