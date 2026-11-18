@@ -47,7 +47,7 @@ function Odometer({ to, delay = 0 }: { to: number; delay?: number }) {
       <span aria-hidden="true">
         {[...final].map((ch, i) => {
           if (ch === ',') return <span key={i}>{ch}</span>
-          if (ch < '0' || ch > '9') return <small key={i} className="mx-0.5 text-[0.55em]">{ch}</small>
+          if (ch < '0' || ch > '9') return <small key={i} className="mx-1 text-[0.55em]">{ch}</small>
           // k は末尾から数えた桁の位置。r は右端 0 から左端 1
           k--
           const r = n > 1 ? k / (n - 1) : 1
