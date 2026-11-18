@@ -886,10 +886,10 @@ function useMedia(query: string) {
 function YearMenu({ years, current, onChange }: { years: number[]; current: number; onChange: (y: number) => void }) {
   return (
     <DropdownMenu>
-      {/* 選んでいる年度を出すので、広い画面の年度の丸（選択中）と同じく緑地に白字にする */}
-      <DropdownMenuTrigger render={<Button size="sm" className="h-8 rounded-full px-3 text-sm font-normal" />}>
+      {/* 選んでいる年度を出すので、広い画面の年度の丸（選択中）と同じく緑地に白字にする。大きさは事業の絞り込みのボタンに揃える */}
+      <DropdownMenuTrigger className={filterTrigger(true)}>
         {yearName(current)}
-        <CaretDownIcon className="size-3.5" aria-hidden="true" />
+        <CaretDownIcon className="size-3.5 shrink-0" aria-hidden="true" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-auto">
         <DropdownMenuRadioGroup value={String(current)} onValueChange={(v) => onChange(Number(v))}>
