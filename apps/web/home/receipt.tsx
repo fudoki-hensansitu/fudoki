@@ -38,7 +38,7 @@ function useCountUp(to: number, key: string, delay = 0) {
       const p = Math.max(0, Math.min(1, (t - t0) / COUNT_MS))
       const settled = Math.min(digits, Math.floor((1 - Math.pow(1 - p, 2)) * digits))
       // 回っている桁は 1 秒に 20 回ほど数字を替える
-      const tick = Math.floor((t - t0) / 50)
+      const tick = Math.max(0, Math.floor((t - t0) / 50))
       setState((s) => (s.settled === settled && s.tick === tick ? s : { settled, tick }))
       if (p < 1) raf = requestAnimationFrame(step)
     }
