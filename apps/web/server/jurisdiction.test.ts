@@ -98,7 +98,7 @@ const view = async (path: string, e: Env = env) => {
 const canonical = (h: Head) => h.link.find((l) => l.rel === 'canonical')?.href
 
 describe('自治体の個別ページ', () => {
-  test('API に繋がらないときは投げて（頁は 502）、sitemap は入口・アシスタントだけで答える', async () => {
+  test('API に繋がらないときは投げて（頁は 502）、sitemap は入口・アシスタント・まち比べだけで答える', async () => {
     const down: Env = web({ fetch: async () => new Response('x', { status: 500 }) })
     await expect(resolveJurisdiction(down, '/tokyo/nakano')).rejects.toThrow()
     await expect(homeEntries(down)).rejects.toThrow()

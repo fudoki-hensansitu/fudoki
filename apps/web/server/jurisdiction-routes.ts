@@ -66,7 +66,7 @@ export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<
   }
 }
 
-/** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口・一覧・アシスタントだけで答える */
+/** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口・アシスタント・まち比べだけで答える */
 export async function sitemapResponse(env: Env): Promise<Response> {
   try {
     return new Response(sitemapXml(await catalog(env), pageYearsOf), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
