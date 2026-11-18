@@ -111,19 +111,33 @@ function LocateResult({ loc, onPick, onRetry, onClose }: { loc: Locate; onPick: 
   )
 }
 
-/** ほかのまちを見る検索。住んでいるまちを選んだあとのホームに出し、選んだまちの頁へ移るだけ（住んでいるまちは変えない） */
-export function OtherTowns({ className }: { className?: string }) {
+/** ほかのまちを見る検索。住んでいるまちを選んだあとのホームに出し、選んだまちの頁へ移るだけ（住んでいるまちは変えない）。
+ * floating では画面の下に浮かべ、レシートとは別の物に見せる（下の案内の帯・左のサイドバーを避ける。ask-dock.tsx と同じ置き方） */
+export function OtherTowns({ className, floating = false }: { className?: string; floating?: boolean }) {
   const [open, setOpen] = React.useState(false)
+  const button = (
+    <button
+      type="button"
+      onClick={() => setOpen(true)}
+      className={cn(
+        'flex h-12 w-full items-center gap-3 rounded-full border border-border bg-background px-4 text-left text-sm text-muted-foreground transition-colors hover:bg-card',
+        floating && 'shadow-lg',
+      )}
+    >
+      <MagnifyingGlassIcon className="size-5 shrink-0" aria-hidden="true" />
+      他のまちを探す
+    </button>
+  )
   return (
-    <section className={cn('ob-rise', className)} aria-label="ほかのまちを見る">
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="flex h-12 w-full items-center gap-3 rounded-full border border-border bg-background px-4 text-left text-sm text-muted-foreground transition-colors hover:bg-card"
-      >
-        <MagnifyingGlassIcon className="size-5 shrink-0" aria-hidden="true" />
-        他のまちを探す
-      </button>
+    <section
+      className={cn(
+        'ob-rise',
+        floating && 'pointer-events-none fixed inset-x-0 bottom-[max(16px,env(safe-area-inset-bottom))] z-30 px-4 max-md:bottom-[calc(16px+var(--bottom-nav))] md:left-(--nav-w)',
+        className,
+      )}
+      aria-label="ほかのまちを見る"
+    >
+      {floating ? <div className="pointer-events-auto mx-auto max-w-md">{button}</div> : button}
       <TownPalette open={open} onOpenChange={setOpen} />
     </section>
   )

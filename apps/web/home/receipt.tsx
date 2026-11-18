@@ -17,6 +17,13 @@ import { withUnits } from './units'
 import { COUNT_MS, PRINT_MS, READ_MS, SCROLL_MS } from './motion'
 import './receipt.css'
 
+/** 最新の値を持つ ref（effect の依存に入れずに最新の callback を呼ぶ） */
+function useLatest<T>(value: T) {
+  const ref = React.useRef(value)
+  ref.current = value
+  return ref
+}
+
 const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
 
 /** 右端の桁が転がる長さ（ms）。左の桁ほど長く、左端は COUNT_MS で着地する */
@@ -401,7 +408,7 @@ let printedId = 0
 /** href（QR の行き先）と pop（1人あたりで割る人口）は、その紙を刷ったときの年度のもの。年度を替えても前の紙は前の年度のまま */
 type Printed = { id: number; key: string; year: number; v: YearView; href: string; pop: number }
 
-export function ReceiptMachine({ code, name, v, year, pop, base, detailHref, head }: { code: string; name: string; v: YearView; year: number; pop: number | null; base: string; detailHref: string; head: React.ReactNode }) {
+export function ReceiptMachine({ code, name, v, year, pop, base, detailHref, head, onPrinted }: { onPrinted?: () => void; code: string; name: string; v: YearView; year: number; pop: number | null; base: string; detailHref: string; head: React.ReactNode }) {
   const settled = v.word === '決算'
   const what = `${yearName(year)}の${settled ? '決算' : '予算'}`
   const counted = `${year}:${v.total}`
@@ -450,6 +457,13 @@ export function ReceiptMachine({ code, name, v, year, pop, base, detailHref, hea
     for (const id of pictures.keys()) if (!live.has(id)) pictures.delete(id)
   }, [printed, older])
   useFollow(phase, printing, card, feed)
+  // 紙を刷り終えたら（人口が無く紙を刷らないまちは数え終えたら）知らせる。ホームはそのあとに他のまちを探す欄を浮かべる
+  const done = useLatest(onPrinted)
+  React.useEffect(() => {
+    if (!printing && !(phase === 'print' && !pop)) return
+    const t = setTimeout(() => done.current?.(), printing && !reduced() ? PRINT_MS : 0)
+    return () => clearTimeout(t)
+  }, [printing, phase, pop])
   /** 一枚の紙の中身 */
   const paper = (r: Printed) => {
     const { parts, sum } = perHeadParts(r.v.fields, r.v.total, r.pop)

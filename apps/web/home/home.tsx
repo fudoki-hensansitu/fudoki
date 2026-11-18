@@ -125,11 +125,12 @@ function YearSwitch({ c, onBrand }: { c: Ctx; onBrand?: boolean }) {
 }
 
 /** うちのまちの札（レシートの機械）。予算と1人あたりを数え上げ、分野ごとの1人あたりのレシートを出す */
-function Dashboard({ c }: { c: Ctx }) {
+function Dashboard({ c, onPrinted }: { c: Ctx; onPrinted: () => void }) {
   const { v, d, year, town } = c
   const detailHref = c.year === c.years.at(-1) ? c.town.path : flowHref(c)
   return (
     <ReceiptMachine
+      onPrinted={onPrinted}
       code={town.code}
       name={town.name}
       v={v}
@@ -246,7 +247,12 @@ export function Home({ listed, featured }: HomeProps) {
   const snap = useSnapshot(ready && town ? town.code : null)
   const vision = town ? featured.find((f) => f.code === town.code)?.vision : undefined
   // 住んでいるまちを外す（選び直す）
-  const reset = () => set(null)
+  /** レシートを刷り終えたか。刷り終えてから他のまちを探す欄を画面の下に浮かべる（2026-11-18 yuito）。年度を替えて刷り直しても出したまま、まちを選び直したら隠す */
+  const [printed, setPrinted] = React.useState(false)
+  const reset = () => {
+    setPrinted(false)
+    set(null)
+  }
   let body: React.ReactNode
   if (!ready) body = <Loading />
   // 選んだ時点でそのまちに決める（要点を見せてから決めさせない、2026-11-17 yuito）
@@ -262,16 +268,16 @@ export function Home({ listed, featured }: HomeProps) {
           </button>
         </div>
         <WithCtx key={town!.code} town={town!} vision={vision} snap={snap}>
-          {(c) => <Dashboard c={c} />}
+          {(c) => <Dashboard c={c} onPrinted={() => setPrinted(true)} />}
         </WithCtx>
-        {/* ほかのまちを見る導線。レシートを読み終えた下に置く（2026-11-18 yuito）。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
-        <OtherTowns className="mt-4" />
+        {/* ほかのまちを見る導線。レシートとは別の物として画面の下に浮かべ、レシートを刷り終えてから出す（2026-11-18 yuito）。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
+        {printed ? <OtherTowns floating /> : null}
       </>
     )
   }
   const featuredTowns = ready && !town ? <FeaturedTowns featured={featured} listed={listed} /> : null
   return (
-    <main className="mx-auto flex min-h-[calc(100svh-56px)] w-full max-w-4xl flex-col px-4 pt-10 pb-28 sm:px-8 sm:pt-14 md:min-h-svh md:pb-10">
+    <main className={`mx-auto flex min-h-[calc(100svh-56px)] w-full max-w-4xl flex-col px-4 pt-10 pb-28 sm:px-8 sm:pt-14 md:min-h-svh ${printed ? 'md:pb-28' : 'md:pb-10'}`}>
       <Intro mode={!ready ? 'hidden' : town ? 'compact' : 'full'} />
       {body}
       {featuredTowns}
