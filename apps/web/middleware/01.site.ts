@@ -16,26 +16,8 @@ const wantsNotFoundPage = (c: Context) => {
   return (c.req.method === 'GET' || c.req.method === 'HEAD') && !c.req.header('X-VoidPages') && (c.req.header('Accept') ?? '').includes('text/html') && path !== '/api' && !path.startsWith('/api/') && !/\.[^/]*$/.test(path)
 }
 
-/** 資産の要求か（拡張子のある path）。頁の pattern（`/:prefecture`・`/:prefecture/:name`）が /favicon.svg・/assets/*.css にも当たり、
- * その loader が返した 404 を Void は頁の意図した 404 として扱い、静的資産へ回さない（void 1.10）。そこで資産を直に引く */
-const isAssetPath = (path: string) => /\.[^/]+$/.test(path)
-/** ファイル名に hash の付いた build の資産（/assets/*）。中身が変われば名前も変わるので、ずっと置かせる */
-const IMMUTABLE = 'public, max-age=31536000, immutable'
-
 export default defineMiddleware(async (c, next) => {
   await next()
-  if (c.res.status === 404 && (c.req.method === 'GET' || c.req.method === 'HEAD') && isAssetPath(c.req.path)) {
-    const assets = (c.env as { ASSETS?: { fetch: (request: Request) => Promise<Response> } }).ASSETS
-    const asset = assets ? await assets.fetch(c.req.raw) : null
-    if (asset && asset.status !== 404) {
-      const headers = new Headers(asset.headers)
-      if (asset.ok && c.req.path.startsWith('/assets/')) headers.set('Cache-Control', IMMUTABLE)
-      // Hono は c.res を差し替えるとき、前の応答（loader の 404）の header を上から写す。資産の header だけにするため、先に空ける
-      c.res = undefined as unknown as Response
-      c.res = new Response(asset.body, { status: asset.status, headers })
-      return
-    }
-  }
   if (!c.isRewritten()) {
     if (c.res.status === 404 && wantsNotFoundPage(c)) {
       // rewrite した先でもこの middleware が走り、CSP などはそこで付く
