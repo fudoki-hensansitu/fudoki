@@ -56,6 +56,7 @@
     "em_boxes": "ingestion.generic.patterns.repairs.em_boxes",
     "justified_names": "ingestion.generic.patterns.repairs.justified_names",
     "prior_year_rows": "ingestion.generic.patterns.repairs.prior_year_rows",
+    "white_cover": "ingestion.generic.patterns.repairs.white_cover",
     "white_text": "ingestion.generic.patterns.repairs.white_text"
   },
   "reading": {
