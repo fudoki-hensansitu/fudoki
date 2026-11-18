@@ -254,7 +254,7 @@ function perforated(texture: HTMLCanvasElement, height: number) {
 
 /** 押し出された前の紙（新しい順）。今出ている紙の下端に続く1本の紙として、真下へ垂れて下で奥へ折り返し、レシートの裏を上へ戻る立体（ribbon3d.ts）に描く。
  * 立体を描くまで（読み込み・絵を写す間）は、いちばん新しい一枚を DOM のまま同じ場所に出しておく。WebGL が使えない・絵を写せないときは、前の紙を残さない（以後も残さない） */
-function Ribbon({ papers, onHeight, onFail, children }: { papers: Older[]; onHeight: (h: number) => void; onFail: () => void; children: React.ReactNode }) {
+function Ribbon({ papers, waiting, onHeight, onFail, children }: { papers: Older[]; waiting: boolean; onHeight: (h: number) => void; onFail: () => void; children: React.ReactNode }) {
   const wrap = React.useRef<HTMLDivElement>(null)
   const canvas = React.useRef<HTMLCanvasElement>(null)
   /** 立体に描き終えた、いちばん新しい紙の id（それまでは DOM のまま出す） */
@@ -351,7 +351,8 @@ function Ribbon({ papers, onHeight, onFail, children }: { papers: Older[]; onHei
     <div ref={wrap} className="rc-ribbon" aria-hidden="true" inert>
       <canvas ref={canvas} className="rc-ribbon-canvas" style={{ left: -RIBBON_MARGIN, width: `calc(100% + ${RIBBON_MARGIN * 2}px)` }} />
       {/* 立体を描くまでは、いちばん新しい一枚を DOM のまま差し出し口の下に出しておく */}
-      {top && drawn !== top.r.id ? <div className="rc-ribbon-dom">{children}</div> : null}
+      {/* 立体は札の裏にいるので、次の紙を刷り始めるまでは、差し出し口から札の下端までの頭だけを DOM のまま札の手前に出す（札の下端で見切れさせない） */}
+      {top && drawn !== top.r.id ? <div className="rc-ribbon-dom">{children}</div> : top && waiting ? <div className="rc-ribbon-dom rc-ribbon-lip">{children}</div> : null}
     </div>
   )
 }
@@ -503,7 +504,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
             ) : null}
             {/* 押し出された前の紙は、今の紙の下端に続いて垂れ、下で折り返してレシートの裏を上へ戻る */}
             {older.length ? (
-              <Ribbon papers={older} onHeight={setRibbonH} onFail={() => setOlder([])}>
+              <Ribbon papers={older} waiting={!printed} onHeight={setRibbonH} onFail={() => setOlder([])}>
                 {paper(older[0]!.r)}
               </Ribbon>
             ) : null}

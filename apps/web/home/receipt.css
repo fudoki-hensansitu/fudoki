@@ -54,6 +54,10 @@
   z-index: 1;
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.04) 45%, transparent);
 }
+/* 紙がまだ無いとき（初めての数え上げ）は出さない */
+.rc-print:not(:has(.rc-strip, .rc-ribbon))::after {
+  display: none;
+}
 /* 下に前の紙が続いているときは、今の紙の下端をちぎらない（1本の続いた紙） */
 .rc-joined .rc-paper {
   -webkit-mask: none;
@@ -84,6 +88,11 @@
 .rc-ribbon-dom {
   position: absolute;
   inset: 0 0 auto;
+}
+/* 次の紙を刷り始めるまで、前の紙の頭（差し出し口の線から札の下端まで、.rc-feed の margin-top の分）だけを札の手前に出す。影は札の下で立体が持つ */
+.rc-ribbon-lip {
+  clip-path: inset(0 0 calc(100% - 22px) 0);
+  filter: none;
 }
 /* 紙の境の切れ目（ミシン目）。立体の絵にも同じものを描く（receipt.tsx の perforated） */
 .rc-ribbon-dom::before {
