@@ -72,7 +72,8 @@ const amountsOf = (d: PageData, year: number, opened?: Opened) => ({
   settlement: opened?.year === year && opened.kind === 'settlement' ? opened.yen : d.headline?.settlement?.year === year ? d.headline.settlement.yen : null,
 })
 
-/** 頁の title。「◯◯区の予算と決算（令和8年度）｜風土記」のように、何の頁か・年度・サイト名だけにする。検索語の「◯◯区 予算」「◯◯区 決算」「令和8年度」を入れる */
+/** 頁の title。「◯◯区の予算と決算（令和8年度）｜予算書・決算書を事業の単位で｜風土記」のように、何の頁か・年度・並べている資料・サイト名にする。
+ * 検索語の「◯◯区 予算」「◯◯区 決算」「◯◯区 予算書」「令和8年度」を入れる */
 export function pageTitle(d: PageData, year: number, section?: Section, opened?: Opened): string {
   const y = reiwaFull(year)
   const subject = (() => {
@@ -84,7 +85,9 @@ export function pageTitle(d: PageData, year: number, section?: Section, opened?:
     }
     return section.tab === 'projects' ? 'の事業一覧' : section.tab === 'money' ? 'の当初予算' : 'の決算'
   })()
-  return `${d.name}${subject}（${y}）｜風土記`
+  // 「◯◯区 予算書」「◯◯市 決算書」で探す人が多いので、頁が並べている資料の名前を添える（事業一覧は予算書・決算書の両方から作る）
+  const docs = section?.tab === 'money' ? '予算書' : section?.tab === 'settled' ? '決算書' : subject === 'の予算' ? '予算書' : subject === 'の決算' ? '決算書' : '予算書・決算書'
+  return `${d.name}${subject}（${y}）｜${docs}を事業の単位で｜風土記`
 }
 
 /** 頁の説明文。検索結果に出るので、金額は API の値だけで書く（人口や仮の値は入れない）。タブ・分野の頁はその頁に何があるかを書く */
