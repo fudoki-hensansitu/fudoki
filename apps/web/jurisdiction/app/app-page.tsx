@@ -1161,16 +1161,16 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
             {/* スクロールしたら上にタブを残す。下に Separator を引いて中身と分ける */}
             <div className="flex items-center gap-3">
             {projectPage ? (
-              <div className="relative z-10 flex h-12 min-w-0 flex-1 items-center sm:h-[52px]">
+              <div className="relative z-10 flex h-[52px] min-w-0 flex-1 items-center">
                 {/* 入れ子の事業は上の事業をパンくずに並べる。分かるまでは事業のタブへ戻るボタンを出しておく */}
                 <ClientSuspense fallback={<ProjectCrumbs base={data.path} label="事業" close={closeProject} open={openProject} ancestors={[]} />} ready={!!res.peek(projectLatestKey(projectPage))}>
                   <ProjectBack res={res} id={projectPage} base={data.path} label="事業" close={closeProject} open={openProject} />
                 </ClientSuspense>
               </div>
             ) : (
-            <TabsList variant="line" className="relative z-10 min-w-0 flex-1 justify-start gap-2 overflow-x-auto p-0 [scrollbar-width:none] group-data-horizontal/tabs:h-12 sm:gap-4 sm:group-data-horizontal/tabs:h-[52px]">
+            <TabsList variant="line" size="lg" className="relative z-10 min-w-0 flex-1 justify-start gap-0 overflow-x-auto p-0 [scrollbar-width:none] sm:gap-4">
               {tabs.map((t) => (
-                <TabsTrigger key={t.key} value={t.key} nativeButton={false} render={<a href={pageHref(year, t.key)} />} onClick={(e) => (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey ? e.preventBaseUIHandler() : e.preventDefault())} className="no-underline h-full flex-none gap-2 px-3 py-0 has-data-[icon=inline-start]:pl-3 focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:text-foreground text-sm leading-none data-active:text-primary data-active:hover:text-primary data-active:focus-visible:text-primary dark:data-active:text-primary group-data-horizontal/tabs:after:-bottom-[0.5px] group-data-horizontal/tabs:after:h-[2.5px] after:bg-primary sm:text-base">
+                <TabsTrigger key={t.key} value={t.key} nativeButton={false} render={<a href={pageHref(year, t.key)} />} onClick={(e) => (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey ? e.preventBaseUIHandler() : e.preventDefault())} className="no-underline h-full flex-none focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:text-foreground data-active:text-primary data-active:hover:text-primary data-active:focus-visible:text-primary dark:data-active:text-primary group-data-horizontal/tabs:after:-bottom-[0.5px] group-data-horizontal/tabs:after:h-[2.5px] after:bg-primary">
                   <t.icon data-icon="inline-start" />
                   {t.label}
                 </TabsTrigger>
