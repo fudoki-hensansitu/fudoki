@@ -189,7 +189,7 @@ const easeInOut = (p: number) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p 
 
 /** 段に合わせて頁を送り、動かさなくても見えるようにする（カメラの代わり）。上へは戻さない。
  * count: 札の下端が画面の外なら、札の上端を越えない範囲で札が収まる位置へ。
- * print（printing が新しく刷る紙の key になったとき）: 紙が伸びるのと同じ長さ・同じ緩急で、刷り終えたレシートの下端が画面の下端に来る位置まで送り、紙が出てくるのを追う。
+ * print（printing が新しく刷る紙の key になったとき）: 紙より長い FOLLOW_MS をかけ FOLLOW_EASE で紙を後から追い、刷り終えたレシートの下端が画面の下端の END_ROOM 上に来る位置まで送る。
  * 利用者が自分で送ったら（ホイール・タッチ・キー・ポインタ）、それ以降は動かさない。
  * scroll の event は数えない（レイアウトの補正でも起き、利用者の操作と区別できない） */
 function useFollow(phase: Phase, printing: string | null, card: React.RefObject<HTMLElement | null>, feed: React.RefObject<HTMLElement | null>) {
@@ -238,7 +238,7 @@ function useFollow(phase: Phase, printing: string | null, card: React.RefObject<
   }, [phase, printing, card, feed])
 }
 
-/** 紙送りの緩急（出だしと終わりだけ緩め、ほぼ一定の速さで送る）。頁送りも同じにする */
+/** 紙送りの緩急（出だしと終わりだけ緩め、ほぼ一定の速さで送る）。頁送りは別の FOLLOW_EASE で後から追う */
 const PRINT_EASE_CSS = 'cubic-bezier(0.3, 0.1, 0.45, 1)'
 /** 紙を追って送ったあと、レシートの末端の下に残す余白（px）。他のまちの節の見出しが覗く */
 const END_ROOM = 160
