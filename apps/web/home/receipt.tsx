@@ -32,8 +32,8 @@ const beat = (delay: number): React.CSSProperties => ({ animationDelay: `${delay
 /** 見比べ用（2026-11-18 yuito）: URL に ?land=left を付けると、左の桁から着地させる。既定は右の桁から */
 const landFromLeft = () => typeof location !== 'undefined' && new URLSearchParams(location.search).get('land') === 'left'
 
-/** 札の金額の幅（em）。数字 0.6・カンマ 0.3・単位（兆億万円、余白込み）0.7 で見積もる */
-const amountEm = (yen: number) => [...withUnits(yen)].reduce((w, ch) => w + (ch === ',' ? 0.3 : ch >= '0' && ch <= '9' ? 0.6 : 0.7), 0.7)
+/** 札の金額の幅（em）。少し広めに、数字 0.68・カンマ 0.32・単位（兆億万、左右の余白込み）0.85・末尾の円 0.75 で見積もる */
+const amountEm = (yen: number) => [...withUnits(yen)].reduce((w, ch) => w + (ch === ',' ? 0.32 : ch >= '0' && ch <= '9' ? 0.68 : 0.85), 0.75)
 
 /** 右端の桁が転がる長さ（ms）。左の桁ほど長く、左端は COUNT_MS で着地する */
 const ROLL_MIN = 700
