@@ -78,21 +78,60 @@ const HOME_URL = 'https://fudoki.dev/'
 /** X に添える文言（2026-11-17 yuito） */
 const SHARE_TEXT = '私のお金はどこへ行った？ | 風土記'
 
-/** シェアのボタン。X に投稿するボタンと、ホームのリンクをコピーするボタンを、アイコンだけで並べる */
+/** スマホなど、共有シートで画像をアプリへ渡せるときだけ true（PC では X の投稿画面を開く） */
+const canShareImage = () => {
+  if (typeof navigator === 'undefined' || !navigator.canShare || !matchMedia('(pointer: coarse)').matches) return false
+  return navigator.canShare({ files: [new File([''], 'receipt.png', { type: 'image/png' })] })
+}
+
+/** シェアのボタン。X に投稿するボタンと、ホームのリンクをコピーするボタンを、アイコンだけで並べる。
+ * 共有シートで画像を渡せる端末（スマホ）では、X のボタンで共有シート（Web Share API）を開き、レシートの画像・文言・ホームのリンクを渡す（2026-11-18 yuito）。
+ * 共有は押した直後に呼ばないと断られるので、画像は紙を刷り終えたあとに先に作っておく。作れていないときと PC では X の投稿画面を開く */
 function Share() {
   const [copied, setCopied] = React.useState(false)
   const timer = React.useRef<ReturnType<typeof setTimeout>>(undefined)
+  const root = React.useRef<HTMLDivElement>(null)
+  const image = React.useRef<File | null>(null)
   React.useEffect(() => () => clearTimeout(timer.current), [])
+  React.useEffect(() => {
+    if (!canShareImage()) return
+    let alive = true
+    const t = setTimeout(() => {
+      // 押し出された前の紙の写し（.rc-ribbon の中）では作らない
+      const el = root.current?.closest('.rc-ribbon') ? null : root.current?.closest<HTMLElement>('.rc-paper')
+      if (!el) return
+      void import('./snap')
+        .then(({ paperCanvas }) => paperCanvas(el, { scale: 2, shade: false }))
+        .then((c) => new Promise<Blob | null>((ok) => c.toBlob(ok, 'image/png')))
+        .then((b) => {
+          if (alive && b) image.current = new File([b], 'fudoki-receipt.png', { type: 'image/png' })
+        }, () => {})
+    }, PRINT_MS + 200)
+    return () => {
+      alive = false
+      clearTimeout(t)
+    }
+  }, [])
   const copy = async () => {
     if (!(await navigator.clipboard.writeText(HOME_URL).then(() => true, () => false))) return
     setCopied(true)
     clearTimeout(timer.current)
     timer.current = setTimeout(() => setCopied(false), 2000)
   }
+  const intent = `https://x.com/intent/post?${new URLSearchParams({ text: SHARE_TEXT, url: HOME_URL })}`
+  const post = (e: React.MouseEvent) => {
+    const file = image.current
+    if (!file || !navigator.canShare?.({ files: [file] })) return
+    e.preventDefault()
+    navigator.share({ files: [file], text: `${SHARE_TEXT} ${HOME_URL}` }).catch((err: unknown) => {
+      // 利用者が閉じたときは何もしない。共有に失敗したら X の投稿画面を開く
+      if (!(err instanceof DOMException && err.name === 'AbortError')) window.open(intent, '_blank', 'noopener')
+    })
+  }
   const round = 'inline-flex size-10 items-center justify-center rounded-full border border-border transition-colors hover:bg-card'
   return (
-    <div className="flex items-center gap-2">
-      <a href={`https://x.com/intent/post?${new URLSearchParams({ text: SHARE_TEXT, url: HOME_URL })}`} target="_blank" rel="noopener noreferrer" aria-label="Xでシェア" className={round}>
+    <div ref={root} className="flex items-center gap-2">
+      <a href={intent} onClick={post} target="_blank" rel="noopener noreferrer" aria-label="Xでシェア" className={round}>
         <XLogoIcon className="size-5" />
       </a>
       <button type="button" onClick={() => void copy()} aria-label={copied ? 'リンクをコピーしました' : 'リンクをコピー'} className={round}>
