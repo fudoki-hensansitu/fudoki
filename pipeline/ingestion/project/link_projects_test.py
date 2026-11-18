@@ -67,6 +67,14 @@ class BuildYearsTest(unittest.TestCase):
         self.assertEqual(ids['a2'], ids['s2'])
         self.assertNotEqual(ids['a1'], ids['a2'])
 
+    def test_当初予算は定員_決算は延べ人数を印字する事業は同じ年度に結ぶ(self):
+        ids = {d: p for d, p, _ in link([
+            row('a', 2025, ['私立保育園費']), row('a1', 2025, ['私立保育園費', '区内私立保育園経費105園定員7,576人'], 'a'),
+            row('s', 2025, ['私立保育園費'], kind='settlement'),
+            row('s1', 2025, ['私立保育園費', '区内私立保育園経費105園延82,972人'], 's', 'settlement'),
+        ])}
+        self.assertEqual(ids['a1'], ids['s1'])
+
     def test_数を除いて結ぶ子は同じ親の中だけで結ぶ(self):
         # 親は名前どおりに結ばれる（決算は逆の順に印字）。子は数を除くと同じ名前になるが、親が違う子どうしは結ばない
         ids = {d: p for d, p, _ in link([
