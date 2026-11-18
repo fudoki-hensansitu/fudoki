@@ -212,9 +212,9 @@ function SearchItem({ className }: { className: string }) {
 function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Theme; onPick: (t: Theme) => void }) {
   const [hidden, setHidden] = useHideOnScroll()
   const items = [
-    { href: '/', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
-    { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
-    { href: '/compare', label: 'まち比べ', icon: <ArrowsLeftRightIcon />, active: active === 'compare' },
+    { href: '/', label: 'ホーム', Icon: HouseIcon, active: active === 'home' },
+    { href: '/assistant', label: 'アシスタント', Icon: RobotIcon, active: active === 'assistant' },
+    { href: '/compare', label: 'まち比べ', Icon: ArrowsLeftRightIcon, active: active === 'compare' },
   ]
   return (
     <nav
@@ -231,7 +231,8 @@ function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Them
           <React.Fragment key={i.href}>
             <li>
               <NavLink href={i.href} aria-current={i.active ? 'page' : undefined} className={BOTTOM_ITEM}>
-                {i.icon}
+                {/* 今いる頁の icon は塗りつぶし（fill）にして、色だけでなく形でも選択中とわかるようにする */}
+                <i.Icon weight={i.active ? 'fill' : 'regular'} />
                 {i.label}
               </NavLink>
             </li>
