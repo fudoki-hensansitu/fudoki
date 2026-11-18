@@ -124,10 +124,10 @@ function YearSwitch({ c, onBrand }: { c: Ctx; onBrand?: boolean }) {
   )
 }
 
-/** 住んでいるまちを外して選び直す。緑の札の上に置くので、地の文字色を薄めて控えめにする */
+/** 住んでいるまちを外して選び直す。緑の札の上に置くので、地の文字色を薄めて控えめにする（ダークでも AA の 4.5:1 を保つ 80%） */
 function ResetButton({ onReset, className }: { onReset: () => void; className?: string }) {
   return (
-    <button type="button" onClick={onReset} className={cn('text-sm opacity-75 transition-opacity hover:opacity-100', className)}>
+    <button type="button" onClick={onReset} className={cn('text-sm opacity-80 transition-opacity hover:opacity-100', className)}>
       リセット
     </button>
   )
@@ -186,11 +186,22 @@ function Loading() {
 }
 
 /** うちのまちのデータが揃うまでの出し分け。揃ったら children に渡す */
-function WithCtx({ town, vision, snap, children }: { town: Town; vision?: string; snap: ReturnType<typeof useSnapshot>; children: (c: Ctx) => React.ReactNode }) {
+function WithCtx({ town, vision, snap, onReset, children }: { town: Town; vision?: string; snap: ReturnType<typeof useSnapshot>; onReset: () => void; children: (c: Ctx) => React.ReactNode }) {
   const { d, failed, year, setYear } = snap
-  if (failed) return <p className="text-sm text-muted-foreground">今はこのまちのデータを読み込めません。少し時間をおいて開き直してください。</p>
-  if (!d || year == null) return <Loading />
-  if (!d.years[String(year)]) return <p className="text-sm text-muted-foreground">このまちの予算・決算は、まだ収録していません。</p>
+  // 札を出せないとき（読めない・読み込み中・未収録）も住んでいるまちを選び直せるよう、札の外の右上にリセットを残す
+  const withReset = (node: React.ReactNode) => (
+    <>
+      <div className="mb-2 flex justify-end">
+        <button type="button" onClick={onReset} className="text-sm text-muted-foreground hover:text-foreground">
+          リセット
+        </button>
+      </div>
+      {node}
+    </>
+  )
+  if (failed) return withReset(<p className="text-sm text-muted-foreground">今はこのまちのデータを読み込めません。少し時間をおいて開き直してください。</p>)
+  if (!d || year == null) return withReset(<Loading />)
+  if (!d.years[String(year)]) return withReset(<p className="text-sm text-muted-foreground">このまちの予算・決算は、まだ収録していません。</p>)
   return <>{children(buildCtx(town, d, year, setYear, vision))}</>
 }
 
@@ -292,7 +303,7 @@ export function Home({ listed, featured }: HomeProps) {
     body = (
       // 刷り出すレシートと他のまちの節の場所を、はじめから画面1.5枚ぶん取っておき、札へ頁を送っても刷り終える前に頁の末尾（footer）が見えないようにする（2026-11-18 yuito）
       <div className="min-h-[150svh]">
-        <WithCtx key={town!.code} town={town!} vision={vision} snap={snap}>
+        <WithCtx key={town!.code} town={town!} vision={vision} snap={snap} onReset={reset}>
           {(c) => <Dashboard c={c} onPrinted={() => setPrinted(true)} onReset={reset} />}
         </WithCtx>
         {/* ほかのまちを見る導線。レシートとは別の節として見出しと大きな検索欄を置き、レシートの末端まで頁が送られてから出す（2026-11-18 yuito）。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
