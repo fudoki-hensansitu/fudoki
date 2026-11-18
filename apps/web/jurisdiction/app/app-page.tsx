@@ -482,8 +482,8 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
   // 会計の総額は頁のデータの資料のもの。別の資料のタブ（スマホで隣に並ぶタブ）では使わない
   const special = account === GENERAL || !total ? undefined : accounts.find((x) => x.name === account)
   const picked: YearTotal | undefined = special ? { year: v.year, yen: special.yen, kan: [] } : total
-  // お金の流れの見せ方（初めはサンキー図）と表の探す語は URL に持つ（?flow=table・歳出の ?exp_q=・歳入の ?rev_q=）。履歴は積まない
-  const [view, setView] = React.useState<'sankey' | 'table'>('sankey')
+  // お金の流れの見せ方（初めはテーブル）と表の探す語は URL に持つ（?flow=sankey・歳出の ?exp_q=・歳入の ?rev_q=）。履歴は積まない
+  const [view, setView] = React.useState<'sankey' | 'table'>('table')
   const [flowQuery, setFlowQuery] = React.useState<FlowQuery>({ expenditure: '', revenue: '' })
   // URL を読み終えるまでは書き換えない（読む前の初めの値で URL の探す語を消さないように）
   const [urlRead, setUrlRead] = React.useState(false)
@@ -491,7 +491,7 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
     const q = new URLSearchParams(location.search)
     const found = { expenditure: q.get('exp_q') ?? '', revenue: q.get('rev_q') ?? '' }
     setFlowQuery(found)
-    if (q.get('flow') === 'table' || found.expenditure || found.revenue) setView('table')
+    if (q.get('flow') === 'sankey' && !found.expenditure && !found.revenue) setView('sankey')
     setUrlRead(true)
   }, [])
   React.useEffect(() => {
@@ -499,7 +499,7 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
     const q = new URLSearchParams(location.search)
     const set = (k: string, x: string) => (x ? q.set(k, x) : q.delete(k))
     const table = view === 'table'
-    set('flow', table ? 'table' : '')
+    set('flow', table ? '' : 'sankey')
     set('exp_q', table ? flowQuery.expenditure.trim() : '')
     set('rev_q', table ? flowQuery.revenue.trim() : '')
     const next = location.pathname + (q.size ? `?${q}` : '') + location.hash
@@ -519,11 +519,11 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
         <div className="flex items-center justify-between gap-3">
           <Title size="h3" as="h2">お金の流れ</Title>
           <ToggleGroup aria-label="お金の流れの見せ方" value={[view]} onValueChange={(v) => { if (v[0]) setView(v[0] as typeof view) }} spacing={0} className="grid shrink-0 grid-cols-2 rounded-full bg-secondary p-1">
-            <ToggleGroupItem value="sankey" className="w-full rounded-full! px-3">
-              <ArrowsSplitIcon aria-hidden="true" className="-rotate-90" />サンキー
-            </ToggleGroupItem>
             <ToggleGroupItem value="table" className="w-full rounded-full! px-3">
               <TableIcon aria-hidden="true" />テーブル
+            </ToggleGroupItem>
+            <ToggleGroupItem value="sankey" className="w-full rounded-full! px-3">
+              <ArrowsSplitIcon aria-hidden="true" className="-rotate-90" />サンキー
             </ToggleGroupItem>
           </ToggleGroup>
         </div>
