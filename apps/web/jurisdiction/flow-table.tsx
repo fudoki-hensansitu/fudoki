@@ -59,9 +59,9 @@ function Section({ title, drills, total }: { title: string; drills: Drill[]; tot
                       <button type="button" onClick={() => toggle(r.key)} aria-expanded={expanded} aria-label={`${r.name}の${LEVELS[r.depth + 1]}を${expanded ? '閉じる' : '開く'}`} className="-my-1 inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring">
                         <CaretRightIcon aria-hidden="true" className={cn('size-4 transition-transform duration-200', expanded && 'rotate-90')} />
                       </button>
-                    ) : (
+                    ) : depth > 0 ? (
                       <span className="w-7 shrink-0" aria-hidden="true" />
-                    )}
+                    ) : null}
                     <span className="min-w-0 leading-snug [overflow-wrap:anywhere]">
                       <span className="mr-2 text-xs text-muted-foreground">{LEVELS[r.depth]}</span>
                       {r.hasChildren ? <button type="button" onClick={() => toggle(r.key)} tabIndex={-1} className="text-left hover:underline">{r.name}</button> : r.name}
