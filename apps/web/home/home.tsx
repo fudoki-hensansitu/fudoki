@@ -255,7 +255,7 @@ function TownList({ featured, except, reveal = false }: { featured: Featured[]; 
 const DOCS = 'https://docs.fudoki.dev'
 
 /** 頁の末尾。風土記について・利用規約・プライバシーポリシーへはここから辿る（前のホームと同じ並び） */
-function Footer() {
+export function Footer() {
   const ext = 'inline-flex items-center gap-1 hover:text-foreground'
   return (
     <footer className="mt-auto flex pt-12 flex-wrap items-center justify-between gap-4 text-xs text-muted-foreground">
