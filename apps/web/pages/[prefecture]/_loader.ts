@@ -3,7 +3,7 @@
 import { HTTPException } from 'hono/http-exception'
 import { defer } from 'void'
 import type { Context } from 'hono'
-import { emptyHead, pageHead, projectHead, type Head } from '../../jurisdiction/html'
+import { emptyHead, pageHead, projectFallbackHead, projectHead, type Head } from '../../jurisdiction/html'
 import { appPageYears, hasDocument, TAB_SLUGS, tabOfSlug, type Headline, type PageData, type PageFlow, type PageTab } from '../../jurisdiction/types'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../../jurisdiction/domains'
 import { PREFECTURE_MAPS } from '../../jurisdiction/map.generated'
@@ -245,6 +245,7 @@ const areasOfFields = (fields: Record<string, number>) =>
 export const jurisdictionHead = (p: JurisdictionProps): Head => {
   if (p.kind !== 'page') return emptyHead(p.entry)
   if (p.projectFull) return projectHead(p.data, p.projectFull)
+  if (p.project) return projectFallbackHead(p.data, p.project)
   const year = p.year ?? appPageYears(p.data)[0]
   const opened = year === undefined ? undefined : p.snapshot?.years[String(year)]
   return pageHead(p.data, p.year, p.tab ? { tab: p.tab } : undefined, opened && year !== undefined ? { year, kind: opened.kind, yen: opened.total, originTitle: opened.originTitle, areas: areasOfFields(opened.fields) } : undefined)

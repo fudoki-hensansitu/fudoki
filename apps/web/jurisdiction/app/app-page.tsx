@@ -49,7 +49,6 @@ import { RequestTown } from '../../nav/request-town'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { cn } from '@/lib/utils'
 import { Link } from '../../nav/link'
-import { jurisdictionPath } from '../path'
 import { CutIcon, DoneIcon, FixIcon, JoinIcon, KeepIcon, LawIcon, MaybeStopIcon, NewIcon, PlanIcon, SizeIcon, StopIcon, UpIcon } from '../fresh-icons'
 import { YearPicker } from '../year-picker'
 import { Flow } from '../flow'
@@ -271,8 +270,8 @@ function ProjectList({ q, head, render }: { q: ListQuery; head?: (page: ListPage
 const projectFeatures = tableFeatures({})
 const projectColumn = createColumnHelper<typeof projectFeatures, Proj & { rank: number }>()
 
-/** 事業の頁の URL（/tokyo/shinagawa/projects/<project_id>）。事業は年度をまたぐので年度の段を持たない */
-const projectHref = (code: string, id: string) => `${jurisdictionPath(code)}/${TAB_SLUGS.projects}/${encodeURIComponent(id)}`
+/** 事業の頁の URL（/tokyo/shinagawa/projects/<project_id>）。base は自治体の頁の path（PageData.path）。事業は年度をまたぐので年度の段を持たない */
+const projectHref = (base: string, id: string) => `${base}/${TAB_SLUGS.projects}/${encodeURIComponent(id)}`
 
 /** 事業の頁へのリンク。検索エンジンが辿れるよう href を持たせ、ふつうに押したときは行の onClick（画面の中で開く）に任せる。
  * 修飾キー・中ボタンで押したときはブラウザに任せ（新しいタブ）、行の onClick に渡さない */
@@ -280,7 +279,7 @@ function ProjectLink({ id, children }: { id: string; children: React.ReactNode }
   const { page } = useApp()
   return (
     <a
-      href={projectHref(page.code, id)}
+      href={projectHref(page.path, id)}
       onClick={(e) => (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey ? e.stopPropagation() : e.preventDefault())}
       className="rounded-sm text-left text-foreground no-underline outline-none focus-visible:ring-2 focus-visible:ring-primary"
     >
@@ -706,11 +705,11 @@ type ProjectHistory = { project: string; depth?: number; fromList?: boolean }
 const projectLatestKey = (id: string) => `project-latest:${id}`
 
 /** 事業の頁の戻る先。事業のタブと、入れ子の上にある事業をすべてパンくずに並べ、押すとそこへ戻る */
-function ProjectBack({ res, id, code, label, close, open }: { res: Resources; id: string; code: string; label: string; close: () => void; open: (id: string) => void }) {
+function ProjectBack({ res, id, base, label, close, open }: { res: Resources; id: string; base: string; label: string; close: () => void; open: (id: string) => void }) {
   const p = React.use(res.get(projectLatestKey(id), () => projectLatest(id)))
-  return <ProjectCrumbs code={code} label={label} close={close} open={open} ancestors={p === FAILED ? [] : (p.ancestors ?? [])} />
+  return <ProjectCrumbs base={base} label={label} close={close} open={open} ancestors={p === FAILED ? [] : (p.ancestors ?? [])} />
 }
-function ProjectCrumbs({ code, label, close, open, ancestors }: { code: string; label: string; close: () => void; open: (id: string) => void; ancestors: NonNullable<ProjectFull['ancestors']> }) {
+function ProjectCrumbs({ base, label, close, open, ancestors }: { base: string; label: string; close: () => void; open: (id: string) => void; ancestors: NonNullable<ProjectFull['ancestors']> }) {
   return (
     <Breadcrumb className="min-w-0">
       <BreadcrumbList className="flex-nowrap text-sm sm:text-base">
@@ -721,7 +720,7 @@ function ProjectCrumbs({ code, label, close, open, ancestors }: { code: string; 
           <React.Fragment key={a.id}>
             <BreadcrumbSeparator />
             <BreadcrumbItem className="min-w-[3em]">
-              <BreadcrumbLink href={projectHref(code, a.id)} onClick={(e) => { if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; e.preventDefault(); open(a.id) }} className="min-w-0 cursor-pointer truncate">{a.name}</BreadcrumbLink>
+              <BreadcrumbLink href={projectHref(base, a.id)} onClick={(e) => { if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; e.preventDefault(); open(a.id) }} className="min-w-0 cursor-pointer truncate">{a.name}</BreadcrumbLink>
             </BreadcrumbItem>
           </React.Fragment>
         ))}
@@ -1109,8 +1108,8 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
             {projectPage ? (
               <div className="relative z-10 flex h-12 min-w-0 flex-1 items-center sm:h-[52px]">
                 {/* 入れ子の事業は上の事業をパンくずに並べる。分かるまでは事業のタブへ戻るボタンを出しておく */}
-                <ClientSuspense fallback={<ProjectCrumbs code={data.code} label="事業" close={closeProject} open={openProject} ancestors={[]} />} ready={!!res.peek(projectLatestKey(projectPage))}>
-                  <ProjectBack res={res} id={projectPage} code={data.code} label="事業" close={closeProject} open={openProject} />
+                <ClientSuspense fallback={<ProjectCrumbs base={data.path} label="事業" close={closeProject} open={openProject} ancestors={[]} />} ready={!!res.peek(projectLatestKey(projectPage))}>
+                  <ProjectBack res={res} id={projectPage} base={data.path} label="事業" close={closeProject} open={openProject} />
                 </ClientSuspense>
               </div>
             ) : (

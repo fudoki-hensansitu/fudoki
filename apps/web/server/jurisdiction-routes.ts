@@ -103,7 +103,7 @@ export async function projectSitemapResponse(env: Env, code: string): Promise<Re
       where: { jurisdiction_code: { eq: [code] } },
       order_by: [{ column: latest.kind === 'initial' ? 'budget_yen' : 'settled_yen', desc: true }],
       page_size: PROJECT_SITEMAP_SIZE,
-    } as never)
+    })
     const base = `https://fudoki.dev${jurisdictionPath(code)}/${TAB_SLUGS.projects}/`
     const ids = [...new Set(r.project_years.map((y) => y.project_id))]
     const body = ids.map((id) => `<url><loc>${xmlEscape(base + encodeURIComponent(id))}</loc></url>`).join('')

@@ -206,6 +206,13 @@ export function projectHead(d: PageData, p: ProjectFull): Head {
   return head(title, description, canonical, { meta, script: [{ type: 'application/ld+json', innerHTML: inlineJson(breadcrumb) }] })
 }
 
+/** 事業の頁で中身を読めなかったとき（API に繋がらない・待ちきれない）の head。題・説明は事業のタブのものだが、canonical は事業の頁自身にする */
+export const projectFallbackHead = (d: PageData, id: string): Head => {
+  const h = pageHead(d, undefined, { tab: 'projects' })
+  const canonical = `${ORIGIN}${jurisdictionPath(d.code)}/${TAB_SLUGS.projects}/${encodeURIComponent(id)}`
+  return { ...h, meta: h.meta.map((m) => (m.property === 'og:url' ? { ...m, content: canonical } : m)), link: h.link.map((l) => (l.rel === 'canonical' ? { ...l, href: canonical } : l)) }
+}
+
 /** 収録がまだ無い自治体。検索の対象にはしない */
 export const emptyHead = (e: CatalogEntry): Head =>
   head(`${e.name}｜風土記`, `${e.name}の歳出は風土記にまだ収録されていません。`, `${ORIGIN}${jurisdictionPath(e.code)}`, { meta: [{ name: 'robots', content: 'noindex' }] })
