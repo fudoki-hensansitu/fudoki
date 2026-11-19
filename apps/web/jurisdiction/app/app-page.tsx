@@ -1200,8 +1200,13 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
         {hub ? (
           <>
             {hero}
-            <Separator />
-            <div className="pt-6"><QuestionFeedView feed={questions} onOpen={(q) => ask.current?.openPreset(q.q)} /></div>
+            {/* 問いを作っていないまちは、まちの頭と4つの入口だけ */}
+            {hasQuestions(data.code) ? (
+              <>
+                <Separator />
+                <div className="pt-6"><QuestionFeedView feed={questions} onOpen={(q) => ask.current?.openPreset(q.q)} /></div>
+              </>
+            ) : null}
           </>
         ) : (
         <>
