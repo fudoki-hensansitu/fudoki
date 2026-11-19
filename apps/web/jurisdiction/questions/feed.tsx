@@ -24,6 +24,16 @@ function Category({ field }: { field?: string }) {
 }
 
 function QuestionCard({ q, onOpen }: { q: Question; onOpen: (q: Question) => void }) {
+  // 答えが枠に収まらないときだけ下を薄くする（短い答えの最後の行まで薄くしない）
+  const body = React.useRef<HTMLDivElement>(null)
+  const [clipped, setClipped] = React.useState(true)
+  React.useEffect(() => {
+    const el = body.current
+    if (!el) return
+    const ro = new ResizeObserver(() => setClipped(el.scrollHeight > el.clientHeight + 1))
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
   return (
     <article className="group/q relative flex flex-col gap-3 border-b py-6 first:pt-2">
       {/* 札の全体を押せるようにする。答えの冒頭のリンクは会話の中で押す */}
@@ -38,7 +48,7 @@ function QuestionCard({ q, onOpen }: { q: Question; onOpen: (q: Question) => voi
           <span className="text-sm text-muted-foreground">{q.big.note}</span>
         </p>
       ) : null}
-      <div aria-hidden="true" inert className="q-fade max-h-36 overflow-hidden text-base leading-relaxed">
+      <div ref={body} aria-hidden="true" inert className={cn('max-h-36 overflow-hidden text-base leading-relaxed', clipped && 'q-fade')}>
         <Markdown text={q.answer} />
       </div>
     </article>

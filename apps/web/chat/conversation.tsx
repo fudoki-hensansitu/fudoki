@@ -73,6 +73,7 @@ export function Conversation({
   beforeComposer,
   onSend,
   movableViews = false,
+  startAtTop = false,
   connect,
   preset,
 }: {
@@ -91,6 +92,8 @@ export function Conversation({
   onSend?: () => void
   /** 表とグラフを会話の横のパネルへ移せるか。会話の頁だけ。自治体の頁のように会話がパネルの中にあるときは移さない */
   movableViews?: boolean
+  /** 開いたときに一番下へ送らず、最初の問いと答えの頭から見せる（作り置きの答えから始めた会話） */
+  startAtTop?: boolean
   /** stored に token が無い会話（作り置きの答えから始めた会話）で、続けて聞くときに会話を作る。Turnstile は押したときでなく、聞くときに通す */
   connect?: () => Promise<{ id: string; session: StoredSession }>
   /** 続きの問いに作り置きの答えがあれば返す。あれば AI に聞かずにその答えを足す */
@@ -168,7 +171,7 @@ export function Conversation({
 
   // 一番下を読んでいる間は、送ったときも配信中も画面全体を最下部へ追う。利用者が上へ遡ったら追わない
   // 上下のフェード（scroll-fade と同じ見え方）は、頁の端にいる側では出さない
-  const pinned = React.useRef(true)
+  const pinned = React.useRef(!startAtTop)
   const [fade, setFade] = React.useState({ top: false, bottom: false })
   const box = React.useCallback(() => {
     const el = scroller?.current

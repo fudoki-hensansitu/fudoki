@@ -4,4 +4,4 @@
 @media (prefers-reduced-motion: reduce) { .app-grow { animation: none } }
 
 /* 「気になる」の札の答えの冒頭。下を薄くして、押すと続きが読めると見せる */
-.q-fade { mask-image: linear-gradient(to bottom, #000 55%, transparent) }
+.q-fade { mask-image: linear-gradient(to bottom, #000 calc(100% - 4rem), transparent) }

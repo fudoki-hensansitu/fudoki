@@ -421,7 +421,7 @@ export function AskDock({ name, code, sitekey, year, section, detail, page, ask 
           >
             <div ref={scroller} className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
               <React.Suspense fallback={<p className="p-6 text-sm text-muted-foreground">会話を開いています…</p>}>
-                <Conversation key={chat.key} id={chat.key} stored={chat.session} connect={connect} preset={preset} header={header} scroller={scroller} context={describe} beforeComposer={<>{chat.live ? null : <SessionVerifier sitekey={sitekey} connectRef={connectRef} />}{chip}</>} onSend={() => setQuote('')} />
+                <Conversation key={chat.key} id={chat.key} stored={chat.session} startAtTop={!chat.live} autoFocus={chat.live} connect={connect} preset={preset} header={header} scroller={scroller} context={describe} beforeComposer={<>{chat.live ? null : <SessionVerifier sitekey={sitekey} connectRef={connectRef} />}{chip}</>} onSend={() => setQuote('')} />
               </React.Suspense>
             </div>
           </div>

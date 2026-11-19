@@ -426,7 +426,7 @@ export const feed: QuestionFeed = {
         "value": "57,700円",
         "note": "1年に区民1人あたり（全体で 240億円）"
       },
-      "answer": "R8年度の行政・議会の予算は **240億円**、区民1人あたり**57,700円**です。R7年度の 327億円 から87.6億円減りました。事業は86あり、大きいのは次の3つです。\n\n- [情報システム運営費](/tokyo/shinagawa/projects/38613b69855b036c3b1e21d0ca7be47a7f82312679602ca2f642dbb75be8cc28) 50.9億円\n- [基金積立金](/tokyo/shinagawa/projects/e21db73b6ee1b4b40878a9f3978730e8a581b7ee905d2d380430a7a123cb3ada) 33.4億円\n- [退職手当141人](/tokyo/shinagawa/projects/9b49caaa262b114da80a2522a2314a2432eb991bd45de51441b32f2500ca4635) 16億円\n\n当初予算の推移:\n\n| R5 | R6 | R7 | R8 |\n| ---: | ---: | ---: | ---: |\n| 188億円 | 215億円 | 328億円 | 240億円 |",
+      "answer": "R8年度の行政・議会の予算は **240億円**、区民1人あたり**57,700円**です。R7年度の 327億円 から87.6億円減りました。事業は86あり、大きいのは次の3つです。\n\n- [情報システム運営費](/tokyo/shinagawa/projects/38613b69855b036c3b1e21d0ca7be47a7f82312679602ca2f642dbb75be8cc28) 50.9億円\n- [基金積立金](/tokyo/shinagawa/projects/e21db73b6ee1b4b40878a9f3978730e8a581b7ee905d2d380430a7a123cb3ada) 33.4億円\n- [退職手当141人](/tokyo/shinagawa/projects/9b49caaa262b114da80a2522a2314a2432eb991bd45de51441b32f2500ca4635) 16億円\n\n当初予算の推移:\n\n| R5 | R6 | R7 | R8 |\n| ---: | ---: | ---: | ---: |\n| 188億円 | 215億円 | 327億円 | 240億円 |",
       "source": "R5〜R8 当初予算書（一般会計）",
       "follow": [
         "chosha",

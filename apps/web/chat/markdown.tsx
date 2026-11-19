@@ -20,8 +20,8 @@ function inline(tokens: Token[] | undefined): React.ReactNode[] {
         return <br key={i} />
       case 'link': {
         const link = t as Tokens.Link
-        // 頁の path（作り置きの答えの事業へのリンク）は同じタブで開く。http(s) 以外（javascript: など）はリンクにしない
-        if (/^\/(?!\/)/.test(link.href)) return <Link key={i} href={link.href} className="text-primary underline underline-offset-4">{inline(link.tokens)}</Link>
+        // 頁の path（作り置きの答えの事業へのリンク）は同じタブで開く（// と /\ はブラウザが別の origin に解く）。http(s) 以外（javascript: など）はリンクにしない
+        if (/^\/(?![/\\])/.test(link.href)) return <Link key={i} href={link.href} className="text-primary underline underline-offset-4">{inline(link.tokens)}</Link>
         if (!/^https?:\/\//i.test(link.href)) return <React.Fragment key={i}>{inline(link.tokens)}</React.Fragment>
         return <a key={i} href={link.href} target="_blank" rel="noopener noreferrer" className="text-primary underline underline-offset-4">{inline(link.tokens)}</a>
       }
