@@ -9,6 +9,7 @@ import { Title } from '@/components/ui/title'
 import { cn } from '@/lib/utils'
 import { Footer } from '../nav/footer'
 import { HOME } from '../home-data'
+import { Logo } from '../nav/site-nav'
 
 const DOCS = 'https://docs.fudoki.dev'
 const HOME_PATH = '/'
@@ -137,8 +138,13 @@ export function Landing() {
     <main className="mx-auto flex min-h-svh w-full max-w-6xl flex-col px-4 pt-4 pb-28 sm:px-8 sm:pt-8 md:pb-10">
       {/* 冒頭: 緑の面に問いの見出し・できるようになること・ボタン。下に実際の画面を、面の縁にまたがせて並べる */}
       <header>
-        <div className="rounded-3xl bg-brand px-6 pt-16 pb-40 text-center text-brand-foreground sm:pt-24 sm:pb-64">
-          <Title size="display" as="h1" className="leading-tight">
+        <div className="rounded-3xl bg-brand px-6 pt-12 pb-40 text-center text-brand-foreground sm:pt-16 sm:pb-64">
+          {/* 白抜きのロゴ（DESIGN.md の Logo）。サイドバーの無いスマホでも風土記の頁だと分かるように、見出しの上に置く */}
+          <p className="flex justify-center">
+            <Logo className="h-9 w-auto sm:h-10" />
+            <span className="sr-only">風土記</span>
+          </p>
+          <Title size="display" as="h1" className="mt-10 leading-tight sm:mt-12">
             私のお金は
             <br />
             どこへ行った？
