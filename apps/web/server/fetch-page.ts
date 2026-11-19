@@ -1,6 +1,7 @@
 // 許可したドメインの頁を Markdown で読む tool（fetch_page）。風土記のサイト・ドキュメントの頁を読み、使い方の案内や頁の中身を答えるのに使う。
 // 許可していないドメイン・他のドメインへの redirect は読まない。頁は Accept で Markdown を頼み（middleware/01.site.ts）、HTML が返ったら Workers AI で Markdown にする
 import { dynamicTool, jsonSchema } from 'ai'
+import { toolText } from '../tool-text'
 import { htmlToMarkdown } from './agent-discovery'
 import type { Env } from './env'
 
@@ -104,5 +105,7 @@ export function fetchPageTool(env: Pick<Env, 'AI'>, fetcher: typeof fetch = fetc
         return fail('頁を読めませんでした')
       }
     },
+    // AI に渡すのは text の側だけ。ほかの tool と同じ上限で切る
+    toModelOutput: ({ output }) => ({ type: 'text', value: toolText(output) }),
   })
 }

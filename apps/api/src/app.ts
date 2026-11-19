@@ -13,9 +13,9 @@ import type { Tool } from './shared/tool'
 import { SUGGESTIONS_META_KEY } from '../../../packages/fiscal/suggestions'
 import { jurisdictionNames, suggestionsFor } from './suggestions'
 import { tools } from './tools'
+import { serving } from './web-ops'
 
 export { tools }
-import { serving } from './web-ops'
 
 
 const MCP_ICON_SRC = `data:image/svg+xml;base64,${btoa(String.fromCharCode(...new TextEncoder().encode(iconSvg)))}`

@@ -1,6 +1,7 @@
 // 自治体の決算の指標（普通会計。市区町村は総務省「市町村別決算状況調」、都道府県は地方財政状況調査）。web の D1（fudoki-web の local_finance、scripts/sync-data/local_finance.py が入れる）から読む。
 // D1 が無い（手元の試験）か読めないときは空で返し、頁は財政の状況の節を出さずに描く
 import { dynamicTool, jsonSchema } from 'ai'
+import { toolText } from '../tool-text'
 import type { LocalFinance } from '../jurisdiction/types'
 import type { Env } from './env'
 import { logError } from './log'
@@ -77,5 +78,6 @@ export function localFinanceTool(env: Env) {
       }
       return { content: [{ type: 'text', text: `決算の指標（普通会計、総務省）\n${JSON.stringify(out)}` }] }
     },
+    toModelOutput: ({ output }) => ({ type: 'text', value: toolText(output) }),
   })
 }

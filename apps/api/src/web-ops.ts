@@ -102,7 +102,7 @@ export async function callWebOp(env: Env, name: string, input: unknown): Promise
 }
 
 const COUNT_SHEETS_DESCRIPTION =
-  'Count evaluation sheets matching the same input as search_evaluation_sheets, grouped by outlook (A expand / B continue / C review / D end; an empty outlook collects sheets whose direction does not map). ' +
+  'Count evaluation sheets matching the same input as search_evaluation_sheets. Rows are grouped by direction_code; each row\'s outlook carries grade A (expand) / B (continue) / C (review) / D (end), so add the size of every row that shares a grade to count a grade (D, for example, spans merge, complete, end and consider_end). A row with a null outlook collects sheets whose direction does not map. ' +
   'Use it for "how many projects were judged to end or be reviewed" style questions instead of paging through search results. page_size, page_token and order_by are ignored.'
 
 /** アシスタントに渡す操作と説明。公開の MCP の tool は同じ説明を使い、web だけの操作はここで書く。名前は WEB_OPS の名前 */

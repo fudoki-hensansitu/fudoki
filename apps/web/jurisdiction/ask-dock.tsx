@@ -206,8 +206,6 @@ export function AskDock({ name, code, sitekey, year, section, detail, page, ask 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') cancelReveal.current()
       if (e.key === 'Escape' && (drawer || open)) {
-        // 表とグラフの全体表示（popover）は、その Escape で先に閉じる
-        if (document.querySelector(':popover-open')) return
         close()
         return
       }

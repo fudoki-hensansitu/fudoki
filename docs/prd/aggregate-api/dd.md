@@ -111,7 +111,7 @@ MCP の tool は11にする（今は8）。人口・収録の範囲・収録し�
 - `search` は今の構造化 JSON の入力（必須の条件・where・order_by・ページ）を共通の部品で受ける。応答は平らな行で、行の列は `columns.json` の契約のまま。列の説明は入力・出力の schema に `.describe()` で付け、足し方の決まり（今の `sum_rules`）はその tool の description に書く。列の説明を返すだけの操作（今の `describe_expenditure_columns`）は作らない。
 - 事業評価・予算案の `get` も歳出と同じく表の行のまま返す（`EvaluationOutput` は `evaluation`・`sheets`（ページ）・`origins`、`SheetOutput` は `sheet`・`indicators`・`indicator_values`・`origins`、`BudgetProposalOutput` は `budget_proposal`・`measures`（1,000 件まで）・`origins`）。ドメインの型（`Evaluation` など）には組み直さない。
 - kill switch・流量・入力の上限は今の仕組みを全操作に掛ける。
-- MCP Apps の View（`apps/api/ui/`）は tool 名と応答の形で描き方を決めている（`ui/types.ts` の `toolFor`、`render_expenditure_view`、web の `VIEW_TOOLS`・`bridge.ts`）。新しい tool 名に付け替え、`src/gen/view.ts` を作り直す。`render_expenditure_view` は名前を残す。
+- MCP Apps の View（`apps/api/ui/`）は tool 名と応答の形で描き方を決めている（`ui/types.ts` の `toolFor`、`render_expenditure_view`、`bridge.ts`。web の `VIEW_TOOLS` と View の中継は ADR 0053 でやめた）。新しい tool 名に付け替え、`src/gen/view.ts` を作り直す。`render_expenditure_view` は名前を残す。
 - web の呼び出し（MCP と REST）は同じ PR で新しい名前に直し、jurisdiction の cache の版（`jurisdiction-vN`）を上げる。（web が公開 API を呼ぶ前提は ADR 0044 で置き換えた。2026-11-13）
 
 ### AI Search を外すときに消すもの
