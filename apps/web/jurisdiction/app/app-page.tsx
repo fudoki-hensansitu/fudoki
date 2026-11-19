@@ -1222,12 +1222,13 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
                 <ProjectBack res={res} id={projectPage} base={data.path} label="事業" close={closeProject} open={openProject} />
               </ClientSuspense>
             ) : yearStuck && v ? (
-              // 頁の頭が帯の下に隠れたら、戻る（左）・小さくした頁の名前（中央）・年度の切り替え（右）を帯の1行にまとめる（財政は年度を持たない）
-              <div className="grid min-w-0 flex-1 grid-cols-[1fr_auto_1fr] items-center gap-2">
-                <Link href={data.path} aria-label={`${data.name}へ戻る`} className="-ml-2 grid size-9 shrink-0 place-items-center justify-self-start rounded-full text-muted-foreground"><ArrowLeftIcon className="size-5" aria-hidden="true" /></Link>
-                <Title size="headline" as="p" className="min-w-0 truncate text-center">{TABS.find((t) => t.key === tab)?.label}</Title>
+              // 頁の頭が帯の下に隠れたら、戻る（左）・小さくした頁の名前（中央）・年度の切り替え（右）を帯の1行にまとめる（財政は年度を持たない）。
+              // 名前は左右の幅が違っても帯のちょうど真ん中に来るよう、流れから外して置く
+              <div className="relative flex min-w-0 flex-1 items-center justify-between gap-2">
+                <Link href={data.path} aria-label={`${data.name}へ戻る`} className="-ml-2 grid size-9 shrink-0 place-items-center rounded-full text-muted-foreground"><ArrowLeftIcon className="size-5" aria-hidden="true" /></Link>
+                <Title size="headline" as="p" className="pointer-events-none absolute left-1/2 max-w-[40%] -translate-x-1/2 truncate text-center">{TABS.find((t) => t.key === tab)?.label}</Title>
                 {tab !== 'overview' ? (
-                  <div className="shrink-0 justify-self-end">
+                  <div className="shrink-0">
                     <div className="md:hidden"><YearMenu years={years} current={v.year} onChange={setYear} /></div>
                     <div className="max-md:hidden"><YearPicker years={years} current={v.year} onChange={setYear} hrefOf={yearHref} /></div>
                   </div>
