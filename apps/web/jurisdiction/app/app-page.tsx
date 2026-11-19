@@ -3,6 +3,7 @@
 import * as React from 'react'
 import { useNavigation, useRouter } from '@void/react'
 import {
+  ArrowLeftIcon,
   ArrowSquareOutIcon,
   BankIcon,
   BasketballIcon,
@@ -769,7 +770,7 @@ function ProjectCrumbs({ base, label, close, open, ancestors }: { base: string; 
     <Breadcrumb className="min-w-0">
       <BreadcrumbList className="flex-nowrap text-sm sm:text-base">
         <BreadcrumbItem className="shrink-0">
-          <BreadcrumbLink render={<button type="button" onClick={close} />} className="inline-flex cursor-pointer items-center gap-1"><ListBulletsIcon className="size-4 shrink-0" aria-hidden="true" />{label}</BreadcrumbLink>
+          <BreadcrumbLink render={<button type="button" onClick={close} />} className="inline-flex cursor-pointer items-center gap-1"><ArrowLeftIcon className="size-4 shrink-0" aria-hidden="true" />{label}</BreadcrumbLink>
         </BreadcrumbItem>
         {ancestors.map((a) => (
           <React.Fragment key={a.id}>
