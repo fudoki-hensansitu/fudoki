@@ -37,20 +37,27 @@ export function setsuGroupOf(setsuId: string): string | undefined {
 
 export const UNKNOWN_SETSU = 'unknown'
 
-/** 目の節を区分ごとに足す。節の分からない分（内訳が節でない目・節の無い目）は total との差で「節の分からない分」にする。多い順、分からない分は最後 */
-export function setsuGroups(moku: Moku[], total: number): { groups: SetsuGroup[]; known: number } {
+/** 目のうち節の分からない額（目の額から区分の分かる節を引いた残り、負にはしない）。「節の分からない分」の見出しと詳細の行で同じ式を使う */
+export function unknownOf(m: Moku): number {
+  const known = m.setsu.reduce((a, s) => a + (s.setsuId && setsuGroupOf(s.setsuId) ? s.yen : 0), 0)
+  return Math.max(0, m.yen - known)
+}
+
+/** 目の節を区分ごとに足す。節の分からない分（内訳が節でない目・節の無い目・目の無い項）は目ごとの残りを足して最後に置く。多い順 */
+export function setsuGroups(moku: Moku[]): { groups: SetsuGroup[]; known: number; total: number } {
   const sums = new Map<string, number>()
+  let unknown = 0
   for (const m of moku) {
     for (const s of m.setsu) {
       const g = s.setsuId ? setsuGroupOf(s.setsuId) : undefined
       if (g) sums.set(g, (sums.get(g) ?? 0) + s.yen)
     }
+    unknown += unknownOf(m)
   }
   const known = [...sums.values()].reduce((a, b) => a + b, 0)
   const groups = GROUPS.map((g) => ({ id: g.id, name: g.name, yen: sums.get(g.id) ?? 0 }))
     .filter((g) => g.yen > 0)
     .sort((a, b) => b.yen - a.yen)
-  const unknown = total - known
   if (unknown > 0) groups.push({ id: UNKNOWN_SETSU, name: '節の分からない分', yen: unknown })
-  return { groups, known }
+  return { groups, known, total: known + unknown }
 }

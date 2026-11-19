@@ -5,7 +5,7 @@ import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } f
 import { Button } from '@/components/ui/button'
 import { XIcon } from '@phosphor-icons/react'
 import { DOMAIN_FRAMES, OTHER_FRAME, frameOf } from '../domains'
-import { setsuGroupOf, setsuLabelOf, UNKNOWN_SETSU, type SetsuGroup } from '../setsu-groups'
+import { setsuGroupOf, setsuLabelOf, unknownOf, UNKNOWN_SETSU, type SetsuGroup } from '../setsu-groups'
 import type { Moku } from '../types'
 import { Amt } from './amount'
 
@@ -44,14 +44,9 @@ function setsuRows(moku: Moku[], id: string): { setsu: Row[]; moku: Row[] } {
   }
 }
 
-/** 節の分からない分を持つ目（目の額から、区分の分かる節を引いた残り） */
-function unknownRows(moku: Moku[]): Row[] {
-  const rows: Row[] = []
-  for (const m of moku) {
-    const known = m.setsu.filter((s) => s.setsuId && setsuGroupOf(s.setsuId)).reduce((a, s) => a + s.yen, 0)
-    if (m.yen - known > 0) rows.push({ key: m.id, name: m.name, sub: pathOf(m), yen: m.yen - known })
-  }
-  return rows.sort((a, b) => b.yen - a.yen)
+/** 節の分からない分を持つ目（目の無い項も含む） */
+function unknownRows(units: Moku[]): Row[] {
+  return units.map((m) => ({ key: m.id, name: m.name, sub: pathOf(m), yen: unknownOf(m) })).filter((r) => r.yen > 0).sort((a, b) => b.yen - a.yen)
 }
 
 /** 一つの節（R1 以前の同じ名前の節も含む）にお金を出している目 */
@@ -95,7 +90,7 @@ function Rows({ title, rows, total }: { title: string; rows: Row[]; total: numbe
   )
 }
 
-export function MoneyDetail({ open, onClose, wide, moku, fields, groups, onProjects }: {
+export function MoneyDetail({ open, onClose, wide, moku, units, fields, groups, onProjects }: {
   /** 開いている詳細。閉じているときも閉じる動きのあいだは前の中身を出す */
   open: MoneyDetailKey | undefined
   onClose: () => void
@@ -103,6 +98,8 @@ export function MoneyDetail({ open, onClose, wide, moku, fields, groups, onProje
   wide: boolean
   /** 開いている会計の目（節つき） */
   moku: Moku[]
+  /** 目に、目の無い項・款を目の代わりに足したもの（節の分からない分に使う） */
+  units: Moku[]
   /** 入る→使うの分野（金額の多い順） */
   fields: { id: string; name: string; yen: number }[]
   /** 何に使う？の節の区分 */
@@ -123,9 +120,9 @@ export function MoneyDetail({ open, onClose, wide, moku, fields, groups, onProje
     if (!key) return undefined
     if (key.kind === 'field') return { kind: 'field' as const, rows: fieldRows(moku, key.id) }
     if (key.kind === 'setsuItem') return { kind: 'setsuItem' as const, rows: setsuItemRows(moku, key.id) }
-    if (key.id === UNKNOWN_SETSU) return { kind: 'unknown' as const, rows: unknownRows(moku) }
+    if (key.id === UNKNOWN_SETSU) return { kind: 'unknown' as const, rows: unknownRows(units) }
     return { kind: 'setsu' as const, ...setsuRows(moku, key.id) }
-  }, [key, moku])
+  }, [key, moku, units])
   // 押した節は、その会計の同じ節の和を見出しにし、入る区分を説明に出す
   const item = key?.kind === 'setsuItem' && body?.kind === 'setsuItem' ? { name: setsuLabelOf(key.id) ?? '節', yen: body.rows.reduce((a, r) => a + r.yen, 0), group: groups.find((g) => g.id === setsuGroupOf(key.id))?.name } : undefined
   const head = field ?? group ?? item

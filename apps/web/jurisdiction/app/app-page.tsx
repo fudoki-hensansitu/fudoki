@@ -481,13 +481,17 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
   const flows = current?.drills
   // 開いている会計の目（節つき）。何に使う？と詳細の引き出しが使う
   const allMoku = React.useMemo(() => (current ? [...current.drills.flatMap((k) => k.kou.flatMap((o) => o.moku)), ...current.loose] : []), [current])
+  // 目の無い項・款は、目の代わりに節の分からない分として数え、何に使う？の総額を会計の総額に揃える
+  const units = React.useMemo(() => (current ? [
+    ...current.drills.flatMap((k): Moku[] => (k.kou.length ? k.kou.flatMap((o): Moku[] => (o.moku.length ? o.moku : o.amountMissing ? [] : [{ id: o.id, name: o.name, yen: o.yen, setsu: [], path: [k.kan.name, null] }])) : k.kan.amountMissing ? [] : [{ id: k.kan.id, name: k.kan.name, yen: k.kan.yen, setsu: [] }])),
+    ...current.loose,
+  ] : []), [current])
   // 節で分けた額。節の分かる額が総額の半分に満たない（目の内訳が節でない資料が多い）ときは出さない
   const setsuView = React.useMemo(() => {
     if (!byMoku || byMoku === FAILED) return undefined
-    const base = allMoku.reduce((a, m) => a + m.yen, 0)
-    const { groups, known } = setsuGroups(allMoku, base)
-    return base > 0 && known >= base * 0.5 ? { groups, total: base } : undefined
-  }, [allMoku, byMoku])
+    const { groups, known, total } = setsuGroups(units)
+    return total > 0 && known >= total * 0.5 ? { groups, total } : undefined
+  }, [units, byMoku])
   // 詳細の引き出し（入る→使うの分野・何に使う？の区分）。入る→使うは一般会計なので、ほかの会計を開いているときは分野を押したら事業のタブへ移る
   const [detail, setDetail] = React.useState<MoneyDetailKey>()
   const wide = useMedia('(min-width: 768px)')
@@ -570,7 +574,7 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
         </Empty>
       )}
       {byMoku === FAILED ? <p className="text-xs text-muted-foreground">目の内訳（節）を読み込めませんでした。少し待ってから開き直してください。</p> : null}
-      <MoneyDetail open={detail} onClose={() => setDetail(undefined)} wide={wide} moku={allMoku} fields={v.fields} groups={setsuView?.groups ?? []} onProjects={(f) => { setDetail(undefined); openField(f) }} />
+      <MoneyDetail open={detail} onClose={() => setDetail(undefined)} wide={wide} moku={allMoku} units={units} fields={v.fields} groups={setsuView?.groups ?? []} onProjects={(f) => { setDetail(undefined); openField(f) }} />
     </div>
   )
 }
