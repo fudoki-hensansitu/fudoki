@@ -196,7 +196,7 @@ export interface Headline {
 export const appPageYears = (d: { settlementYears: number[]; budgetYears: number[] }) =>
   [...new Set([...d.settlementYears, ...d.budgetYears])].sort((a, b) => b - a).slice(0, 3)
 
-/** 自治体の頁のタブ。予算・決算・事業は年度の段の下（/tokyo/shinagawa/2026/budget）、財政（overview）は年度の段を持たない（/tokyo/shinagawa/finance）。自治体の頁そのもの（/tokyo/shinagawa）は、問いのある自治体ならまちの頭と問いのフィード（questions）、ほかは最新の年度の予算を出す */
+/** 自治体の頁のタブ。予算・決算・事業は年度の段の下（/tokyo/shinagawa/2026/budget）、財政（overview）は年度の段を持たない（/tokyo/shinagawa/finance）。自治体の頁そのもの（/tokyo/shinagawa）は、まちの頭と問いのフィード（questions） */
 export type PageTab = 'questions' | 'overview' | 'projects' | 'money' | 'settled'
 /** 年度の段の下に置くタブ */
 export type YearTab = Exclude<PageTab, 'overview' | 'questions'>

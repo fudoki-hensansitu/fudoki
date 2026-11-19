@@ -3,7 +3,6 @@
 // 札そのものをレジに見立て、平らな描き方に揃える。押し出された前の紙だけを立体にする（ribbon3d.ts）。
 // 1人あたりは予算を人口で割った額（払った税金の額ではない）。分野の行の和が合計に合うよう、大きい端数から1円ずつ足して丸める
 import * as React from 'react'
-import { hasQuestions } from '../jurisdiction/questions'
 import { encode } from 'uqr'
 import { ArrowRightIcon, CheckIcon, LinkIcon, XLogoIcon } from '@phosphor-icons/react'
 import { Link } from '../nav/link'
@@ -11,7 +10,6 @@ import { cn } from '@/lib/utils'
 import { titleVariants } from '@/components/ui/title'
 import { reiwa, yearName } from '../jurisdiction/types'
 import type { YearView } from '../jurisdiction/app/data'
-import { OTHER_FRAME } from '../jurisdiction/domains'
 import { FieldIcon } from './parts'
 import { perHeadParts } from './per-head'
 import { withUnits } from './units'
@@ -517,16 +515,12 @@ export function ReceiptMachine({ code, name, v, year, pop, base, detailHref, hea
               {f.examples ? <span className="mt-1 block pl-7 text-xs text-muted-foreground">{f.examples}</span> : null}
             </>
           )
-          // 「気になる」の問いのあるまちは、その分野の問いのフィードを開く（その他も問いがある。問いは年度の段を持たないので base の年度を外す）。無いまちは事業の絞り込みを開き、その他は絞り込みに無いので押せない
+          // 分野の問いのフィードを開く（その他も問いがある。問いは年度の段を持たないので base の年度を外す）
           return (
             <li key={f.id}>
-              {f.id === OTHER_FRAME.id && !hasQuestions(code) ? (
-                <div className="px-2 py-2">{row}</div>
-              ) : (
-                <Link href={hasQuestions(code) ? `${base.replace(/\/\d{4}$/, '')}?field=${f.id}` : `${base}/projects?field=${f.id}`} className="block rounded-lg px-2 py-2 transition-colors hover:bg-card">
-                  {row}
-                </Link>
-              )}
+              <Link href={`${base.replace(/\/\d{4}$/, '')}?field=${f.id}`} className="block rounded-lg px-2 py-2 transition-colors hover:bg-card">
+                {row}
+              </Link>
             </li>
           )
         })}

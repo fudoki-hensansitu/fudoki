@@ -62,7 +62,6 @@ import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock, type AskHandle, type PresetAnswer } from '../ask-dock'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type Moku, type MokuBreakdowns, type PageData, type PageFlow, type YearTotal, TAB_SLUGS, FINANCE_SLUG, hasDocument, type PageTab } from '../types'
-import { hasQuestions } from '../questions'
 import { QuestionFeedView } from '../questions/feed'
 import { Chip } from '../chip'
 import { Mark as BrandMark } from '../../nav/site-nav'
@@ -1201,13 +1200,8 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
             {/* 狭い画面はサイドバーが無いので、左上に風土記のマークを置いてホームへ戻れるようにする */}
             <Link href="/" aria-label="風土記 ホーム" className="mt-4 inline-flex md:hidden"><BrandMark className="size-8 text-primary" /></Link>
             {hero}
-            {/* 問いを作っていないまちは、まちの頭と4つの入口だけ */}
-            {hasQuestions(data.code) ? (
-              <>
-                <Separator />
-                <div className="pt-6"><QuestionFeedView feed={questions} onOpen={(q) => ask.current?.openPreset(q.q)} /></div>
-              </>
-            ) : null}
+            <Separator />
+            <div className="pt-6"><QuestionFeedView feed={questions} onOpen={(q) => ask.current?.openPreset(q.q)} /></div>
           </>
         ) : (
         <>

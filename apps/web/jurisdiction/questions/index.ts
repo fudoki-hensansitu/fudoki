@@ -6,10 +6,12 @@ const FEEDS: Record<string, () => Promise<QuestionFeed>> = {
   '131091': () => import('./131091').then((m) => m.feed),
 }
 
-/** 「気になる」のタブを出す自治体か */
-export const hasQuestions = (code: string) => code in FEEDS
-
-export const loadQuestions = (code: string): Promise<QuestionFeed> | undefined => FEEDS[code]?.()
+/** 自治体の問い。全自治体に作り置きの問いを持つ */
+export function loadQuestions(code: string): Promise<QuestionFeed> {
+  const load = FEEDS[code]
+  if (!load) throw new Error(`「気になる」の問いがありません: ${code}`)
+  return load()
+}
 
 /** 分野のフィード。すべてなら決めた並び、分野なら先頭の問い（1人いくら）とその分野の問い */
 export function feedOf(feed: QuestionFeed, field: string | null): Question[] {

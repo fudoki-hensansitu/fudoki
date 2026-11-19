@@ -115,9 +115,9 @@ async function entryProps(c: Context, path: string): Promise<JurisdictionProps> 
   const initial = years.find((y) => hasDocument(props.data, y, 'initial'))
   const year = initial ?? years.find((y) => hasDocument(props.data, y, 'settlement')) ?? years[0]
   if (year === undefined) return props
-  // 入口はまちの頭（問いのあるまちは問いのフィードも）。予算・決算・事業・財政はそこから開く単体の頁
+  // 入口はまちの頭と問いのフィード（全自治体に問いを持つ）。予算・決算・事業・財政はそこから開く単体の頁
   const questions = await loadQuestions(props.data.code)
-  return { ...props, year, tab: 'questions', ...(questions ? { questions } : {}) }
+  return { ...props, year, tab: 'questions', questions }
 }
 
 /** 事業の ID の段。事業の ID と、事業の収録の無い自治体で目を事業の代わりにした ID（moku:<subject_id>） */

@@ -5,7 +5,7 @@
 - 頁は `apps/web/pages/[prefecture]/` の下にある。全自治体が同じ頁・同じ loader（`_loader.ts`）を通る。自治体ごとの分岐やデータを頁・コンポーネントに書かない
 - 金額・事業・事業評価は apps/api から取る（`server/app-data.ts`。年度・タブ・流れ図の会計は頁の URL で、loader が props で渡す）。手で起こしたデータを web に置かない。web が持つのは API に無い都市像（`jurisdiction/visions.ts`）と紋章（`jurisdiction/emblems.ts`）と、「気になる」の問いと作り置きの答え（`jurisdiction/questions/`。今は品川区だけを手で置いている仮の置き場で、他の自治体は pipeline で作って移す。LLM の費用が出るので作る前に yuito に確かめる）
 - データの取得は `server/jurisdiction-routes.ts`（Worker の中には置かず CDN の ISR に置く）。頁・OG 画像・sitemap が同じ関数を使う。事業は頁ごとに読む（`jurisdiction/app/api.ts`。サーバーは api の内部の RPC、ブラウザは web の `/api/projects`。全件を手元に取らない）
-- 自治体の URL（`/tokyo/shinagawa`、canonical も同じ）は入口。画面の半分ほどのまちの頭（紋章・名前・最新の予算と1人あたり）と、予算・決算・事業・財政の4つの入口を置き、問いのある自治体はその下に問いのフィード（`?field=` で分野）を流す。予算・決算・事業・財政はタブで切り替えず、入口から開く単体の頁にする（上に「← 自治体名」、予算と決算の頁の終わりにもう一方への入口）。財政は年度の段の無い `/tokyo/shinagawa/finance`。もとの年度つきの `/tokyo/shinagawa/2026` はその年度の予算の頁へ転送する。予算・決算・事業の頁は年度つきの URL（`/tokyo/shinagawa/2026/projects`）にし、年度の無い URL は最新の年度へ転送する
+- 自治体の URL（`/tokyo/shinagawa`、canonical も同じ）は入口。画面の半分ほどのまちの頭（紋章・名前・最新の予算と1人あたり）と、予算・決算・事業・財政の4つの入口を置き、その下に問いのフィード（`?field=` で分野）を流す。予算・決算・事業・財政はタブで切り替えず、入口から開く単体の頁にする（上に「← 自治体名」、予算と決算の頁の終わりにもう一方への入口）。財政は年度の段の無い `/tokyo/shinagawa/finance`。もとの年度つきの `/tokyo/shinagawa/2026` はその年度の予算の頁へ転送する。予算・決算・事業の頁は年度つきの URL（`/tokyo/shinagawa/2026/projects`）にし、年度の無い URL は最新の年度へ転送する
 - 描画は `jurisdiction/app/app-page.tsx`、AI に質問する欄は `jurisdiction/ask-dock.tsx`
 
 ## 都市像（visions.ts）

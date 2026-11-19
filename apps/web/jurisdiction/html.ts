@@ -224,11 +224,11 @@ export function financeHead(d: PageData): Head {
   return head(`${d.name}の財政（借金・貯金・財政の指標）｜風土記`, `${d.name}の借金と貯金、事業に回ったお金、実質収支などの財政の指標を、総務省の${source}から年度を並べて見られます。`, `${ORIGIN}${jurisdictionPath(d.code)}/${FINANCE_SLUG}`)
 }
 
-/** 問いのあるまちの入口（/tokyo/shinagawa）の head。入口はまちの頭と問いのフィードで、予算・決算・事業・財政はそこから開く */
+/** 自治体の入口（/tokyo/shinagawa）の head。入口はまちの頭と問いのフィードで、予算・決算・事業・財政はそこから開く */
 export const questionsHead = (d: PageData): Head =>
   head(`${d.name}のお金の使い道｜風土記`, `借金は多い？貯金はなぜ使わない？${d.name}のお金について気になる問いに、予算書・決算書の数字で答えます。答えからそのまま AI に続けて聞けます。`, `${ORIGIN}${jurisdictionPath(d.code)}`)
 
-/** sitemap。入口・まち比べ（/compare と問いの頁）と、財政（/tokyo/shinagawa/finance）と各年度のタブの頁（/tokyo/shinagawa/2026/projects）を載せる。自治体の頁そのもの（/tokyo/shinagawa）は入口（まちの頭と、問いのあるまちは問いのフィード）。years は頁で選べる年度（新しい順） */
+/** sitemap。入口・まち比べ（/compare と問いの頁）と、財政（/tokyo/shinagawa/finance）と各年度のタブの頁（/tokyo/shinagawa/2026/projects）を載せる。自治体の頁そのもの（/tokyo/shinagawa）は入口（まちの頭と問いのフィード）。years は頁で選べる年度（新しい順） */
 export const sitemapXml = (entries: CatalogEntry[], yearsOf: (e: CatalogEntry) => number[] = (e) => [...e.settlementYears].sort((a, b) => b - a)) =>
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${ORIGIN}/</loc></url><url><loc>${ORIGIN}/assistant</loc></url><url><loc>${ORIGIN}/about</loc></url><url><loc>${ORIGIN}/compare</loc></url>${QUESTIONS.map((q) => `<url><loc>${ORIGIN}/compare/${q.slug}</loc></url>`).join('')}${entries
     .filter((e) => e.settlementYears.length > 0)
