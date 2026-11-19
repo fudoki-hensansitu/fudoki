@@ -21,7 +21,7 @@
 - Goal: 会話の答えの横に、自治体の頁と同じ部品で図・表・出典の頁を出す。数字はすべて tool が引いたデータから出し、AI が書いた数字を部品に入れない。
 - Non-Goal: 部品の組み合わせ・レイアウトを AI に決めさせること（json-render などの、AI が UI の JSON を書く形）。比べた結果は「Considered Options」。
 - Non-Goal: 公開 MCP（`/mcp`）に同じ部品を出すこと。部品を packages に移して `apps/api/ui` の View に同梱すれば出せるが、外部の利用がほぼ無いので、web で形が固まってからにする。
-- Non-Goal: 出典 PDF の頁を会話・頁の中で開くこと（`show_source_page`）。自前の R2 から読むには「api は R2 の binding を持たない」（`pipeline/verify/boundaries.ts`・`apps/AGENTS.md`）を見直す必要があり、利用条件の判断も要るので、別の dd と ADR で決める（「関連: 出典の頁」）。
+- Non-Goal: 出典 PDF の頁を会話・頁の中で開くこと（`show_source_page`）。自前の R2 から読むには「api は R2 の binding を持たない」（`pipeline/verify/boundaries.ts`・`apps/AGENTS.md`）を見直す必要があり、利用条件の判断も要るので、見送った（「関連: 出典の頁」）。
 - Non-Goal: 款・項のサンキー（`Overview`）・節の「何に使う？」・年度の推移・事業のカード。この4つで仕組みを通してから、同じ形で足す。
 
 ## Background
@@ -38,14 +38,15 @@
 見せる tool は web の `server/views/` に置く `dynamicTool` で、結果を次の形で返す。
 
 ```ts
-type ViewResult = {
-  content: [{ type: 'text'; text: string }] // AI に渡す。部品に出した要点（総額などの数字は tool が引いた値）と「画面に出した」旨
-  view: { kind: ViewKind; v: 1; data: unknown } // 画面だけが読む。AI には渡らない
-  isError?: true
-}
+type ViewResult =
+  | {
+      content: [{ type: 'text'; text: string }] // AI に渡す。部品に出した要点（総額などの数字は tool が引いた値）と「画面に出した」旨
+      view: { kind: ViewKind; v: 1; data: unknown } // 画面だけが読む。AI には渡らない
+    }
+  | { content: [{ type: 'text'; text: string }]; isError: true } // 収録の無い年度など。view は付けない
 ```
 
-- `view` は `toolText` が読まないので AI には渡らない（`_meta` の候補と同じ扱い）。`forServer` は output を text だけに作り直すので、server にも送り返されない。sessionStorage には残り、前の回の部品も描き直せる。
+- `view` は `toolText` が読まないので AI には渡らない（`_meta` の候補と同じ扱い）。そのため見せる tool も、ほかの tool と同じく `toModelOutput` で `toolText` を通す（登録しないと AI SDK の既定の変換が output 全体を AI に渡し、`view` が届く）。`forServer` は output を text だけに作り直すので、server にも送り返されない。sessionStorage には残り、前の回の部品も描き直せる。
 - `content` の text には、AI が答えの文を書くのに要る要点だけを入れる（例: 総額・1人あたり・上位3つの分野と額）。全行は入れない。「図と同じ数字を並べ直さず、図で読み取れることを短く書く」と system prompt に足す。
 - 失敗（収録の無い年度など）は `isError` と、理由の text だけを返し、`view` を付けない。AI は text を見て「無い」と答える。
 - `kind` ごとの `data` の型は zod で `chat/views/schema.ts` に置き（web は今 zod を持たないので依存に足す。server と画面の両方が import する）、server が返す前と、画面が描く前の両方で `safeParse` する。sessionStorage に古い版の data が残っていても、形が違えば描かずに印だけにする（`v` で版を区別する）。
@@ -95,9 +96,9 @@ type ViewResult = {
 - **データ tool の結果をそのまま部品にする（見せる tool を作らない）**: 検索のたびに表が出て、AI が下調べに呼んだ結果まで画面に並ぶ。どれを見せるかを AI が選べない。
 - **前の tool の結果を ID で指す見せる tool**: 引き直しが要らないが、`execute` に届く履歴は AI に渡した text だけで、行のデータが無い。server に結果を取っておく置き場が要る。
 
-## 関連: 出典の頁（別の dd で決める）
+## 関連: 出典の頁（見送り）
 
-出典 PDF を会話と自治体の頁の中で開く部品（`show_source_page`）は、この dd に入れない。2026-11-19 のレビューで分かった前提を残す。
+出典 PDF を会話と自治体の頁の中で開く部品（`show_source_page`）は作らない。2026-11-19 に yuito が見送った（元の PDF は配らず公式 URL から取る、という 2026-11-12 の決定を保つ）。考え直すときのために、レビューで分かった前提を残す。
 
 - 「api は R2 の binding を持たない」は検査（`pipeline/verify/boundaries.ts` の `apiHasNoR2Binding`）と `apps/AGENTS.md` の決まり。非公開の bucket（`fudoki-inputs`）には取り込みの Parquet も入り、binding は読み取りだけにも prefix にも絞れない。R2 から出すなら、公開してよい PDF だけを写した別の bucket を api に繋ぐ案と、ADR が要る。
 - `origin_id` は出典の sha256 そのもの。R2 の key（`fiscal/source-selection/<自治体>/<年度>/<資料>[-<分冊>].pdf`）は選定の JSON の受領書にあり、D1 には無い。`fiscal_origin` は `pipeline/dbt/scripts/prepare.py` の `track_origin` が組むので、key を足すならそこ。ただし `fiscal_origin` の列は公開 REST にそのまま出る。
