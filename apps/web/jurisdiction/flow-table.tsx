@@ -28,8 +28,8 @@ import { cn } from '@/lib/utils'
 import { formatShare, formatYen, type Drill } from './types'
 
 const LEVELS = ['款', '項', '目', '節'] as const
-/** 行の頭の印。目の下の事業は、節と同じ目の額の別の切り口なので、節と足さないよう「事業で分けると」の行の下にまとめる */
-const labelOf = (n: Node) => (n.project ? '事業' : n.group ? '' : LEVELS[n.depth])
+/** 行の頭の印。目の下の事業は、節と同じ目の額の別の切り口なので、節と足さないよう額を出さない「事業」の行の下にまとめる（事業の行には印を付けない） */
+const labelOf = (n: Node) => (n.project || n.group ? '' : LEVELS[n.depth])
 const childLabelOf = (n: Node) => (n.group ? '事業' : LEVELS[n.depth + 1])
 
 interface Node {
@@ -59,7 +59,7 @@ const toNodes = (drills: Drill[]): Node[] =>
         subRows: m.setsu.length || m.projects?.length ? [
           ...m.setsu.map((s, k): Node => ({ id: `${m.id}:setsu:${k}`, name: s.name, yen: s.yen, missing: s.amountMissing, depth: 3, src: s.src, setsuId: s.setsuId })),
           ...(m.projects?.length ? [{
-            id: `${m.id}:projects`, name: '事業で分けると（節と同じ額の別の分け方）', yen: 0, depth: 3, group: true as const,
+            id: `${m.id}:projects`, name: '事業', yen: 0, depth: 3, group: true as const,
             subRows: m.projects.map((s, j): Node => ({ id: `${m.id}:project:${j}`, name: s.name, yen: s.yen, missing: s.amountMissing, depth: 4, project: true as const, src: s.src })),
           }] : []),
         ] : undefined,
