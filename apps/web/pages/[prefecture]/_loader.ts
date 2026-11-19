@@ -115,10 +115,9 @@ async function entryProps(c: Context, path: string): Promise<JurisdictionProps> 
   const initial = years.find((y) => hasDocument(props.data, y, 'initial'))
   const year = initial ?? years.find((y) => hasDocument(props.data, y, 'settlement')) ?? years[0]
   if (year === undefined) return props
-  // 問いのあるまちの入口は、まちの頭と問いのフィード。予算・決算・事業・財政はそこから開く
+  // 入口はまちの頭（問いのあるまちは問いのフィードも）。予算・決算・事業・財政はそこから開く単体の頁
   const questions = await loadQuestions(props.data.code)
-  if (questions) return { ...props, year, tab: 'questions', questions }
-  return { ...props, year, tab: initial !== undefined ? 'money' : 'settled' }
+  return { ...props, year, tab: 'questions', ...(questions ? { questions } : {}) }
 }
 
 /** 事業の ID の段。事業の ID と、事業の収録の無い自治体で目を事業の代わりにした ID（moku:<subject_id>） */
@@ -268,10 +267,10 @@ export const jurisdictionHead = (p: JurisdictionProps): Head => {
   if (p.projectFull) return projectHead(p.data, p.projectFull)
   if (p.project) return projectFallbackHead(p.data, p.project)
   if (p.tab === 'overview') return financeHead(p.data)
-  if (p.tab === 'questions') return questionsHead(p.data)
+  if (p.questions) return questionsHead(p.data)
   const year = p.year ?? appPageYears(p.data)[0]
   const opened = year === undefined ? undefined : p.snapshot?.years[String(year)]
-  return pageHead(p.data, p.year, p.tab ? { tab: p.tab } : undefined, opened && year !== undefined ? { year, kind: opened.kind, yen: opened.total, originTitle: opened.originTitle, areas: areasOfFields(opened.fields) } : undefined)
+  return pageHead(p.data, p.year, p.tab && p.tab !== 'questions' ? { tab: p.tab } : undefined, opened && year !== undefined ? { year, kind: opened.kind, yen: opened.total, originTitle: opened.originTitle, areas: areasOfFields(opened.fields) } : undefined)
 }
 
 /** 最後の節に出す近くの自治体の数 */

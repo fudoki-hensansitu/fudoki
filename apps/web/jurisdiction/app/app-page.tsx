@@ -1,9 +1,10 @@
 // 自治体の頁（アプリ型）。ヘッダーの下を「予算・決算・事業・財政」のタブにし（予算・決算のタブはどの年度にも出す。自治体の頁そのものは最新の年度の予算を出す）。事業は一覧から事業の頁へ移る。
-// 一覧は名前と金額だけを出し、説明は詳細にだけ出す。部品は shadcn/ui（Tabs・Carousel・Card・Input・ToggleGroup）
+// 一覧は名前と金額だけを出し、説明は詳細にだけ出す。部品は shadcn/ui（Card・Input・ToggleGroup）
 import * as React from 'react'
 import { useNavigation, useRouter } from '@void/react'
 import {
   ArrowLeftIcon,
+  ArrowRightIcon,
   ArrowSquareOutIcon,
   BankIcon,
   BasketballIcon,
@@ -39,11 +40,9 @@ import { MoreDots } from '@/components/more-dots'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel'
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { createColumnHelper, tableFeatures, useTable } from '@tanstack/react-table'
 import { Empty, EmptyContent, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
@@ -408,22 +407,6 @@ function FieldRow({ f, i, max, total, onClick, grow = true }: { f: { name: strin
     </Row>
   )
 }
-
-// タブのスワイプは、横に動かせる中身（Carousel・横スクロールの列・表）の上では始めない。始めると中身より先にタブが動く
-// マウスで押して動かすのは文字を選ぶ操作なので、タブのスワイプは指でだけ始める（マウスではタブを押して移る）。指でも、文字を選んでいる間は始めない
-function startsTabSwipe(api: NonNullable<CarouselApi>, evt: MouseEvent | TouchEvent) {
-  if (!('touches' in evt)) return false
-  const selection = window.getSelection()
-  if (selection && !selection.isCollapsed) return false
-  const root = api.rootNode()
-  for (let el = evt.target instanceof Element ? evt.target : null; el && el !== root; el = el.parentElement) {
-    if (el instanceof HTMLElement && el.dataset.slot === 'carousel') return false
-    const x = getComputedStyle(el).overflowX
-    if ((x === 'auto' || x === 'scroll') && el.scrollWidth > el.clientWidth) return false
-  }
-  return true
-}
-
 
 const GENERAL = '一般会計'
 
@@ -1093,7 +1076,6 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     const next = location.pathname + (q.size ? `?${q}` : '') + location.hash
     if (next !== location.pathname + location.search + location.hash) history.replaceState(history.state, '', next)
   }, [idle, tab, projectPage, query, filter, fields.join()])
-  const phone = useMedia('(max-width: 767px)')
   // やめた事業は前の年度の科目を持つので、やめた事業を出すときは前の年度の分野の科目を読んで分野を引く
   const prevKey = d.prev ? `field-subjects:${d.code}:${d.prev.year}` : ''
   const [prevFields, setPrevFields] = React.useState<{ key: string; x: Record<string, string[]> }>()
@@ -1153,73 +1135,18 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   // 分野（何に使う？の棒・入る→使うの分野）を押したら、その分野で絞った事業のタブへ移る
   const openField = (id: string) => go('projects', { field: id })
 
-  // スマホではタブの中身を左右のスワイプで切り替える（shadcn の Carousel）。高さは今のタブに合わせる
-  const [api, setApi] = React.useState<CarouselApi>()
-  // 予算・決算のタブはどの年度にも出す。収録の無い年度はタブの中で「まだ収録していない」と出す
-  // 問いのあるまちは、頁の入口（/tokyo/shinagawa）をまちの頭と問いのフィードにし、予算・決算・事業・財政はそこから開く頁にする
-  const tabs = TABS
+  // 予算・決算・事業・財政は入口（/tokyo/shinagawa）から開く単体の頁にし、タブで切り替えない
   const hub = tab === 'questions' && !projectPage
-  const tabsRef = React.useRef(tabs)
-  tabsRef.current = tabs
-  // 事業評価は評価した事業を行った年度にだけある。評価の無い年度へ移ったら絞り込みを戻す
-  const index = Math.max(0, tabs.findIndex((t) => t.key === tab))
-  // 始めの位置は Carousel を置いたときだけ渡す。タブのたびに変わると embla が作り直されて、滑らずに飛ぶ
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  const carouselOpts = React.useMemo(() => ({ startIndex: index, watchDrag: startsTabSwipe }), [phone])
-  React.useEffect(() => {
-    if (!api) return
-    const onSelect = () => changeTab(tabsRef.current[api.selectedScrollSnap()]!.key)
-    api.on('select', onSelect)
-    return () => void api.off('select', onSelect)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [api])
-  React.useEffect(() => {
-    // タブを押したときは滑らせずに切り替える（指で横に動かしたときは指に付いて動く）
-    if (api && api.selectedScrollSnap() !== index) api.scrollTo(index, true)
-  }, [api, index])
-  const slides = React.useRef<(HTMLDivElement | null)[]>([])
-  const [height, setHeight] = React.useState<number>()
-  React.useEffect(() => {
-    if (!phone) return
-    const el = slides.current[index]
-    if (!el) return
-    const ro = new ResizeObserver(() => setHeight(el.offsetHeight))
-    ro.observe(el)
-    return () => ro.disconnect()
-    // 事業の頁から戻ると Carousel が作り直されるので、新しいスライドを測り直す
-  }, [phone, index, v, projectPage])
-
-  const header = (
-    <header className="grid grid-cols-[80px_minmax(0,1fr)] items-start gap-4 py-7 sm:grid-cols-[108px_minmax(0,1fr)] sm:gap-6">
-      <div className="grid size-20 place-items-center rounded-xl border bg-emblem p-3 sm:size-[108px] sm:rounded-2xl sm:p-4">
-        {emblem ? <img src={emblem} alt="" className="size-full min-h-0 min-w-0 object-contain" /> : <span className={cn(titleVariants({ size: 'display' }), 'font-normal text-foreground')}>{data.name[0]}</span>}
-      </div>
-      <div className="flex min-w-0 flex-col gap-2">
-        {/* 年度の切り替えは、財政以外のタブの頭に置く（財政は年度をまたぐので置かない） */}
-        {/* 見出しは自治体名だけ。「の予算と決算」は検索の題（title）にだけ持つ */}
-        <Title size="h2" as="h1" className="min-w-0 font-normal">{hasQuestions(data.code) ? <Link href={data.path} className="no-underline hover:text-primary">{data.name}</Link> : data.name}</Title>
-        {vision ? <p className="text-base leading-snug">{vision}</p> : null}
-        <div className="mt-1 flex flex-wrap gap-x-3 gap-y-2 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
-          <span className="inline-flex items-center gap-1 sm:gap-2"><MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" />{data.prefecturePath ? <Button variant="link" size="inline" nativeButton={false} render={<Link href={data.prefecturePath} />}>{data.prefecture}</Button> : data.prefecture}</span>
-          {data.population ? (
-            <Hint label={`住民基本台帳人口（${formatAsOf(data.population.asOf)}時点）`}>
-              <span className="inline-flex items-center gap-1 text-foreground sm:gap-2"><UsersIcon className="size-3.5 text-muted-foreground sm:size-4" aria-hidden="true" /><span className="sr-only">人口 </span>{formatPeople(data.population.people)}</span>
-            </Hint>
-          ) : null}
-          {data.officialUrl ? <span className="inline-flex items-center gap-1 sm:gap-2"><GlobeIcon className="size-3.5 sm:size-4" aria-hidden="true" /><Button variant="link" size="inline" nativeButton={false} render={<a href={data.officialUrl} target="_blank" rel="noopener" />}>公式サイト</Button></span> : null}
-        </div>
-      </div>
-    </header>
-  )
-
 
   // 入口のまちの頭。画面の半分ほどを使ってまちを大きく見せ、予算・決算・事業・財政への入口を並べる
   const hl = data.headline
   const lead = hl?.budget ? { label: '予算', ...hl.budget } : hl?.settlement ? { label: '決算', ...hl.settlement } : undefined
   const people = data.population?.people
+  /** その資料を収録した最新の年度（無ければ開いている年度） */
+  const latestOf = (doc: 'initial' | 'settlement') => years.find((y) => hasDocument(data, y, doc)) ?? year
   const doors: { key: TabKey; sub: string; year: number }[] = [
-    { key: 'money', sub: '何に使う予定か', year: hl?.budget?.year ?? year },
-    { key: 'settled', sub: '何に使ったか', year: hl?.settlement?.year ?? year },
+    { key: 'money', sub: '何に使う予定か', year: latestOf('initial') },
+    { key: 'settled', sub: '何に使ったか', year: latestOf('settlement') },
     { key: 'projects', sub: '一つ一つの使い道', year },
     { key: 'overview', sub: '借金と貯金', year },
   ]
@@ -1276,39 +1203,31 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
           </>
         ) : (
         <>
-        {header}
-        <Separator />
-        <Tabs value={tab} onValueChange={(t) => changeTab(t as TabKey)} className="gap-0">
-          <div ref={tabsTop} aria-hidden="true" />
-          {/* 区切りの線は画面の端から端まで引く（50cqw は外側の幅の半分、50% は中身の幅の半分。px で文字の位置は中身に揃える） */}
-          <div ref={stickyBar} className="sticky top-0 z-20 mx-[calc(50%-50cqw)] px-[calc(50cqw-50%)] bg-background">
-            {/* 下線を区切りの線に重ねて、線が二重に見えないようにする */}
-            <Separator className="absolute inset-x-0 bottom-0 data-horizontal:w-auto" />
-            {/* スクロールしたら上にタブを残す。下に Separator を引いて中身と分ける */}
-            <div className="flex items-center gap-3">
+        <div ref={tabsTop} aria-hidden="true" />
+        {/* 区切りの線は画面の端から端まで引く（50cqw は外側の幅の半分、50% は中身の幅の半分。px で文字の位置は中身に揃える） */}
+        <div ref={stickyBar} className="sticky top-0 z-20 mx-[calc(50%-50cqw)] px-[calc(50cqw-50%)] bg-background">
+          <Separator className="absolute inset-x-0 bottom-0 data-horizontal:w-auto" />
+          <div className="relative z-10 flex h-[52px] min-w-0 items-center">
             {projectPage ? (
-              <div className="relative z-10 flex h-[52px] min-w-0 flex-1 items-center">
-                {/* 入れ子の事業は上の事業をパンくずに並べる。分かるまでは事業のタブへ戻るボタンを出しておく */}
-                <ClientSuspense fallback={<ProjectCrumbs base={data.path} label="事業" close={closeProject} open={openProject} ancestors={[]} />} ready={!!res.peek(projectLatestKey(projectPage))}>
-                  <ProjectBack res={res} id={projectPage} base={data.path} label="事業" close={closeProject} open={openProject} />
-                </ClientSuspense>
-              </div>
+              // 入れ子の事業は上の事業をパンくずに並べる。分かるまでは事業の頁へ戻るボタンを出しておく
+              <ClientSuspense fallback={<ProjectCrumbs base={data.path} label="事業" close={closeProject} open={openProject} ancestors={[]} />} ready={!!res.peek(projectLatestKey(projectPage))}>
+                <ProjectBack res={res} id={projectPage} base={data.path} label="事業" close={closeProject} open={openProject} />
+              </ClientSuspense>
             ) : (
-            <TabsList variant="line" size="lg" className="relative z-10 min-w-0 flex-1 justify-start gap-0 overflow-x-auto p-0 [scrollbar-width:none] sm:gap-4">
-              {tabs.map((t) => (
-                <TabsTrigger key={t.key} value={t.key} nativeButton={false} render={<a href={pageHref(year, t.key)} />} onClick={(e) => (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey ? e.preventBaseUIHandler() : e.preventDefault())} className="no-underline h-full flex-none focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:text-foreground data-active:text-primary data-active:hover:text-primary data-active:focus-visible:text-primary dark:data-active:text-primary group-data-horizontal/tabs:after:-bottom-[0.5px] group-data-horizontal/tabs:after:h-[2.5px] after:bg-primary">
-                  <t.icon data-icon="inline-start" />
-                  {t.label}
-                </TabsTrigger>
-              ))}
-            </TabsList>
+              <Breadcrumb className="min-w-0">
+                <BreadcrumbList className="flex-nowrap text-sm sm:text-base">
+                  <BreadcrumbItem className="shrink-0">
+                    <BreadcrumbLink render={<Link href={data.path} />} className="inline-flex items-center gap-1"><ArrowLeftIcon className="size-4 shrink-0" aria-hidden="true" />{data.name}</BreadcrumbLink>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
             )}
-            </div>
+          </div>
             {/* 帯の高さを変えると中身がずれて出し入れが揺れるので、帯の下に重ねて出す（幅は帯と同じく画面の端から端まで） */}
             {yearStuck && v ? (
               <div className="relative h-0">
               <div className="absolute inset-x-0 top-0 mx-[calc(50%-50cqw)] flex h-12 items-center justify-between gap-3 border-b bg-background px-[calc(50cqw-50%)]">
-                <span className="truncate text-sm font-semibold">{projectPage ? '' : tabs.find((t) => t.key === tab)?.label}</span>
+                <span className="truncate text-sm font-semibold">{projectPage ? '' : TABS.find((t) => t.key === tab)?.label}</span>
                 <div className="shrink-0">
                   <div className="md:hidden"><YearMenu years={years} current={v.year} onChange={setYear} /></div>
                   <div className="max-md:hidden"><YearPicker years={years} current={v.year} onChange={setYear} hrefOf={yearHref} /></div>
@@ -1321,33 +1240,28 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
             <AppContext.Provider value={{ d, page: data, years, v, res, openProject, go, openField, flow, flowFailed, pickAccount, setsu, extras: extrasProp, prevFieldSubjects, setYear, yearHref }}>
               {projectPage ? (
                 <div key={projectPage} className="pt-6"><ProjectPage id={projectPage} /></div>
-              ) : phone ? (
-                <Carousel setApi={setApi} opts={carouselOpts} className="-mx-4 pt-5">
-                  <CarouselContent className="ml-0 items-start" style={{ height }}>
-                    {tabs.map((t, i) => (
-                      <CarouselItem key={t.key} className="px-4">
-                        <div ref={(el) => void (slides.current[i] = el)}>{panel(t.key)}</div>
-                      </CarouselItem>
-                    ))}
-                  </CarouselContent>
-                </Carousel>
               ) : (
-                tabs.map((t) => (
-                  <TabsContent key={t.key} value={t.key} className="pt-6">
-                    {panel(t.key)}
-                  </TabsContent>
-                ))
+                <div className="pt-6">
+                  {panel(tab)}
+                  {/* 予算と決算は見比べたくなるので、頁の終わりにもう一方への入口を置く */}
+                  {tab === 'money' || tab === 'settled' ? (
+                    <p className="pt-10">
+                      <Button variant="link" size="inline" nativeButton={false} render={<Link href={tab === 'money' ? pageHref(latestOf('settlement'), 'settled') : pageHref(latestOf('initial'), 'money')} />} className="inline-flex items-center gap-1 text-base">
+                        {tab === 'money' ? '決算を見る' : '予算を見る'}<ArrowRightIcon className="size-4" aria-hidden="true" />
+                      </Button>
+                    </p>
+                  ) : null}
+                </div>
               )}
 
             </AppContext.Provider>
           ) : (
             <p className="pt-6 text-sm text-muted-foreground">データを読み込めませんでした。頁を読み込み直してください。</p>
           )}
-        </Tabs>
         </>
         )}
       </div>
-      <AskDock name={data.name} code={data.code} sitekey={sitekey} year={year} detail={() => (v ? (projectPage ? describeProject(res.peek<Loaded<ProjectFull>>(projectLatestKey(projectPage))) : '') : '')} section={tabs.find((t) => t.key === tab)?.label} ask={askLabel(tab)} preset={preset} handle={ask} />
+      <AskDock name={data.name} code={data.code} sitekey={sitekey} year={year} detail={() => (v ? (projectPage ? describeProject(res.peek<Loaded<ProjectFull>>(projectLatestKey(projectPage))) : '') : '')} section={TABS.find((t) => t.key === tab)?.label} ask={askLabel(tab)} preset={preset} handle={ask} />
     </div>
   )
 }
