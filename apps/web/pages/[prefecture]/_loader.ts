@@ -219,7 +219,7 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
       .catch(() => undefined) : undefined,
     // 流れの左に出す一般会計の歳入。読めない・収録の無いときは空にして、歳出の流れだけを描く（頁は止めない）
     entry && phase && account === ACCOUNT ? within(loadRevenueFlow(env, entry.code, year, phase), FLOW_WAIT_MS).catch(() => []) : [],
-    newest && latestSettled !== undefined && (latestSettled !== year || phase === 'initial') ? within(loadSettlementSummary(env, props.data.code, latestSettled), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
+    newest && latestSettled !== undefined && (latestSettled !== year || phase === 'initial' || props.tab === 'questions') ? within(loadSettlementSummary(env, props.data.code, latestSettled), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
   ])
   const flow = expenditureFlow && revenueFlow.length ? { ...expenditureFlow, revenue: revenueFlow } : expenditureFlow
   const opened = snapshot?.years[String(year)]
