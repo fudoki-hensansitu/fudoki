@@ -1,4 +1,4 @@
-// 自治体の頁（アプリ型）。ヘッダーの下を「まとめ・事業・予算・決算」のタブにし（予算・決算のタブはどの年度にも出す）。事業は一覧から事業の頁へ移る。
+// 自治体の頁（アプリ型）。ヘッダーの下を「まとめ・予算・決算・事業」のタブにし（予算・決算のタブはどの年度にも出す）。事業は一覧から事業の頁へ移る。
 // 一覧は名前と金額だけを出し、説明は詳細にだけ出す。部品は shadcn/ui（Tabs・Carousel・Card・Input・ToggleGroup）
 import * as React from 'react'
 import { useNavigation, useRouter } from '@void/react'
@@ -902,9 +902,9 @@ function YearMenu({ years, current, onChange }: { years: number[]; current: numb
 // ---------- 頁 ----------
 const TABS: { key: TabKey; label: string; icon: Icon }[] = [
   { key: 'overview', label: 'まとめ', icon: SquaresFourIcon },
-  { key: 'projects', label: '事業', icon: ListBulletsIcon },
   { key: 'money', label: '予算', icon: WalletIcon },
   { key: 'settled', label: '決算', icon: ReceiptIcon },
+  { key: 'projects', label: '事業', icon: ListBulletsIcon },
 ]
 
 const TAB_SEGMENT = new RegExp(`/(${Object.values(TAB_SLUGS).join('|')})/?$`)
