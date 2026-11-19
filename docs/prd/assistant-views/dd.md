@@ -70,7 +70,7 @@ type ViewResult =
 **`show_expenditure_table({ tool: 'search_expenditure_subjects' | 'search_expenditure_details', arguments })`**
 
 - 消した `render_expenditure_view` と同じく、データ tool と同じ入力を受けて引き直す。前の tool の結果を参照させる案（tool call の ID を渡す）は、`execute` に届く履歴が `toModelOutput` で切った text で、行のデータが残っていないので採らない。
-- 出すのは 50 行まで（`page_size` を 50 で頭打ちにする）。結果に `next_page_token` があれば、表の下に「50件まで表示（続きがあります）」と出す。会話の中で続きを読む操作は置かず、続きは AI が `page_token` を渡して同じ tool をもう一度呼ぶ。
+- 出すのは 50 行まで（`page_size` を 50 で頭打ちにする）。結果に `next_page_token` があれば、表の下に「50件まで表示（続きがあります）」と出す。会話の中で続きを読む操作は置かず、続きは AI が `page_token` を渡して同じ tool をもう一度呼ぶ。そのため `content` の text（AI に渡る側）にも、表示した件数・続きがあること・`next_page_token` の値を入れる（`view` は AI に渡らないので、ここに書かないと AI は続きを知れない）。
 - 列は名称・階層・金額・金額の段階・出典の頁。出典の頁は、今の頁と同じく自治体の資料の URL の `#page=` へのリンクにする。
 - 内訳（`search_expenditure_details`）は、分け方（`breakdown`: 事業・節・その他）ごとに見出しを分けて表を区切り、深さで字下げする。事業と節は同じ目の額の別の切り口なので、表に合計の行を置かず、見出しに「分け方の違う表どうしは足せません」を添える（頁の `FlowTable`・MCP の View が軸ごとに分けているのと同じ）。科目（`search_expenditure_subjects`）も合計の行を置かず、階層（款・項・目）の列を出す。
 
