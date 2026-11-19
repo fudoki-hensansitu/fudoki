@@ -46,7 +46,7 @@ export default defineMiddleware(async (c, next) => {
       return
     }
   }
-  // View の器（routes/view-frame.ts）のように自分の policy を持つ応答はそのままにする
+  // 自分の policy を持つ応答はそのままにする
   if (!c.res.headers.has('Content-Security-Policy')) c.res.headers.set('Content-Security-Policy', PAGE_CSP)
   // アクセス解析（Cloudflare Zaraz → GA4）は本番だけ。preview・手元には入れない（analytics/zaraz.ts）
   const analytics = new URL(c.req.url).hostname === ZARAZ_HOST ? `\n${ZARAZ_SCRIPT}` : ''

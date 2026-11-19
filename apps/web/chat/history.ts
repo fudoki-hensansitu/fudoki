@@ -20,7 +20,7 @@ export function splitContext(context: string): { quote: string; screen: string }
   return { quote, screen }
 }
 
-/** View 用の structuredContent と _meta を外し、text は server が AI に渡す形に切り詰める。最後の利用者の発言より前の回の結果は省く */
+/** 結果の _meta（次の質問の候補）を外し、text は server が AI に渡す形に切り詰める。最後の利用者の発言より前の回の結果は省く */
 export function forServer<M extends UIMessage>(messages: M[]) {
   const lastUser = messages.findLastIndex((m) => m.role === 'user')
   return messages.map((m, i) => ({
@@ -32,7 +32,7 @@ export function forServer<M extends UIMessage>(messages: M[]) {
       .map((p: Part) => {
         if (p.type !== 'dynamic-tool' || p.state !== 'output-available') return p
         const isError = !!(p.output as { isError?: boolean } | undefined)?.isError
-        const text = i < lastUser ? OMITTED : toolText(p.toolName, p.output)
+        const text = i < lastUser ? OMITTED : toolText(p.output)
         return { ...p, output: { content: [{ type: 'text', text }], ...(isError ? { isError: true } : {}) } }
       }),
   }))

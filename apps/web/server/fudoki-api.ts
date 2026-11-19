@@ -1,12 +1,13 @@
 // web が apps/api を呼ぶ口。本番は api の内部の RPC（Service Binding・entrypoint Web）だけを使い、公開の REST・MCP は使わない（ADR 0044）。
-// binding の無い手元の開発と試験だけ、同じ操作を公開の REST・MCP に読み替えて呼ぶ（restRpc）
-import type { WebOpInput, WebOpName, WebOpOutput, WebRpc } from '@fudoki/api/rpc'
+// binding の無い手元の開発と試験だけ、同じ操作を公開の REST に、アシスタントの tool を公開の MCP に読み替えて呼ぶ（restRpc）
+import type { AssistantTool, WebOpInput, WebOpName, WebOpOutput, WebRpc } from '@fudoki/api/rpc'
+import { readSuggestions } from '../../../packages/fiscal/suggestions'
 import type { Env } from './env'
 
-export type { WebOpInput, WebOpName, WebOpOutput, WebRpc }
+export type { AssistantTool, WebOpInput, WebOpName, WebOpOutput, WebRpc }
 
 export const API_ORIGIN = 'https://api.fudoki.dev'
-/** アシスタントが繋ぐ MCP の URL。内部の RPC でもこの URL の Request を渡し、結果の _meta.apiOrigin を公開の MCP と同じにする */
+/** 公開の MCP の URL（エージェント向けの案内と、手元の開発の読み替えに使う） */
 export const MCP_URL = `${API_ORIGIN}/mcp`
 
 /** api が返した失敗。status は公開の REST と同じ */
@@ -41,18 +42,6 @@ export function apiCall(env: Pick<Env, 'WEB'>): ApiCall {
     if (!r.ok) throw new FudokiApiError(r.status, r.code, r.message)
     return r.value
   }
-}
-
-/** @ai-sdk/mcp などに渡す fetch。MCP_URL への要求を内部の RPC の mcp に渡す */
-export function mcpFetch(env: Pick<Env, 'WEB'>): typeof fetch {
-  const rpc = fudokiApi(env)
-  // @ai-sdk/mcp は redirect: 'error' で呼ぶが、Workers は 'error' を受け付けず Request の生成で例外になる。'manual' なら 3xx は結果として返るので同じ安全さで足りる
-  // @ai-sdk/mcp は AbortSignal も付けるが、Workers の RPC は signal を持つ Request を渡せず DataCloneError になる。signal を外して渡す
-  return ((input: RequestInfo | URL, init?: RequestInit) => {
-    const { signal: _signal, ...rest } = init ?? {}
-    const request = new Request(input, rest.redirect === 'error' ? { ...rest, redirect: 'manual' } : rest)
-    return rpc.mcp(new Request(request.url, { method: request.method, headers: request.headers, body: request.body, redirect: request.redirect }))
-  }) as typeof fetch
 }
 
 /** 操作を公開の REST の要求に読み替える。web が使う操作だけを持つ */
@@ -103,6 +92,39 @@ export function restRpc(fetcher: (request: Request) => Promise<Response>): WebRp
       if (!res.ok) return { ok: false, status: res.status, code: body?.error?.code ?? 'UNAVAILABLE', message: body?.error?.message ?? `${name} ${res.status}` }
       return { ok: true, value: body as never }
     },
-    mcp: (request) => fetcher(request),
+    // アシスタントの tool は公開の MCP の tools/list・tools/call に読み替える（描画 tool は除く）。web だけの操作は手元では出ない
+    async tools() {
+      const result = (await mcpCall(fetcher, 'tools/list', {})) as { tools: AssistantTool[] }
+      return result.tools.filter((t) => t.name !== 'render_expenditure_view').map(({ name, description, inputSchema }) => ({ name, description, inputSchema }))
+    },
+    async runTool(name, input) {
+      const r = (await mcpCall(fetcher, 'tools/call', { name, arguments: input })) as { isError?: boolean; content?: { text?: string }[]; structuredContent?: unknown; _meta?: unknown }
+      if (r.isError) {
+        // 風土記の失敗は {error: {code, message}} の JSON、MCP の SDK の入力検査の失敗はただの文
+        const raw = r.content?.[0]?.text ?? name
+        let body: { error?: { code?: string; message?: string } } = {}
+        try {
+          body = JSON.parse(raw)
+        } catch {}
+        return { ok: false, status: 400, code: body.error?.code ?? 'INVALID_ARGUMENT', message: body.error?.message ?? raw }
+      }
+      return { ok: true, value: { value: r.structuredContent, suggestions: readSuggestions(r._meta) } }
+    },
   }
+}
+
+/** JSON-RPC を1つ公開の MCP に送り、JSON か SSE の data 行から result を取り出す */
+async function mcpCall(fetcher: (request: Request) => Promise<Response>, method: string, params: unknown): Promise<unknown> {
+  const res = await fetcher(
+    new Request(MCP_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json, text/event-stream', 'MCP-Protocol-Version': '2025-06-18' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
+    }),
+  )
+  const text = await res.text()
+  const data = /^data: (.*)$/m.exec(text)
+  const message = JSON.parse(data ? data[1]! : text) as { result?: unknown; error?: { message?: string } }
+  if (!res.ok || message.error || message.result === undefined) throw new Error(message.error?.message ?? `MCP ${res.status}`)
+  return message.result
 }

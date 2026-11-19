@@ -188,7 +188,8 @@ describe('事業の読み込み（/api/projects）', () => {
     const seen: unknown[] = []
     const WEB: Env['WEB'] = {
       call: async (name, input) => (seen.push([name, input]), { ok: true, value: { project_years: [], projects: [], total_size: 0, total_size_capped: false, next_page_token: null } as never }),
-      mcp: async () => new Response('x'),
+      tools: async () => [],
+      runTool: async () => ({ ok: false, status: 404, code: 'NOT_FOUND', message: '' }),
     }
     const ok = await post({ query }, { ...env, WEB })
     expect(ok.status).toBe(200)

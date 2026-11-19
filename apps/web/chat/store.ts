@@ -8,8 +8,6 @@ export interface StoredSession {
   pending?: string
   /** 最初の質問を書いたときに頁で見ていたもの・選んだ文（選んだ文は質問の直前の利用者の発言に、見ている画面は最後の質問のものだけを system prompt に入れて AI に渡す） */
   pendingContext?: string
-  /** 表とグラフの View が伝える、いま画面で見ているもの（system に参考として渡す） */
-  viewContext?: string
   /** 会話を始めた頁のパス（例: /tokyo/shinagawa）。どこから聞かれたかを質問の記録に残す */
   entry?: string
   messages?: UIMessage[]
