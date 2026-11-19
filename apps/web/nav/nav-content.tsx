@@ -58,7 +58,7 @@ function MyTownItem({ path }: { path: string }) {
   const { town } = useMyTown()
   if (!town) return null
   // 都道府県を選んだ人が配下の市区町村の頁にいるときは選択中にしない。次の段が年度・タブの語のときだけ、そのまちの頁とみなす
-  const rest = path === town.path ? '' : path.startsWith(`${town.path}/`) ? path.slice(town.path.length + 1).split('/')[0] : null
+  const rest = path === town.path ? '' : path.startsWith(`${town.path}/`) ? (path.slice(town.path.length + 1).split('/')[0] ?? '') : null
   const active = rest !== null && (rest === '' || /^\d{4}$/.test(rest) || TOWN_SEGMENTS.has(rest))
   return <Item href={town.path} label={town.name} icon={<TownIcon code={town.code} />} active={active} />
 }
