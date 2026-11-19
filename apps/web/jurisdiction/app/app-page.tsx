@@ -1,4 +1,4 @@
-// 自治体の頁（アプリ型）。ヘッダーの下を「まとめ・予算・決算・事業」のタブにし（予算・決算のタブはどの年度にも出す）。事業は一覧から事業の頁へ移る。
+// 自治体の頁（アプリ型）。ヘッダーの下を「予算・決算・事業・財政」のタブにし（予算・決算のタブはどの年度にも出す。自治体の頁そのものは最新の年度の予算を出す）。事業は一覧から事業の頁へ移る。
 // 一覧は名前と金額だけを出し、説明は詳細にだけ出す。部品は shadcn/ui（Tabs・Carousel・Card・Input・ToggleGroup）
 import * as React from 'react'
 import { useNavigation, useRouter } from '@void/react'
@@ -24,7 +24,7 @@ import {
   MapPinIcon,
   ShieldCheckIcon,
   ArrowDownIcon,
-  SquaresFourIcon,
+  PiggyBankIcon,
   MapTrifoldIcon,
   MapPinAreaIcon,
   StorefrontIcon,
@@ -60,7 +60,7 @@ import { DOMAIN_FRAMES, OTHER_FRAME, frameOf } from '../domains'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock } from '../ask-dock'
-import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type Moku, type MokuBreakdowns, type PageData, type PageFlow, type YearTotal, TAB_SLUGS, hasDocument, type PageTab } from '../types'
+import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type Moku, type MokuBreakdowns, type PageData, type PageFlow, type YearTotal, TAB_SLUGS, FINANCE_SLUG, hasDocument, type PageTab } from '../types'
 import { Title, titleVariants } from '@/components/ui/title'
 import { withExtras, yearView, type AccountTotal, type Proj, type Snapshot, type YearExtras, type YearView } from './data'
 import { fieldSubjects, listKey, listPage, projectLatest, type ListPage, type ListQuery, type ProjectFull } from './api'
@@ -167,7 +167,7 @@ function TabYear() {
     </div>
   )
 }
-/** まとめ以外のタブの頭。その言葉の意味の一文と、年度の切り替え。見出しはタブ名のくり返しになるので画面に出さず、読み上げと検索のためだけに残す */
+/** 財政以外のタブの頭。その言葉の意味の一文と、年度の切り替え。見出しはタブ名のくり返しになるので画面に出さず、読み上げと検索のためだけに残す */
 function TabHead({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     // 狭い画面は一文を横の切り替えに押されて細く折れるので、切り替えを上に置いて一文を全幅にする
@@ -913,13 +913,13 @@ function YearMenu({ years, current, onChange }: { years: number[]; current: numb
 
 // ---------- 頁 ----------
 const TABS: { key: TabKey; label: string; icon: Icon }[] = [
-  { key: 'overview', label: 'まとめ', icon: SquaresFourIcon },
   { key: 'money', label: '予算', icon: WalletIcon },
   { key: 'settled', label: '決算', icon: ReceiptIcon },
   { key: 'projects', label: '事業', icon: ListBulletsIcon },
+  { key: 'overview', label: '財政', icon: PiggyBankIcon },
 ]
 
-const TAB_SEGMENT = new RegExp(`/(${Object.values(TAB_SLUGS).join('|')})/?$`)
+const TAB_SEGMENT = new RegExp(`/(${[...Object.values(TAB_SLUGS), FINANCE_SLUG].join('|')})/?$`)
 /** 今の URL から年度・タブ・分野の段を除いた、自治体の頁の path */
 const basePath = () => location.pathname.replace(PROJECT_PATH, '').replace(TAB_SEGMENT, '').replace(/\/\d{4}\/?$/, '')
 /** 事業の頁の段（/projects/<project_id>） */
@@ -947,12 +947,12 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   React.useEffect(() => rememberJurisdiction({ code: data.code, name: data.name, path: basePath() }), [data.code, data.name])
   const year = d.year
   // 年度・タブは頁の URL で、移るたびに loader が頁のデータを読み直す。タブは押したらすぐ切り替え、届いた頁のタブに合わせ直す
-  const [tab, setTabState] = React.useState<TabKey>(initialTab ?? 'overview')
-  React.useEffect(() => setTabState(initialTab ?? 'overview'), [initialTab, year])
+  const [tab, setTabState] = React.useState<TabKey>(initialTab ?? 'money')
+  React.useEffect(() => setTabState(initialTab ?? 'money'), [initialTab, year])
   const at = React.useRef({ year, tab })
   at.current = { year, tab }
-  /** 年度・タブの頁の URL。リンクの先にして検索エンジンにも辿らせる。まとめは年度の段を持たない（最新の年度を出す） */
-  const pageHref = (y: number, t: TabKey) => (t === 'overview' ? data.path : `${data.path}/${y}/${TAB_SLUGS[t]}`)
+  /** 年度・タブの頁の URL。リンクの先にして検索エンジンにも辿らせる。財政は年度の段を持たない（/tokyo/shinagawa/finance） */
+  const pageHref = (y: number, t: TabKey) => (t === 'overview' ? `${data.path}/${FINANCE_SLUG}` : `${data.path}/${y}/${TAB_SLUGS[t]}`)
   // 年度・タブを移っても、選んでいる状態とスクロールは持ち越す。タブは履歴に積み、戻るで前のタブとそのスクロールへ帰す。年度・会計は置き換える
   const move = (href: string, { push = false } = {}) => void router.visit(href, { replace: !push, preserveState: true, preserveScroll: true })
   // 年度のリンクは今のタブを引き継ぐ（予算・決算のタブはどの年度にもある）。分野の頁なら同じ分野のまま年度を移る
@@ -1133,7 +1133,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
         {emblem ? <img src={emblem} alt="" className="size-full min-h-0 min-w-0 object-contain" /> : <span className={cn(titleVariants({ size: 'display' }), 'font-normal text-foreground')}>{data.name[0]}</span>}
       </div>
       <div className="flex min-w-0 flex-col gap-2">
-        {/* 年度の切り替えは、まとめ以外のタブの頭に置く（まとめには置かない） */}
+        {/* 年度の切り替えは、財政以外のタブの頭に置く（財政は年度をまたぐので置かない） */}
         {/* 見出しは自治体名だけ。「の予算と決算」は検索の題（title）にだけ持つ */}
         <Title size="h2" as="h1" className="min-w-0 font-normal">{data.name}</Title>
         {vision ? <p className="text-base leading-snug">{vision}</p> : null}

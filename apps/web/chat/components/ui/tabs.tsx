@@ -28,7 +28,7 @@ const tabsListVariants = cva(
         default: "bg-muted",
         line: "gap-1 bg-transparent",
       },
-      /** タブの大きさ。lg は頁の主なタブ（自治体の頁のまとめ・予算・決算・事業）に使い、どの幅でも同じ大きさにする */
+      /** タブの大きさ。lg は頁の主なタブ（自治体の頁の予算・決算・事業・財政）に使い、どの幅でも同じ大きさにする */
       size: {
         default: "",
         lg: "group-data-horizontal/tabs:h-[52px]",

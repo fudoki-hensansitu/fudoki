@@ -3,7 +3,7 @@
 import type { CatalogEntry } from '../server/jurisdiction'
 import { assetPath } from './assets'
 import { jurisdictionPath } from './path'
-import { appPageYears, formatYen, hasDocument, TAB_SLUGS, type PageData, type PageTab } from './types'
+import { appPageYears, FINANCE_SLUG, formatYen, hasDocument, TAB_SLUGS, type PageData, type PageTab } from './types'
 import { DOMAIN_FRAMES, OTHER_FRAME } from './domains'
 import { QUESTIONS } from '../compare/questions'
 import type { ProjectFull } from './app/api'
@@ -63,7 +63,7 @@ export function pageDescription(d: PageData): string {
   return `${d.name}の${reiwaFull(latest.year)}決算（一般会計）の歳出は約${formatYen(latest.yen)}。いちばん大きい分野は${topText}。決算書の歳出を事業の単位まで、出典の頁と並べて見られます。`
 }
 
-/** 頁の区分。まとめ（無し）・タブの頁・分野の頁 */
+/** 頁の区分。自治体の頁そのもの（無し）・タブの頁。財政のタブは financeHead */
 export type Section = { tab: Exclude<PageTab, 'overview'> }
 
 /** その年度の当初予算と決算（一般会計）の歳出の総額。金額の欠けたものは無いことにする */
@@ -149,7 +149,7 @@ export function pageHead(d: PageData, year?: number, section?: Section, opened?:
     return head(title, `${d.name}の${reiwaFull(shown)}${missing === 'initial' ? '当初予算' : '決算'}はまだ収録していません。`, canonical, { meta: [{ name: 'robots', content: 'noindex' }] })
   }
   const description = pageDescriptionOf(d, shown, section, opened)
-  // まとめは年度の段の無い /tokyo/nakano だけ。タブの頁は年度の段つきの URL を正規にし、年度の段の無いタブの頁は最新の年度へ転送する
+  // 自治体の頁そのもの（/tokyo/nakano）は最新の年度の予算のタブを正規にする。タブの頁は年度の段つきの URL を正規にし、年度の段の無いタブの頁は最新の年度へ転送する
   // タブの頁の年度は、本文・年度チップ・sitemap と同じ頁の最新の年度（金額の読めない当初予算の年度でも）
   const canonical = section ? `${ORIGIN}${base}/${year ?? appPageYears(d)[0] ?? shown}${sectionPath(section)}` : `${ORIGIN}${base}`
   const ld = {
@@ -217,15 +217,20 @@ export const projectFallbackHead = (d: PageData, id: string): Head => {
 export const emptyHead = (e: CatalogEntry): Head =>
   head(`${e.name}｜風土記`, `${e.name}の歳出は風土記にまだ収録されていません。`, `${ORIGIN}${jurisdictionPath(e.code)}`, { meta: [{ name: 'robots', content: 'noindex' }] })
 
-/** sitemap。入口・まち比べ（/compare と問いの頁）と、まとめ（/tokyo/shinagawa）と各年度のタブの頁（/tokyo/shinagawa/2026/projects）を載せる。years は頁で選べる年度（新しい順） */
+/** 財政のタブの頁（/tokyo/shinagawa/finance）の head。財政は年度をまたぐ指標なので年度の段を持たない */
+export function financeHead(d: PageData): Head {
+  return head(`${d.name}の財政（借金・貯金・財政の指標）｜風土記`, `${d.name}の借金と貯金、事業に回ったお金、実質収支などの財政の指標を、総務省の決算状況調から年度を並べて見られます。`, `${ORIGIN}${jurisdictionPath(d.code)}/${FINANCE_SLUG}`)
+}
+
+/** sitemap。入口・まち比べ（/compare と問いの頁）と、財政（/tokyo/shinagawa/finance）と各年度のタブの頁（/tokyo/shinagawa/2026/projects）を載せる。自治体の頁そのものは最新の年度の予算のタブが正規なので載せない。years は頁で選べる年度（新しい順） */
 export const sitemapXml = (entries: CatalogEntry[], yearsOf: (e: CatalogEntry) => number[] = (e) => [...e.settlementYears].sort((a, b) => b - a)) =>
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${ORIGIN}/</loc></url><url><loc>${ORIGIN}/assistant</loc></url><url><loc>${ORIGIN}/about</loc></url><url><loc>${ORIGIN}/compare</loc></url>${QUESTIONS.map((q) => `<url><loc>${ORIGIN}/compare/${q.slug}</loc></url>`).join('')}${entries
     .filter((e) => e.settlementYears.length > 0)
     .flatMap((e) => {
       const base = jurisdictionPath(e.code)
       const years = yearsOf(e)
-      // まとめと、年度ごとのタブの頁（予算・決算・事業）
-      return [base, ...years.flatMap((y) => {
+      // 財政と、年度ごとのタブの頁（予算・決算・事業）
+      return [`${base}/${FINANCE_SLUG}`, ...years.flatMap((y) => {
         const page = `${base}/${y}`
         return [`${page}/${TAB_SLUGS.projects}`, ...(e.initialYears.includes(y) ? [`${page}/${TAB_SLUGS.money}`] : []), ...(e.settlementYears.includes(y) ? [`${page}/${TAB_SLUGS.settled}`] : [])]
       })]
