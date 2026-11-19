@@ -146,7 +146,9 @@ describe('頁を読む tool（fetch_page）', () => {
   test('許可したドメインの https だけを読む', () => {
     expect(checkFetchUrl('https://fudoki.dev/about')).toBeInstanceOf(URL)
     expect(checkFetchUrl('https://docs.fudoki.dev/')).toBeInstanceOf(URL)
-    for (const url of ['http://fudoki.dev/', 'https://evil.example/', 'https://fudoki.dev.evil.example/', 'https://api.fudoki.dev/v1/jurisdictions', 'https://user@fudoki.dev/', 'https://fudoki.dev:8443/', 'https://fudoki.dev/api/chat', 'nope'])
+    for (const url of ['https://www.city.shinagawa.tokyo.jp/', 'https://www.city.moka.lg.jp/a.html', 'https://www.town.okutama.tokyo.jp/', 'https://www.vill.ogasawara.tokyo.jp/', 'https://www.pref.ibaraki.jp/', 'https://www.metro.tokyo.lg.jp/', 'https://www.metro.tokyo.jp/'])
+      expect(checkFetchUrl(url)).toBeInstanceOf(URL)
+    for (const url of ['http://fudoki.dev/', 'https://evil.example/', 'https://fudoki.dev.evil.example/', 'https://lg.jp/', 'https://city.example.com.jp/', 'https://www.city.shinagawa.tokyo.jp.evil.example/', 'https://example.jp/', 'https://prd-hachijo.s3.ap-northeast-1.amazonaws.com/', 'https://api.fudoki.dev/v1/jurisdictions', 'https://user@fudoki.dev/', 'https://fudoki.dev:8443/', 'https://fudoki.dev/api/chat', 'nope'])
       expect(typeof checkFetchUrl(url)).toBe('string')
   })
   test('別のドメインへの redirect はたどらない', async () => {
