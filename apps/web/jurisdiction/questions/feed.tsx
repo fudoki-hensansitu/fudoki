@@ -1,9 +1,8 @@
 // 「気になる」のタブ。問いの札を1列に流し、押すとその問いと作り置きの答えから AI との会話が始まる。
 // 札は答えの冒頭だけを出し、下を薄くして続きがあると見せる（全文は会話で読む）。分野のチップで分野ごとのフィードに切り替える（?field=）。チップはスクロールしても上に残す
 import * as React from 'react'
-import { RobotIcon } from '@phosphor-icons/react'
+import { ArrowRightIcon, RobotIcon } from '@phosphor-icons/react'
 import { Markdown } from '../../chat/markdown'
-import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Title } from '@/components/ui/title'
 import { cn } from '@/lib/utils'
@@ -99,11 +98,11 @@ export function QuestionFeedView({ feed, onOpen, onAsk }: { feed: QuestionFeed |
         {items.map((q) => <QuestionCard key={q.id} q={q} onOpen={onOpen} />)}
       </div>
       {/* フィードを読み終えた人に、並んでいない問いを自分で聞く入口を出す */}
-      <div className="flex flex-col items-start gap-3 rounded-xl border bg-card p-5">
-        <Title size="h3" as="h3">ほかに知りたいことは？</Title>
-        <p className="text-base leading-relaxed text-muted-foreground">予算書・決算書の数字をもとに、AI が出典つきで答えます。</p>
-        <Button onClick={onAsk} className="gap-2"><RobotIcon className="size-4" aria-hidden="true" />質問する</Button>
-      </div>
+      <button type="button" onClick={onAsk} className="flex items-center gap-4 rounded-xl border bg-card p-5 text-left">
+        <RobotIcon className="size-6 shrink-0 text-primary" aria-hidden="true" />
+        <Title size="h3" as="span" className="min-w-0 flex-1">ほかに知りたいことを聞く</Title>
+        <ArrowRightIcon className="size-5 shrink-0 text-primary" aria-hidden="true" />
+      </button>
     </section>
   )
 }
