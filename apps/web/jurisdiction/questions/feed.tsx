@@ -1,26 +1,24 @@
 // 「気になる」のタブ。問いの札を1列に流し、押すとその問いと作り置きの答えから AI との会話が始まる。
 // 札は答えの冒頭だけを出し、下を薄くして続きがあると見せる（全文は会話で読む）。分野のチップで分野ごとのフィードに切り替える（?field=）
 import * as React from 'react'
-import { CityIcon } from '@phosphor-icons/react'
 import { Markdown } from '../../chat/markdown'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Title } from '@/components/ui/title'
 import { cn } from '@/lib/utils'
 import { FieldIcon } from '../../home/parts'
-import { DOMAIN_FRAMES } from '../domains'
+import { DOMAIN_FRAMES, OTHER_FRAME } from '../domains'
 import { feedOf } from '.'
 import type { Question, QuestionFeed } from './types'
 
-const FIELD_NAME = new Map(DOMAIN_FRAMES.map((f) => [f.id, f.name]))
-
-/** 分野をまたぐ問いのカテゴリ */
-const WHOLE = 'まち全体'
+/** 分野をまたぐ問いは、分野の分け方と同じ「その他」に入れる */
+const FRAMES = [...DOMAIN_FRAMES, OTHER_FRAME]
+const FIELD_NAME = new Map(FRAMES.map((f) => [f.id, f.name]))
 
 function Category({ field }: { field?: string }) {
   return (
     <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-      {field ? <FieldIcon id={field} className="size-4" /> : <CityIcon className="size-4" aria-hidden="true" />}
-      {field ? FIELD_NAME.get(field) : WHOLE}
+      <FieldIcon id={field ?? OTHER_FRAME.id} className="size-4" />
+      {FIELD_NAME.get(field ?? OTHER_FRAME.id)}
     </span>
   )
 }
@@ -62,7 +60,7 @@ export function QuestionFeedView({ feed, onOpen }: { feed: QuestionFeed | undefi
     history.replaceState(history.state, '', url)
   }
   if (!feed) return <FeedSkeleton />
-  const fields = DOMAIN_FRAMES.filter((f) => feed.questions.some((q) => q.field === f.id))
+  const fields = FRAMES.filter((f) => feed.questions.some((q) => (q.field ?? OTHER_FRAME.id) === f.id))
   const items = feedOf(feed, field)
   const chip = (on: boolean) => cn('inline-flex h-9 shrink-0 items-center gap-1 rounded-full border px-4 text-sm transition-colors', on ? 'border-primary bg-primary text-primary-foreground' : 'border-input bg-background hover:bg-card')
   return (

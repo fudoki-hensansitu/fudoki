@@ -3,7 +3,7 @@
 /** 1つの問い */
 export interface Question {
   id: string
-  /** 分野（jurisdiction/domains.ts の id）。分野をまたぐ問いは無し（「まち全体」と出す） */
+  /** 分野（jurisdiction/domains.ts の id）。分野をまたぐ問いは無し（「その他」に入れる） */
   field?: string
   /** 分野のフィードの先頭に置く問い（「〇〇に、1人いくら使ってる？」） */
   lead?: boolean

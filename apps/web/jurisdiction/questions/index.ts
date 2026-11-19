@@ -14,5 +14,7 @@ export const loadQuestions = (code: string): Promise<QuestionFeed> | undefined =
 export function feedOf(feed: QuestionFeed, field: string | null): Question[] {
   const byId = new Map(feed.questions.map((q) => [q.id, q]))
   if (!field) return feed.order.flatMap((id) => byId.get(id) ?? [])
-  return [...feed.questions.filter((q) => q.field === field && q.lead), ...feed.questions.filter((q) => q.field === field && !q.lead)]
+  // 分野をまたぐ問い（field 無し）は「その他」（jurisdiction/domains.ts の OTHER_FRAME）
+  const of = (q: Question) => (q.field ?? 'other') === field
+  return [...feed.questions.filter((q) => of(q) && q.lead), ...feed.questions.filter((q) => of(q) && !q.lead)]
 }
