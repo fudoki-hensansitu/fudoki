@@ -68,7 +68,7 @@ const series = (rows: LocalFinance[], pick: (f: LocalFinance) => number | null) 
 
 /** 義務的経費（扶助費・人件費・公債費）の和。どれかが欠けた年度は null */
 const dutyOf = (f: LocalFinance) => (f.socialAssistance == null || f.personnel == null || f.debtService == null ? null : f.socialAssistance + f.personnel + f.debtService)
-const freeOf = (f: LocalFinance) => {
+export const freeOf = (f: LocalFinance) => {
   const duty = dutyOf(f)
   return duty == null || f.expenditureTotal == null ? null : f.expenditureTotal - duty
 }
@@ -267,7 +267,11 @@ function OtherNumbers({ at, rows, prefecture }: { at: LocalFinance; rows: LocalF
 }
 
 /** 開いた年度までの最新の決算の年度の、借金と貯金・事業に回ったお金・財政の指標。中身の無い節は出さない */
-export function FinanceSections({ finance, year, population, prefecture }: { finance: LocalFinance[] | undefined; year: number; population: Population | null; prefecture: boolean }) {
+export type FinanceSection = 'debt' | 'free' | 'indicators'
+
+/** sections を渡すとその節だけを出す（アシスタントの会話の部品）。省略は全部 */
+export function FinanceSections({ finance, year, population, prefecture, sections }: { finance: LocalFinance[] | undefined; year: number; population: Population | null; prefecture: boolean; sections?: readonly FinanceSection[] }) {
+  const show = (s: FinanceSection) => !sections || sections.includes(s)
   const upTo = (finance ?? []).filter((f) => f.year <= year)
   const at = upTo.at(-1)
   if (!at) return null
@@ -278,22 +282,24 @@ export function FinanceSections({ finance, year, population, prefecture }: { fin
   const card = 'rounded-2xl bg-card p-5'
   return (
     <>
-      {at.localBondBalance != null ? (
+      {show('debt') && at.localBondBalance != null ? (
         <section>
           <Head title={at.fundBalance != null ? '借金と貯金' : '借金'} tag={tag} />
           <div className={card}><DebtAndFunds at={at} rows={rows} people={people} prefecture={prefecture} /></div>
         </section>
       ) : null}
-      {freeOf(at) != null ? (
+      {show('free') && freeOf(at) != null ? (
         <section>
           <Head title="事業に回ったお金" tag={tag} />
           <div className={card}><FreeMoney at={at} rows={rows} people={people} /></div>
         </section>
       ) : null}
-      <section>
-        <Head title="財政の指標" tag={tag} />
-        <OtherNumbers at={at} rows={rows} prefecture={prefecture} />
-      </section>
+      {show('indicators') ? (
+        <section>
+          <Head title="財政の指標" tag={tag} />
+          <OtherNumbers at={at} rows={rows} prefecture={prefecture} />
+        </section>
+      ) : null}
     </>
   )
 }

@@ -8,6 +8,7 @@ import type { Env } from './env'
 import { apiCall, type WebOpInput, type WebOpOutput } from './fudoki-api'
 import { loadAccountTotals, shownSettlementYears, type CatalogEntry } from './jurisdiction'
 import { appPageYears, type PageTab } from '../jurisdiction/types'
+import { jurisdictionPath } from '../jurisdiction/path'
 
 const ACCOUNT = '一般会計'
 
@@ -35,7 +36,7 @@ async function all<R extends { next_page_token?: string | null }, T>(page: (toke
 }
 
 /** 1年度の款項目を全部。出典は頁ごとの応答に、その頁の行が指すものだけが載るので、全部の頁から集める */
-async function subjectsOf(env: Env, code: string, year: number, kind: Kind) {
+export async function subjectsOf(env: Env, code: string, year: number, kind: Kind) {
   const origins: WebOpOutput<'search_expenditure_subjects'>['origins'] = []
   const { rows } = await all(
     (token) => apiCall(env)('search_expenditure_subjects', { document_kind: kind, fiscal_year: { min: year, max: year }, where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [ACCOUNT] } }, page_size: 1000, ...(token ? { page_token: token } : {}) } as SubjectBody),
@@ -49,6 +50,15 @@ async function subjectsOf(env: Env, code: string, year: number, kind: Kind) {
 
 const fieldOf = (cofog: string | null | undefined) => ((cofog ? frameOf(cofog) : undefined) ?? OTHER_FRAME).id
 const short = (id: string) => id.slice(0, 12)
+
+/** 自治体の頁の予算・決算のタブの path。頁に無い年度（頁は最新の数年だけを出す）・資料は null */
+export function yearTabPath(entry: CatalogEntry, year: number, kind: Kind): string | null {
+  // 決算を収録していない自治体は頁に年度の段が無い（案内だけの頁。pageBase が null）
+  if (shownSettlementYears(entry.settlementYears).length === 0) return null
+  if (!appYears(entry).some((y) => y.year === year)) return null
+  if (!(kind === 'initial' ? entry.initialYears : entry.settlementYears).includes(year)) return null
+  return `${jurisdictionPath(entry.code)}/${year}/${kind === 'initial' ? 'budget' : 'settlement'}`
+}
 
 /** 頁の年度（自治体の頁で選べる年度と同じ。jurisdiction/types.ts の appPageYears）。決算のある年度は決算、決算より後の年度は当初予算を読む */
 export function appYears(entry: Pick<CatalogEntry, 'initialYears' | 'settlementYears'>): { year: number; kind: Kind }[] {

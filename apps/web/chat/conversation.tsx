@@ -58,7 +58,14 @@ const TOOL_LABELS: Record<string, string> = {
   get_local_finance: '財政の指標を確認',
   fetch_page: '頁を読む',
   read_source_page: '資料を読む',
+  show_money_flow: '入る→使うを描く',
+  show_local_finance: '財政の図を描く',
+  show_expenditure_table: '表を描く',
 }
+
+/** 見せる tool の部品。図・表を出した会話だけが読む */
+const ViewBlock = React.lazy(() => import('./views/view-block'))
+const hasView = (output: unknown) => typeof output === 'object' && output !== null && 'view' in output
 
 function ToolMarker({ part }: { part: DynamicToolUIPart }) {
   const label = TOOL_LABELS[part.toolName] ?? part.toolName
@@ -263,6 +270,11 @@ export function Conversation({
     if (pinned.current) box().target.scrollTo({ top: box().height })
     measure()
   }, [messages, status, measure, box])
+  // 図・表の部品は lazy で後から描かれ、会話の高さが伸びる。下に付いて読んでいた人は下に付いたままにする
+  const follow = React.useCallback(() => {
+    if (pinned.current) box().target.scrollTo({ top: box().height })
+    measure()
+  }, [measure, box])
 
   const lastMessage = messages.at(-1)
   const suggestions = busy ? [] : lastMessage?.metadata?.follow ? lastMessage.metadata.follow.map((q) => ({ label: q, prompt: q })) : suggestionsOf(lastMessage)
@@ -294,7 +306,16 @@ export function Conversation({
                         </Bubble>
                       )
                     if (p.type !== 'dynamic-tool') return null
-                    return <ToolMarker key={i} part={p} />
+                    return (
+                      <React.Fragment key={i}>
+                        <ToolMarker part={p} />
+                        {p.state === 'output-available' && hasView(p.output) ? (
+                          <React.Suspense fallback={null}>
+                            <ViewBlock output={p.output} onShown={follow} />
+                          </React.Suspense>
+                        ) : null}
+                      </React.Fragment>
+                    )
                   })}
                   {m.metadata?.source ? <p className="px-1 text-xs text-muted-foreground">作り置きの答え・出典: {m.metadata.source}</p> : null}
                 </MessageContent>
