@@ -3,7 +3,7 @@
 import type { CatalogEntry } from '../server/jurisdiction'
 import { assetPath } from './assets'
 import { jurisdictionPath } from './path'
-import { appPageYears, FINANCE_SLUG, formatYen, hasDocument, QUESTIONS_SLUG, TAB_SLUGS, type PageData, type YearTab } from './types'
+import { appPageYears, FINANCE_SLUG, formatYen, hasDocument, TAB_SLUGS, type PageData, type YearTab } from './types'
 import { hasQuestions } from './questions'
 import { DOMAIN_FRAMES, OTHER_FRAME } from './domains'
 import { QUESTIONS } from '../compare/questions'
@@ -225,9 +225,9 @@ export function financeHead(d: PageData): Head {
   return head(`${d.name}の財政（借金・貯金・財政の指標）｜風土記`, `${d.name}の借金と貯金、事業に回ったお金、実質収支などの財政の指標を、総務省の${source}から年度を並べて見られます。`, `${ORIGIN}${jurisdictionPath(d.code)}/${FINANCE_SLUG}`)
 }
 
-/** 「気になる」のタブの頁（/tokyo/shinagawa/questions）の head */
+/** 問いのあるまちの入口（/tokyo/shinagawa）の head。入口はまちの頭と問いのフィードで、予算・決算・事業・財政はそこから開く */
 export const questionsHead = (d: PageData): Head =>
-  head(`${d.name}のお金で気になること｜風土記`, `借金は多い？貯金はなぜ使わない？${d.name}のお金について気になる問いに、予算書・決算書の数字で答えます。答えからそのまま AI に続けて聞けます。`, `${ORIGIN}${jurisdictionPath(d.code)}/${QUESTIONS_SLUG}`)
+  head(`${d.name}のお金の使い道｜風土記`, `借金は多い？貯金はなぜ使わない？${d.name}のお金について気になる問いに、予算書・決算書の数字で答えます。答えからそのまま AI に続けて聞けます。`, `${ORIGIN}${jurisdictionPath(d.code)}`)
 
 /** sitemap。入口・まち比べ（/compare と問いの頁）と、財政（/tokyo/shinagawa/finance）と各年度のタブの頁（/tokyo/shinagawa/2026/projects）を載せる。自治体の頁そのものは最新の年度の予算のタブが正規なので載せない。years は頁で選べる年度（新しい順） */
 export const sitemapXml = (entries: CatalogEntry[], yearsOf: (e: CatalogEntry) => number[] = (e) => [...e.settlementYears].sort((a, b) => b - a)) =>
@@ -237,7 +237,7 @@ export const sitemapXml = (entries: CatalogEntry[], yearsOf: (e: CatalogEntry) =
       const base = jurisdictionPath(e.code)
       const years = yearsOf(e)
       // 財政と、年度ごとのタブの頁（予算・決算・事業）
-      return [...(hasQuestions(e.code) ? [`${base}/${QUESTIONS_SLUG}`] : []), `${base}/${FINANCE_SLUG}`, ...years.flatMap((y) => {
+      return [...(hasQuestions(e.code) ? [base] : []), `${base}/${FINANCE_SLUG}`, ...years.flatMap((y) => {
         const page = `${base}/${y}`
         return [`${page}/${TAB_SLUGS.projects}`, ...(e.initialYears.includes(y) ? [`${page}/${TAB_SLUGS.money}`] : []), ...(e.settlementYears.includes(y) ? [`${page}/${TAB_SLUGS.settled}`] : [])]
       })]

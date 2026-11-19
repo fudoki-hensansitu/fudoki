@@ -21,7 +21,7 @@ import { loadLocalFinance } from '../../server/local-finance'
 import { loadRevenue } from '../../server/revenue'
 import { readProjectFull, type ProjectFull } from '../../jurisdiction/app/api'
 import { apiCall, FudokiApiError } from '../../server/fudoki-api'
-import { loadQuestions } from '../../jurisdiction/questions'
+import { hasQuestions, loadQuestions } from '../../jurisdiction/questions'
 import type { QuestionFeed } from '../../jurisdiction/questions/types'
 
 export const notFound = () => new Response('Not Found\n', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
@@ -114,7 +114,11 @@ async function entryProps(c: Context, path: string): Promise<JurisdictionProps> 
   const years = appPageYears(props.data)
   const initial = years.find((y) => hasDocument(props.data, y, 'initial'))
   const year = initial ?? years.find((y) => hasDocument(props.data, y, 'settlement')) ?? years[0]
-  return year === undefined ? props : { ...props, year, tab: initial !== undefined ? 'money' : 'settled' }
+  if (year === undefined) return props
+  // 問いのあるまちの入口は、まちの頭と問いのフィード。予算・決算・事業・財政はそこから開く
+  const questions = await loadQuestions(props.data.code)
+  if (questions) return { ...props, year, tab: 'questions', questions }
+  return { ...props, year, tab: initial !== undefined ? 'money' : 'settled' }
 }
 
 /** 事業の ID の段。事業の ID と、事業の収録の無い自治体で目を事業の代わりにした ID（moku:<subject_id>） */
@@ -148,12 +152,11 @@ export async function projectProps(c: Context, path: string, segment: string): P
   return { ...props, tab: 'projects', project, ...(projectFull ? { projectFull } : {}) }
 }
 
-/** 「気になる」のタブの頁。問いの無い自治体は 404 */
+/** もとの「気になる」のタブの頁（/tokyo/shinagawa/questions）。問いは入口に移したので、入口へ 301。問いの無い自治体は 404 */
 async function questionProps(c: Context, path: string): Promise<JurisdictionProps> {
   const props = await jurisdictionProps(c, path)
-  const questions = props.kind === 'page' ? await loadQuestions(props.data.code) : undefined
-  if (!questions) throw new HTTPException(404, { res: notFound() })
-  return { ...props, tab: 'questions', questions }
+  if (props.kind !== 'page' || !hasQuestions(props.data.code)) throw new HTTPException(404, { res: notFound() })
+  throw new HTTPException(301, { res: new Response(null, { status: 301, headers: { Location: `${path}${new URL(c.req.url).search}` } }) })
 }
 
 /** タブの頁（/tokyo/nakano/projects、/tokyo/nakano/2024/budget）。タブの名前が違えば 404。予算・決算のタブは収録の無い年度にもあり、画面が「まだ収録していない」と出す */

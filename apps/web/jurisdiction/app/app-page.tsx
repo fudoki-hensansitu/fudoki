@@ -33,7 +33,6 @@ import {
   StudentIcon,
   UsersIcon,
   WalletIcon,
-  ChatCircleTextIcon,
   type Icon,
 } from '@phosphor-icons/react'
 import { MoreDots } from '@/components/more-dots'
@@ -957,7 +956,6 @@ function YearMenu({ years, current, onChange }: { years: number[]; current: numb
 // ---------- 頁 ----------
 /** 聞く欄の文言。いま見ているタブのことを聞けると伝える（自治体の名前は頁の頭にあるので繰り返さない） */
 const askLabel = (tab: TabKey) => (tab === 'questions' ? '気になることを質問' : `${{ money: '予算', settled: '決算', projects: '事業', overview: '財政' }[tab]}について質問`)
-const QUESTIONS_TAB: { key: TabKey; label: string; icon: Icon } = { key: 'questions', label: '気になる', icon: ChatCircleTextIcon }
 const TABS: { key: TabKey; label: string; icon: Icon }[] = [
   { key: 'money', label: '予算', icon: WalletIcon },
   { key: 'settled', label: '決算', icon: ReceiptIcon },
@@ -998,7 +996,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   const at = React.useRef({ year, tab })
   at.current = { year, tab }
   /** 年度・タブの頁の URL。リンクの先にして検索エンジンにも辿らせる。財政は年度の段を持たない（/tokyo/shinagawa/finance） */
-  const pageHref = (y: number, t: TabKey) => (t === 'overview' ? `${data.path}/${FINANCE_SLUG}` : t === 'questions' ? `${data.path}/${QUESTIONS_SLUG}` : `${data.path}/${y}/${TAB_SLUGS[t]}`)
+  const pageHref = (y: number, t: TabKey) => (t === 'overview' ? `${data.path}/${FINANCE_SLUG}` : t === 'questions' ? data.path : `${data.path}/${y}/${TAB_SLUGS[t]}`)
   // 問いは「気になる」のタブの頁でだけ loader が渡す。他のタブへ移っても、続きの問いに作り置きの答えで答えられるよう持っておく
   const [questions, setQuestions] = React.useState(questionsProp)
   React.useEffect(() => void (questionsProp && setQuestions(questionsProp)), [questionsProp])
@@ -1157,7 +1155,9 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   // スマホではタブの中身を左右のスワイプで切り替える（shadcn の Carousel）。高さは今のタブに合わせる
   const [api, setApi] = React.useState<CarouselApi>()
   // 予算・決算のタブはどの年度にも出す。収録の無い年度はタブの中で「まだ収録していない」と出す
-  const tabs = React.useMemo(() => (hasQuestions(data.code) ? [QUESTIONS_TAB, ...TABS] : TABS), [data.code])
+  // 問いのあるまちは、頁の入口（/tokyo/shinagawa）をまちの頭と問いのフィードにし、予算・決算・事業・財政はそこから開く頁にする
+  const tabs = TABS
+  const hub = tab === 'questions' && !projectPage
   const tabsRef = React.useRef(tabs)
   tabsRef.current = tabs
   // 事業評価は評価した事業を行った年度にだけある。評価の無い年度へ移ったら絞り込みを戻す
@@ -1196,7 +1196,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
       <div className="flex min-w-0 flex-col gap-2">
         {/* 年度の切り替えは、財政以外のタブの頭に置く（財政は年度をまたぐので置かない） */}
         {/* 見出しは自治体名だけ。「の予算と決算」は検索の題（title）にだけ持つ */}
-        <Title size="h2" as="h1" className="min-w-0 font-normal">{data.name}</Title>
+        <Title size="h2" as="h1" className="min-w-0 font-normal">{hasQuestions(data.code) ? <Link href={data.path} className="no-underline hover:text-primary">{data.name}</Link> : data.name}</Title>
         {vision ? <p className="text-base leading-snug">{vision}</p> : null}
         <div className="mt-1 flex flex-wrap gap-x-3 gap-y-2 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
           <span className="inline-flex items-center gap-1 sm:gap-2"><MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" />{data.prefecturePath ? <Button variant="link" size="inline" nativeButton={false} render={<Link href={data.prefecturePath} />}>{data.prefecture}</Button> : data.prefecture}</span>
@@ -1211,12 +1211,67 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     </header>
   )
 
+
+  // 入口のまちの頭。画面の半分ほどを使ってまちを大きく見せ、予算・決算・事業・財政への入口を並べる
+  const hl = data.headline
+  const lead = hl?.budget ? { label: '予算', ...hl.budget } : hl?.settlement ? { label: '決算', ...hl.settlement } : undefined
+  const people = data.population?.people
+  const doors: { key: TabKey; sub: string; year: number }[] = [
+    { key: 'money', sub: '何に使う予定か', year: hl?.budget?.year ?? year },
+    { key: 'settled', sub: '何に使ったか', year: hl?.settlement?.year ?? year },
+    { key: 'projects', sub: '一つ一つの使い道', year },
+    { key: 'overview', sub: '借金と貯金', year },
+  ]
+  const hero = (
+    <section className="flex min-h-[50svh] flex-col items-center justify-center gap-6 py-10 text-center">
+      <div className="grid size-28 place-items-center rounded-2xl border bg-emblem p-4 sm:size-36 sm:rounded-3xl sm:p-5">
+        {emblem ? <img src={emblem} alt="" className="size-full min-h-0 min-w-0 object-contain" /> : <span className={cn(titleVariants({ size: 'display' }), 'font-normal text-foreground')}>{data.name[0]}</span>}
+      </div>
+      <div className="flex flex-col items-center gap-2">
+        <Title size="h1" as="h1">{data.name}</Title>
+        {vision ? <p className="max-w-[36em] text-base leading-snug text-muted-foreground">{vision}</p> : null}
+        <div className="mt-1 flex flex-wrap justify-center gap-x-4 gap-y-2 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
+          <span className="inline-flex items-center gap-1 sm:gap-2"><MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" />{data.prefecturePath ? <Button variant="link" size="inline" nativeButton={false} render={<Link href={data.prefecturePath} />}>{data.prefecture}</Button> : data.prefecture}</span>
+          {people ? <span className="inline-flex items-center gap-1 sm:gap-2"><UsersIcon className="size-3.5 sm:size-4" aria-hidden="true" /><span className="sr-only">人口 </span>{formatPeople(people)}</span> : null}
+          {data.officialUrl ? <span className="inline-flex items-center gap-1 sm:gap-2"><GlobeIcon className="size-3.5 sm:size-4" aria-hidden="true" /><Button variant="link" size="inline" nativeButton={false} render={<a href={data.officialUrl} target="_blank" rel="noopener" />}>公式サイト</Button></span> : null}
+        </div>
+      </div>
+      {lead ? (
+        <p className="flex flex-col items-center gap-1">
+          <span className="text-sm text-muted-foreground">{reiwa(lead.year)}の{lead.label}</span>
+          <Title size="display" as="span" className="text-primary"><Amt yen={lead.yen} /></Title>
+          {people ? <span className="text-sm text-muted-foreground">1人あたり <Amt yen={lead.yen / people} plainUnit /></span> : null}
+        </p>
+      ) : null}
+      <nav aria-label="お金の使い道を見る" className="grid w-full max-w-[720px] grid-cols-2 gap-3 sm:grid-cols-4">
+        {doors.map(({ key, sub, year: y }) => {
+          const t = TABS.find((x) => x.key === key)!
+          return (
+            <Link key={key} href={pageHref(y, key)} className="flex flex-col items-start gap-1 rounded-xl border bg-card p-4 text-left no-underline transition-colors hover:border-primary">
+              <t.icon className="size-5 text-muted-foreground" aria-hidden="true" />
+              <span className="text-base font-semibold text-foreground">{t.label}</span>
+              <span className="text-xs text-muted-foreground">{sub}</span>
+            </Link>
+          )
+        })}
+      </nav>
+    </section>
+  )
+
   const panel = (key: TabKey) =>
-    !v ? null : key === 'questions' ? <QuestionFeedView feed={questions} onOpen={(q) => ask.current?.openPreset(q.q)} /> : key === 'overview' ? <Overview /> : key === 'money' ? <MoneyTab key={v.year} phase="initial" active={tab === key} /> : key === 'settled' ? <MoneyTab key={v.year} phase="settlement" active={tab === key} /> : <ProjectsTab filter={filter} setFilter={setFilter} fields={fields} setFields={setFields} q={query} setQ={setQuery} />
+    !v ? null : key === 'overview' ? <Overview /> : key === 'money' ? <MoneyTab key={v.year} phase="initial" active={tab === key} /> : key === 'settled' ? <MoneyTab key={v.year} phase="settlement" active={tab === key} /> : <ProjectsTab filter={filter} setFilter={setFilter} fields={fields} setFields={setFields} q={query} setQ={setQuery} />
 
   return (
     <div className="@container">
       <div className="mx-auto max-w-[1120px] px-4 pb-48">
+        {hub ? (
+          <>
+            {hero}
+            <Separator />
+            <div className="pt-6"><QuestionFeedView feed={questions} onOpen={(q) => ask.current?.openPreset(q.q)} /></div>
+          </>
+        ) : (
+        <>
         {header}
         <Separator />
         <Tabs value={tab} onValueChange={(t) => changeTab(t as TabKey)} className="gap-0">
@@ -1285,6 +1340,8 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
             <p className="pt-6 text-sm text-muted-foreground">データを読み込めませんでした。頁を読み込み直してください。</p>
           )}
         </Tabs>
+        </>
+        )}
       </div>
       <AskDock name={data.name} code={data.code} sitekey={sitekey} year={year} detail={() => (v ? (projectPage ? describeProject(res.peek<Loaded<ProjectFull>>(projectLatestKey(projectPage))) : '') : '')} section={tabs.find((t) => t.key === tab)?.label} ask={askLabel(tab)} preset={preset} handle={ask} />
     </div>
