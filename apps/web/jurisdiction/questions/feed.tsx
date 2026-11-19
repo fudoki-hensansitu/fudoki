@@ -33,7 +33,7 @@ function QuestionCard({ q, onOpen }: { q: Question; onOpen: (q: Question) => voi
         <span className="sr-only">{q.q}</span>
       </button>
       <Category field={q.field} />
-      <Title size="h3" className="text-balance transition-colors group-has-[button:hover]/q:text-primary">{q.q}</Title>
+      <Title size="h3" className="transition-colors group-has-[button:hover]/q:text-primary">{q.q}</Title>
       {q.big ? (
         <p className="flex flex-col gap-1">
           <Title size="h2" as="span" className="tabular-nums text-primary">{q.big.value}</Title>
