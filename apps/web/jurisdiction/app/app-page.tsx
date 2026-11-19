@@ -556,7 +556,7 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
       ) : picked ? (
         <Flow key={`${v.year}-${phase}-${account}`} flows={flows} revenue={current?.revenue} total={picked} onSetsu={(id) => setDetail({ kind: 'setsuItem', id })} onRetry={flowFailed && !drills ? () => void router.refresh({ preserveState: true, preserveScroll: true }) : undefined} bare natural className="scroll-mt-16 @4xl:scroll-mt-16" />
       ) : recorded ? (
-        <Skeleton className="h-[480px] rounded-xl" />
+        <FlowSkeleton />
       ) : (
         <Empty className="min-h-[320px] border border-border bg-card">
           <EmptyHeader>
@@ -596,6 +596,22 @@ function SetsuSection({ phase, account, groups, total, onOpen }: { phase: 'initi
         {groups ? groups.map((g, i) => <FieldRow key={g.id} f={g} i={i} max={max} total={total} onClick={onOpen && (() => onOpen(g.id))} />) : SETSU_SKELETON.map((w, i) => <FieldRowSkeleton key={i} width={w} />)}
       </div>
     </section>
+  )
+}
+
+/** お金の流れを読み込む間。見出しはそのまま出し、表（款の行の名前・金額・割合）の形だけを skeleton にする */
+function FlowSkeleton() {
+  return (
+    <div aria-busy="true" aria-label="読み込み中">
+      <Title size="h3" as="h2" className="mb-3">お金の流れ</Title>
+      {[10, 7, 9, 6, 8, 5, 7, 6].map((w, i) => (
+        <div key={i} className="flex items-center gap-4 border-b border-border py-4">
+          <Skeleton className="h-5" style={{ width: `${w}em` }} />
+          <Skeleton className="ml-auto h-5 w-24" />
+          <Skeleton className="hidden h-5 w-12 sm:block" />
+        </div>
+      ))}
+    </div>
   )
 }
 
