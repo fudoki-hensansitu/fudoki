@@ -206,12 +206,13 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
   const account = new URL(c.req.url).searchParams.get('account') || ACCOUNT
   // 会計で中身の変わらない頁（予算・決算のタブ以外）の ?account= も 404 にして、CDN の key（void.config.ts の revalidateQueryAllowlist）を増やさせない
   if (account !== ACCOUNT && (!phase || (entry && !entry.accounts?.[phase]?.[String(year)]?.includes(account)))) throw new HTTPException(404, { res: notFound() })
+  // 入口（まちの頭）は最新の当初予算を出すので、同じ年度に決算があっても当初予算を読む
   // 入口（最新の年度の頁）の題・説明文は、最新の決算と、決算より後の最新の当初予算の金額を書く。開いた年度の分は本文から作り、
   // 当初予算を開いたとき（決算のある年度の予算のタブも）の最新の決算だけを本文と同じ段で読む
   const latestSettled = props.data.settlementYears.at(-1)
   const newest = year === appPageYears(props.data)[0]
   const [snapshot, expenditureFlow, revenueFlow, settledSummary] = await Promise.all([
-    entry ? within(loadYearSnapshot(env, entry, year, { tab: props.tab ?? 'overview' }), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
+    entry ? within(loadYearSnapshot(env, entry, year, { tab: props.tab === 'questions' ? 'money' : (props.tab ?? 'overview') }), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
     entry && phase ? within(loadFlowParts(env, entry.code, year, 'moku', phase, account), FLOW_WAIT_MS)
       // 款が1つも無い流れは読めなかったものとして扱う（CDN に置かず、画面が読み直しを出す）
       .then(({ drills, loose }): PageFlow | undefined => (drills.length ? { year, phase, account, drills, loose } : undefined))

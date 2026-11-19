@@ -17,6 +17,20 @@ import { Markdown } from './markdown'
 import { saveSession, type StoredSession } from './store'
 import { ViewFrame } from './view-frame'
 
+/** 送る前に会話（server の id・token）を用意する transport。用意を待つ間も送信の中断（止める）に従う */
+class LazyChatTransport extends DefaultChatTransport<ChatMessage> {
+  constructor(
+    options: ConstructorParameters<typeof DefaultChatTransport<ChatMessage>>[0],
+    private readonly ready: (signal?: AbortSignal) => Promise<void>,
+  ) {
+    super(options)
+  }
+  override async sendMessages(options: Parameters<DefaultChatTransport<ChatMessage>['sendMessages']>[0]) {
+    await this.ready(options.abortSignal)
+    return super.sendMessages(options)
+  }
+}
+
 /** 頁の端からこの距離以内なら、その側のフェードは出さない */
 const FADE_EDGE_PX = 4
 /** 一番下からこの距離以内なら、読み終えて追っていると見なす */
@@ -107,24 +121,53 @@ export function Conversation({
   const live = React.useRef(stored.token ? { id, token: stored.token, expiresAt: stored.expiresAt } : undefined)
   const connectRef = React.useRef(connect)
   connectRef.current = connect
+  // 続けて聞くときに会話を作る。Turnstile が操作を求めて待つ間も、止めるを押せば待たずに送信を終える（会話は裏で作り終えたら使う）
+  const connecting = React.useRef<Promise<void> | undefined>(undefined)
+  const fresh = React.useRef(false)
+  const ensureLive = (signal?: AbortSignal) => {
+    if (live.current) return Promise.resolve()
+    if (!connectRef.current) return Promise.reject(new Error('会話を始められませんでした'))
+    connecting.current ??= connectRef.current().then(
+      (made) => {
+        live.current = { id: made.id, token: made.session.token, expiresAt: made.session.expiresAt }
+        fresh.current = true
+      },
+      (e) => {
+        connecting.current = undefined
+        throw e
+      },
+    )
+    if (!signal) return connecting.current
+    return Promise.race([
+      connecting.current,
+      new Promise<never>((_, reject) => {
+        if (signal.aborted) reject(new DOMException('Aborted', 'AbortError'))
+        signal.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')), { once: true })
+      }),
+    ])
+  }
+  const ensureRef = React.useRef(ensureLive)
+  ensureRef.current = ensureLive
   const transport = React.useMemo(
     () =>
-      new DefaultChatTransport<ChatMessage>({
-        api: '/api/chat',
-        prepareSendMessagesRequest: async ({ messages }) => {
-          if (!live.current) {
-            if (!connectRef.current) throw new Error('会話を始められませんでした')
-            const made = await connectRef.current()
-            live.current = { id: made.id, token: made.session.token, expiresAt: made.session.expiresAt }
-            // 別の頁で開くリンクが出るので、最初の答えを待たずに会話を保存しておく
-            save(messages)
-          }
-          return {
-            headers: { Authorization: `Bearer ${live.current.token}` },
-            body: { id: live.current.id, messages: forServer(messages), ...(stored.entry ? { entry: stored.entry } : {}), ...(viewContext.current ? { viewContext: viewContext.current } : {}) },
-          }
+      new LazyChatTransport(
+        {
+          api: '/api/chat',
+          prepareSendMessagesRequest: ({ messages }) => {
+            if (!live.current) throw new Error('会話を始められませんでした')
+            // 別の頁で開くリンクが出るので、会話を作ったら最初の答えを待たずに保存しておく
+            if (fresh.current) {
+              fresh.current = false
+              save(messages)
+            }
+            return {
+              headers: { Authorization: `Bearer ${live.current.token}` },
+              body: { id: live.current.id, messages: forServer(messages), ...(stored.entry ? { entry: stored.entry } : {}), ...(viewContext.current ? { viewContext: viewContext.current } : {}) },
+            }
+          },
         },
-      }),
+        (signal) => ensureRef.current(signal),
+      ),
     [stored.entry],
   )
   const save = (messages: ChatMessage[]) =>
