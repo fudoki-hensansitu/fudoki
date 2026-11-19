@@ -13,4 +13,4 @@ export const apiRoutes = routes().route('/', jurisdictionRoutes).route('/', expe
 export type AppType = typeof apiRoutes
 
 /** web が内部の RPC（entrypoint Web）で呼ぶ操作の型（web-ops.ts） */
-export type { WebOpInput, WebOpName, WebOpOutput, WebResult, WebRpc } from './web-ops'
+export type { AssistantTool, AssistantToolResult, WebOpInput, WebOpName, WebOpOutput, WebResult, WebRpc } from './web-ops'

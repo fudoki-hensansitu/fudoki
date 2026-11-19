@@ -34,11 +34,12 @@ bun run build:web
 
 ## 風土記の AI に聞く（`/assistant` の入力と `/s/:id`）
 
-サイドバーの「アシスタント」で開く `/assistant`（`chat/assistant-home.tsx`。例のカードを押してもその質問で始まる）から、風土記の MCP（apps/api）に繋いだ AI と会話する。会話の画面 `/s/:id` は `chat/session-page.tsx`（会話は sessionStorage にしか無いので、サーバーは枠だけを書き、ブラウザで読んでから描く）。チャットの部品は shadcn の chat 系（`chat/components/ui/`、`components.json`）で、apps/web の中に閉じる。入力欄（`chat/composer.tsx`、アシスタント・会話・自治体の頁で共通）は textarea で、`field-sizing: content` で文に合わせて伸ばす。Enter で送り、Shift+Enter で改行する（指で触る端末では Enter も改行で、送るボタンで送る）。
+サイドバーの「アシスタント」で開く `/assistant`（`chat/assistant-home.tsx`。例のカードを押してもその質問で始まる）から、風土記のデータの tool を持たせた AI と会話する。会話の画面 `/s/:id` は `chat/session-page.tsx`（会話は sessionStorage にしか無いので、サーバーは枠だけを書き、ブラウザで読んでから描く）。チャットの部品は shadcn の chat 系（`chat/components/ui/`、`components.json`）で、apps/web の中に閉じる。入力欄（`chat/composer.tsx`、アシスタント・会話・自治体の頁で共通）は textarea で、`field-sizing: content` で文に合わせて伸ばす。Enter で送り、Shift+Enter で改行する（指で触る端末では Enter も改行で、送るボタンで送る）。
 
-- **流れ**: 入力を送ると Turnstile で確かめ（`POST /api/sessions` がサーバー側で siteverify）、その会話だけに使える署名付き token（2時間）を受けて `/s/:id` に頁を読み直さずに移る。`POST /api/chat` が Workers AI（`workers-ai-provider`、モデルは config の `CHAT_MODEL`、推論の深さは `CHAT_REASONING_EFFORT`）と AI SDK の MCP client で応答を stream する。apps/api とは内部の RPC（Service Binding `WEB`・entrypoint `Web`、`server/fudoki-api.ts`）で繋ぐ。ブラウザは `api.fudoki.dev` を呼ばない（CSP の connect-src にも入れない）
-- **表示**: AI が `render_expenditure_view` を呼んだ結果は、apps/api の MCP Apps の View を器の頁（`/view-frame`、自分の CSP を持つ）+ `sandbox="allow-scripts"` の iframe に置き（`srcdoc` は親の頁の CSP を引き継いで View の script が止まるので使わない）、`AppBridge` + `PostMessageTransport` で渡す（`chat/view-frame.tsx`、土台は `apps/api/tests/host.ts`）。View が呼ぶ tool と resource の読み込みは `POST /api/mcp` が許可リスト（`server/limits.ts` の `VIEW_TOOLS`・`VIEW_RESOURCE`）で中継する
-- **AI に渡すもの**: tool の結果は text の側だけ（`server/chat.ts` の `textOnly`）。structuredContent と `_meta` は View にだけ流れる（`_meta` の `fudoki.dev/suggestions` の候補だけは会話の画面も読み、回答の下にチップで出す。押すと候補の `prompt` を質問として送る。`packages/fiscal/suggestions.ts` が型と検査を共有する）
+- **流れ**: 入力を送ると Turnstile で確かめ（`POST /api/sessions` がサーバー側で siteverify）、その会話だけに使える署名付き token（2時間）を受けて `/s/:id` に頁を読み直さずに移る。`POST /api/chat` が Workers AI（`workers-ai-provider`、モデルは config の `CHAT_MODEL`、推論の深さは `CHAT_REASONING_EFFORT`）と AI SDK で応答を stream する。apps/api とは内部の RPC（Service Binding `WEB`・entrypoint `Web`、`server/fudoki-api.ts`）で繋ぎ、MCP は使わない。ブラウザは `api.fudoki.dev` を呼ばない（CSP の connect-src にも入れない）
+- **tool**: 風土記のデータの tool は apps/api の `Web` の `tools()`（名前・説明・入力の JSON Schema。公開の MCP の tool と同じ説明に、web だけの操作 `count_evaluation_sheets` を足したもの、`apps/api/src/web-ops.ts`）を会話ごとに引き、AI SDK の tool に包む（`server/assistant-tools.ts`）。呼び出しは `runTool()` で、入力の検査と kill switch は内部の RPC の `call` と同じ。ほかに web が持つ tool: 出典の頁を読む `read_source_page`（`server/source-pages.ts`）、人口 `get_population`（`server/population.ts`）、決算状況調の財政の指標 `get_local_finance`（`server/local-finance.ts`）、許可したドメイン（`server/fetch-page.ts` の `FETCH_HOSTS`、今は fudoki.dev・docs.fudoki.dev）の頁を Markdown で読む `fetch_page`。手元で WEB binding が無いときだけ、tool の定義と呼び出しを公開の MCP に読み替える（`restRpc`）
+- **表示**: tool を呼んだところは印だけを出す。表とグラフ（以前の MCP Apps の View）は今は出さない
+- **AI に渡すもの**: tool の結果は text の側だけ（`tool-text.ts` が上限で切る）。結果の `_meta` の `fudoki.dev/suggestions` の候補は会話の画面だけが読み、回答の下にチップで出す。押すと候補の `prompt` を質問として送る（`packages/fiscal/suggestions.ts` が型と検査を共有する）
 - **画面の会話の履歴はブラウザに置く**: 画面の会話の履歴と token はブラウザの sessionStorage に置く。サーバーは利用状況を Analytics Engine に（本文・IP・会話 ID は書かない）、会話（質問と回答）を D1 `fudoki-web`（binding `DB`、本番だけ）に保存する。あとで会話を開き直す（復元）のと改善の分析の両方に使う。質問・頁の文脈・tool の引数・回答の文のメール・電話番号は伏せ字にし（tool の結果は風土記の公開データなので原文のまま）、IP・UA・cookie は書かない。ログインしていない会話は最後の発言から90日を過ぎたら書くたびに消す（`server/chat-log.ts`）。利用者への説明はプライバシーポリシーに書いてある
 - **上限**: IP ごとの流量（`CHAT_RATE_LIMIT`・`VIEW_RATE_LIMIT`、値は `server/limits.ts` と config で二重に持ち、試験が照合する）、段数・出力 token・文字数・件数・body の大きさ（`server/limits.ts`）。流量の binding・Turnstile の secret・site key のどれかが無ければ、チャットは止まる（アシスタントは入力を出さない）
 
@@ -50,7 +51,7 @@ bun run build:web
 
 ### 利用状況
 
-dataset `fudoki_web_chat`（binding `CHAT_USAGE`）に1要求1行で書く。列は `server/usage.ts`: blob1 種類（`chat`・`relay`）・blob2 モデル・blob3 tool と回数（`name:count,...`）・blob4 失敗の種類、double1 入力 token・double2 出力 token・double3 tool 呼び出し数・double4 段数・double5 所要 ms・double6 失敗なら1。
+dataset `fudoki_web_chat`（binding `CHAT_USAGE`）に1要求1行で書く。列は `server/usage.ts`: blob1 種類（`chat`。以前は View の中継の `relay` もあった）・blob2 モデル・blob3 tool と回数（`name:count,...`）・blob4 失敗の種類、double1 入力 token・double2 出力 token・double3 tool 呼び出し数・double4 段数・double5 所要 ms・double6 失敗なら1。
 
 ```sql
 -- 直近7日の、日ごと・モデルごとの会話の応答数・token・tool 呼び出し・失敗・平均所要時間（Analytics Engine の SQL API）

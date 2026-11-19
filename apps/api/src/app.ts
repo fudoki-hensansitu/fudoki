@@ -5,38 +5,18 @@ import { cors } from 'hono/cors'
 import iconSvg from './favicon.svg?raw'
 import { ApiError, errorBody, invalid } from './errors'
 import { VIEW_HTML, VIEW_URI } from './gen/view'
-import { JURISDICTION_TABLE } from './columns'
-import { projectTools } from './project/tools'
-import { evaluationTools } from './evaluation/tools'
 import { ORIGIN_PDF_PATH } from './expenditure/routes'
-import { expenditureTools } from './expenditure/tools'
-import { jurisdictionTools } from './jurisdiction/tools'
-import { revenueTools } from './revenue/tools'
 import { apiRoutes } from './rpc'
 import type { Ctx } from './shared/context'
-import type { Env } from './db'
 import { MAX_BODY_BYTES, routes } from './shared/http'
 import type { Tool } from './shared/tool'
 import { SUGGESTIONS_META_KEY } from '../../../packages/fiscal/suggestions'
-import { suggestionsFor } from './suggestions'
+import { jurisdictionNames, suggestionsFor } from './suggestions'
+import { tools } from './tools'
 import { serving } from './web-ops'
 
-/** MCP の tool。並びは tools/list の順 */
-export const tools: Tool[] = [
-  jurisdictionTools.list,
-  expenditureTools.searchSubjects,
-  expenditureTools.searchDetails,
-  expenditureTools.getLine,
-  revenueTools.get,
-  revenueTools.searchSubjects,
-  revenueTools.searchDetails,
-  revenueTools.getLine,
-  evaluationTools.get,
-  evaluationTools.getSheet,
-  evaluationTools.searchSheets,
-  projectTools.get,
-  projectTools.search,
-]
+export { tools }
+
 
 const MCP_ICON_SRC = `data:image/svg+xml;base64,${btoa(String.fromCharCode(...new TextEncoder().encode(iconSvg)))}`
 
@@ -108,23 +88,6 @@ preloadSchemas()
 
 /** MCP Apps（io.modelcontextprotocol/ui）の View の HTML の MIME type */
 export const VIEW_MIME_TYPE = 'text/html;profile=mcp-app'
-
-/** View が自治体コードの代わりに自治体名を出すための対応。structuredContent の契約は変えず、MCP の _meta にだけ載せる */
-async function jurisdictionNames(ctx: Ctx, out: unknown): Promise<Record<string, string>> {
-  type Coded = { jurisdiction_code: string }
-  const o = out as { subjects?: Coded[]; details?: Coded[] | Record<string, Coded[]>; line?: Coded; child_subjects?: Coded[] }
-  const details = Array.isArray(o.details) ? o.details : Object.values(o.details ?? {}).flat()
-  const codes = [...new Set([...(o.subjects ?? []), ...details, ...(o.line ? [o.line] : []), ...(o.child_subjects ?? [])].map((n) => n.jurisdiction_code))]
-  if (!codes.length) return {}
-  // D1 は1文の bind を100個までに制限するので、100件ずつに分けて1つの batch で読む
-  const chunks = Array.from({ length: Math.ceil(codes.length / 100) }, (_, i) => codes.slice(i * 100, i * 100 + 100))
-  const pages = await ctx.db.batch<{ jurisdiction_code: string; name: string }>(
-    chunks.map((c) =>
-      ctx.db.prepare(`SELECT "jurisdiction_code", "name" FROM ${JURISDICTION_TABLE} WHERE "jurisdiction_code" IN (${c.map(() => '?').join(', ')})`).bind(...c)
-    )
-  )
-  return Object.fromEntries(pages.flatMap((p) => p.results).map((r) => [r.jurisdiction_code, r.name]))
-}
 
 /** View を描く tool の名前。データを返す tool には View を付けず、この tool だけが View を指す（iframe を tool 呼び出しごとに作り直させないため） */
 export const RENDER_TOOL = 'render_expenditure_view'
@@ -231,7 +194,7 @@ function mcpServer(ctx: Ctx, apiOrigin: string): McpServer {
   return server
 }
 
-/** MCP の要求に答える。公開の /mcp と、web の内部の RPC（web-entrypoint.ts）が同じものを使う。body は検査・parse 済みの値 */
+/** MCP の要求に答える（公開の /mcp）。body は検査・parse 済みの値 */
 export async function mcpResponse(ctx: Ctx, raw: Request, body: unknown, apiOrigin: string): Promise<Response> {
   const json = (value: unknown, status: number) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json' } })
   // JSON-RPC の batch は1回の HTTP で検索を何十件も実行できるので、単一の要求だけを受ける。
@@ -250,22 +213,6 @@ export async function mcpResponse(ctx: Ctx, raw: Request, body: unknown, apiOrig
     onerror: (e) => console.error(e),
   })
   return handler.fetch(raw, { parsedBody: body })
-}
-
-/** web のアシスタントの MCP（内部の RPC、web-entrypoint.ts）。公開の /mcp と同じ検査（kill switch・body の大きさ・JSON）を通し、同じ tool に答える */
-export async function webMcp(env: Env, request: Request): Promise<Response> {
-  const json = (value: unknown, status: number) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } })
-  if (request.method !== 'POST') return json(errorBody('INVALID_ARGUMENT', 'MCP は POST だけを受け付けます'), 405)
-  if (!(await serving(env.DB))) return json(errorBody('UNAVAILABLE', '提供を停止しています'), 503)
-  let body: unknown
-  try {
-    if (!JSON_CONTENT_TYPE.test(request.headers.get('content-type') ?? '')) throw new ApiError(415, 'UNSUPPORTED_MEDIA_TYPE', 'Content-Type は application/json にしてください')
-    body = parseJsonBody(await readLimitedText(request))
-  } catch (e) {
-    if (!(e instanceof ApiError)) throw e
-    return json(jsonRpcError(e.status === 400 ? -32700 : -32600, e.message), e.status)
-  }
-  return mcpResponse({ db: env.DB }, request, body, new URL(request.url).origin)
 }
 
 export function createApp() {

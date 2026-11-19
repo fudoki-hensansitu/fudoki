@@ -1,6 +1,6 @@
 // 会話の本体。履歴はブラウザだけが持ち、送るたびに web の Worker（/api/chat）へ渡す。
 // 会話の画面（/s/:id）は頁全体を、自治体の個別ページは下から出す drawer の中を、scroller としてスクロールする。
-// AI が描画 tool を呼んだ結果は、apps/api の MCP Apps の View を iframe に置いて見せる（独自の表は作らない）
+// AI が tool を呼んだところは印だけを出す（表とグラフはまだ出さない）
 import * as React from 'react'
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport, type DynamicToolUIPart, type UIMessage } from 'ai'
@@ -15,7 +15,6 @@ import { Composer } from './composer'
 import { forServer, MAX_CONTEXT, splitContext } from './history'
 import { Markdown } from './markdown'
 import { saveSession, type StoredSession } from './store'
-import { ViewFrame } from './view-frame'
 
 /** 送る前に会話（server の id・token）を用意する transport。用意を待つ間も送信の中断（止める）に従う */
 class LazyChatTransport extends DefaultChatTransport<ChatMessage> {
@@ -37,7 +36,7 @@ const FADE_EDGE_PX = 4
 const NEAR_BOTTOM_PX = 120
 
 /** follow・source は作り置きの答え（自治体の頁の「気になる」）にだけ付く。follow は答えのあとに出す続きの問い */
-type Metadata = { apps?: Record<string, string>; context?: string; follow?: string[]; source?: string }
+type Metadata = { context?: string; follow?: string[]; source?: string }
 type ChatMessage = UIMessage<Metadata>
 
 const TOOL_LABELS: Record<string, string> = {
@@ -50,7 +49,14 @@ const TOOL_LABELS: Record<string, string> = {
   search_evaluation_sheets: '評価シートを検索',
   get_project: '事業を開く',
   search_projects: '事業を検索',
-  render_expenditure_view: '表とグラフを用意',
+  count_evaluation_sheets: '評価シートを数える',
+  get_revenue: '歳入を開く',
+  search_revenue_subjects: '歳入を検索',
+  search_revenue_details: '歳入の内訳を検索',
+  get_revenue_line: '歳入の科目・内訳を開く',
+  get_population: '人口を確認',
+  get_local_finance: '財政の指標を確認',
+  fetch_page: '頁を読む',
   read_source_page: '資料を読む',
 }
 
@@ -86,7 +92,6 @@ export function Conversation({
   context,
   beforeComposer,
   onSend,
-  movableViews = false,
   startAtTop = false,
   connect,
   preset,
@@ -98,14 +103,12 @@ export function Conversation({
   /** 会話をスクロールする箱。無ければ頁全体 */
   scroller?: React.RefObject<HTMLElement | null>
   autoFocus?: boolean
-  /** 送るたびに読む、頁で見ているもの（自治体の頁の画面・選んだ文）。表とグラフの View が渡す文脈の前に足す */
+  /** 送るたびに読む、頁で見ているもの（自治体の頁の画面・選んだ文） */
   context?: () => string | undefined
   /** 続けて聞く入力欄の上に出すもの（選んだ文など） */
   beforeComposer?: React.ReactNode
   /** 続けて聞いたとき（選んだ文を外すなど） */
   onSend?: () => void
-  /** 表とグラフを会話の横のパネルへ移せるか。会話の頁だけ。自治体の頁のように会話がパネルの中にあるときは移さない */
-  movableViews?: boolean
   /** 開いたときに一番下へ送らず、最初の問いと答えの頭から見せる（作り置きの答えから始めた会話） */
   startAtTop?: boolean
   /** stored に token が無い会話（作り置きの答えから始めた会話）で、続けて聞くときに会話を作る。Turnstile は押したときでなく、聞くときに通す */
@@ -113,7 +116,6 @@ export function Conversation({
   /** 続きの問いに作り置きの答えがあれば返す。あれば AI に聞かずにその答えを足す */
   preset?: (question: string) => { answer: string; follow: string[]; source: string } | undefined
 }) {
-  const viewContext = React.useRef(stored.viewContext ?? '')
   // 頁の文脈は質問ごとに読み、その発言の metadata に持たせる（server が選んだ文は質問の直前の利用者の発言に、見ている画面は最後の質問のものだけを system prompt に入れる）
   const contextRef = React.useRef(context)
   contextRef.current = context
@@ -162,7 +164,7 @@ export function Conversation({
             }
             return {
               headers: { Authorization: `Bearer ${live.current.token}` },
-              body: { id: live.current.id, messages: forServer(messages), ...(stored.entry ? { entry: stored.entry } : {}), ...(viewContext.current ? { viewContext: viewContext.current } : {}) },
+              body: { id: live.current.id, messages: forServer(messages), ...(stored.entry ? { entry: stored.entry } : {}) },
             }
           },
         },
@@ -171,7 +173,7 @@ export function Conversation({
     [stored.entry],
   )
   const save = (messages: ChatMessage[]) =>
-    !live.current || saveSession(live.current.id, { token: live.current.token, expiresAt: live.current.expiresAt, messages, ...(stored.entry ? { entry: stored.entry } : {}), ...(viewContext.current ? { viewContext: viewContext.current } : {}) })
+    !live.current || saveSession(live.current.id, { token: live.current.token, expiresAt: live.current.expiresAt, messages, ...(stored.entry ? { entry: stored.entry } : {}) })
   const { messages, sendMessage, setMessages, status, stop, error } = useChat<ChatMessage>({
     id,
     messages: (stored.messages ?? []) as ChatMessage[],
@@ -209,7 +211,7 @@ export function Conversation({
   React.useEffect(() => {
     if (sent.current || !stored.pending) return
     sent.current = true
-    saveSession(id, { token: stored.token, expiresAt: stored.expiresAt, messages: stored.messages, ...(stored.entry ? { entry: stored.entry } : {}), ...(stored.viewContext ? { viewContext: stored.viewContext } : {}) })
+    saveSession(id, { token: stored.token, expiresAt: stored.expiresAt, messages: stored.messages, ...(stored.entry ? { entry: stored.entry } : {}) })
     // 入口で書いた最初の質問は、書いたときの文脈（選んだ文を含む）で送る
     send(stored.pending, stored.pendingContext)
   }, [id, stored, send])
@@ -271,7 +273,6 @@ export function Conversation({
     status === 'submitted' ||
     (status === 'streaming' &&
       (last === undefined || last.type === 'step-start' || (last.type === 'dynamic-tool' && (last.state === 'output-available' || last.state === 'output-error'))))
-  const apps = (m: ChatMessage) => m.metadata?.apps ?? {}
   return (
     <div className={`flex w-full flex-col ${scroller ? 'min-h-full' : 'min-h-dvh'}`}>
       <div className="sticky top-0 z-20 bg-background">
@@ -293,14 +294,6 @@ export function Conversation({
                         </Bubble>
                       )
                     if (p.type !== 'dynamic-tool') return null
-                    if (!live.current) return null
-                    const uri = apps(m)[p.toolName]
-                    const output = p.state === 'output-available' ? (p.output as { isError?: boolean; structuredContent?: unknown }) : undefined
-                    // View は結果の structuredContent を描く。履歴から復元した結果で structuredContent が無いときは印だけにする
-                    if (uri && output && !output.isError && output.structuredContent)
-                      return (
-                        <ViewFrame key={i} token={live.current.token} uri={uri} movable={movableViews} input={p.input} output={output} onContext={(text) => (viewContext.current = text.slice(0, 2000))} />
-                      )
                     return <ToolMarker key={i} part={p} />
                   })}
                   {m.metadata?.source ? <p className="px-1 text-xs text-muted-foreground">作り置きの答え・出典: {m.metadata.source}</p> : null}

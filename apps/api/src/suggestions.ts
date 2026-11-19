@@ -1,4 +1,6 @@
 import { validSuggestions, type Suggestion } from '../../../packages/fiscal/suggestions'
+import { JURISDICTION_TABLE } from './columns'
+import type { Ctx } from './shared/context'
 
 interface Node {
   name: string
@@ -43,4 +45,21 @@ export function suggestionsFor(tool: string, out: unknown, jurisdictionNames: Re
   out3.push({ label: `「${short(focus.name)}」を他の自治体と比べる`, prompt: `${scope(focus)}の「${focus.name}」を他の自治体と比べて` })
   // 名前が長くて上限を超えた候補は、読み手に黙って捨てられる前にここで外す
   return validSuggestions(out3)
+}
+
+/** 結果に出てくる自治体コードの名前。次の質問の候補と、MCP の View が自治体コードの代わりに出す名前（_meta）に使う */
+export async function jurisdictionNames(ctx: Ctx, out: unknown): Promise<Record<string, string>> {
+  type Coded = { jurisdiction_code: string }
+  const o = out as { subjects?: Coded[]; details?: Coded[] | Record<string, Coded[]>; line?: Coded; child_subjects?: Coded[] }
+  const details = Array.isArray(o.details) ? o.details : Object.values(o.details ?? {}).flat()
+  const codes = [...new Set([...(o.subjects ?? []), ...details, ...(o.line ? [o.line] : []), ...(o.child_subjects ?? [])].map((n) => n.jurisdiction_code))]
+  if (!codes.length) return {}
+  // D1 は1文の bind を100個までに制限するので、100件ずつに分けて1つの batch で読む
+  const chunks = Array.from({ length: Math.ceil(codes.length / 100) }, (_, i) => codes.slice(i * 100, i * 100 + 100))
+  const pages = await ctx.db.batch<{ jurisdiction_code: string; name: string }>(
+    chunks.map((c) =>
+      ctx.db.prepare(`SELECT "jurisdiction_code", "name" FROM ${JURISDICTION_TABLE} WHERE "jurisdiction_code" IN (${c.map(() => '?').join(', ')})`).bind(...c)
+    )
+  )
+  return Object.fromEntries(pages.flatMap((p) => p.results).map((r) => [r.jurisdiction_code, r.name]))
 }
