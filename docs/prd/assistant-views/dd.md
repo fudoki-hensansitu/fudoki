@@ -22,7 +22,7 @@
 - Non-Goal: 部品の組み合わせ・レイアウトを AI に決めさせること（json-render などの、AI が UI の JSON を書く形）。比べた結果は「Considered Options」。
 - Non-Goal: 公開 MCP（`/mcp`）に同じ部品を出すこと。部品を packages に移して `apps/api/ui` の View に同梱すれば出せるが、外部の利用がほぼ無いので、web で形が固まってからにする。
 - Non-Goal: 出典 PDF の頁を会話・頁の中で開くこと（`show_source_page`）。自前の R2 から読むには「api は R2 の binding を持たない」（`pipeline/verify/boundaries.ts`・`apps/AGENTS.md`）を見直す必要があり、利用条件の判断も要るので、見送った（「関連: 出典の頁」）。
-- Non-Goal: 款・項のサンキー（`Overview`）・節の「何に使う？」・年度の推移・事業のカード。この4つで仕組みを通してから、同じ形で足す。
+- Non-Goal: 款・項のサンキー（`Overview`）・節の「何に使う？」・年度の推移・事業のカード。最初の3つで仕組みを通してから、この4つを同じ形で足す。
 
 ## Background
 
@@ -65,12 +65,14 @@ type ViewResult =
 - 引数名は api の `document_kind` に揃える（Glossary の phase は金額の段階を指すので使わない）。
 - 数字が頁とずれないよう、自治体の頁の loader と同じ関数で引く。歳出の総額と分野は `subjectsOf` の款項目を `subjectTree` に通したもの（`server/app-data.ts`）、歳入の款は `loadRevenue`、1人あたりの住民税に要る歳入の項・目・節は `loadRevenueFlow`、人口は自治体の catalog。`list_expenditures` の `cofog_*_yen` は別の経路で頁と一致する保証が無いので使わない。
 - 組み立て（上位7款＋ほかの収入、決算の差を「翌年度へ繰り越すお金など」、1人あたりの住民税）は今 `IncomeFlow` の中にあるので、純粋な関数に切り出して頁と tool の両方から呼ぶ。
-- 歳入の無い資料は「入る」を出さず、分野の額だけの「使う」を出す（頁で歳入が無いときと同じ）。
+- 歳入の無い資料では、頁と同じく入る→使うを描かない（頁は `revenueDoc` が無ければ `IncomeFlow` を出さない、`app-page.tsx`）。`isError` と「この資料は歳入を収録していない」の text を返し、AI は分野の額を文か `show_expenditure_table` で答える。頁に無い「使う」だけの図は作らない。
 
 **`show_expenditure_table({ tool: 'search_expenditure_subjects' | 'search_expenditure_details', arguments })`**
 
 - 消した `render_expenditure_view` と同じく、データ tool と同じ入力を受けて引き直す。前の tool の結果を参照させる案（tool call の ID を渡す）は、`execute` に届く履歴が `toModelOutput` で切った text で、行のデータが残っていないので採らない。
-- 出すのは 50 行まで（`page_size` を 50 で頭打ちにする）。列は名称・階層・金額・金額の段階・出典の頁。出典の頁は、今の頁と同じく自治体の資料の URL の `#page=` へのリンクにする。
+- 出すのは 50 行まで（`page_size` を 50 で頭打ちにする）。結果に `next_page_token` があれば、表の下に「50件まで表示（続きがあります）」と出す。会話の中で続きを読む操作は置かず、続きは AI が `page_token` を渡して同じ tool をもう一度呼ぶ。
+- 列は名称・階層・金額・金額の段階・出典の頁。出典の頁は、今の頁と同じく自治体の資料の URL の `#page=` へのリンクにする。
+- 内訳（`search_expenditure_details`）は、分け方（`breakdown`: 事業・節・その他）ごとに見出しを分けて表を区切り、深さで字下げする。事業と節は同じ目の額の別の切り口なので、表に合計の行を置かず、見出しに「分け方の違う表どうしは足せません」を添える（頁の `FlowTable`・MCP の View が軸ごとに分けているのと同じ）。科目（`search_expenditure_subjects`）も合計の行を置かず、階層（款・項・目）の列を出す。
 
 **`show_local_finance({ jurisdiction_code, sections?: ('debt' | 'free' | 'indicators')[] })`**
 
@@ -87,7 +89,7 @@ type ViewResult =
 
 - **数字の正しさ**: 部品の数字は、tool が内部の口と D1 から引いた値だけ。`IncomeFlow` から切り出す組み立て（上位7款・繰り越しの差）は頁と同じ関数を使い、金額の組み立てなので unit テストを書く（AGENTS.md のテストの範囲の「金額の正しさ」）。
 - **大きさ**: view の data は sessionStorage に残る。表は50行、お金の流れは款と分野で数十行、財政は5年分。1回の会話で数百 KB を超えない見込み。
-- **費用**: 見せる tool は AI の出力トークンを増やさない（数字も JSON も書かない）。D1 への書き込みも増えない（会話の記録から view を外す）。
+- **費用**: 見せる tool は部品の中身を AI に書かせないので、出力トークンは tool の引数の分だけ増える。`show_money_flow`・`show_local_finance` の引数は自治体・年度などの数語。`show_expenditure_table` はデータ tool と同じ `arguments`（検索の条件と、続きを読むときの `page_token`、512字まで）を書き直すので、その分が増え、D1 の読み取りもデータ tool と合わせて2回になる。D1 への書き込みは増えない（会話の記録から view を外す）。
 - **届き方**: execute の戻り値は UI message stream でそのまま画面に届き、`toModelOutput` は AI に渡す分にだけ効く。次の質問の候補の `_meta` が同じ経路で今動いている。
 
 ## Considered Options
