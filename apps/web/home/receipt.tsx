@@ -517,10 +517,10 @@ export function ReceiptMachine({ code, name, v, year, pop, base, detailHref, hea
               {f.examples ? <span className="mt-1 block pl-7 text-xs text-muted-foreground">{f.examples}</span> : null}
             </>
           )
-          // その他は分野の絞り込みに無いので押せない。「気になる」の問いのあるまちは、その分野の問いのフィードを開く
+          // 「気になる」の問いのあるまちは、その分野の問いのフィードを開く（その他も問いがある）。無いまちは事業の絞り込みを開き、その他は絞り込みに無いので押せない
           return (
             <li key={f.id}>
-              {f.id === OTHER_FRAME.id ? (
+              {f.id === OTHER_FRAME.id && !hasQuestions(code) ? (
                 <div className="px-2 py-2">{row}</div>
               ) : (
                 <Link href={hasQuestions(code) ? `${base}/${QUESTIONS_SLUG}?field=${f.id}` : `${base}/projects?field=${f.id}`} className="block rounded-lg px-2 py-2 transition-colors hover:bg-card">
