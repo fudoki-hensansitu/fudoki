@@ -1,4 +1,5 @@
 // 「気になる」の問いを持つ自治体と、その読み込み。問いは自治体ごとの module に置き、そのタブの頁の loader だけが読む（頁の JS に全自治体の文を載せない）
+import { OTHER_FRAME } from '../domains'
 import type { Question, QuestionFeed } from './types'
 
 const FEEDS: Record<string, () => Promise<QuestionFeed>> = {
@@ -14,7 +15,7 @@ export const loadQuestions = (code: string): Promise<QuestionFeed> | undefined =
 export function feedOf(feed: QuestionFeed, field: string | null): Question[] {
   const byId = new Map(feed.questions.map((q) => [q.id, q]))
   if (!field) return feed.order.flatMap((id) => byId.get(id) ?? [])
-  // 分野をまたぐ問い（field 無し）は「その他」（jurisdiction/domains.ts の OTHER_FRAME）
-  const of = (q: Question) => (q.field ?? 'other') === field
+  // 分野をまたぐ問い（field 無し）は「その他」
+  const of = (q: Question) => (q.field ?? OTHER_FRAME.id) === field
   return [...feed.questions.filter((q) => of(q) && q.lead), ...feed.questions.filter((q) => of(q) && !q.lead)]
 }
