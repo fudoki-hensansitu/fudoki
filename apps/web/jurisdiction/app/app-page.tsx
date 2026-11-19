@@ -20,6 +20,7 @@ import {
   HouseLineIcon,
   LeafIcon,
   ListBulletsIcon,
+  ListDashesIcon,
   MagnifyingGlassIcon,
   ReceiptIcon,
   MapPinIcon,
@@ -30,7 +31,6 @@ import {
   MapPinAreaIcon,
   StorefrontIcon,
   StudentIcon,
-  TreeStructureIcon,
   UsersIcon,
   WalletIcon,
   type Icon,
@@ -743,15 +743,14 @@ function DetailSection({ icon: I, title, children }: { icon: Icon; title: string
     </section>
   )
 }
-/** 事業の名前。新しく始める・やめた事業の印は名前の後ろに付ける */
+/** 事業の名前。新しく始める・やめた事業の印は名前の前に置き、名前の1行目の高さの真ん中に揃える（名前が折り返しても印は1行目の横） */
 function ProjectTitle({ p, mark }: { p: Pick<ProjectFull, 'name'>; mark: 'new' | 'stop' | null }) {
+  const m = mark === 'stop' ? <Mark kind="stop" label="やめた事業" className="size-7" /> : mark === 'new' ? <Mark kind="new" label="新しく始める事業" className="size-7" /> : null
   return (
-    <>
-      <Title size="h2" className="mb-2 flex items-start gap-2">
-        {p.name}
-        {mark === 'stop' ? <Mark kind="stop" label="やめた事業" /> : mark === 'new' ? <Mark kind="new" label="新しく始める事業" /> : null}
-      </Title>
-    </>
+    <Title size="h2" className="mb-2 flex items-start gap-2">
+      {m ? <span className="flex h-[1lh] shrink-0 items-center">{m}</span> : null}
+      <span className="min-w-0">{p.name}</span>
+    </Title>
   )
 }
 
@@ -850,7 +849,7 @@ function ProjectPageBody({ id }: { id: string }) {
         </div>
       </DetailSection>
       {p.kids.length ? (
-        <DetailSection icon={TreeStructureIcon} title="内訳">
+        <DetailSection icon={ListDashesIcon} title="内訳">
           {/* 内訳の一つ一つも年度をまたぐ事業なので、押すとその事業の頁へ移る。額はその事業の最新の年度のもの */}
           <Infinite items={p.kids} step={10} list={(kids) => (
             <Table>
