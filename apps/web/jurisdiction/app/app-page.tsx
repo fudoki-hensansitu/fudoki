@@ -69,6 +69,7 @@ import { Amt, yenParts } from './amount'
 import { FinanceSections } from './finance'
 import { IncomeFlow } from './income-flow'
 import { setsuGroups, type SetsuGroup } from '../setsu-groups'
+import { MoneyDetail, type MoneyDetailKey } from './money-detail'
 import './app.css'
 
 const FIELD_ICON: Record<string, Icon> = {
@@ -478,13 +479,19 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
   const current = React.useMemo(() => (shown && byMoku && byMoku !== FAILED ? withSetsu(shown, byMoku) : shown), [shown, byMoku])
   const drills = current?.drills
   const flows = current?.drills
+  // 開いている会計の目（節つき）。何に使う？と詳細の引き出しが使う
+  const allMoku = React.useMemo(() => (current ? [...current.drills.flatMap((k) => k.kou.flatMap((o) => o.moku)), ...current.loose] : []), [current])
   // 節で分けた額。節の分かる額が総額の半分に満たない（目の内訳が節でない資料が多い）ときは出さない
   const setsuView = React.useMemo(() => {
-    if (!current || !byMoku || byMoku === FAILED) return undefined
-    const base = current.drills.reduce((a, k) => a + k.kou.reduce((b, o) => b + o.moku.reduce((c, m) => c + m.yen, 0), 0), 0) + current.loose.reduce((a, m) => a + m.yen, 0)
-    const { groups, known } = setsuGroups([...current.drills.flatMap((k) => k.kou.flatMap((o) => o.moku)), ...current.loose], base)
+    if (!byMoku || byMoku === FAILED) return undefined
+    const base = allMoku.reduce((a, m) => a + m.yen, 0)
+    const { groups, known } = setsuGroups(allMoku, base)
     return base > 0 && known >= base * 0.5 ? { groups, total: base } : undefined
-  }, [current, byMoku])
+  }, [allMoku, byMoku])
+  // 詳細の引き出し（入る→使うの分野・何に使う？の区分）。入る→使うは一般会計なので、ほかの会計を開いているときは分野を押したら事業のタブへ移る
+  const [detail, setDetail] = React.useState<MoneyDetailKey>()
+  const wide = useMedia('(min-width: 768px)')
+  const openFieldDetail = (id: string) => (current?.account === GENERAL ? setDetail({ kind: 'field', id }) : openField(id))
   const router = useRouter()
   const accounts = d.accounts ?? []
   // 会計の総額は頁のデータの資料のもの。別の資料のタブ（スマホで隣に並ぶタブ）では使わない
@@ -521,10 +528,9 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
           : '予算は、1年間に何にいくら使うかを、年度が始まる前に決めた計画です。議会の議決を経て決まります。このタブでは、年度の初めに決めた当初予算を扱います。'}
       </TabHead>
       {/* 入る→使う（一般会計の歳入と歳出の総額と流れ）。その年度・資料の歳入を収録しているときだけ */}
-      {total && revenueDoc ? <IncomeFlow doc={revenueDoc} revenue={current?.revenue} phase={phase} expTotal={total.yen} fields={v.fields} pop={d.pop} openField={openField} /> : null}
-      {/* 使い道の分野は入る→使うに出るので、分野の棒は入る→使うの無い年度だけ。代わりに節で分けた「どうやって使う？」を出す（節は描いた後に届くので、届くまでは枠だけ） */}
-      {total && !revenueDoc ? <FieldsSection phase={phase} /> : null}
-      {total && setsuView ? <SetsuSection phase={phase} account={account} groups={setsuView.groups} total={setsuView.total} /> : total && shown && byMoku === undefined ? <Skeleton className="mb-5 h-[280px] rounded-xl" /> : null}
+      {total && revenueDoc ? <IncomeFlow doc={revenueDoc} revenue={current?.revenue} phase={phase} expTotal={total.yen} fields={v.fields} pop={d.pop} openField={openFieldDetail} /> : null}
+      {/* 使い道の分野は入る→使うに出るので、ここは節で分けた「何に使う？」。節が載っていない資料では出さない（節は描いた後に届くので、届くまでは枠だけ） */}
+      {total && setsuView ? <SetsuSection phase={phase} account={account} groups={setsuView.groups} total={setsuView.total} onOpen={(id) => setDetail({ kind: 'setsu', id })} /> : total && shown && byMoku === undefined ? <Skeleton className="mb-5 h-[280px] rounded-xl" /> : null}
       {total ? (
         <div className="flex items-center justify-between gap-3">
           <Title size="h3" as="h2">お金の流れ</Title>
@@ -564,50 +570,22 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
         </Empty>
       )}
       {byMoku === FAILED ? <p className="text-xs text-muted-foreground">目の内訳（節）を読み込めませんでした。少し待ってから開き直してください。</p> : null}
+      <MoneyDetail open={detail} onClose={() => setDetail(undefined)} wide={wide} moku={allMoku} fields={v.fields} groups={setsuView?.groups ?? []} onProjects={(f) => { setDetail(undefined); openField(f) }} />
     </div>
   )
 }
 
-/** どうやって使う？／どうやって使った？（歳出を節でまとめた区分ごとに）。予算・決算のタブのお金の流れの上に置く。押せない */
-function SetsuSection({ phase, account, groups, total }: { phase: 'initial' | 'settlement'; account: string; groups: SetsuGroup[]; total: number }) {
+/** 何に使う？／何に使った？（歳出を節でまとめた区分ごとに）。予算・決算のタブのお金の流れの上に置く。押すと区分の詳細の引き出しを開く */
+function SetsuSection({ phase, account, groups, total, onOpen }: { phase: 'initial' | 'settlement'; account: string; groups: SetsuGroup[]; total: number; /** 区分の詳細を開く */ onOpen: (id: string) => void }) {
   const max = Math.max(...groups.map((g) => g.yen))
   return (
     <section className="mb-5">
       <Title size="h3" as="h2" className="mb-3">
-        {phase === 'initial' ? 'どうやって使う？' : 'どうやって使った？'}
+        {phase === 'initial' ? '何に使う？' : '何に使った？'}
       </Title>
       <p className="mb-3 text-base leading-[1.7] text-muted-foreground">{account}の歳出を、人件費・委託料・工事など、お金の出し方で分けています。予算書・決算書の「節」をまとめたものです。</p>
       <div className="grid gap-x-8 @3xl:grid-flow-col @3xl:grid-cols-2 @3xl:grid-rows-(--rows)" style={{ '--rows': `repeat(${Math.ceil(groups.length / 2)}, auto)` } as React.CSSProperties}>
-        {groups.map((g, i) => <FieldRow key={g.id} f={g} i={i} max={max} total={total} />)}
-      </div>
-    </section>
-  )
-}
-
-/** 何に使う？／何に使った？（歳出を分野ごとに）。予算・決算のタブのお金の流れの上に置く。棒を押すと分野の頁へ */
-// タブへ移ると、すぐ描いた頁を loader が読み終えた頁で作り直すので、同じ棒を少し前に伸ばしたなら作り直した頁では伸ばさない
-const grownAt = new Map<string, number>()
-function FieldsSection({ phase }: { phase: 'initial' | 'settlement' }) {
-  const { d, v, openField } = useApp()
-  const max = Math.max(...v.fields.map((x) => x.yen))
-  const [grow] = React.useState(() => {
-    // サーバーの描画は頁ごとに1回なので覚えない（覚えると別の人の頁と食い違う）
-    if (typeof window === 'undefined') return true
-    const key = `${d.code}:${v.year}:${phase}`
-    const last = grownAt.get(key)
-    grownAt.set(key, Date.now())
-    return last === undefined || Date.now() - last > 5000
-  })
-  return (
-    <section className="mb-5">
-      <Title size="h3" as="h2" className="mb-3">
-        {phase === 'initial' ? '何に使う？' : '何に使った？'}<span className="ml-2 text-sm font-normal text-muted-foreground">歳出</span>
-        <Amt yen={v.total} className="ml-2 font-medium text-primary" />
-      </Title>
-      <p className="mb-3 text-base leading-[1.7] text-muted-foreground">税金を主な財源にする基本の会計（一般会計）の歳出を、使い道の分野ごとに分けています。</p>
-      {/* 棒の長さは一番大きい分野を満たんにし、割合の数字は合計に対する比のまま出す */}
-      <div className="grid gap-x-8 @3xl:grid-flow-col @3xl:grid-cols-2 @3xl:grid-rows-(--rows)" style={{ '--rows': `repeat(${Math.ceil(v.fields.length / 2)}, auto)` } as React.CSSProperties}>
-        {v.fields.map((f, i) => <FieldRow key={f.id} f={f} i={i} max={max} grow={grow} onClick={() => openField(f.id)} />)}
+        {groups.map((g, i) => <FieldRow key={g.id} f={g} i={i} max={max} total={total} onClick={() => onOpen(g.id)} />)}
       </div>
     </section>
   )

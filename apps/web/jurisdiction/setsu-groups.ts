@@ -30,6 +30,18 @@ export function setsuGroupOf(setsuId: string): string | undefined {
   return code === 7 ? 'people' : GROUP_OF.get(code >= 8 ? code - 1 : code)
 }
 
+/** 節の名前（R2 からの番号）。R1 以前の節は setsuCode で R2 の番号に寄せてから引く（07 の賃金だけは R2 に無い） */
+const SETSU_LABELS = ['', '報酬', '給料', '職員手当等', '共済費', '災害補償費', '恩給及び退職年金', '報償費', '旅費', '交際費', '需用費', '役務費', '委託料', '使用料及び賃借料', '工事請負費', '原材料費', '公有財産購入費', '備品購入費', '負担金、補助及び交付金', '扶助費', '貸付金', '補償、補塡及び賠償金', '償還金、利子及び割引料', '投資及び出資金', '積立金', '寄附金', '公課費', '繰出金', '予備費']
+
+/** 節マスタの ID の名前（R1 以前の賃金は「賃金」） */
+export function setsuLabelOf(setsuId: string): string | undefined {
+  const m = /^setsu-(\d{2})(-2019)?$/.exec(setsuId)
+  if (!m) return undefined
+  const code = Number(m[1])
+  if (!m[2]) return SETSU_LABELS[code]
+  return code === 7 ? '賃金' : SETSU_LABELS[code >= 8 ? code - 1 : code]
+}
+
 export const UNKNOWN_SETSU = 'unknown'
 
 /** 目の節を区分ごとに足す。節の分からない分（内訳が節でない目・節の無い目）は total との差で「節の分からない分」にする。多い順、分からない分は最後 */
