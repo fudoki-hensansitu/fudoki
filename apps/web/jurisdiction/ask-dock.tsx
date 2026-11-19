@@ -9,6 +9,7 @@ import { QUOTE_PREFIX } from '../chat/history'
 import { Hint } from '@/components/hint'
 import { reiwa } from './types'
 import { myTownContext } from '../home/towns'
+import { onPageScroll, pageScrollY, scrollPageTo, setSidePanel } from '../nav/page-scroll'
 /** AI に聞く入力欄。最初は開いておき、読み進めるか Escape で右下のボタンに畳む。押すか「/」、頁の文を選んで文脈が入ったときに開く。
  * 送ると頁を移らずに会話を開く。広い画面では右の side panel（頁は読み続けられる）、スマホでは下からの drawer。閉じても会話は残り、右下のボタンで戻れる */
 const DOCK_CLOSE_AFTER = 80
@@ -61,10 +62,9 @@ const BACK_TO_TOP_AFTER = 800
 function BackToTop({ hidden }: { hidden: boolean }) {
   const [shown, setShown] = React.useState(false)
   React.useEffect(() => {
-    const onScroll = () => setShown(window.scrollY > BACK_TO_TOP_AFTER)
+    const onScroll = () => setShown(pageScrollY() > BACK_TO_TOP_AFTER)
     onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    return onPageScroll(onScroll)
   }, [])
   const off = hidden || !shown
   return (
@@ -72,7 +72,7 @@ function BackToTop({ hidden }: { hidden: boolean }) {
       <button
         type="button"
         aria-label="上に戻る"
-        onClick={() => window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })}
+        onClick={() => scrollPageTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })}
         tabIndex={off ? -1 : 0}
         aria-hidden={off}
         className={`fixed bottom-[max(16px,env(safe-area-inset-bottom))] left-4 z-20 grid size-11 place-items-center rounded-full border bg-background text-muted-foreground shadow-md transition-[opacity,transform] duration-200 hover:border-primary hover:text-foreground max-md:bottom-[calc(16px+var(--bottom-nav))] md:left-[calc(var(--nav-w)+16px)] motion-reduce:transition-none ${off ? 'pointer-events-none translate-y-4 opacity-0' : ''}`}
@@ -249,26 +249,23 @@ export function AskDock({ name, code, sitekey, year, section, detail, page, ask 
     })
   }
 
-  // スマホの drawer を開いている間は、下の頁を動かさない。広い画面の side panel では頁を左へ寄せ、読み続けられるようにする
+  // スマホの drawer を開いている間は、下の頁を動かさない。広い画面の side panel では本文と会話を横に並べ、それぞれでスクロールする
   React.useEffect(() => {
     if (!drawer) return
     const body = document.body.style
-    const saved = { overflow: body.overflow, marginRight: body.marginRight }
+    const saved = body.overflow
     const apply = () => {
       const wide = matchMedia(WIDE_QUERY).matches
-      body.overflow = wide ? saved.overflow : 'hidden'
-      body.marginRight = wide ? `${SIDE_WIDTH}px` : saved.marginRight
-      // 固定の小さなヘッダーも panel の左で終える
-      document.documentElement.style.setProperty('--side-panel', wide ? `${SIDE_WIDTH}px` : '0px')
+      body.overflow = wide ? saved : 'hidden'
+      setSidePanel(wide ? SIDE_WIDTH : 0)
     }
     apply()
     const media = matchMedia(WIDE_QUERY)
     media.addEventListener('change', apply)
     return () => {
       media.removeEventListener('change', apply)
-      body.overflow = saved.overflow
-      body.marginRight = saved.marginRight
-      document.documentElement.style.removeProperty('--side-panel')
+      body.overflow = saved
+      setSidePanel(0)
     }
   }, [drawer])
 
@@ -305,7 +302,7 @@ export function AskDock({ name, code, sitekey, year, section, detail, page, ask 
   const restart = () => {
     setChat(undefined)
     setDrawer(false)
-    anchor.current = window.scrollY
+    anchor.current = pageScrollY()
     setOpen(true)
     requestAnimationFrame(() => dock.current?.querySelector<HTMLElement>('textarea, input')?.focus())
   }

@@ -61,6 +61,7 @@ import { DOMAIN_FRAMES, OTHER_FRAME, frameOf } from '../domains'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock } from '../ask-dock'
+import { onPageScroll, scrollPageTo } from '../../nav/page-scroll'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type Moku, type MokuBreakdowns, type PageData, type PageFlow, type YearTotal, TAB_SLUGS, FINANCE_SLUG, hasDocument, type PageTab } from '../types'
 import { Title, titleVariants } from '@/components/ui/title'
 import { withExtras, yearView, type AccountTotal, type Proj, type Snapshot, type YearExtras, type YearView } from './data'
@@ -1044,7 +1045,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
       : { project: id, depth: 1, fromList: tab === 'projects' && !projectPage }
     history.pushState({ ...state, ...next }, '', `${basePath()}/${projectSegment(id)}`)
     React.startTransition(() => setProjectPage(id))
-    window.scrollTo({ top: 0 })
+    scrollPageTo({ top: 0 })
   }
   const closeProject = () => {
     // 事業のタブから開いたなら履歴を戻る（探す語・絞り込み・スクロールが戻る）。他のタブや事業の頁を直に開いたときは事業のタブへ移る
@@ -1053,7 +1054,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     setProjectPage(null)
     setTabState('projects')
     void router.visit(pageHref(year, 'projects'), { preserveState: true })
-    window.scrollTo({ top: 0 })
+    scrollPageTo({ top: 0 })
   }
   React.useEffect(() => {
     // 戻る・進むでは、URL の事業に画面を合わせる（年度・タブは移った頁の loader が渡す）
@@ -1113,11 +1114,11 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
       })
     }
     check()
-    addEventListener('scroll', check, { passive: true })
+    const off = onPageScroll(check)
     addEventListener('resize', check)
     return () => {
       cancelAnimationFrame(frame)
-      removeEventListener('scroll', check)
+      off()
       removeEventListener('resize', check)
     }
   }, [tab, year, projectPage])

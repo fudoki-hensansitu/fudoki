@@ -11,6 +11,7 @@ import { Overview, OverviewSkeleton } from './sankey'
 import { MoneyFlow } from './app/income-flow'
 import { formatShare, formatYen, type Drill, type Kou, type Moku, type YearTotal } from './types'
 import { titleVariants } from '@/components/ui/title'
+import { pageScrollY, scrollPageBy, scrollPageTo } from '../nav/page-scroll'
 
 /** 歳入の面は、緑（使う）の代わりに入るの色で描く。図の部品は --primary で色を付けているので、面の中だけ差し替える */
 /** 見出しの名前と金額。名前も金額と同じ大きさにする */
@@ -129,7 +130,7 @@ function useEdgeFade(ref: React.RefObject<HTMLElement | null>, deps: React.Depen
       if (!((e.deltaY < 0 && atTop) || (e.deltaY > 0 && atBottom))) return
       e.preventDefault()
       const unit = e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1
-      window.scrollBy({ top: e.deltaY * unit, behavior: 'instant' })
+      scrollPageBy({ top: e.deltaY * unit, behavior: 'instant' })
     }
     el.addEventListener('scroll', update, { passive: true })
     el.addEventListener('wheel', onWheel, { passive: false })
@@ -343,7 +344,7 @@ function KanPanel({ drill, loading, levels, natural, shown, pos, style, noSetsu,
     const el = sections.current[i]
     if (!root || !el) return
     // 上に貼り付くタブの帯と図の見出しの下に出す
-    if (natural) return window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 120, behavior: 'smooth' })
+    if (natural) return scrollPageTo({ top: el.getBoundingClientRect().top + pageScrollY() - 120, behavior: 'smooth' })
     root.scrollTo({ top: el.getBoundingClientRect().top - root.getBoundingClientRect().top + root.scrollTop, behavior: 'smooth' })
   }
   const ticks = (
@@ -441,7 +442,7 @@ export function Flow({ flows: given, revenue: revenueGiven, total: year, classNa
     const section = kouIndex === undefined ? undefined : body?.querySelectorAll<HTMLElement>('[data-kou]')[kouIndex]
     if (!body) return
     if (natural) {
-      if (section) window.scrollTo({ top: section.getBoundingClientRect().top + window.scrollY - 120, behavior: 'instant' })
+      if (section) scrollPageTo({ top: section.getBoundingClientRect().top + pageScrollY() - 120, behavior: 'instant' })
       el.focus({ preventScroll: true })
       return
     }
