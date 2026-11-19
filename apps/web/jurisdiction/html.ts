@@ -219,7 +219,9 @@ export const emptyHead = (e: CatalogEntry): Head =>
 
 /** 財政のタブの頁（/tokyo/shinagawa/finance）の head。財政は年度をまたぐ指標なので年度の段を持たない */
 export function financeHead(d: PageData): Head {
-  return head(`${d.name}の財政（借金・貯金・財政の指標）｜風土記`, `${d.name}の借金と貯金、事業に回ったお金、実質収支などの財政の指標を、総務省の決算状況調から年度を並べて見られます。`, `${ORIGIN}${jurisdictionPath(d.code)}/${FINANCE_SLUG}`)
+  // 出典は市区町村が市町村別決算状況調、都道府県が地方財政状況調査（finance.tsx と同じ）
+  const source = d.code.slice(2, 5) === '000' ? '地方財政状況調査' : '市町村別決算状況調'
+  return head(`${d.name}の財政（借金・貯金・財政の指標）｜風土記`, `${d.name}の借金と貯金、事業に回ったお金、実質収支などの財政の指標を、総務省の${source}から年度を並べて見られます。`, `${ORIGIN}${jurisdictionPath(d.code)}/${FINANCE_SLUG}`)
 }
 
 /** sitemap。入口・まち比べ（/compare と問いの頁）と、財政（/tokyo/shinagawa/finance）と各年度のタブの頁（/tokyo/shinagawa/2026/projects）を載せる。自治体の頁そのものは最新の年度の予算のタブが正規なので載せない。years は頁で選べる年度（新しい順） */

@@ -96,18 +96,21 @@ export async function fieldProps(c: Context, path: string, field: string, yearSe
   throw new HTTPException(301, { res: new Response(null, { status: 301, headers: { Location: `${path}/${yearSegment}${sub}` } }) })
 }
 
-/** もとの年度のまとめの頁（/tokyo/nakano/2024）。まとめはやめたので、その年度の予算のタブへ 301 */
-const toYearBudget = (path: string, yearSegment: string): never => {
-  throw new HTTPException(301, { res: new Response(null, { status: 301, headers: { Location: `${path}/${yearSegment}/${TAB_SLUGS.money}` } }) })
+/** もとの年度のまとめの頁（/tokyo/nakano/2024）。まとめはやめたので、その年度の予算のタブ（当初予算の収録が無ければ決算のタブ）へ 301 */
+async function toYearMoney(c: Context, path: string, yearSegment: string): Promise<never> {
+  const props = await jurisdictionProps(c, path)
+  const initial = props.kind === 'page' && YEAR_SEGMENT.test(yearSegment) && hasDocument(props.data, Number(yearSegment), 'initial')
+  throw new HTTPException(301, { res: new Response(null, { status: 301, headers: { Location: `${path}/${yearSegment}/${initial ? TAB_SLUGS.money : TAB_SLUGS.settled}` } }) })
 }
 
-/** 自治体の頁（/tokyo/nakano）。当初予算を収録した最新の年度（無ければ頁の最新の年度）の予算のタブを出す。canonical はその年度の予算のタブの頁 */
+/** 自治体の頁（/tokyo/nakano）。当初予算を収録した最新の年度の予算のタブを出す。当初予算の収録が無い自治体（決算だけ）は最新の年度の決算のタブ。canonical はそのタブの頁 */
 async function entryProps(c: Context, path: string): Promise<JurisdictionProps> {
   const props = await jurisdictionProps(c, path)
   if (props.kind !== 'page') return props
   const years = appPageYears(props.data)
-  const year = years.find((y) => hasDocument(props.data, y, 'initial')) ?? years[0]
-  return year === undefined ? props : { ...props, year, tab: 'money' }
+  const initial = years.find((y) => hasDocument(props.data, y, 'initial'))
+  const year = initial ?? years.find((y) => hasDocument(props.data, y, 'settlement')) ?? years[0]
+  return year === undefined ? props : { ...props, year, tab: initial !== undefined ? 'money' : 'settled' }
 }
 
 /** 事業の ID の段。事業の ID と、事業の収録の無い自治体で目を事業の代わりにした ID（moku:<subject_id>） */
@@ -165,7 +168,7 @@ export async function routeProps(c: Context, segments: string[]): Promise<Jurisd
     if (a === FINANCE_SLUG) return b === undefined ? { ...(await jurisdictionProps(c, path)), tab: 'overview' as const } : Promise.reject(new HTTPException(404, { res: notFound() }))
     if (a === 'fields') return b !== undefined && f === undefined ? fieldProps(c, path, b) : Promise.reject(new HTTPException(404, { res: notFound() }))
     if (!YEAR_SEGMENT.test(a)) return b === undefined ? tabProps(c, path, a) : a === 'projects' && f === undefined ? projectProps(c, path, b) : Promise.reject(new HTTPException(404, { res: notFound() }))
-    if (b === undefined) return toYearBudget(path, a)
+    if (b === undefined) return toYearMoney(c, path, a)
     if (b === 'fields') return f !== undefined ? fieldProps(c, path, f, a) : Promise.reject(new HTTPException(404, { res: notFound() }))
     return f === undefined ? tabProps(c, path, b, a) : Promise.reject(new HTTPException(404, { res: notFound() }))
   })()
