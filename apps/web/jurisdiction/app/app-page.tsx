@@ -536,7 +536,7 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
       {/* 入る→使う（一般会計の歳入と歳出の総額と流れ）。その年度・資料の歳入を収録しているときだけ */}
       {total && revenueDoc ? <IncomeFlow doc={revenueDoc} revenue={current?.revenue} phase={phase} expTotal={total.yen} fields={v.fields} pop={d.pop} openField={openFieldDetail} /> : null}
       {/* 使い道の分野は入る→使うに出るので、ここは節で分けた「何に使う？」。節が載っていない資料では出さない（節は描いた後に届くので、届くまでは枠だけ） */}
-      {total && setsuView ? <SetsuSection phase={phase} account={account} groups={setsuView.groups} total={setsuView.total} onOpen={(id) => setDetail({ kind: 'setsu', id })} /> : total && shown && byMoku === undefined ? <Skeleton className="mb-5 h-[280px] rounded-xl" /> : null}
+      {total && setsuView ? <SetsuSection phase={phase} account={account} groups={setsuView.groups} total={setsuView.total} onOpen={(id) => setDetail({ kind: 'setsu', id })} /> : total && shown && byMoku === undefined ? <SetsuSection phase={phase} account={account} /> : null}
       {total ? (
         <div className="flex items-center justify-between gap-3">
           <Title size="h3" as="h2">お金の流れ</Title>
@@ -581,19 +581,39 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
   )
 }
 
-/** 何に使う？／何に使った？（歳出を節でまとめた区分ごとに）。予算・決算のタブのお金の流れの上に置く。押すと区分の詳細の引き出しを開く */
-function SetsuSection({ phase, account, groups, total, onOpen }: { phase: 'initial' | 'settlement'; account: string; groups: SetsuGroup[]; total: number; /** 区分の詳細を開く */ onOpen: (id: string) => void }) {
-  const max = Math.max(...groups.map((g) => g.yen))
+/** 何に使う？／何に使った？（歳出を節でまとめた区分ごとに）。予算・決算のタブのお金の流れの上に置く。押すと区分の詳細の引き出しを開く。
+ * 節は描いた後に届くので、届くまで（groups が無い間）は見出しと説明をそのまま出し、棒の行だけを同じ形の skeleton にする */
+function SetsuSection({ phase, account, groups, total, onOpen }: { phase: 'initial' | 'settlement'; account: string; groups?: SetsuGroup[]; total?: number; /** 区分の詳細を開く */ onOpen?: (id: string) => void }) {
+  const max = groups ? Math.max(...groups.map((g) => g.yen)) : 0
+  const n = groups?.length ?? SETSU_SKELETON.length
   return (
     <section className="mb-5">
       <Title size="h3" as="h2" className="mb-3">
         {phase === 'initial' ? '何に使う？' : '何に使った？'}
       </Title>
       <p className="mb-3 text-base leading-[1.7] text-muted-foreground">{account}の歳出を、人件費・委託料・工事など、お金の出し方で分けています。予算書・決算書の「節」をまとめたものです。</p>
-      <div className="grid gap-x-8 @3xl:grid-flow-col @3xl:grid-cols-2 @3xl:grid-rows-(--rows)" style={{ '--rows': `repeat(${Math.ceil(groups.length / 2)}, auto)` } as React.CSSProperties}>
-        {groups.map((g, i) => <FieldRow key={g.id} f={g} i={i} max={max} total={total} onClick={() => onOpen(g.id)} />)}
+      <div className="grid gap-x-8 @3xl:grid-flow-col @3xl:grid-cols-2 @3xl:grid-rows-(--rows)" style={{ '--rows': `repeat(${Math.ceil(n / 2)}, auto)` } as React.CSSProperties}>
+        {groups ? groups.map((g, i) => <FieldRow key={g.id} f={g} i={i} max={max} total={total} onClick={onOpen && (() => onOpen(g.id))} />) : SETSU_SKELETON.map((w, i) => <FieldRowSkeleton key={i} width={w} />)}
       </div>
     </section>
+  )
+}
+
+/** 何に使う？の skeleton の棒の長さ（%）。区分は大きい順に並ぶので、だんだん短くする */
+const SETSU_SKELETON = [100, 72, 55, 40, 30, 22, 15, 10, 6]
+/** FieldRow と同じ格子で、名前・棒・割合と金額の場所を skeleton にする */
+function FieldRowSkeleton({ width }: { width: number }) {
+  return (
+    <div aria-hidden="true" className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2 px-3 py-3 sm:grid-cols-[10rem_minmax(0,1fr)_5.5rem]">
+      <Skeleton className="col-start-1 row-start-1 h-5 w-20 sm:col-start-auto sm:row-start-auto" />
+      <span className="col-span-2 col-start-1 row-start-2 block h-1.5 sm:col-span-1 sm:col-start-auto sm:row-start-auto">
+        <Skeleton className="h-full rounded-full" style={{ width: `${width}%` }} />
+      </span>
+      <span className="col-start-2 row-start-1 flex flex-col items-end gap-1 sm:col-start-auto sm:row-start-auto">
+        <Skeleton className="h-5 w-12" />
+        <Skeleton className="h-3 w-16" />
+      </span>
+    </div>
   )
 }
 
