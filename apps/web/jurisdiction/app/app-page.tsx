@@ -738,7 +738,7 @@ function ProjectsTab({ filter, setFilter, fields, setFields, q, setQ }: { filter
 function DetailSection({ icon: I, title, children }: { icon: Icon; title: string; children: React.ReactNode }) {
   return (
     <section className="mt-6">
-      <Title size="headline" as="h3" className="mb-2 flex items-center gap-2"><I className="size-4 text-muted-foreground" aria-hidden="true" />{title}</Title>
+      <Title size="h3" className="mb-2 flex items-center gap-2"><I className="size-5 text-muted-foreground" aria-hidden="true" />{title}</Title>
       {children}
     </section>
   )
