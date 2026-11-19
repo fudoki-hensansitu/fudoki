@@ -12,10 +12,18 @@ export function loadQuestions(code: string): Promise<QuestionFeed> {
   return (FEEDS[code] ?? GENERIC[code])?.() ?? Promise.resolve({ order: [], questions: [] })
 }
 
-/** 分野のフィード。すべてなら決めた並び、分野なら先頭の問い（1人いくら）とその分野の問い */
-export function feedOf(feed: QuestionFeed, field: string | null): Question[] {
+/** 分野のフィード。すべてなら決めた並び、分野なら先頭の問い（1人いくら）とその分野の問い。
+ * すべてのときは、興味のある分野（interests、選んだ順）の問いを先に並べる。同じ分野の中は決めた並びのまま */
+export function feedOf(feed: QuestionFeed, field: string | null, interests: string[] = []): Question[] {
   const byId = new Map(feed.questions.map((q) => [q.id, q]))
-  if (!field) return feed.order.flatMap((id) => byId.get(id) ?? [])
+  if (!field) {
+    const all = feed.order.flatMap((id) => byId.get(id) ?? [])
+    const rank = (q: Question) => {
+      const i = interests.indexOf(q.field ?? OTHER_FRAME.id)
+      return i < 0 ? interests.length : i
+    }
+    return interests.length ? [...all].sort((a, b) => rank(a) - rank(b)) : all
+  }
   // 分野をまたぐ問い（field 無し）は「その他」
   const of = (q: Question) => (q.field ?? OTHER_FRAME.id) === field
   return [...feed.questions.filter((q) => of(q) && q.lead), ...feed.questions.filter((q) => of(q) && !q.lead)]

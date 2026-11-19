@@ -83,7 +83,32 @@ function read(): Town | null {
   }
 }
 
+const INTERESTS_KEY = 'fudoki:interests'
+/** 興味のある分野は3つまで選ぶ（オンボーディングのレシートで、2026-11-19 yuito） */
+export const MAX_INTERESTS = 3
+
+/** 興味のある分野（jurisdiction/domains.ts の id、選んだ順）。自治体の頁の「気になること」は、この分野の問いから並べる */
+export function loadInterests(): string[] {
+  try {
+    const v = JSON.parse(localStorage.getItem(INTERESTS_KEY) ?? '[]') as unknown
+    return Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string').slice(0, MAX_INTERESTS) : []
+  } catch {
+    return []
+  }
+}
+
+export function saveInterests(ids: string[]) {
+  try {
+    if (ids.length) localStorage.setItem(INTERESTS_KEY, JSON.stringify(ids.slice(0, MAX_INTERESTS)))
+    else localStorage.removeItem(INTERESTS_KEY)
+  } catch {
+    // 保存できなくても、その場の並びだけ替える
+  }
+}
+
+/** 住んでいるまち。外したら（選び直す）、オンボーディングで選び直すので興味のある分野も消す */
 export function setMyTown(t: Town | null) {
+  if (!t) saveInterests([])
   try {
     if (t) localStorage.setItem(KEY, JSON.stringify(t))
     else localStorage.removeItem(KEY)

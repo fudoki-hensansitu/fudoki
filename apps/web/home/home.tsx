@@ -1,5 +1,7 @@
-// ホーム（/）。住んでいるまちの札（予算と1人あたりを数え上げ、分野ごとの1人あたりのレシートを出す。receipt.tsx）と、ほかのまちを見る検索。
-// 住んでいるまちを決めていないときは、住んでいるまちを選ぶ欄（onboarding.tsx）を出し、選んだ時点でそのまちに決めて札を出す。うちのまちは1つで、ブラウザ（localStorage）にだけ置く
+// ホーム（/）。住んでいるまちを選ぶ欄（onboarding.tsx）と、ほかのまちを見る検索。
+// 選んだ時点でそのまちに決め、オンボーディングとして札（予算と1人あたりを数え上げ、分野ごとの1人あたりのレシートを出す。receipt.tsx）を出す。
+// レシートの分野から興味のある分野を選ばせ、レシートの末端からそのまちの頁へ進む。住んでいるまちを選んだ人がまたホームへ来たら、そのまちの頁へ移す（home/redirect.ts、2026-11-19 yuito）。
+// うちのまちは1つで、ブラウザ（localStorage）にだけ置く
 // データは自治体の頁と同じ1年度の分（server/app-data.ts）を /api/jurisdictions/:code で読み、yearView で年度ごとに見る
 import * as React from 'react'
 import { ArrowRightIcon, CaretDownIcon } from '@phosphor-icons/react'
@@ -13,7 +15,8 @@ import type { MapEntry } from '../jurisdiction/index-table'
 import { yearView, type Snapshot, type YearView } from '../jurisdiction/app/data'
 import { reiwa, yearName } from '../jurisdiction/types'
 import { ReceiptMachine } from './receipt'
-import { useMyTown, type Town } from './towns'
+import { loadInterests, MAX_INTERESTS, saveInterests, useMyTown, type Town } from './towns'
+import { useRouter } from '@void/react'
 import { OtherTowns, AskTown, Intro } from './onboarding'
 import { Title } from '@/components/ui/title'
 
@@ -134,18 +137,18 @@ function ResetButton({ onReset, className }: { onReset: () => void; className?: 
 }
 
 /** うちのまちの札（レシートの機械）。予算と1人あたりを数え上げ、分野ごとの1人あたりのレシートを出す */
-function Dashboard({ c, onPrinted, onReset }: { c: Ctx; onPrinted: () => void; onReset: () => void }) {
+function Dashboard({ c, onReset, interests, onToggle }: { c: Ctx; onReset: () => void; interests: string[]; onToggle: (id: string) => void }) {
   const { v, d, year, town } = c
   const detailHref = c.year === c.years.at(-1) ? c.town.path : flowHref(c)
   return (
     <ReceiptMachine
-      onPrinted={onPrinted}
+      interests={interests}
+      onToggle={onToggle}
       code={town.code}
       name={town.name}
       v={v}
       year={year}
       pop={d.pop ?? null}
-      base={c.base}
       detailHref={detailHref}
       head={
         <div className="flex flex-wrap items-center gap-4 lg:items-start">
@@ -218,23 +221,14 @@ function FeaturedTowns({ featured, listed }: { featured: Featured[]; listed: boo
   )
 }
 
-/** 見本のまち（事業評価か都市像のあるまち）を6つまで、紋章・都市像と並べて開けるようにする。except のまち（住んでいるまち）は外す。
- * reveal では、一覧の近くまで頁を送ったときに一つずつふわっと出す（2026-11-18 yuito） */
-function TownList({ featured, except, reveal = false }: { featured: Featured[]; except?: string; reveal?: boolean }) {
-  const items = featured.filter((f) => f.code !== except).slice(0, 6)
-  const ref = React.useRef<HTMLUListElement>(null)
-  const [seen, setSeen] = React.useState(!reveal)
-  React.useEffect(() => {
-    if (seen || !ref.current) return
-    const io = new IntersectionObserver(([e]) => e?.isIntersecting && setSeen(true), { rootMargin: '0px 0px -10% 0px' })
-    io.observe(ref.current)
-    return () => io.disconnect()
-  }, [seen])
+/** 見本のまち（事業評価か都市像のあるまち）を6つまで、紋章・都市像と並べて開けるようにする */
+function TownList({ featured }: { featured: Featured[] }) {
+  const items = featured.slice(0, 6)
   if (!items.length) return null
   return (
-    <ul ref={ref} className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
-      {items.map((t, i) => (
-        <li key={t.code} className={reveal ? (seen ? 'ob-fade' : 'opacity-0') : undefined} style={reveal ? { animationDelay: `${i * 80}ms` } : undefined}>
+    <ul className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
+      {items.map((t) => (
+        <li key={t.code}>
           <Link href={t.path} className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground no-underline transition-colors hover:bg-card">
             <Emblem code={t.code} name={t.name} />
             <span className="min-w-0 flex-1">
@@ -254,39 +248,55 @@ function TownList({ featured, except, reveal = false }: { featured: Featured[]; 
 
 export function Home({ listed, featured }: HomeProps) {
   const { ready, town, set } = useMyTown()
-  const snap = useSnapshot(ready && town ? town.code : null)
+  const router = useRouter()
+  /** この頁を開いてから住んでいるまちを選んだか。選んだ直後はオンボーディング（札とレシート）を出し、前から選んでいた人はそのまちの頁へ移す */
+  const fresh = React.useRef(false)
+  const leaving = ready && !!town && !fresh.current
+  React.useEffect(() => {
+    // 頁を読み直して来たときは <head> の script（home/redirect.ts）が先に移すので、ここに来るのは頁を読み直さずにホームへ来たとき
+    if (leaving) void router.visit(town!.path, { replace: true })
+  }, [leaving])
+  const snap = useSnapshot(ready && town && !leaving ? town.code : null)
   const vision = town ? featured.find((f) => f.code === town.code)?.vision : undefined
-  // 住んでいるまちを外す（選び直す）
-  /** レシートの末端まで見たか。レシートの末端まで頁が送られてから他のまちの節を出す（2026-11-18 yuito）。年度を替えて刷り直しても出したまま、まちを選び直したら隠す */
-  const [printed, setPrinted] = React.useState(false)
+  /** 興味のある分野（選んだ順）。レシートの分野の行を押して選び、3つまで */
+  const [interests, setInterests] = React.useState<string[]>([])
+  React.useEffect(() => setInterests(loadInterests()), [])
+  const toggle = (id: string) =>
+    setInterests((cur) => {
+      const next = cur.includes(id) ? cur.filter((x) => x !== id) : cur.length >= MAX_INTERESTS ? cur : [...cur, id]
+      saveInterests(next)
+      return next
+    })
+  // 住んでいるまちを外す（選び直す）。興味のある分野も選び直す
   const reset = () => {
-    setPrinted(false)
+    setInterests([])
     set(null)
   }
   let body: React.ReactNode
-  if (!ready) body = <Loading />
+  if (!ready || leaving) body = <Loading />
   // 選んだ時点でそのまちに決める（要点を見せてから決めさせない、2026-11-17 yuito）
-  else if (!town) body = <AskTown listed={listed} onPick={(e) => set(toTown(e))} />
+  else if (!town)
+    body = (
+      <AskTown
+        listed={listed}
+        onPick={(e) => {
+          fresh.current = true
+          set(toTown(e))
+        }}
+      />
+    )
   else {
     body = (
-      // 刷り出すレシートと他のまちの節の場所を、はじめから画面1.5枚ぶん取っておき、札へ頁を送っても刷り終える前に頁の末尾（footer）が見えないようにする（2026-11-18 yuito）
+      // 刷り出すレシートの場所を、はじめから画面1.5枚ぶん取っておき、札へ頁を送っても刷り終える前に頁の末尾（footer）が見えないようにする（2026-11-18 yuito）。
+      // レシートの下に他のまちへの導線は置かず、終わりはレシートの末端の「<まち>を開く」だけにする（2026-11-19 yuito）
       <div className="min-h-[150svh]">
         <WithCtx key={town!.code} town={town!} vision={vision} snap={snap} onReset={reset}>
-          {(c) => <Dashboard c={c} onPrinted={() => setPrinted(true)} onReset={reset} />}
+          {(c) => <Dashboard c={c} onReset={reset} interests={interests} onToggle={toggle} />}
         </WithCtx>
-        {/* ほかのまちを見る導線。レシートとは別の節として見出しと大きな検索欄を置き、レシートの末端まで頁が送られてから出す（2026-11-18 yuito）。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
-        {printed ? (
-          <section className="ob-fade mt-16" aria-labelledby="other-towns">
-            <Title size="h2" id="other-towns" className="mb-4">他のまちの使い道を見る</Title>
-            <OtherTowns large className="mb-4" />
-            {/* 探す語が浮かばなくても開けるよう、見本のまちを6つ並べる（2026-11-18 yuito） */}
-            <TownList featured={featured} except={town!.code} reveal />
-          </section>
-        ) : null}
       </div>
     )
   }
-  const featuredTowns = ready && !town ? <FeaturedTowns featured={featured} listed={listed} /> : null
+  const featuredTowns = ready && !town && !leaving ? <FeaturedTowns featured={featured} listed={listed} /> : null
   return (
     <main className={`mx-auto flex min-h-[calc(100svh-56px)] w-full max-w-4xl flex-col px-4 pt-10 pb-28 sm:px-8 sm:pt-14 md:min-h-svh md:pb-10`}>
       <Intro mode={!ready ? 'hidden' : town ? 'compact' : 'full'} />

@@ -4,7 +4,7 @@
 // 1人あたりは予算を人口で割った額（払った税金の額ではない）。分野の行の和が合計に合うよう、大きい端数から1円ずつ足して丸める
 import * as React from 'react'
 import { encode } from 'uqr'
-import { ArrowRightIcon, CheckIcon, LinkIcon, XLogoIcon } from '@phosphor-icons/react'
+import { ArrowRightIcon, CheckCircleIcon, CheckIcon, LinkIcon, XLogoIcon } from '@phosphor-icons/react'
 import { Link } from '../nav/link'
 import { cn } from '@/lib/utils'
 import { titleVariants } from '@/components/ui/title'
@@ -13,15 +13,9 @@ import type { YearView } from '../jurisdiction/app/data'
 import { FieldIcon } from './parts'
 import { perHeadParts } from './per-head'
 import { withUnits } from './units'
+import { MAX_INTERESTS } from './towns'
 import { BEAT, COUNT_MS, FOLLOW_MS, PRINT_MS, READ_MS, SCROLL_MS } from './motion'
 import './receipt.css'
-
-/** 最新の値を持つ ref（effect の依存に入れずに最新の callback を呼ぶ） */
-function useLatest<T>(value: T) {
-  const ref = React.useRef(value)
-  ref.current = value
-  return ref
-}
 
 const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -416,7 +410,8 @@ let printedId = 0
 /** href（QR の行き先）と pop（1人あたりで割る人口）は、その紙を刷ったときの年度のもの。年度を替えても前の紙は前の年度のまま */
 type Printed = { id: number; key: string; year: number; v: YearView; href: string; pop: number }
 
-export function ReceiptMachine({ code, name, v, year, pop, base, detailHref, head, onPrinted }: { onPrinted?: () => void; code: string; name: string; v: YearView; year: number; pop: number | null; base: string; detailHref: string; head: React.ReactNode }) {
+/** interests は選んだ興味のある分野（選んだ順）。レシートの分野の行を押すと onToggle で選ぶ・外す */
+export function ReceiptMachine({ code, name, v, year, pop, detailHref, head, interests, onToggle }: { code: string; name: string; v: YearView; year: number; pop: number | null; detailHref: string; head: React.ReactNode; interests: string[]; onToggle: (id: string) => void }) {
   const settled = v.word === '決算'
   const what = `${yearName(year)}の${settled ? '決算' : '予算'}`
   const counted = `${year}:${v.total}`
@@ -465,34 +460,6 @@ export function ReceiptMachine({ code, name, v, year, pop, base, detailHref, hea
     for (const id of pictures.keys()) if (!live.has(id)) pictures.delete(id)
   }, [printed, older])
   useFollow(phase, printing, card, feed)
-  // 刷り終えたレシートの末端（合計・QR・詳細）まで頁が送られたら知らせる（人口が無く紙を刷らないまちは数え終えたら）。
-  // 紙の動きが終わったかではなく、頁の送り具合で決める。ホームはそのあとにレシートの下へ他のまちの節を出す（2026-11-18 yuito）
-  const done = useLatest(onPrinted)
-  React.useEffect(() => {
-    if (phase === 'print' && !pop) return void done.current?.()
-    if (!printing) return
-    // 紙は高さを 0 から伸ばすので、末端の位置は刷り終えたときの高さ（paperHeight）から求める
-    const reached = () => {
-      const latest = feed.current?.querySelector<HTMLElement>('[data-latest]')
-      return !!latest && feed.current!.getBoundingClientRect().top + paperHeight(latest) + FEED_PAD <= window.innerHeight + 4
-    }
-    const check = () => {
-      if (!reached()) return
-      stop()
-      done.current?.()
-    }
-    const stop = () => {
-      window.removeEventListener('scroll', check)
-      window.removeEventListener('resize', check)
-    }
-    window.addEventListener('scroll', check, { passive: true })
-    window.addEventListener('resize', check, { passive: true })
-    const raf = requestAnimationFrame(check)
-    return () => {
-      cancelAnimationFrame(raf)
-      stop()
-    }
-  }, [printing, phase, pop])
   /** 一枚の紙の中身 */
   const paper = (r: Printed) => {
     const { parts, sum } = perHeadParts(r.v.fields, r.v.total, r.pop)
@@ -502,12 +469,15 @@ export function ReceiptMachine({ code, name, v, year, pop, base, detailHref, hea
       <p className="mt-1 text-center text-sm text-muted-foreground">
         {reiwa(r.year)} {r.v.word === '決算' ? '決算' : '当初予算'}・1人あたり
       </p>
-      <ul className="rc-rule mt-4 pt-2">
+      {/* 興味のある分野をレシートの行から選ばせる。選んだ分野は、まちの頁の「気になること」の並びに使う（2026-11-19 yuito） */}
+      <p id={`rc-pick-${r.id}`} className="mt-4 text-center text-sm">気になる分野を選んでください（{MAX_INTERESTS}つまで）</p>
+      <ul className="rc-rule mt-2 pt-2" aria-labelledby={`rc-pick-${r.id}`}>
         {r.v.fields.map((f, i) => {
+          const on = interests.includes(f.id)
           const row = (
             <>
               <span className="flex items-baseline gap-2 text-sm">
-                <FieldIcon id={f.id} className="size-[18px] shrink-0 self-center text-muted-foreground" />
+                {on ? <CheckCircleIcon weight="fill" className="size-[18px] shrink-0 self-center text-primary" /> : <FieldIcon id={f.id} className="size-[18px] shrink-0 self-center text-muted-foreground" />}
                 <span className="whitespace-nowrap">{f.name}</span>
                 <span className="rc-lead" />
                 <Yen n={parts[i]!} className="text-base" />
@@ -515,12 +485,13 @@ export function ReceiptMachine({ code, name, v, year, pop, base, detailHref, hea
               {f.examples ? <span className="mt-1 block pl-7 text-xs text-muted-foreground">{f.examples}</span> : null}
             </>
           )
-          // 分野の問いのフィードを開く（その他も問いがある。問いは年度の段を持たないので base の年度を外す）
+          // 押すと興味のある分野に選ぶ・外す。3つ選んだら、選んでいない行は押せない
+          const full = !on && interests.length >= MAX_INTERESTS
           return (
             <li key={f.id}>
-              <Link href={`${base.replace(/\/\d{4}$/, '')}?field=${f.id}`} className="block rounded-lg px-2 py-2 transition-colors hover:bg-card">
+              <button type="button" aria-pressed={on} disabled={full} onClick={() => onToggle(f.id)} className={cn('block w-full rounded-lg px-2 py-2 text-left transition-colors', on ? 'bg-secondary' : 'enabled:hover:bg-card', full && 'opacity-60')}>
                 {row}
-              </Link>
+              </button>
             </li>
           )
         })}
@@ -534,9 +505,9 @@ export function ReceiptMachine({ code, name, v, year, pop, base, detailHref, hea
         <Qr url={r.href} />
         <Share url={shareUrl(code, r.year)} />
       </div>
-      {/* 読み終えたところから、そのまま詳しい頁へ進めるように、紙の一番下に「<まち>の詳細」を置く（2026-11-18 yuito） */}
+      {/* 読み終えたところから、そのまちの頁へ進めるように、紙の一番下に「<まち>を開く」を置く。分野を選ばなくても開ける */}
       <Link href={r.href} data-snap-skip className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-brand px-4 py-3 text-sm font-medium text-brand-foreground transition-opacity hover:opacity-90">
-        {name}の詳細
+        {name}を開く
         <ArrowRightIcon className="size-4" />
       </Link>
     </div>

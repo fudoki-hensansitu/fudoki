@@ -7,7 +7,7 @@ import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSideb
 import { Item } from './site-nav'
 import { TownPalette } from './town-palette'
 import { useMyTown } from '../home/towns'
-import { FINANCE_SLUG, TAB_SLUGS } from '../jurisdiction/types'
+import { isTownPath } from './town-path'
 
 /** まちを探す。欄を押すか ⌘K で、画面の中央に候補のパレット（TownPalette）を開く。選んだまちの頁へ移る */
 function TownSearch() {
@@ -51,15 +51,11 @@ function TownIcon({ code }: { code: string }) {
   return failed ? <MapPinIcon /> : <span className="grid size-5 shrink-0 place-items-center rounded-sm bg-emblem p-px"><img src={`/jurisdictions/${code}/emblem.svg`} alt="" className="size-full min-h-0 min-w-0 object-contain" onError={() => setFailed(true)} /></span>
 }
 
-const TOWN_SEGMENTS = new Set<string>([...Object.values(TAB_SLUGS), FINANCE_SLUG])
-
 /** ホームで選んだ住んでいるまち。選んでいなければ出さない。そのまちの頁（年度の頁も）にいる間は選択中にする */
 function MyTownItem({ path }: { path: string }) {
   const { town } = useMyTown()
   if (!town) return null
-  // 都道府県を選んだ人が配下の市区町村の頁にいるときは選択中にしない。次の段が年度・タブの語のときだけ、そのまちの頁とみなす
-  const rest = path === town.path ? '' : path.startsWith(`${town.path}/`) ? (path.slice(town.path.length + 1).split('/')[0] ?? '') : null
-  const active = rest !== null && (rest === '' || /^\d{4}$/.test(rest) || TOWN_SEGMENTS.has(rest))
+  const active = isTownPath(path, town.path)
   return <Item href={town.path} label={town.name} icon={<TownIcon code={town.code} />} active={active} />
 }
 
