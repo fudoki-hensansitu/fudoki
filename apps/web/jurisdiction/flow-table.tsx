@@ -38,7 +38,7 @@ interface Node {
   yen: number
   missing?: true
   depth: number
-  /** 事業の行（目の下の「事業で分けると」の行の子） */
+  /** 事業の行（目の下の「事業」の行の子） */
   project?: true
   /** 目の下で事業の行をまとめる行。額は節と同じ目の額なので出さない */
   group?: true
