@@ -2,6 +2,7 @@
 // Zaraz の script は middleware/01.site.ts が本番（fudoki.dev）の HTML にだけ入れる（server/zaraz.ts）。無い所（preview・手元）では window.zaraz が無く、ここは何もしない。
 // 頁の表示（SPA の移動も含む）は Zaraz の設定で送る。gtag.js の拡張計測は Zaraz では動かないので、要るもの（外部リンク・PDF・スクロール・検索）だけをここで送る。名前と項目は GA4 の拡張計測に合わせる
 
+import { onPageScroll, pageScrollY, pageScroller } from '../nav/page-scroll'
 
 declare global {
   interface Window {
@@ -51,15 +52,13 @@ export function installTracking() {
     },
     { capture: true },
   )
-  addEventListener(
-    'scroll',
-    () => {
-      if (scrolled) return
-      const height = document.documentElement.scrollHeight
-      if (height <= innerHeight || scrollY + innerHeight < height * 0.9) return
-      scrolled = true
-      track('scroll', { percent_scrolled: 90 })
-    },
-    { passive: true },
-  )
+  onPageScroll(() => {
+    if (scrolled) return
+    const box = pageScroller()
+    const height = box ? box.scrollHeight : document.documentElement.scrollHeight
+    const view = box ? box.clientHeight : innerHeight
+    if (height <= view || pageScrollY() + view < height * 0.9) return
+    scrolled = true
+    track('scroll', { percent_scrolled: 90 })
+  })
 }
