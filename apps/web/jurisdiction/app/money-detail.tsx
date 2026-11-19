@@ -44,6 +44,16 @@ function setsuRows(moku: Moku[], id: string): { setsu: Row[]; moku: Row[] } {
   }
 }
 
+/** 節の分からない分を持つ目（目の額から、区分の分かる節を引いた残り） */
+function unknownRows(moku: Moku[]): Row[] {
+  const rows: Row[] = []
+  for (const m of moku) {
+    const known = m.setsu.filter((s) => s.setsuId && setsuGroupOf(s.setsuId)).reduce((a, s) => a + s.yen, 0)
+    if (m.yen - known > 0) rows.push({ key: m.id, name: m.name, sub: pathOf(m), yen: m.yen - known })
+  }
+  return rows.sort((a, b) => b.yen - a.yen)
+}
+
 /** 一つの節（R1 以前の同じ名前の節も含む）にお金を出している目 */
 function setsuItemRows(moku: Moku[], setsuId: string): Row[] {
   const label = setsuLabelOf(setsuId)
@@ -113,6 +123,7 @@ export function MoneyDetail({ open, onClose, wide, moku, fields, groups, onProje
     if (!key) return undefined
     if (key.kind === 'field') return { kind: 'field' as const, rows: fieldRows(moku, key.id) }
     if (key.kind === 'setsuItem') return { kind: 'setsuItem' as const, rows: setsuItemRows(moku, key.id) }
+    if (key.id === UNKNOWN_SETSU) return { kind: 'unknown' as const, rows: unknownRows(moku) }
     return { kind: 'setsu' as const, ...setsuRows(moku, key.id) }
   }, [key, moku])
   // 押した節は、その会計の同じ節の和を見出しにし、入る区分を説明に出す
@@ -139,8 +150,8 @@ export function MoneyDetail({ open, onClose, wide, moku, fields, groups, onProje
           </Button>
         </DrawerHeader>
         <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-5 py-4">
-          {head && (body?.kind === 'field' || body?.kind === 'setsuItem') ? <Rows title="科目（目）" rows={body.rows} total={head.yen} /> : null}
-          {head && body?.kind === 'setsu' && key?.id !== UNKNOWN_SETSU ? (
+          {head && (body?.kind === 'field' || body?.kind === 'setsuItem' || body?.kind === 'unknown') ? <Rows title="科目（目）" rows={body.rows} total={head.yen} /> : null}
+          {head && body?.kind === 'setsu' ? (
             <>
               <Rows title="節" rows={body.setsu} total={head.yen} />
               <Rows title="多く出している科目（目）" rows={body.moku} total={head.yen} />

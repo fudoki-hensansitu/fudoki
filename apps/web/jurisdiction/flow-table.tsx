@@ -28,8 +28,9 @@ import { cn } from '@/lib/utils'
 import { formatShare, formatYen, type Drill } from './types'
 
 const LEVELS = ['款', '項', '目', '節'] as const
-/** 行の頭の印。目の下には節と、節と並んで印字された事業が並ぶ（同じ目の額の別の切り口） */
-const labelOf = (n: Node) => (n.project ? '事業' : LEVELS[n.depth])
+/** 行の頭の印。目の下の事業は、節と同じ目の額の別の切り口なので、節と足さないよう「事業で分けると」の行の下にまとめる */
+const labelOf = (n: Node) => (n.project ? '事業' : n.group ? '' : LEVELS[n.depth])
+const childLabelOf = (n: Node) => (n.group ? '事業' : LEVELS[n.depth + 1])
 
 interface Node {
   id: string
@@ -37,8 +38,10 @@ interface Node {
   yen: number
   missing?: true
   depth: number
-  /** 目の下の事業の行（節と同じ段に、節の後ろに並べる） */
+  /** 事業の行（目の下の「事業で分けると」の行の子） */
   project?: true
+  /** 目の下で事業の行をまとめる行。額は節と同じ目の額なので出さない */
+  group?: true
   /** 名前が印字された出典の URL（PDF は頁つき） */
   src?: string
   /** 歳出の節の節マスタの ID。あれば行を押すと節の詳細を開く */
@@ -54,8 +57,11 @@ const toNodes = (drills: Drill[]): Node[] =>
       subRows: k.moku.length ? k.moku.map((m) => ({
         id: m.id, name: m.name, yen: m.yen, missing: m.amountMissing, depth: 2, src: m.src,
         subRows: m.setsu.length || m.projects?.length ? [
-          ...m.setsu.map((s, i) => ({ id: `${m.id}:setsu:${i}`, name: s.name, yen: s.yen, missing: s.amountMissing, depth: 3, src: s.src, setsuId: s.setsuId })),
-          ...(m.projects ?? []).map((s, i) => ({ id: `${m.id}:project:${i}`, name: s.name, yen: s.yen, missing: s.amountMissing, depth: 3, project: true as const, src: s.src })),
+          ...m.setsu.map((s, k): Node => ({ id: `${m.id}:setsu:${k}`, name: s.name, yen: s.yen, missing: s.amountMissing, depth: 3, src: s.src, setsuId: s.setsuId })),
+          ...(m.projects?.length ? [{
+            id: `${m.id}:projects`, name: '事業で分けると（節と同じ額の別の分け方）', yen: 0, depth: 3, group: true as const,
+            subRows: m.projects.map((s, j): Node => ({ id: `${m.id}:project:${j}`, name: s.name, yen: s.yen, missing: s.amountMissing, depth: 4, project: true as const, src: s.src })),
+          }] : []),
         ] : undefined,
       })) : undefined,
     })) : undefined,
@@ -104,7 +110,7 @@ function Section({ title, drills, total, query, onQuery, onSetsu }: { title: str
   const [sorting, setSorting] = React.useState<SortingState>([])
   const columns = React.useMemo(() => column.columns([
     column.accessor('name', {
-      // 事業は節と同じ段（節の下ではない）なので、矢印でなく「・」でつなぐ
+      // 事業は節の下ではない（目の別の分け方）ので、矢印でなく「・」でつなぐ
       header: () => LEVELS.slice(0, depth + 1).join(' → ') + (hasProjects ? '・事業' : ''),
       filterFn: 'includesString',
       cell: (c) => {
@@ -113,15 +119,18 @@ function Section({ title, drills, total, query, onQuery, onSetsu }: { title: str
         return (
           <div className="flex items-center gap-1" style={{ paddingLeft: `${row.original.depth}rem` }}>
             {row.getCanExpand() ? (
-              <button type="button" onClick={(e) => { e.stopPropagation(); row.toggleExpanded() }} aria-expanded={open} aria-label={`${row.original.name}の${LEVELS[row.original.depth + 1]}を${open ? '閉じる' : '開く'}`} className="-my-1 inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring">
+              <button type="button" onClick={(e) => { e.stopPropagation(); row.toggleExpanded() }} aria-expanded={open} aria-label={`${row.original.name}の${childLabelOf(row.original)}を${open ? '閉じる' : '開く'}`} className="-my-1 inline-flex size-7 shrink-0 items-center justify-center rounded-md text-muted-foreground focus-visible:outline-2 focus-visible:outline-ring">
                 <CaretRightIcon aria-hidden="true" className={cn('size-4 transition-transform duration-200', open && 'rotate-90')} />
               </button>
             ) : depth > 0 ? (
               <span className="w-7 shrink-0" aria-hidden="true" />
             ) : null}
-            <span className="min-w-0 leading-snug [overflow-wrap:anywhere]">
-              <span className="mr-2 text-muted-foreground">{labelOf(row.original)}</span>
-              {row.original.name}
+            <span className={cn('min-w-0 leading-snug [overflow-wrap:anywhere]', row.original.group && 'text-muted-foreground')}>
+              {labelOf(row.original) ? <span className="mr-2 text-muted-foreground">{labelOf(row.original)}</span> : null}
+              {/* 押すと詳細を開く節は、キーボードでも開けるようボタンにする */}
+              {onSetsu && row.original.setsuId && !row.getCanExpand() ? (
+                <button type="button" onClick={(e) => { e.stopPropagation(); onSetsu(row.original.setsuId!) }} className="rounded-sm text-left focus-visible:outline-2 focus-visible:outline-ring">{row.original.name}</button>
+              ) : row.original.name}
             </span>
           </div>
         )
@@ -129,7 +138,7 @@ function Section({ title, drills, total, query, onQuery, onSetsu }: { title: str
       enableSorting: false,
       meta: { className: 'w-full pl-0 whitespace-normal' },
     }),
-    column.accessor((n) => (n.missing ? undefined : n.yen), {
+    column.accessor((n) => (n.missing || n.group ? undefined : n.yen), {
       id: 'yen',
       header: (h) => {
         const sorted = h.column.getIsSorted()
@@ -140,13 +149,13 @@ function Section({ title, drills, total, query, onQuery, onSetsu }: { title: str
           </button>
         )
       },
-      cell: (c) => (c.row.original.missing ? '金額未記載' : formatYen(c.row.original.yen)),
+      cell: (c) => (c.row.original.group ? '' : c.row.original.missing ? '金額未記載' : formatYen(c.row.original.yen)),
       sortFn: 'basic',
       sortDescFirst: true,
       sortUndefined: 'last',
       meta: { className: 'text-right tabular-nums' },
     }),
-    column.display({ id: 'share', header: '割合', cell: (c) => formatShare(c.row.original.yen, total, c.row.original.missing) ?? '', meta: { className: cn('text-right tabular-nums', !hasSrc && 'pr-0') } }),
+    column.display({ id: 'share', header: '割合', cell: (c) => (c.row.original.group ? '' : formatShare(c.row.original.yen, total, c.row.original.missing) ?? ''), meta: { className: cn('text-right tabular-nums', !hasSrc && 'pr-0') } }),
     ...(hasSrc ? [column.display({
       id: 'src',
       header: () => <span className="sr-only">出典</span>,
@@ -159,7 +168,7 @@ function Section({ title, drills, total, query, onQuery, onSetsu }: { title: str
       ) : null,
       meta: { className: 'w-0 pr-0 text-right' },
     })] : []),
-  ]), [title, levels, depth, total, hasSrc, hasProjects])
+  ]), [title, levels, depth, total, hasSrc, hasProjects, onSetsu])
   const table = useTable({
     features,
     columns,
