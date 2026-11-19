@@ -385,17 +385,19 @@ function FieldRow({ f, i, max, total, onClick, grow = true }: { f: { name: strin
   const pct = (f.yen / (total ?? v.total)) * 100
   const Row = onClick ? 'button' : 'div'
   return (
-    <Row {...(onClick ? { type: 'button' as const, onClick } : {})} className={cn('grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2 rounded-lg px-3 py-3 text-left sm:grid-cols-[10rem_minmax(0,1fr)_4.5rem]', onClick && 'transition-colors hover:bg-card')}>
-      <span className="col-start-1 row-start-1 min-w-0 sm:col-start-auto sm:row-start-auto">
-        <span className="block truncate text-base font-medium">{f.name}</span>
-        <span className="block text-xs text-muted-foreground"><Amt yen={f.yen} /></span>
-      </span>
+    <Row {...(onClick ? { type: 'button' as const, onClick } : {})} className={cn('grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2 rounded-lg px-3 py-3 text-left sm:grid-cols-[10rem_minmax(0,1fr)_5.5rem]', onClick && 'transition-colors hover:bg-card')}>
+      {/* 名前は切らずに折り返す */}
+      <span className="col-start-1 row-start-1 min-w-0 text-base font-medium sm:col-start-auto sm:row-start-auto">{f.name}</span>
       <span className="col-span-2 col-start-1 row-start-2 block h-1.5 overflow-hidden rounded-full bg-secondary sm:col-span-1 sm:col-start-auto sm:row-start-auto">
         <span className={cn(grow && 'app-grow', 'block h-full rounded-full bg-primary')} style={{ width: `${Math.max(1, (f.yen / max) * 100)}%`, animationDelay: `${i * 30}ms` }} />
       </span>
-      <span className="col-start-2 row-start-1 text-right text-base tabular-nums sm:col-start-auto sm:row-start-auto">
-        {pct.toFixed(1)}
-        <small className="text-xs text-muted-foreground">%</small>
+      {/* 割合の下に金額。金額はすでに小さい文字なので、単位も同じ大きさにする */}
+      <span className="col-start-2 row-start-1 text-right sm:col-start-auto sm:row-start-auto">
+        <span className="block text-base tabular-nums">
+          {pct.toFixed(1)}
+          <small className="text-xs text-muted-foreground">%</small>
+        </span>
+        <Amt yen={f.yen} plainUnit className="block text-xs text-muted-foreground" />
       </span>
     </Row>
   )
