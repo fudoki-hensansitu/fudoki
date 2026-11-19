@@ -3,6 +3,7 @@
 import { ArrowRightIcon } from '@phosphor-icons/react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Title } from '@/components/ui/title'
+import { Link } from '../../nav/link'
 import { FinanceSections } from '../../jurisdiction/app/finance'
 import { IncomeFlowBody } from '../../jurisdiction/app/income-flow'
 import { Amt } from '../../jurisdiction/app/amount'
@@ -13,10 +14,10 @@ const DOC_LABEL = { initial: '当初予算', settlement: '決算' } as const
 
 function OpenPage({ path }: { path: string }) {
   return (
-    <a href={path} className="inline-flex items-center gap-1 self-start text-sm text-primary underline-offset-4 hover:underline">
+    <Link href={path} className="inline-flex items-center gap-1 self-start text-sm text-primary underline-offset-4 hover:underline">
       頁で開く
       <ArrowRightIcon aria-hidden="true" />
-    </a>
+    </Link>
   )
 }
 
@@ -27,7 +28,7 @@ function MoneyFlowView({ data }: { data: ViewData<'money_flow'> }) {
       <div>
         <IncomeFlowBody data={data.flow} />
       </div>
-      <OpenPage path={data.path} />
+      {data.path ? <OpenPage path={data.path} /> : null}
     </>
   )
 }

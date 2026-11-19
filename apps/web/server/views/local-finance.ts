@@ -1,17 +1,15 @@
 // show_local_finance: 財政タブの「借金と貯金」「事業に回ったお金」「財政の指標」を会話に描く。数字は get_local_finance と同じ web の D1 から引き、AI には要点だけを渡す
 import { dynamicTool, jsonSchema } from 'ai'
-import registry from '../../../../packages/jurisdictions/jurisdictions.json'
 import { FINANCE_SECTIONS } from '../../chat/views/schema'
 import { jurisdictionPath } from '../../jurisdiction/path'
 import { reiwa } from '../../jurisdiction/types'
 import type { Env } from '../env'
+import { loadCatalogEntry } from '../jurisdiction'
 import { loadLocalFinance } from '../local-finance'
-import { loadPopulations } from '../population'
+import { logError } from '../log'
 import { SHOWN, toModelOutput, viewError, viewResult } from './result'
 
 export const SHOW_LOCAL_FINANCE_TOOL = 'show_local_finance'
-
-const NAMES = registry.jurisdictions as Record<string, { name?: string }>
 
 const DESCRIPTION =
   '自治体の財政の状況（借金と貯金・事業に回ったお金・財政の指標の5年の推移）を、自治体の頁の「財政」タブと同じ図で利用者の画面に描く。' +
@@ -34,11 +32,19 @@ export function showLocalFinanceTool(env: Env) {
     }),
     execute: async (input) => {
       const { jurisdiction_code: code, sections } = input as { jurisdiction_code: string; sections?: (typeof FINANCE_SECTIONS)[number][] }
-      const [finance, populations] = await Promise.all([loadLocalFinance(env, code), loadPopulations(env, [code])])
+      // D1 の決算状況調は全国の自治体を持つが、頁（と「頁で開く」）は風土記が収録した自治体だけ
+      const [entry, finance] = await Promise.all([
+        loadCatalogEntry(env, code).catch((e) => {
+          logError(e)
+          return undefined
+        }),
+        loadLocalFinance(env, code),
+      ])
+      if (entry === undefined) return viewError('風土記の API から読めませんでした')
+      if (!entry) return viewError('収録していない自治体です。数字だけなら get_local_finance で答えてください')
       const at = finance.at(-1)
       if (!at) return viewError('この自治体の決算の指標はありません')
-      const name = NAMES[code]?.name ?? code
-      const population = populations.get(code)?.at(-1) ?? null
+      const { name, population } = entry
       const message = [
         SHOWN,
         `${name}の財政の状況（${reiwa(at.year)}決算・普通会計・総務省）: 地方債現在高（まちの借金）${oku(at.localBondBalance)}、積立金現在高（まちの貯金）${oku(at.fundBalance)}、` +

@@ -30,8 +30,8 @@ const moneyFlow = z.object({
       perIn: per,
       perOut: per,
     }),
-    /** 自治体の頁の予算・決算のタブ */
-    path: z.string(),
+    /** 自治体の頁の予算・決算のタブ。頁に無い年度（頁は最新の数年だけ）は null */
+    path: z.string().nullable(),
   }),
 })
 
@@ -81,7 +81,7 @@ const expenditureTable = z.object({
     /** 内訳は分け方（事業・節・その他）ごと。科目は見出しの無い1つ */
     groups: z.array(z.object({ heading: z.string().nullable(), rows: z.array(tableRow) })),
     hasMore: z.boolean(),
-    /** 1つの自治体のときだけ */
+    /** 1つの自治体・年度・資料で、その年度が頁にあるときだけ */
     path: z.string().nullable(),
   }),
 })

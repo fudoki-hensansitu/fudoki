@@ -3,9 +3,10 @@
 import { dynamicTool, jsonSchema } from 'ai'
 import registry from '../../../../packages/jurisdictions/jurisdictions.json'
 import type { ViewData } from '../../chat/views/schema'
-import { jurisdictionPath } from '../../jurisdiction/path'
 import { reiwa } from '../../jurisdiction/types'
+import { yearTabPath } from '../app-data'
 import type { Env } from '../env'
+import { loadCatalogEntry } from '../jurisdiction'
 import { apiCall, FudokiApiError, type WebOpInput, type WebOpOutput } from '../fudoki-api'
 import { logError } from '../log'
 import { toModelOutput, viewError, viewResult } from './result'
@@ -43,8 +44,9 @@ function urlOf(origins: Origins, n: { origin_id: string; source_page: number | n
 function scope(rows: (Subject | Detail)[]) {
   const places = new Set(rows.map((r) => r.jurisdiction_code))
   const years = new Set(rows.map((r) => r.fiscal_year))
+  const kinds = new Set(rows.map((r) => r.document_kind))
   const mixed = places.size > 1 || years.size > 1
-  return { mixed, single: places.size === 1 ? rows[0]!.jurisdiction_code : null, where: (r: Subject | Detail) => (mixed ? `${nameOf(r.jurisdiction_code)} ${reiwa(r.fiscal_year)}` : null) }
+  return { mixed, single: !mixed && kinds.size === 1, where: (r: Subject | Detail) => (mixed ? `${nameOf(r.jurisdiction_code)} ${reiwa(r.fiscal_year)}` : null) }
 }
 
 function subjectRows(rows: Subject[], origins: Origins, where: (r: Subject) => string | null): Row[] {
@@ -78,6 +80,15 @@ function detailGroups(rows: Detail[], origins: Origins, where: (r: Detail) => st
     })
   }
   return [...groups].map(([b, list]) => ({ heading: b === 'その他' ? 'その他の内訳' : `${b}で分けた内訳`, rows: list }))
+}
+
+/** 1つの自治体・年度・資料の表から頁の予算・決算のタブへ。頁に無い年度・読めないときはリンクを出さない */
+async function pagePath(env: Env, r: Subject | Detail) {
+  const entry = await loadCatalogEntry(env, r.jurisdiction_code).catch((e) => {
+    logError(e)
+    return null
+  })
+  return entry ? yearTabPath(entry, r.fiscal_year, r.document_kind) : null
 }
 
 export function showExpenditureTableTool(env: Env) {
@@ -118,7 +129,7 @@ export function showExpenditureTableTool(env: Env) {
         return viewResult(message, {
           kind: 'expenditure_table',
           v: 1,
-          data: { table: r.kind, title, amountLabel: PHASE_LABEL[first.amount_phase], groups, hasMore, path: s.single ? `${jurisdictionPath(s.single)}/${first.fiscal_year}/${first.document_kind === 'initial' ? 'budget' : 'settlement'}` : null },
+          data: { table: r.kind, title, amountLabel: PHASE_LABEL[first.amount_phase], groups, hasMore, path: s.single ? await pagePath(env, first) : null },
         })
       } catch (e) {
         if (e instanceof FudokiApiError && e.status === 400) return viewError(`検索の引数が正しくありません: ${e.message}`)

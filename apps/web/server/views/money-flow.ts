@@ -2,9 +2,8 @@
 import { dynamicTool, jsonSchema } from 'ai'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../../jurisdiction/domains'
 import { incomeFlowOf } from '../../jurisdiction/app/income-flow-data'
-import { jurisdictionPath } from '../../jurisdiction/path'
 import { reiwa, type Drill } from '../../jurisdiction/types'
-import { subjectsOf, subjectTree } from '../app-data'
+import { subjectsOf, subjectTree, yearTabPath } from '../app-data'
 import type { Env } from '../env'
 import { loadCatalogEntry, loadRevenueFlow, loadRevenueSetsuByMoku } from '../jurisdiction'
 import { logError } from '../log'
@@ -69,7 +68,7 @@ export function showMoneyFlowTool(env: Env) {
         return viewResult(message, {
           kind: 'money_flow',
           v: 1,
-          data: { name: entry.name, year, document_kind: kind, flow, path: `${jurisdictionPath(code)}/${year}/${kind === 'initial' ? 'budget' : 'settlement'}` },
+          data: { name: entry.name, year, document_kind: kind, flow, path: yearTabPath(entry, year, kind) },
         })
       } catch (e) {
         logError(e)
