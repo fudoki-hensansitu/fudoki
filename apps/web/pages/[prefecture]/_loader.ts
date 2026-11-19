@@ -3,8 +3,8 @@
 import { HTTPException } from 'hono/http-exception'
 import { defer } from 'void'
 import type { Context } from 'hono'
-import { emptyHead, financeHead, pageHead, projectFallbackHead, projectHead, type Head } from '../../jurisdiction/html'
-import { appPageYears, FINANCE_SLUG, hasDocument, TAB_SLUGS, tabOfSlug, type Headline, type PageData, type PageFlow, type PageTab } from '../../jurisdiction/types'
+import { emptyHead, financeHead, pageHead, questionsHead, projectFallbackHead, projectHead, type Head } from '../../jurisdiction/html'
+import { appPageYears, FINANCE_SLUG, hasDocument, QUESTIONS_SLUG, TAB_SLUGS, tabOfSlug, type Headline, type PageData, type PageFlow, type PageTab } from '../../jurisdiction/types'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../../jurisdiction/domains'
 import { PREFECTURE_MAPS } from '../../jurisdiction/map.generated'
 import { codeOfPath, jurisdictionPath } from '../../jurisdiction/path'
@@ -21,6 +21,8 @@ import { loadLocalFinance } from '../../server/local-finance'
 import { loadRevenue } from '../../server/revenue'
 import { readProjectFull, type ProjectFull } from '../../jurisdiction/app/api'
 import { apiCall, FudokiApiError } from '../../server/fudoki-api'
+import { loadQuestions } from '../../jurisdiction/questions'
+import type { QuestionFeed } from '../../jurisdiction/questions/types'
 
 export const notFound = () => new Response('Not Found\n', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
 export const unavailable = () => new Response('風土記の API に繋がりませんでした。少し待ってからもう一度開いてください。\n', { status: 502, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } })
@@ -44,6 +46,8 @@ export type JurisdictionProps = JurisdictionView & {
   extras?: Promise<YearExtras>
   /** 流れの目ごとの節。defer で HTML の後ろに流す */
   setsu?: Promise<MokuBreakdowns>
+  /** 「気になる」のタブの頁（/tokyo/shinagawa/questions）の問いと作り置きの答え */
+  questions?: QuestionFeed
 }
 
 /** 年度の段（/tokyo/nakano/2024）。4桁の数字だけ */
@@ -144,6 +148,14 @@ export async function projectProps(c: Context, path: string, segment: string): P
   return { ...props, tab: 'projects', project, ...(projectFull ? { projectFull } : {}) }
 }
 
+/** 「気になる」のタブの頁。問いの無い自治体は 404 */
+async function questionProps(c: Context, path: string): Promise<JurisdictionProps> {
+  const props = await jurisdictionProps(c, path)
+  const questions = props.kind === 'page' ? await loadQuestions(props.data.code) : undefined
+  if (!questions) throw new HTTPException(404, { res: notFound() })
+  return { ...props, tab: 'questions', questions }
+}
+
 /** タブの頁（/tokyo/nakano/projects、/tokyo/nakano/2024/budget）。タブの名前が違えば 404。予算・決算のタブは収録の無い年度にもあり、画面が「まだ収録していない」と出す */
 export async function tabProps(c: Context, path: string, slug: string, yearSegment?: string): Promise<JurisdictionProps> {
   const tab = tabOfSlug(slug)
@@ -159,13 +171,14 @@ export async function tabProps(c: Context, path: string, slug: string, yearSegme
 export async function routeProps(c: Context, segments: string[]): Promise<JurisdictionProps> {
   const [prefecture = '', ...rest] = segments
   const head = rest[0]
-  const named = head !== undefined && !YEAR_SEGMENT.test(head) && head !== 'fields' && head !== FINANCE_SLUG && !tabOfSlug(head)
+  const named = head !== undefined && !YEAR_SEGMENT.test(head) && head !== 'fields' && head !== FINANCE_SLUG && head !== QUESTIONS_SLUG && !tabOfSlug(head)
   const path = named ? `/${prefecture}/${head}` : `/${prefecture}`
   const [a, b, f, ...extra] = named ? rest.slice(1) : rest
   const props = await (async () => {
     if (extra.length) throw new HTTPException(404, { res: notFound() })
     if (a === undefined) return entryProps(c, path)
     if (a === FINANCE_SLUG) return b === undefined ? { ...(await jurisdictionProps(c, path)), tab: 'overview' as const } : Promise.reject(new HTTPException(404, { res: notFound() }))
+    if (a === QUESTIONS_SLUG) return b === undefined ? questionProps(c, path) : Promise.reject(new HTTPException(404, { res: notFound() }))
     if (a === 'fields') return b !== undefined && f === undefined ? fieldProps(c, path, b) : Promise.reject(new HTTPException(404, { res: notFound() }))
     if (!YEAR_SEGMENT.test(a)) return b === undefined ? tabProps(c, path, a) : a === 'projects' && f === undefined ? projectProps(c, path, b) : Promise.reject(new HTTPException(404, { res: notFound() }))
     if (b === undefined) return toYearMoney(c, path, a)
@@ -260,6 +273,7 @@ export const jurisdictionHead = (p: JurisdictionProps): Head => {
   if (p.projectFull) return projectHead(p.data, p.projectFull)
   if (p.project) return projectFallbackHead(p.data, p.project)
   if (p.tab === 'overview') return financeHead(p.data)
+  if (p.tab === 'questions') return questionsHead(p.data)
   const year = p.year ?? appPageYears(p.data)[0]
   const opened = year === undefined ? undefined : p.snapshot?.years[String(year)]
   return pageHead(p.data, p.year, p.tab ? { tab: p.tab } : undefined, opened && year !== undefined ? { year, kind: opened.kind, yen: opened.total, originTitle: opened.originTitle, areas: areasOfFields(opened.fields) } : undefined)

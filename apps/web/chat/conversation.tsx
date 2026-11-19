@@ -22,7 +22,8 @@ const FADE_EDGE_PX = 4
 /** 一番下からこの距離以内なら、読み終えて追っていると見なす */
 const NEAR_BOTTOM_PX = 120
 
-type Metadata = { apps?: Record<string, string>; context?: string }
+/** follow・source は作り置きの答え（自治体の頁の「気になる」）にだけ付く。follow は答えのあとに出す続きの問い */
+type Metadata = { apps?: Record<string, string>; context?: string; follow?: string[]; source?: string }
 type ChatMessage = UIMessage<Metadata>
 
 const TOOL_LABELS: Record<string, string> = {
@@ -72,6 +73,8 @@ export function Conversation({
   beforeComposer,
   onSend,
   movableViews = false,
+  connect,
+  preset,
 }: {
   id: string
   stored: StoredSession
@@ -88,38 +91,71 @@ export function Conversation({
   onSend?: () => void
   /** 表とグラフを会話の横のパネルへ移せるか。会話の頁だけ。自治体の頁のように会話がパネルの中にあるときは移さない */
   movableViews?: boolean
+  /** stored に token が無い会話（作り置きの答えから始めた会話）で、続けて聞くときに会話を作る。Turnstile は押したときでなく、聞くときに通す */
+  connect?: () => Promise<{ id: string; session: StoredSession }>
+  /** 続きの問いに作り置きの答えがあれば返す。あれば AI に聞かずにその答えを足す */
+  preset?: (question: string) => { answer: string; follow: string[]; source: string } | undefined
 }) {
   const viewContext = React.useRef(stored.viewContext ?? '')
   // 頁の文脈は質問ごとに読み、その発言の metadata に持たせる（server が選んだ文は質問の直前の利用者の発言に、見ている画面は最後の質問のものだけを system prompt に入れる）
   const contextRef = React.useRef(context)
   contextRef.current = context
+  // server の会話（id・token）。作り置きの答えから始めた会話は、続けて聞くまで作らない
+  const live = React.useRef(stored.token ? { id, token: stored.token, expiresAt: stored.expiresAt } : undefined)
+  const connectRef = React.useRef(connect)
+  connectRef.current = connect
   const transport = React.useMemo(
     () =>
       new DefaultChatTransport<ChatMessage>({
         api: '/api/chat',
-        headers: { Authorization: `Bearer ${stored.token}` },
-        prepareSendMessagesRequest: ({ messages }) => ({
-          body: { id, messages: forServer(messages), ...(stored.entry ? { entry: stored.entry } : {}), ...(viewContext.current ? { viewContext: viewContext.current } : {}) },
-        }),
+        prepareSendMessagesRequest: async ({ messages }) => {
+          if (!live.current) {
+            if (!connectRef.current) throw new Error('会話を始められませんでした')
+            const made = await connectRef.current()
+            live.current = { id: made.id, token: made.session.token, expiresAt: made.session.expiresAt }
+          }
+          return {
+            headers: { Authorization: `Bearer ${live.current.token}` },
+            body: { id: live.current.id, messages: forServer(messages), ...(stored.entry ? { entry: stored.entry } : {}), ...(viewContext.current ? { viewContext: viewContext.current } : {}) },
+          }
+        },
       }),
-    [id, stored.token],
+    [stored.entry],
   )
-  const { messages, sendMessage, status, stop, error } = useChat<ChatMessage>({
+  const save = (messages: ChatMessage[]) =>
+    !live.current || saveSession(live.current.id, { token: live.current.token, expiresAt: live.current.expiresAt, messages, ...(stored.entry ? { entry: stored.entry } : {}), ...(viewContext.current ? { viewContext: viewContext.current } : {}) })
+  const { messages, sendMessage, setMessages, status, stop, error } = useChat<ChatMessage>({
     id,
     messages: (stored.messages ?? []) as ChatMessage[],
     transport,
-    onFinish: ({ messages }) => {
-      return saveSession(id, { token: stored.token, expiresAt: stored.expiresAt, messages, ...(stored.entry ? { entry: stored.entry } : {}), ...(viewContext.current ? { viewContext: viewContext.current } : {}) })
-    },
+    onFinish: ({ messages }) => save(messages),
   })
   const busy = status === 'submitted' || status === 'streaming'
   const onSendRef = React.useRef(onSend)
   onSendRef.current = onSend
+  const presetRef = React.useRef(preset)
+  presetRef.current = preset
   const send = React.useCallback((text: string, pageContext = contextRef.current?.()) => {
+    // 作り置きの答えのある問いは、AI に聞かずに答えを足す
+    const found = presetRef.current?.(text)
+    if (found) {
+      const at = Date.now().toString(36)
+      setMessages((prev) => {
+        const next: ChatMessage[] = [
+          ...prev,
+          { id: `preset-q-${at}`, role: 'user', parts: [{ type: 'text', text }] },
+          { id: `preset-a-${at}`, role: 'assistant', parts: [{ type: 'text', text: found.answer }], metadata: { follow: found.follow, source: found.source } },
+        ]
+        save(next)
+        return next
+      })
+      onSendRef.current?.()
+      return
+    }
     const ctx = pageContext?.slice(0, MAX_CONTEXT)
     void sendMessage({ text, ...(ctx ? { metadata: { context: ctx } } : {}) })
     onSendRef.current?.()
-  }, [sendMessage])
+  }, [sendMessage, setMessages])
   // 入口で入力した最初の質問を1回だけ送る（StrictMode の二重実行でも1回）
   const sent = React.useRef(false)
   React.useEffect(() => {
@@ -178,7 +214,8 @@ export function Conversation({
     measure()
   }, [messages, status, measure, box])
 
-  const suggestions = busy ? [] : suggestionsOf(messages.at(-1))
+  const lastMessage = messages.at(-1)
+  const suggestions = busy ? [] : lastMessage?.metadata?.follow ? lastMessage.metadata.follow.map((q) => ({ label: q, prompt: q })) : suggestionsOf(lastMessage)
   // 応答の生成中で、画面に動くものが無い間は「考えています」を出す。止まって見えないように。
   // 出すのは送った直後と、tool の結果が返ったあと次を組み立てている間だけ。文が出始めたあとは出さない（書き終えた答えの下に出ないように）
   const last = messages.at(-1)?.parts.at(-1)
@@ -208,15 +245,17 @@ export function Conversation({
                         </Bubble>
                       )
                     if (p.type !== 'dynamic-tool') return null
+                    if (!live.current) return null
                     const uri = apps(m)[p.toolName]
                     const output = p.state === 'output-available' ? (p.output as { isError?: boolean; structuredContent?: unknown }) : undefined
                     // View は結果の structuredContent を描く。履歴から復元した結果で structuredContent が無いときは印だけにする
                     if (uri && output && !output.isError && output.structuredContent)
                       return (
-                        <ViewFrame key={i} token={stored.token} uri={uri} movable={movableViews} input={p.input} output={output} onContext={(text) => (viewContext.current = text.slice(0, 2000))} />
+                        <ViewFrame key={i} token={live.current.token} uri={uri} movable={movableViews} input={p.input} output={output} onContext={(text) => (viewContext.current = text.slice(0, 2000))} />
                       )
                     return <ToolMarker key={i} part={p} />
                   })}
+                  {m.metadata?.source ? <p className="px-1 text-xs text-muted-foreground">作り置きの答え・出典: {m.metadata.source}</p> : null}
                 </MessageContent>
               </Message>
             </div>

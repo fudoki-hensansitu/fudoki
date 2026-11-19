@@ -33,6 +33,7 @@ import {
   StudentIcon,
   UsersIcon,
   WalletIcon,
+  ChatCircleTextIcon,
   type Icon,
 } from '@phosphor-icons/react'
 import { MoreDots } from '@/components/more-dots'
@@ -60,8 +61,11 @@ import { COFOG_NAMES } from '@fudoki/fiscal/cofog-master'
 import { DOMAIN_FRAMES, OTHER_FRAME, frameOf } from '../domains'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
-import { AskDock } from '../ask-dock'
-import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type Moku, type MokuBreakdowns, type PageData, type PageFlow, type YearTotal, TAB_SLUGS, FINANCE_SLUG, hasDocument, type PageTab } from '../types'
+import { AskDock, type AskHandle, type PresetAnswer } from '../ask-dock'
+import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type Moku, type MokuBreakdowns, type PageData, type PageFlow, type YearTotal, TAB_SLUGS, FINANCE_SLUG, QUESTIONS_SLUG, hasDocument, type PageTab } from '../types'
+import { hasQuestions } from '../questions'
+import { QuestionFeedView } from '../questions/feed'
+import type { Question, QuestionFeed } from '../questions/types'
 import { Title, titleVariants } from '@/components/ui/title'
 import { withExtras, yearView, type AccountTotal, type Proj, type Snapshot, type YearExtras, type YearView } from './data'
 import { fieldSubjects, listKey, listPage, projectLatest, type ListPage, type ListQuery, type ProjectFull } from './api'
@@ -951,6 +955,7 @@ function YearMenu({ years, current, onChange }: { years: number[]; current: numb
 }
 
 // ---------- 頁 ----------
+const QUESTIONS_TAB: { key: TabKey; label: string; icon: Icon } = { key: 'questions', label: '気になる', icon: ChatCircleTextIcon }
 const TABS: { key: TabKey; label: string; icon: Icon }[] = [
   { key: 'money', label: '予算', icon: WalletIcon },
   { key: 'settled', label: '決算', icon: ReceiptIcon },
@@ -958,7 +963,7 @@ const TABS: { key: TabKey; label: string; icon: Icon }[] = [
   { key: 'overview', label: '財政', icon: PiggyBankIcon },
 ]
 
-const TAB_SEGMENT = new RegExp(`/(${[...Object.values(TAB_SLUGS), FINANCE_SLUG].join('|')})/?$`)
+const TAB_SEGMENT = new RegExp(`/(${[...Object.values(TAB_SLUGS), FINANCE_SLUG, QUESTIONS_SLUG].join('|')})/?$`)
 /** 今の URL から年度・タブ・分野の段を除いた、自治体の頁の path */
 const basePath = () => location.pathname.replace(PROJECT_PATH, '').replace(TAB_SEGMENT, '').replace(/\/\d{4}\/?$/, '')
 /** 事業の頁の段（/projects/<project_id>） */
@@ -971,7 +976,7 @@ const projectOfPath = () => {
 /** 事業の頁の URL の段 */
 const projectSegment = (id: string) => `projects/${encodeURIComponent(id)}`
 
-export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, setsu, sitekey, initialProject, initialProjectFull, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; /** loader が defer で渡す残り（評価シート・お金のかかる事業・新しく始めた事業） */ extras?: Promise<YearExtras>; /** loader が defer で渡す流れの節 */ setsu?: Promise<MokuBreakdowns>; sitekey: string; /** 事業の頁（/2026/projects/<project_id>）で開いた事業 */ initialProject?: string; /** 事業の頁で loader が読んだ事業の中身（サーバーでも事業の頁を描く） */ initialProjectFull?: ProjectFull; initialTab?: TabKey }) {
+export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, setsu, sitekey, initialProject, initialProjectFull, initialTab, questions: questionsProp }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; /** loader が defer で渡す残り（評価シート・お金のかかる事業・新しく始めた事業） */ extras?: Promise<YearExtras>; /** loader が defer で渡す流れの節 */ setsu?: Promise<MokuBreakdowns>; sitekey: string; /** 事業の頁（/2026/projects/<project_id>）で開いた事業 */ initialProject?: string; /** 事業の頁で loader が読んだ事業の中身（サーバーでも事業の頁を描く） */ initialProjectFull?: ProjectFull; initialTab?: TabKey; /** 「気になる」のタブの頁で loader が読んだ問い */ questions?: QuestionFeed }) {
   // 最初の画面に要らない分（評価シート・お金のかかる事業・新しく始めた事業）は loader が defer で流し、使う部分が Full（Suspense と use()）で待つ
   const d = base
   const vision = data.vision?.text
@@ -991,7 +996,22 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   const at = React.useRef({ year, tab })
   at.current = { year, tab }
   /** 年度・タブの頁の URL。リンクの先にして検索エンジンにも辿らせる。財政は年度の段を持たない（/tokyo/shinagawa/finance） */
-  const pageHref = (y: number, t: TabKey) => (t === 'overview' ? `${data.path}/${FINANCE_SLUG}` : `${data.path}/${y}/${TAB_SLUGS[t]}`)
+  const pageHref = (y: number, t: TabKey) => (t === 'overview' ? `${data.path}/${FINANCE_SLUG}` : t === 'questions' ? `${data.path}/${QUESTIONS_SLUG}` : `${data.path}/${y}/${TAB_SLUGS[t]}`)
+  // 問いは「気になる」のタブの頁でだけ loader が渡す。他のタブへ移っても、続きの問いに作り置きの答えで答えられるよう持っておく
+  const [questions, setQuestions] = React.useState(questionsProp)
+  React.useEffect(() => void (questionsProp && setQuestions(questionsProp)), [questionsProp])
+  const ask = React.useRef<AskHandle>(null)
+  const preset = React.useMemo(() => {
+    if (!questions) return undefined
+    const byId = new Map(questions.questions.map((q) => [q.id, q]))
+    const byText = new Map(questions.questions.map((q) => [q.q, q]))
+    // 続きの候補は問いの id なら問いの文に直す（文のままのものは AI に聞く）
+    const follow = (q: Question) => q.follow.map((f) => byId.get(f)?.q ?? f)
+    return (text: string): PresetAnswer | undefined => {
+      const q = byText.get(text)
+      return q ? { answer: q.answer, follow: follow(q), source: q.source } : undefined
+    }
+  }, [questions])
   // 年度・タブを移っても、選んでいる状態とスクロールは持ち越す。タブは履歴に積み、戻るで前のタブとそのスクロールへ帰す。年度・会計は置き換える
   const move = (href: string, { push = false } = {}) => void router.visit(href, { replace: !push, preserveState: true, preserveScroll: true })
   // 年度のリンクは今のタブを引き継ぐ（予算・決算のタブはどの年度にもある）。分野の頁なら同じ分野のまま年度を移る
@@ -1135,7 +1155,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   // スマホではタブの中身を左右のスワイプで切り替える（shadcn の Carousel）。高さは今のタブに合わせる
   const [api, setApi] = React.useState<CarouselApi>()
   // 予算・決算のタブはどの年度にも出す。収録の無い年度はタブの中で「まだ収録していない」と出す
-  const tabs = TABS
+  const tabs = React.useMemo(() => (hasQuestions(data.code) ? [QUESTIONS_TAB, ...TABS] : TABS), [data.code])
   const tabsRef = React.useRef(tabs)
   tabsRef.current = tabs
   // 事業評価は評価した事業を行った年度にだけある。評価の無い年度へ移ったら絞り込みを戻す
@@ -1190,7 +1210,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   )
 
   const panel = (key: TabKey) =>
-    !v ? null : key === 'overview' ? <Overview /> : key === 'money' ? <MoneyTab key={v.year} phase="initial" active={tab === key} /> : key === 'settled' ? <MoneyTab key={v.year} phase="settlement" active={tab === key} /> : <ProjectsTab filter={filter} setFilter={setFilter} fields={fields} setFields={setFields} q={query} setQ={setQuery} />
+    !v ? null : key === 'questions' ? <QuestionFeedView feed={questions} onOpen={(q) => ask.current?.openPreset(q.q)} /> : key === 'overview' ? <Overview /> : key === 'money' ? <MoneyTab key={v.year} phase="initial" active={tab === key} /> : key === 'settled' ? <MoneyTab key={v.year} phase="settlement" active={tab === key} /> : <ProjectsTab filter={filter} setFilter={setFilter} fields={fields} setFields={setFields} q={query} setQ={setQuery} />
 
   return (
     <div className="@container">
@@ -1227,7 +1247,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
             {yearStuck && v ? (
               <div className="relative h-0">
               <div className="absolute inset-x-0 top-0 mx-[calc(50%-50cqw)] flex h-12 items-center justify-between gap-3 border-b bg-background px-[calc(50cqw-50%)]">
-                <span className="truncate text-sm font-semibold">{projectPage ? '' : TABS.find((t) => t.key === tab)?.label}</span>
+                <span className="truncate text-sm font-semibold">{projectPage ? '' : tabs.find((t) => t.key === tab)?.label}</span>
                 <div className="shrink-0">
                   <div className="md:hidden"><YearMenu years={years} current={v.year} onChange={setYear} /></div>
                   <div className="max-md:hidden"><YearPicker years={years} current={v.year} onChange={setYear} hrefOf={yearHref} /></div>
@@ -1264,7 +1284,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
           )}
         </Tabs>
       </div>
-      <AskDock name={data.name} code={data.code} sitekey={sitekey} year={year} detail={() => (v ? (projectPage ? describeProject(res.peek<Loaded<ProjectFull>>(projectLatestKey(projectPage))) : '') : '')} section={TABS.find((t) => t.key === tab)?.label} />
+      <AskDock name={data.name} code={data.code} sitekey={sitekey} year={year} detail={() => (v ? (projectPage ? describeProject(res.peek<Loaded<ProjectFull>>(projectLatestKey(projectPage))) : '') : '')} section={tabs.find((t) => t.key === tab)?.label} preset={preset} handle={ask} />
     </div>
   )
 }

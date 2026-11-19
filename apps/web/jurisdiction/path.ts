@@ -8,7 +8,7 @@ const SLUGS = new Map(Object.entries(registry.jurisdictions as Record<string, { 
 
 /** 自治体の頁の下に置くテーマの段（/tokyo/shinagawa/elections）。都道府県自体のテーマ（/tokyo/elections）と
  * 市区町村（/tokyo/shinagawa）が同じ段に並ぶので、市区町村の slug に使わない（テストで確かめる）。テーマを足すときはここにも足す */
-export const TOPIC_SEGMENTS = new Set(['spending', 'revenue', 'elections', 'budget', 'settlement'])
+export const TOPIC_SEGMENTS = new Set(['spending', 'revenue', 'elections', 'budget', 'settlement', 'questions'])
 
 export const PREFECTURE_SLUGS = new Set(Object.values(PREFECTURES))
 
