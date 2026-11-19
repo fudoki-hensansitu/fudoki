@@ -100,7 +100,7 @@ export function QuestionFeedView({ feed, onOpen, onAsk }: { feed: QuestionFeed |
       {/* フィードを読み終えた人に、並んでいない問いを自分で聞く入口を出す */}
       <button type="button" onClick={onAsk} className="flex items-center gap-4 rounded-xl border bg-card p-5 text-left">
         <RobotIcon className="size-6 shrink-0 text-primary" aria-hidden="true" />
-        <Title size="h3" as="span" className="min-w-0 flex-1">ほかに知りたいことを聞く</Title>
+        <Title size="h3" as="span" className="min-w-0 flex-1">ほかのことを聞く</Title>
         <ArrowRightIcon className="size-5 shrink-0 text-primary" aria-hidden="true" />
       </button>
     </section>
