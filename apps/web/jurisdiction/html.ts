@@ -224,7 +224,7 @@ export const sitemapXml = (entries: CatalogEntry[], yearsOf: (e: CatalogEntry) =
     .flatMap((e) => {
       const base = jurisdictionPath(e.code)
       const years = yearsOf(e)
-      // まとめと、年度ごとのタブの頁（事業・予算・決算）
+      // まとめと、年度ごとのタブの頁（予算・決算・事業）
       return [base, ...years.flatMap((y) => {
         const page = `${base}/${y}`
         return [`${page}/${TAB_SLUGS.projects}`, ...(e.initialYears.includes(y) ? [`${page}/${TAB_SLUGS.money}`] : []), ...(e.settlementYears.includes(y) ? [`${page}/${TAB_SLUGS.settled}`] : [])]
