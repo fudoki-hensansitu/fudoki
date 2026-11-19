@@ -602,8 +602,10 @@ function SetsuSection({ phase, account, groups, total, onOpen }: { phase: 'initi
 /** お金の流れを読み込む間。見出しはそのまま出し、表（款の行の名前・金額・割合）の形だけを skeleton にする */
 function FlowSkeleton() {
   return (
-    <div aria-busy="true" aria-label="読み込み中">
-      <Title size="h3" as="h2" className="mb-3">お金の流れ</Title>
+    <div className="flex flex-col gap-3">
+      {/* 見出しの行は、読み込み後に右へ並ぶ切り替え（テーブル／サンキー）と同じ高さを取っておく */}
+      <div className="flex h-10 items-center"><Title size="h3" as="h2">お金の流れ</Title></div>
+      <div aria-hidden="true">
       {[10, 7, 9, 6, 8, 5, 7, 6].map((w, i) => (
         <div key={i} className="flex items-center gap-4 border-b border-border py-4">
           <Skeleton className="h-5" style={{ width: `${w}em` }} />
@@ -611,6 +613,7 @@ function FlowSkeleton() {
           <Skeleton className="hidden h-5 w-12 sm:block" />
         </div>
       ))}
+      </div>
     </div>
   )
 }
