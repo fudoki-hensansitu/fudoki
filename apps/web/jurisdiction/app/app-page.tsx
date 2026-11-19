@@ -48,6 +48,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { createColumnHelper, tableFeatures, useTable } from '@tanstack/react-table'
 import { Empty, EmptyContent, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 import { Skeleton } from '@/components/ui/skeleton'
+import { Spinner } from '@/components/ui/spinner'
 import { RequestTown } from '../../nav/request-town'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { cn } from '@/lib/utils'
@@ -1222,6 +1223,9 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     { key: 'projects', sub: '一つ一つの使い道', year },
     { key: 'overview', sub: '借金と貯金', year },
   ]
+  // 予算・決算の頁は流れを読むので開くまで数秒かかる。押した入口に読み込み中の印を出す
+  const [opening, setOpening] = React.useState<TabKey | null>(null)
+  React.useEffect(() => void (idle && setOpening(null)), [idle])
   const hero = (
     <section className="flex min-h-[50svh] flex-col items-center justify-center gap-6 py-10 text-center">
       <div className="grid size-28 place-items-center rounded-2xl border bg-emblem p-4 sm:size-36 sm:rounded-3xl sm:p-5">
@@ -1247,8 +1251,8 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
         {doors.map(({ key, sub, year: y }) => {
           const t = TABS.find((x) => x.key === key)!
           return (
-            <Link key={key} href={pageHref(y, key)} className="flex flex-col items-start gap-1 rounded-xl border bg-card p-4 text-left no-underline transition-colors hover:border-primary">
-              <t.icon className="size-5 text-muted-foreground" aria-hidden="true" />
+            <Link key={key} href={pageHref(y, key)} onClick={() => setOpening(key)} aria-busy={opening === key} className={cn('flex flex-col items-start gap-1 rounded-xl border bg-card p-4 text-left no-underline transition-colors hover:border-primary', opening === key && 'border-primary')}>
+              {opening === key ? <Spinner className="size-5 text-primary" /> : <t.icon className="size-5 text-muted-foreground" aria-hidden="true" />}
               <span className="text-base font-semibold text-foreground">{t.label}</span>
               <span className="text-xs text-muted-foreground">{sub}</span>
             </Link>
