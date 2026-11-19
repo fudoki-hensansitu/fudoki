@@ -64,4 +64,5 @@ sidebar:
 
 - 頁は出典ファイル（`origin_id` が指す 1 つの PDF）の 1 から数えた番号で、紙面の印刷頁とは別です。URL に `#page=<番号>` を付けると、Chrome・Edge・Firefox・Acrobat ではその頁が開きます。
 - 横の座標（x0・x1）が null の自治体があります。金額の座標は、一つの印字が全額のときだけ入ります。
+- 頁だけで足りるときは、`search_expenditure_subjects`・`search_expenditure_details` の行の `source_page` にも同じ頁が入っています（CSV の出典と位置の分からない行は null）。
 - CSV の出典（`kind = "csv"`）は頁の代わりに `source_line`・`amount_source_line` に 1 から数えた物理行（見出しが 1 行目）が入り、頁と座標は持ちません。

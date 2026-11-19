@@ -108,7 +108,7 @@ const geometry = (kanValues: number[], kouValues: number[], width: number, heigh
   return { narrow, x0, x1, kans, kouNodes, kanLines, kouLines, kanSize, kouSize, total: Math.max(end(kans), end(kouNodes), 40) }
 }
 
-// タブへ移ると、すぐ描いた頁を loader が読み終えた頁で作り直す。同じ図を少し前に描いたなら、作り直した図では帯を伸ばし直さない（FieldsSection の grownAt と同じ）
+// タブへ移ると、すぐ描いた頁を loader が読み終えた頁で作り直す。同じ図を少し前に描いたなら、作り直した図では帯を伸ばし直さない
 const drawnAt = new Map<string, number>()
 /** 図が画面に入ったら true（帯が伸び始める）。still は少し前に同じ図を描いたので動かさないとき */
 export function useFlowSeen(ref: React.RefObject<HTMLElement | null>, key: string) {

@@ -1,8 +1,9 @@
-// 自治体の頁（アプリ型）。ヘッダーの下を「まとめ・事業・予算・決算」のタブにし（予算・決算のタブはどの年度にも出す）。事業は一覧から事業の頁へ移る。
+// 自治体の頁（アプリ型）。ヘッダーの下を「予算・決算・事業・財政」のタブにし（予算・決算のタブはどの年度にも出す。自治体の頁そのものは最新の年度の予算を出す）。事業は一覧から事業の頁へ移る。
 // 一覧は名前と金額だけを出し、説明は詳細にだけ出す。部品は shadcn/ui（Tabs・Carousel・Card・Input・ToggleGroup）
 import * as React from 'react'
 import { useNavigation, useRouter } from '@void/react'
 import {
+  ArrowLeftIcon,
   ArrowSquareOutIcon,
   BankIcon,
   BasketballIcon,
@@ -19,17 +20,17 @@ import {
   HouseLineIcon,
   LeafIcon,
   ListBulletsIcon,
+  ListDashesIcon,
   MagnifyingGlassIcon,
   ReceiptIcon,
   MapPinIcon,
   ShieldCheckIcon,
   ArrowDownIcon,
-  SquaresFourIcon,
+  PiggyBankIcon,
   MapTrifoldIcon,
   MapPinAreaIcon,
   StorefrontIcon,
   StudentIcon,
-  TreeStructureIcon,
   UsersIcon,
   WalletIcon,
   type Icon,
@@ -60,7 +61,7 @@ import { DOMAIN_FRAMES, OTHER_FRAME, frameOf } from '../domains'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock } from '../ask-dock'
-import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type Moku, type PageData, type PageFlow, type Setsu, type YearTotal, TAB_SLUGS, hasDocument, type PageTab } from '../types'
+import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type Moku, type MokuBreakdowns, type PageData, type PageFlow, type YearTotal, TAB_SLUGS, FINANCE_SLUG, hasDocument, type PageTab } from '../types'
 import { Title, titleVariants } from '@/components/ui/title'
 import { withExtras, yearView, type AccountTotal, type Proj, type Snapshot, type YearExtras, type YearView } from './data'
 import { fieldSubjects, listKey, listPage, projectLatest, type ListPage, type ListQuery, type ProjectFull } from './api'
@@ -68,6 +69,8 @@ import { ClientSuspense, FAILED, Resources, type Loaded } from './resource'
 import { Amt, yenParts } from './amount'
 import { FinanceSections } from './finance'
 import { IncomeFlow } from './income-flow'
+import { setsuGroups, type SetsuGroup } from '../setsu-groups'
+import { MoneyDetail, type MoneyDetailKey } from './money-detail'
 import './app.css'
 
 const FIELD_ICON: Record<string, Icon> = {
@@ -89,7 +92,7 @@ const perHead = (y: number, pop: number) => {
 const r = (y: number) => `R${y - 2018}`
 
 // ---------- 選んだもの（詳細） ----------
-type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; res: Resources; /** 事業の頁へ移る */ openProject: (id: string) => void; go: Go; openField: (id: string) => void; /** 予算・決算のタブの頁で loader が読んだ流れ */ flow?: PageFlow; /** 予算・決算のタブの頁なのに流れを読めなかった（API に繋がらなかった） */ flowFailed: boolean; /** 流れの会計を変える（?account= の頁へ移る） */ pickAccount: (account: string) => void; /** loader が defer で渡す流れの節 */ setsu?: Promise<Record<string, Setsu[]>>; /** loader が defer で渡す残り（評価シート・お金のかかる事業）。useFullView が use() で待つ */ extras?: Promise<YearExtras>; prevFieldSubjects?: Record<string, string[]>; /** 年度を移る（タブの見出しの年度の切り替え） */ setYear: (y: number) => void; /** 年度の頁の URL（今のタブのまま） */ yearHref: (y: number) => string }
+type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; res: Resources; /** 事業の頁へ移る */ openProject: (id: string) => void; go: Go; openField: (id: string) => void; /** 予算・決算のタブの頁で loader が読んだ流れ */ flow?: PageFlow; /** 予算・決算のタブの頁なのに流れを読めなかった（API に繋がらなかった） */ flowFailed: boolean; /** 流れの会計を変える（?account= の頁へ移る） */ pickAccount: (account: string) => void; /** loader が defer で渡す流れの節 */ setsu?: Promise<MokuBreakdowns>; /** loader が defer で渡す残り（評価シート・お金のかかる事業）。useFullView が use() で待つ */ extras?: Promise<YearExtras>; prevFieldSubjects?: Record<string, string[]>; /** 年度を移る（タブの見出しの年度の切り替え） */ setYear: (y: number) => void; /** 年度の頁の URL（今のタブのまま） */ yearHref: (y: number) => string }
 /** 文脈に添える、開いている事業の評価シートの数の上限（文脈の長さの上限に収める） */
 const DETAIL_SOURCES = 3
 /** 開いている事業を、アシスタントに渡す文脈の行にする。金額は at（無ければ事業が持つ年度と資料）のもの */
@@ -165,7 +168,7 @@ function TabYear() {
     </div>
   )
 }
-/** まとめ以外のタブの頭。その言葉の意味の一文と、年度の切り替え。見出しはタブ名のくり返しになるので画面に出さず、読み上げと検索のためだけに残す */
+/** 財政以外のタブの頭。その言葉の意味の一文と、年度の切り替え。見出しはタブ名のくり返しになるので画面に出さず、読み上げと検索のためだけに残す */
 function TabHead({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     // 狭い画面は一文を横の切り替えに押されて細く折れるので、切り替えを上に置いて一文を全幅にする
@@ -379,23 +382,26 @@ type Go = (t: TabKey, opt?: { filter?: string; field?: string }) => void
 
 
 /** 分野の行。名前・金額・棒・割合を1行に並べる。割合は前景色で、緑は棒だけに置く */
-function FieldRow({ f, i, max, onClick, grow = true }: { f: YearView['fields'][number]; i: number; max: number; onClick: () => void; /** 棒を伸ばすアニメーションを出す */ grow?: boolean }) {
+function FieldRow({ f, i, max, total, onClick, grow = true }: { f: { name: string; yen: number }; i: number; max: number; /** 割合の分母。無ければ一般会計の総額 */ total?: number; /** 無ければ押せない行にする */ onClick?: () => void; /** 棒を伸ばすアニメーションを出す */ grow?: boolean }) {
   const { v } = useApp()
-  const pct = (f.yen / v.total) * 100
+  const pct = (f.yen / (total ?? v.total)) * 100
+  const Row = onClick ? 'button' : 'div'
   return (
-    <button type="button" onClick={onClick} className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2 rounded-lg px-3 py-3 text-left transition-colors hover:bg-card sm:grid-cols-[10rem_minmax(0,1fr)_4.5rem]">
-      <span className="col-start-1 row-start-1 min-w-0 sm:col-start-auto sm:row-start-auto">
-        <span className="block truncate text-base font-medium">{f.name}</span>
-        <span className="block text-xs text-muted-foreground"><Amt yen={f.yen} /></span>
-      </span>
+    <Row {...(onClick ? { type: 'button' as const, onClick } : {})} className={cn('grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2 rounded-lg px-3 py-3 text-left sm:grid-cols-[10rem_minmax(0,1fr)_5.5rem]', onClick && 'transition-colors hover:bg-card')}>
+      {/* 名前は切らずに折り返す */}
+      <span className="col-start-1 row-start-1 min-w-0 text-base font-medium sm:col-start-auto sm:row-start-auto">{f.name}</span>
       <span className="col-span-2 col-start-1 row-start-2 block h-1.5 overflow-hidden rounded-full bg-secondary sm:col-span-1 sm:col-start-auto sm:row-start-auto">
         <span className={cn(grow && 'app-grow', 'block h-full rounded-full bg-primary')} style={{ width: `${Math.max(1, (f.yen / max) * 100)}%`, animationDelay: `${i * 30}ms` }} />
       </span>
-      <span className="col-start-2 row-start-1 text-right text-base tabular-nums sm:col-start-auto sm:row-start-auto">
-        {pct.toFixed(1)}
-        <small className="text-xs text-muted-foreground">%</small>
+      {/* 割合の下に金額。金額はすでに小さい文字なので、単位も同じ大きさにする */}
+      <span className="col-start-2 row-start-1 text-right sm:col-start-auto sm:row-start-auto">
+        <span className="block text-base tabular-nums">
+          {pct.toFixed(1)}
+          <small className="text-xs text-muted-foreground">%</small>
+        </span>
+        <Amt yen={f.yen} plainUnit className="block text-xs text-muted-foreground" />
       </span>
-    </button>
+    </Row>
   )
 }
 
@@ -433,14 +439,14 @@ function AccountCards({ accounts, account, setAccount }: { accounts: AccountTota
 
 /** 予算・決算。事業は下から積み上げる見方、こちらは大きい項目から下りていく見方。当初予算と決算の両方がある年度はタブを分ける */
 /** 流れの目（歳入の目も）に節を足す */
-const withSetsu = (flow: PageFlow, byMoku: Record<string, Setsu[]>): PageFlow => {
-  const moku = (m: Moku): Moku => ({ ...m, setsu: byMoku[m.id] ?? m.setsu })
+const withSetsu = (flow: PageFlow, byMoku: MokuBreakdowns): PageFlow => {
+  const moku = (m: Moku): Moku => ({ ...m, setsu: byMoku.setsu[m.id] ?? m.setsu, ...(byMoku.projects[m.id] ? { projects: byMoku.projects[m.id] } : {}) })
   const drills = (ds: Drill[]) => ds.map((k) => ({ ...k, kou: k.kou.map((o) => ({ ...o, moku: o.moku.map(moku) })) }))
   return { ...flow, drills: drills(flow.drills), loose: flow.loose.map(moku), ...(flow.revenue ? { revenue: drills(flow.revenue) } : {}) }
 }
 
 function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開いているタブか。スマホは隣のタブも描くので、URL を書き換えるのは開いているタブだけにする */ active: boolean }) {
-  const { v, d, res, page, flow, flowFailed, pickAccount, setsu: setsuProp, openField, setYear, yearHref } = useApp()
+  const { v, d, res, page, flow, flowFailed, pickAccount, setsu: setsuProp, openField, openProject, setYear, yearHref } = useApp()
   const y = d.years[String(v.year)]
   const total: YearTotal | undefined = y?.kind === phase ? { year: v.year, yen: y.total, kan: [] } : undefined
   // 収録はあるが、今の頁のデータが別の資料（スマホで隣のタブを開いた頁など）なら、タブへ移って loader が読むまで待つ
@@ -459,7 +465,7 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
   const shown = flow && flow.year === v.year && flow.phase === phase && flow.account === account ? flow : undefined
   // 目ごとの節は最初の画面に出さないので、描いた後に読んで流れに足す（読み終えるまで節の無い流れを出す）
   const setsuKey = shown ? `setsu:${d.code}:${shown.year}:${shown.phase}:${shown.account}` : ''
-  const [setsu, setSetsu] = React.useState<{ key: string; byMoku: Record<string, Setsu[]> | typeof FAILED }>()
+  const [setsu, setSetsu] = React.useState<{ key: string; byMoku: MokuBreakdowns | typeof FAILED }>()
   React.useEffect(() => {
     if (!shown) return
     let live = true
@@ -474,6 +480,24 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
   const current = React.useMemo(() => (shown && byMoku && byMoku !== FAILED ? withSetsu(shown, byMoku) : shown), [shown, byMoku])
   const drills = current?.drills
   const flows = current?.drills
+  // 開いている会計の目（節つき）。何に使う？と詳細の引き出しが使う
+  const allMoku = React.useMemo(() => (current ? [...current.drills.flatMap((k) => k.kou.flatMap((o) => o.moku)), ...current.loose] : []), [current])
+  // 目の無い項・款は、目の代わりに節の分からない分として数え、何に使う？の総額を会計の総額に揃える
+  const units = React.useMemo(() => (current ? [
+    ...current.drills.flatMap((k): Moku[] => (k.kou.length ? k.kou.flatMap((o): Moku[] => (o.moku.length ? o.moku : o.amountMissing ? [] : [{ id: o.id, name: o.name, yen: o.yen, setsu: [], path: [k.kan.name, null] }])) : k.kan.amountMissing ? [] : [{ id: k.kan.id, name: k.kan.name, yen: k.kan.yen, setsu: [] }])),
+    ...current.loose,
+  ] : []), [current])
+  // 節で分けた額。節の分かる額が総額の半分に満たない（目の内訳が節でない資料が多い）ときは出さない
+  const setsuView = React.useMemo(() => {
+    if (!byMoku || byMoku === FAILED) return undefined
+    const { groups, known, total } = setsuGroups(units)
+    return total > 0 && known >= total * 0.5 ? { groups, total } : undefined
+  }, [units, byMoku])
+  // 詳細の引き出し（入る→使うの分野・何に使う？の区分）。入る→使うは一般会計なので、ほかの会計を開いているときは分野を押したら事業のタブへ移る
+  const [detail, setDetail] = React.useState<MoneyDetailKey>()
+  const wide = useMedia('(min-width: 768px)')
+  const projectLink = React.useMemo(() => ({ href: (id: string) => projectHref(page.path, id), open: openProject }), [page.path, openProject])
+  const openFieldDetail = (id: string) => (current?.account === GENERAL ? setDetail({ kind: 'field', id }) : openField(id))
   const router = useRouter()
   const accounts = d.accounts ?? []
   // 会計の総額は頁のデータの資料のもの。別の資料のタブ（スマホで隣に並ぶタブ）では使わない
@@ -510,8 +534,9 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
           : '予算は、1年間に何にいくら使うかを、年度が始まる前に決めた計画です。議会の議決を経て決まります。このタブでは、年度の初めに決めた当初予算を扱います。'}
       </TabHead>
       {/* 入る→使う（一般会計の歳入と歳出の総額と流れ）。その年度・資料の歳入を収録しているときだけ */}
-      {total && revenueDoc ? <IncomeFlow doc={revenueDoc} revenue={current?.revenue} phase={phase} expTotal={total.yen} fields={v.fields} pop={d.pop} openField={openField} /> : null}
-      {total ? <FieldsSection phase={phase} /> : null}
+      {total && revenueDoc ? <IncomeFlow doc={revenueDoc} revenue={current?.revenue} phase={phase} expTotal={total.yen} fields={v.fields} pop={d.pop} openField={openFieldDetail} /> : null}
+      {/* 使い道の分野は入る→使うに出るので、ここは節で分けた「何に使う？」。節が載っていない資料では出さない（節は描いた後に届くので、届くまでは枠だけ） */}
+      {total && setsuView ? <SetsuSection phase={phase} account={account} groups={setsuView.groups} total={setsuView.total} onOpen={(id) => setDetail({ kind: 'setsu', id })} /> : total && shown && byMoku === undefined ? <SetsuSection phase={phase} account={account} /> : null}
       {total ? (
         <div className="flex items-center justify-between gap-3">
           <Title size="h3" as="h2">お金の流れ</Title>
@@ -527,11 +552,11 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
       ) : null}
       {total ? <AccountCards accounts={accounts} account={account} setAccount={setAccount} /> : null}
       {picked && view === 'table' ? (
-        <FlowTable key={`${v.year}-${phase}-${account}`} flows={flows} revenue={current?.revenue} total={picked.yen} query={flowQuery} onQuery={(k, x) => setFlowQuery((f) => ({ ...f, [k]: x }))} onRetry={flowFailed && !drills ? () => void router.refresh({ preserveState: true, preserveScroll: true }) : undefined} />
+        <FlowTable key={`${v.year}-${phase}-${account}`} flows={flows} revenue={current?.revenue} total={picked.yen} query={flowQuery} onQuery={(k, x) => setFlowQuery((f) => ({ ...f, [k]: x }))} onSetsu={(id) => setDetail({ kind: 'setsuItem', id })} project={projectLink} onRetry={flowFailed && !drills ? () => void router.refresh({ preserveState: true, preserveScroll: true }) : undefined} />
       ) : picked ? (
-        <Flow key={`${v.year}-${phase}-${account}`} flows={flows} revenue={current?.revenue} total={picked} onRetry={flowFailed && !drills ? () => void router.refresh({ preserveState: true, preserveScroll: true }) : undefined} bare natural className="scroll-mt-16 @4xl:scroll-mt-16" />
+        <Flow key={`${v.year}-${phase}-${account}`} flows={flows} revenue={current?.revenue} total={picked} onSetsu={(id) => setDetail({ kind: 'setsuItem', id })} onRetry={flowFailed && !drills ? () => void router.refresh({ preserveState: true, preserveScroll: true }) : undefined} bare natural className="scroll-mt-16 @4xl:scroll-mt-16" />
       ) : recorded ? (
-        <Skeleton className="h-[480px] rounded-xl" />
+        <FlowSkeleton />
       ) : (
         <Empty className="min-h-[320px] border border-border bg-card">
           <EmptyHeader>
@@ -551,36 +576,63 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
         </Empty>
       )}
       {byMoku === FAILED ? <p className="text-xs text-muted-foreground">目の内訳（節）を読み込めませんでした。少し待ってから開き直してください。</p> : null}
+      <MoneyDetail open={detail} onClose={() => setDetail(undefined)} wide={wide} moku={allMoku} units={units} fields={v.fields} groups={setsuView?.groups ?? []} onProjects={(f) => { setDetail(undefined); openField(f) }} />
     </div>
   )
 }
 
-/** 何に使う？／何に使った？（歳出を分野ごとに）。予算・決算のタブのお金の流れの上に置く。棒を押すと分野の頁へ */
-// タブへ移ると、すぐ描いた頁を loader が読み終えた頁で作り直すので、同じ棒を少し前に伸ばしたなら作り直した頁では伸ばさない
-const grownAt = new Map<string, number>()
-function FieldsSection({ phase }: { phase: 'initial' | 'settlement' }) {
-  const { d, v, openField } = useApp()
-  const max = Math.max(...v.fields.map((x) => x.yen))
-  const [grow] = React.useState(() => {
-    // サーバーの描画は頁ごとに1回なので覚えない（覚えると別の人の頁と食い違う）
-    if (typeof window === 'undefined') return true
-    const key = `${d.code}:${v.year}:${phase}`
-    const last = grownAt.get(key)
-    grownAt.set(key, Date.now())
-    return last === undefined || Date.now() - last > 5000
-  })
+/** 何に使う？／何に使った？（歳出を節でまとめた区分ごとに）。予算・決算のタブのお金の流れの上に置く。押すと区分の詳細の引き出しを開く。
+ * 節は描いた後に届くので、届くまで（groups が無い間）は見出しと説明をそのまま出し、棒の行だけを同じ形の skeleton にする */
+function SetsuSection({ phase, account, groups, total, onOpen }: { phase: 'initial' | 'settlement'; account: string; groups?: SetsuGroup[]; total?: number; /** 区分の詳細を開く */ onOpen?: (id: string) => void }) {
+  const max = groups ? Math.max(...groups.map((g) => g.yen)) : 0
+  const n = groups?.length ?? SETSU_SKELETON.length
   return (
     <section className="mb-5">
       <Title size="h3" as="h2" className="mb-3">
-        {phase === 'initial' ? '何に使う？' : '何に使った？'}<span className="ml-2 text-sm font-normal text-muted-foreground">歳出</span>
-        <Amt yen={v.total} className="ml-2 font-medium text-primary" />
+        {phase === 'initial' ? '何に使う？' : '何に使った？'}
       </Title>
-      <p className="mb-3 text-base leading-[1.7] text-muted-foreground">税金を主な財源にする基本の会計（一般会計）の歳出を、使い道の分野ごとに分けています。</p>
-      {/* 棒の長さは一番大きい分野を満たんにし、割合の数字は合計に対する比のまま出す */}
-      <div className="grid gap-x-8 @3xl:grid-flow-col @3xl:grid-cols-2 @3xl:grid-rows-(--rows)" style={{ '--rows': `repeat(${Math.ceil(v.fields.length / 2)}, auto)` } as React.CSSProperties}>
-        {v.fields.map((f, i) => <FieldRow key={f.id} f={f} i={i} max={max} grow={grow} onClick={() => openField(f.id)} />)}
+      <p className="mb-3 text-base leading-[1.7] text-muted-foreground">{account}の歳出を、人件費・委託料・工事など、お金の出し方で分けています。予算書・決算書の「節」をまとめたものです。</p>
+      <div className="grid gap-x-8 @3xl:grid-flow-col @3xl:grid-cols-2 @3xl:grid-rows-(--rows)" style={{ '--rows': `repeat(${Math.ceil(n / 2)}, auto)` } as React.CSSProperties}>
+        {groups ? groups.map((g, i) => <FieldRow key={g.id} f={g} i={i} max={max} total={total} onClick={onOpen && (() => onOpen(g.id))} />) : SETSU_SKELETON.map((w, i) => <FieldRowSkeleton key={i} width={w} />)}
       </div>
     </section>
+  )
+}
+
+/** お金の流れを読み込む間。見出しはそのまま出し、表（款の行の名前・金額・割合）の形だけを skeleton にする */
+function FlowSkeleton() {
+  return (
+    <div className="flex flex-col gap-3">
+      {/* 見出しの行は、読み込み後に右へ並ぶ切り替え（テーブル／サンキー）と同じ高さを取っておく */}
+      <div className="flex h-10 items-center"><Title size="h3" as="h2">お金の流れ</Title></div>
+      <div aria-hidden="true">
+      {[10, 7, 9, 6, 8, 5, 7, 6].map((w, i) => (
+        <div key={i} className="flex items-center gap-4 border-b border-border py-4">
+          <Skeleton className="h-5" style={{ width: `${w}em` }} />
+          <Skeleton className="ml-auto h-5 w-24" />
+          <Skeleton className="hidden h-5 w-12 sm:block" />
+        </div>
+      ))}
+      </div>
+    </div>
+  )
+}
+
+/** 何に使う？の skeleton の棒の長さ（%）。区分は大きい順に並ぶので、だんだん短くする */
+const SETSU_SKELETON = [100, 72, 55, 40, 30, 22, 15, 10, 6]
+/** FieldRow と同じ格子で、名前・棒・割合と金額の場所を skeleton にする */
+function FieldRowSkeleton({ width }: { width: number }) {
+  return (
+    <div aria-hidden="true" className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2 px-3 py-3 sm:grid-cols-[10rem_minmax(0,1fr)_5.5rem]">
+      <Skeleton className="col-start-1 row-start-1 h-5 w-20 sm:col-start-auto sm:row-start-auto" />
+      <span className="col-span-2 col-start-1 row-start-2 block h-1.5 sm:col-span-1 sm:col-start-auto sm:row-start-auto">
+        <Skeleton className="h-full rounded-full" style={{ width: `${width}%` }} />
+      </span>
+      <span className="col-start-2 row-start-1 flex flex-col items-end gap-1 sm:col-start-auto sm:row-start-auto">
+        <Skeleton className="h-5 w-12" />
+        <Skeleton className="h-3 w-16" />
+      </span>
+    </div>
   )
 }
 
@@ -725,20 +777,19 @@ function ProjectsTab({ filter, setFilter, fields, setFields, q, setQ }: { filter
 function DetailSection({ icon: I, title, children }: { icon: Icon; title: string; children: React.ReactNode }) {
   return (
     <section className="mt-6">
-      <Title size="headline" as="h3" className="mb-2 flex items-center gap-2"><I className="size-4 text-muted-foreground" aria-hidden="true" />{title}</Title>
+      <Title size="h3" className="mb-2 flex items-center gap-2"><I className="size-5 text-muted-foreground" aria-hidden="true" />{title}</Title>
       {children}
     </section>
   )
 }
-/** 事業の名前。新しく始める・やめた事業の印は名前の後ろに付ける */
+/** 事業の名前。新しく始める・やめた事業の印は名前の前に置き、名前の1行目の高さの真ん中に揃える（名前が折り返しても印は1行目の横） */
 function ProjectTitle({ p, mark }: { p: Pick<ProjectFull, 'name'>; mark: 'new' | 'stop' | null }) {
+  const m = mark === 'stop' ? <Mark kind="stop" label="やめた事業" className="size-7" /> : mark === 'new' ? <Mark kind="new" label="新しく始める事業" className="size-7" /> : null
   return (
-    <>
-      <Title size="h2" className="mb-2 flex items-start gap-2">
-        {p.name}
-        {mark === 'stop' ? <Mark kind="stop" label="やめた事業" /> : mark === 'new' ? <Mark kind="new" label="新しく始める事業" /> : null}
-      </Title>
-    </>
+    <Title size="h2" className="mb-2 flex items-start gap-2">
+      {m ? <span className="flex h-[1lh] shrink-0 items-center">{m}</span> : null}
+      <span className="min-w-0">{p.name}</span>
+    </Title>
   )
 }
 
@@ -757,7 +808,7 @@ function ProjectCrumbs({ base, label, close, open, ancestors }: { base: string; 
     <Breadcrumb className="min-w-0">
       <BreadcrumbList className="flex-nowrap text-sm sm:text-base">
         <BreadcrumbItem className="shrink-0">
-          <BreadcrumbLink render={<button type="button" onClick={close} />} className="inline-flex cursor-pointer items-center gap-1"><ListBulletsIcon className="size-4 shrink-0" aria-hidden="true" />{label}</BreadcrumbLink>
+          <BreadcrumbLink render={<button type="button" onClick={close} />} className="inline-flex cursor-pointer items-center gap-1"><ArrowLeftIcon className="size-4 shrink-0" aria-hidden="true" />{label}</BreadcrumbLink>
         </BreadcrumbItem>
         {ancestors.map((a) => (
           <React.Fragment key={a.id}>
@@ -837,7 +888,7 @@ function ProjectPageBody({ id }: { id: string }) {
         </div>
       </DetailSection>
       {p.kids.length ? (
-        <DetailSection icon={TreeStructureIcon} title="内訳">
+        <DetailSection icon={ListDashesIcon} title="内訳">
           {/* 内訳の一つ一つも年度をまたぐ事業なので、押すとその事業の頁へ移る。額はその事業の最新の年度のもの */}
           <Infinite items={p.kids} step={10} list={(kids) => (
             <Table>
@@ -901,13 +952,13 @@ function YearMenu({ years, current, onChange }: { years: number[]; current: numb
 
 // ---------- 頁 ----------
 const TABS: { key: TabKey; label: string; icon: Icon }[] = [
-  { key: 'overview', label: 'まとめ', icon: SquaresFourIcon },
-  { key: 'projects', label: '事業', icon: ListBulletsIcon },
   { key: 'money', label: '予算', icon: WalletIcon },
   { key: 'settled', label: '決算', icon: ReceiptIcon },
+  { key: 'projects', label: '事業', icon: ListBulletsIcon },
+  { key: 'overview', label: '財政', icon: PiggyBankIcon },
 ]
 
-const TAB_SEGMENT = new RegExp(`/(${Object.values(TAB_SLUGS).join('|')})/?$`)
+const TAB_SEGMENT = new RegExp(`/(${[...Object.values(TAB_SLUGS), FINANCE_SLUG].join('|')})/?$`)
 /** 今の URL から年度・タブ・分野の段を除いた、自治体の頁の path */
 const basePath = () => location.pathname.replace(PROJECT_PATH, '').replace(TAB_SEGMENT, '').replace(/\/\d{4}\/?$/, '')
 /** 事業の頁の段（/projects/<project_id>） */
@@ -920,7 +971,7 @@ const projectOfPath = () => {
 /** 事業の頁の URL の段 */
 const projectSegment = (id: string) => `projects/${encodeURIComponent(id)}`
 
-export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, setsu, sitekey, initialProject, initialProjectFull, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; /** loader が defer で渡す残り（評価シート・お金のかかる事業・新しく始めた事業） */ extras?: Promise<YearExtras>; /** loader が defer で渡す流れの節 */ setsu?: Promise<Record<string, Setsu[]>>; sitekey: string; /** 事業の頁（/2026/projects/<project_id>）で開いた事業 */ initialProject?: string; /** 事業の頁で loader が読んだ事業の中身（サーバーでも事業の頁を描く） */ initialProjectFull?: ProjectFull; initialTab?: TabKey }) {
+export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, setsu, sitekey, initialProject, initialProjectFull, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; /** loader が defer で渡す残り（評価シート・お金のかかる事業・新しく始めた事業） */ extras?: Promise<YearExtras>; /** loader が defer で渡す流れの節 */ setsu?: Promise<MokuBreakdowns>; sitekey: string; /** 事業の頁（/2026/projects/<project_id>）で開いた事業 */ initialProject?: string; /** 事業の頁で loader が読んだ事業の中身（サーバーでも事業の頁を描く） */ initialProjectFull?: ProjectFull; initialTab?: TabKey }) {
   // 最初の画面に要らない分（評価シート・お金のかかる事業・新しく始めた事業）は loader が defer で流し、使う部分が Full（Suspense と use()）で待つ
   const d = base
   const vision = data.vision?.text
@@ -935,12 +986,12 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   React.useEffect(() => rememberJurisdiction({ code: data.code, name: data.name, path: basePath() }), [data.code, data.name])
   const year = d.year
   // 年度・タブは頁の URL で、移るたびに loader が頁のデータを読み直す。タブは押したらすぐ切り替え、届いた頁のタブに合わせ直す
-  const [tab, setTabState] = React.useState<TabKey>(initialTab ?? 'overview')
-  React.useEffect(() => setTabState(initialTab ?? 'overview'), [initialTab, year])
+  const [tab, setTabState] = React.useState<TabKey>(initialTab ?? 'money')
+  React.useEffect(() => setTabState(initialTab ?? 'money'), [initialTab, year])
   const at = React.useRef({ year, tab })
   at.current = { year, tab }
-  /** 年度・タブの頁の URL。リンクの先にして検索エンジンにも辿らせる。まとめは年度の段を持たない（最新の年度を出す） */
-  const pageHref = (y: number, t: TabKey) => (t === 'overview' ? data.path : `${data.path}/${y}/${TAB_SLUGS[t]}`)
+  /** 年度・タブの頁の URL。リンクの先にして検索エンジンにも辿らせる。財政は年度の段を持たない（/tokyo/shinagawa/finance） */
+  const pageHref = (y: number, t: TabKey) => (t === 'overview' ? `${data.path}/${FINANCE_SLUG}` : `${data.path}/${y}/${TAB_SLUGS[t]}`)
   // 年度・タブを移っても、選んでいる状態とスクロールは持ち越す。タブは履歴に積み、戻るで前のタブとそのスクロールへ帰す。年度・会計は置き換える
   const move = (href: string, { push = false } = {}) => void router.visit(href, { replace: !push, preserveState: true, preserveScroll: true })
   // 年度のリンクは今のタブを引き継ぐ（予算・決算のタブはどの年度にもある）。分野の頁なら同じ分野のまま年度を移る
@@ -970,8 +1021,8 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   const setFilter = (f: string) => React.startTransition(() => setFilterState(f))
   const [query, setQueryState] = React.useState('')
   const setQuery = (x: string) => React.startTransition(() => setQueryState(x))
-  // 事業の絞り込み（?filter=・?field=・探す語の ?q=）は URL に持つ。ホームやまとめの札から開いた状態で来られ、
-  // 事業の頁を開いて戻ったときも URL から戻せる。まとめ（/tokyo/nakano）と事業のタブ（/2024/projects）は頁が別で、移ると画面を作り直すので、go も URL で渡す
+  // 事業の絞り込み（?filter=・?field=・探す語の ?q=）は URL に持つ。ホームの札などから開いた状態で来られ、
+  // 事業の頁を開いて戻ったときも URL から戻せる。財政（/tokyo/nakano/finance）と事業のタブ（/2024/projects）は頁が別で、移ると画面を作り直すので、go も URL で渡す
   // 頁を移る途中は URL がまだ前の頁のままなので、移り終えてから読む
   const idle = navigation.state === 'idle'
   React.useEffect(() => {
@@ -1121,7 +1172,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
         {emblem ? <img src={emblem} alt="" className="size-full min-h-0 min-w-0 object-contain" /> : <span className={cn(titleVariants({ size: 'display' }), 'font-normal text-foreground')}>{data.name[0]}</span>}
       </div>
       <div className="flex min-w-0 flex-col gap-2">
-        {/* 年度の切り替えは、まとめ以外のタブの頭に置く（まとめには置かない） */}
+        {/* 年度の切り替えは、財政以外のタブの頭に置く（財政は年度をまたぐので置かない） */}
         {/* 見出しは自治体名だけ。「の予算と決算」は検索の題（title）にだけ持つ */}
         <Title size="h2" as="h1" className="min-w-0 font-normal">{data.name}</Title>
         {vision ? <p className="text-base leading-snug">{vision}</p> : null}

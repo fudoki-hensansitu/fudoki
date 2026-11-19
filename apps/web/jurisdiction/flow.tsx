@@ -38,10 +38,14 @@ const share = (yen: number, max: number, missing?: boolean) => (missing || max <
 /** 款のどこかの目に節があるか。歳入は節を後から読み、節の無い資料もあるので、無いうちは「内訳の区分は出典にありません」を出さない */
 const hasSetsu = (drill: Drill) => drill.kou.some((k) => k.moku.some((m) => m.setsu.length > 0))
 
+/** 節を押したとき（節の詳細を開く）。Flow が渡し、目の欄が読む */
+const SetsuClick = React.createContext<((setsuId: string) => void) | undefined>(undefined)
+
 /** 節は目の内訳。上位だけ名前を出して残りは件数にまとめる。広い画面では目の棒から帯でつなぎ、狭い画面では目の金額に占める割合の横棒を出す */
 
 /** kouYen は割合の基準（目は項に占める割合、節は目に占める割合）。金額と割合を並べて出す */
 function MokuGroup({ moku, kouYen, levels, noSetsu, mirror }: { moku: Moku; kouYen: number; levels: Levels; /** 款のどの目にも節の無い流れ（節を読む前か、節の無い歳入）。節の欄に何も出さない */ noSetsu?: boolean; /** 左右を逆にする（歳入）。節を左、目を右に置き、右に寄せる */ mirror?: boolean }) {
+  const onSetsu = React.useContext(SetsuClick)
   const shown = moku.setsu.filter((s) => s.amountMissing || s.yen > 0)
   const top = shown.slice(0, SETSU_SHOWN)
   const rest = shown.slice(SETSU_SHOWN)
@@ -65,7 +69,7 @@ function MokuGroup({ moku, kouYen, levels, noSetsu, mirror }: { moku: Moku; kouY
           <li className="text-xs text-muted-foreground sm:hidden">{levels.setsu}</li>
           {top.map((s) => (
             <li key={s.name} data-setsu data-yen={s.amountMissing ? 0 : Math.max(0, s.yen)} data-share={formatShare(s.yen, mokuYen, s.amountMissing) ?? ''} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3">
-              <AmountTip name={`${moku.name}・${s.name}`} yen={s.yen} missing={s.amountMissing} side="right" className="col-span-2 grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 outline-none">
+              <AmountTip name={`${moku.name}・${s.name}`} yen={s.yen} missing={s.amountMissing} side="right" className="col-span-2 grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 outline-none" render={onSetsu && s.setsuId ? <button type="button" onClick={() => onSetsu(s.setsuId!)} className="col-span-2 grid cursor-pointer grid-cols-[minmax(0,1fr)_auto] gap-x-3 rounded-sm text-left outline-none hover:text-primary focus-visible:outline-2 focus-visible:outline-ring" /> : undefined}>
                 <span className="truncate">{s.name}</span>
                 <span className="text-right tabular-nums"><span className="font-semibold">{amountText(s.yen, s.amountMissing)}</span>{formatShare(s.yen, mokuYen, s.amountMissing) ? <span className="ml-2 text-muted-foreground sm:sr-only">{formatShare(s.yen, mokuYen, s.amountMissing)}</span> : null}</span>
               </AmountTip>
@@ -376,7 +380,7 @@ function KanPanel({ drill, loading, levels, natural, shown, pos, style, noSetsu,
 }
 
 /** 款→項の全体図と款ごとの内訳。流れ（目の内訳まで）は頁の loader が読んで渡す。flows が無い間は読み込み中の形を出す */
-export function Flow({ flows: given, revenue: revenueGiven, total: year, className, bare, natural, onRetry }: { /** 一般会計の歳入（款 → 項 → 目）。あれば全体図の左に置き、左へスクロールするとたどれる。無ければ今までどおり歳出だけ */ revenue?: Drill[]; /** 款 → 項 → 目 → 節の流れ。読み込み中は undefined */ flows: Drill[] | undefined; total: YearTotal; /** 図の高さなど、置き場ごとに変える枠の class */ className?: string; /** 枠（カード）を付けず、置き場の幅いっぱいに出す */ bare?: boolean; /** 図の高さを画面に合わせて決めず、中身の高さで伸ばして頁のスクロールで読む */ natural?: boolean; /** 読めなかったときに読み直す。あれば「読めませんでした」とボタンを出す */ onRetry?: () => void }) {
+export function Flow({ flows: given, revenue: revenueGiven, total: year, className, bare, natural, onRetry, onSetsu }: { /** 歳出の節を押したとき（節の詳細を開く） */ onSetsu?: (setsuId: string) => void; /** 一般会計の歳入（款 → 項 → 目）。あれば全体図の左に置き、左へスクロールするとたどれる。無ければ今までどおり歳出だけ */ revenue?: Drill[]; /** 款 → 項 → 目 → 節の流れ。読み込み中は undefined */ flows: Drill[] | undefined; total: YearTotal; /** 図の高さなど、置き場ごとに変える枠の class */ className?: string; /** 枠（カード）を付けず、置き場の幅いっぱいに出す */ bare?: boolean; /** 図の高さを画面に合わせて決めず、中身の高さで伸ばして頁のスクロールで読む */ natural?: boolean; /** 読めなかったときに読み直す。あれば「読めませんでした」とボタンを出す */ onRetry?: () => void }) {
   const levels = LEVELS
   const root = React.useRef<HTMLDivElement>(null)
   const track = React.useRef<HTMLDivElement>(null)
@@ -459,6 +463,7 @@ export function Flow({ flows: given, revenue: revenueGiven, total: year, classNa
   const revenueTotal = revenue.reduce((s, f) => s + Math.max(0, f.kan.yen), 0)
   const sum = flows.reduce((s, f) => s + Math.max(0, f.kan.yen), 0) + revenueTotal || 1
   return (
+    <SetsuClick.Provider value={onSetsu}>
     <div ref={root} className={cn('flex min-w-0 scroll-mt-[122px] flex-col rounded-[20px] border bg-background @4xl:scroll-mt-[77px]', !natural && 'h-[calc(100svh-61px-53px-1.5rem)] min-h-[480px] @4xl:h-[calc(100svh-61px-2rem)]', bare && 'rounded-none border-0', className)}>
       <div className={cn('shrink-0', bare ? 'pt-1' : 'px-5 pt-5 sm:px-6')}>
         {/* 見出しと金額の行。右に今いる段（大分類 4 / 8）と前後の矢印を置く */}
@@ -599,5 +604,6 @@ export function Flow({ flows: given, revenue: revenueGiven, total: year, classNa
         </div>
       ) : null}
     </div>
+    </SetsuClick.Provider>
   )
 }

@@ -11,13 +11,13 @@ export function yenParts(y: number): [string, string] {
   return [Math.round(y / 1e4).toLocaleString('ja-JP'), '万円']
 }
 /** 数字を強調し、単位は小さく */
-export function Amt({ yen, className }: { yen: number | null | undefined; className?: string }) {
+export function Amt({ yen, className, plainUnit = false }: { yen: number | null | undefined; className?: string; /** 単位を数字と同じ大きさにする（すでに小さい文字で出すとき） */ plainUnit?: boolean }) {
   if (yen == null) return <span className={cn('text-muted-foreground', className)}>—</span>
   const [n, u] = yenParts(yen)
   return (
     <span className={cn('whitespace-nowrap tabular-nums', className)}>
       {n}
-      <small className="ml-px text-[0.6em]">{u}</small>
+      {plainUnit ? u : <small className="ml-px text-[0.6em]">{u}</small>}
     </span>
   )
 }

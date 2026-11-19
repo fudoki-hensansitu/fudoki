@@ -132,7 +132,7 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
   // 事業を当初予算から並べると使わないので、読めなくても投げっぱなしにしない
   ownSubjects.catch(() => undefined)
   // 会計の札（予算・決算のタブ）。一般会計のほかにも会計を収録した年度だけ、会計ごとの総額を読む（検索1回）。
-  // まとめ・事業のタブの頁でも読んでおく（予算・決算のタブへ移ったとき、loader を待つあいだも札を出して流れの図がずれないように）
+  // 財政・事業のタブの頁でも読んでおく（予算・決算のタブへ移ったとき、loader を待つあいだも札を出して流れの図がずれないように）
   const accounts = entry.accounts?.[docKind]?.[String(year)] ?? []
   const wantAccounts = tab !== undefined && accounts.length > 1
   const [projects, accountTotals] = await Promise.all([

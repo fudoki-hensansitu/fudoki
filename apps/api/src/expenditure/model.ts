@@ -181,6 +181,7 @@ const subjectShape = described(SUBJECT_TABLE.columns, {
   is_interfund_transfer: z.boolean(),
   interfund_transfer_to: z.string().nullable(),
   origin_id: z.string(),
+  source_page: z.int().nullable(),
 })
 export const SubjectRow = z.strictObject(subjectShape).meta({ id: 'SubjectRow', description: '歳出の科目（款・項・目）。' })
 
@@ -204,6 +205,7 @@ const detailShape = described(DETAIL_TABLE.columns, {
   is_interfund_transfer: z.boolean(),
   interfund_transfer_to: z.string().nullable(),
   origin_id: z.string(),
+  source_page: z.int().nullable(),
 })
 export const DetailRow = z.strictObject(detailShape).meta({ id: 'DetailRow', description: '歳出の内訳（科目の下の事業・節など）。' })
 

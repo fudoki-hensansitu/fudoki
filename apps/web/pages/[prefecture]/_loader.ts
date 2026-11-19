@@ -3,8 +3,8 @@
 import { HTTPException } from 'hono/http-exception'
 import { defer } from 'void'
 import type { Context } from 'hono'
-import { emptyHead, pageHead, projectFallbackHead, projectHead, type Head } from '../../jurisdiction/html'
-import { appPageYears, hasDocument, TAB_SLUGS, tabOfSlug, type Headline, type PageData, type PageFlow, type PageTab } from '../../jurisdiction/types'
+import { emptyHead, financeHead, pageHead, projectFallbackHead, projectHead, type Head } from '../../jurisdiction/html'
+import { appPageYears, FINANCE_SLUG, hasDocument, TAB_SLUGS, tabOfSlug, type Headline, type PageData, type PageFlow, type PageTab } from '../../jurisdiction/types'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../../jurisdiction/domains'
 import { PREFECTURE_MAPS } from '../../jurisdiction/map.generated'
 import { codeOfPath, jurisdictionPath } from '../../jurisdiction/path'
@@ -12,10 +12,10 @@ import { assetPath, EMBLEMS, emblemOf, prefectureCodeOf } from '../../jurisdicti
 import { VISIONS } from '../../jurisdiction/visions'
 import type { Env } from '../../server/env'
 import type { CatalogEntry } from '../../server/jurisdiction'
-import { ACCOUNT, loadCatalog, loadCatalogEntry, loadFlowParts, loadRevenueFlow, loadRevenueSetsuByMoku, loadSetsuByMoku, loadSettlementSummary, pageBase } from '../../server/jurisdiction'
+import { ACCOUNT, loadCatalog, loadCatalogEntry, loadFlowParts, loadMokuBreakdowns, loadRevenueFlow, loadRevenueSetsuByMoku, loadSettlementSummary, pageBase } from '../../server/jurisdiction'
 import { appYears, loadYearExtras, loadYearSnapshot } from '../../server/app-data'
 import type { Snapshot, YearExtras } from '../../jurisdiction/app/data'
-import type { Setsu } from '../../jurisdiction/types'
+import type { MokuBreakdowns } from '../../jurisdiction/types'
 import { siteKey } from '../../server/site-key'
 import { loadLocalFinance } from '../../server/local-finance'
 import { loadRevenue } from '../../server/revenue'
@@ -26,7 +26,7 @@ export const notFound = () => new Response('Not Found\n', { status: 404, headers
 export const unavailable = () => new Response('風土記の API に繋がりませんでした。少し待ってからもう一度開いてください。\n', { status: 502, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } })
 
 /** 自治体の頁（/tokyo、/tokyo/nakano、/tokyo/nakano/2024/budget）の props。sitekey は頁の中の「この自治体について質問」の Turnstile。
- * year は年度の段のあるタブの頁（/tokyo/nakano/2024/budget）のときだけ持つ。まとめは年度の段の無い /tokyo/nakano だけで、最新の年度を出す */
+ * year は年度の段のあるタブの頁（/tokyo/nakano/2024/budget）と、最新の年度の予算を出す自治体の頁（/tokyo/nakano）で持つ。財政（/tokyo/nakano/finance）は年度の段を持たない */
 export type JurisdictionProps = JurisdictionView & {
   sitekey: string
   year?: number
@@ -34,8 +34,8 @@ export type JurisdictionProps = JurisdictionView & {
   project?: string
   /** 事業の頁の中身（年度を指さずに読んだ詳細）。サーバーで本文・題まで描くために渡す。API に繋がらなければ無く、画面が取る */
   projectFull?: ProjectFull
-  /** タブの頁（/tokyo/nakano/2026/projects）のときのタブ */
-  tab?: Exclude<PageTab, 'overview'>
+  /** タブの頁（/tokyo/nakano/2026/projects）のときのタブ。財政（/tokyo/nakano/finance）は overview */
+  tab?: PageTab
   /** 開いた年度の款項目・評価シート・事業の一覧の1頁目。サーバーで本文まで描くために渡す。API に繋がらなければ無く、画面が取る */
   snapshot?: Snapshot
   /** 予算・決算のタブの頁（/tokyo/nakano/2025/settlement?account=…）の流れ。API に繋がらなければ無く、画面が読み直しを出す */
@@ -43,7 +43,7 @@ export type JurisdictionProps = JurisdictionView & {
   /** 最初の画面に要らない残り（評価シート・お金のかかる事業・新しく始めた事業）。defer で HTML の後ろに流す */
   extras?: Promise<YearExtras>
   /** 流れの目ごとの節。defer で HTML の後ろに流す */
-  setsu?: Promise<Record<string, Setsu[]>>
+  setsu?: Promise<MokuBreakdowns>
 }
 
 /** 年度の段（/tokyo/nakano/2024）。4桁の数字だけ */
@@ -96,9 +96,21 @@ export async function fieldProps(c: Context, path: string, field: string, yearSe
   throw new HTTPException(301, { res: new Response(null, { status: 301, headers: { Location: `${path}/${yearSegment}${sub}` } }) })
 }
 
-/** もとの年度のまとめの頁（/tokyo/nakano/2024）。まとめは年度の段を持たないので、年度の段の無い頁へ 301 */
-const toOverview = (path: string): never => {
-  throw new HTTPException(301, { res: new Response(null, { status: 301, headers: { Location: path } }) })
+/** もとの年度のまとめの頁（/tokyo/nakano/2024）。まとめはやめたので、その年度の予算のタブ（当初予算の収録が無ければ決算のタブ）へ 301 */
+async function toYearMoney(c: Context, path: string, yearSegment: string): Promise<never> {
+  const props = await jurisdictionProps(c, path)
+  const initial = props.kind === 'page' && YEAR_SEGMENT.test(yearSegment) && hasDocument(props.data, Number(yearSegment), 'initial')
+  throw new HTTPException(301, { res: new Response(null, { status: 301, headers: { Location: `${path}/${yearSegment}/${initial ? TAB_SLUGS.money : TAB_SLUGS.settled}` } }) })
+}
+
+/** 自治体の頁（/tokyo/nakano）。当初予算を収録した最新の年度の予算のタブを出す。当初予算の収録が無い自治体（決算だけ）は最新の年度の決算のタブ。canonical はそのタブの頁 */
+async function entryProps(c: Context, path: string): Promise<JurisdictionProps> {
+  const props = await jurisdictionProps(c, path)
+  if (props.kind !== 'page') return props
+  const years = appPageYears(props.data)
+  const initial = years.find((y) => hasDocument(props.data, y, 'initial'))
+  const year = initial ?? years.find((y) => hasDocument(props.data, y, 'settlement')) ?? years[0]
+  return year === undefined ? props : { ...props, year, tab: initial !== undefined ? 'money' : 'settled' }
 }
 
 /** 事業の ID の段。事業の ID と、事業の収録の無い自治体で目を事業の代わりにした ID（moku:<subject_id>） */
@@ -147,15 +159,16 @@ export async function tabProps(c: Context, path: string, slug: string, yearSegme
 export async function routeProps(c: Context, segments: string[]): Promise<JurisdictionProps> {
   const [prefecture = '', ...rest] = segments
   const head = rest[0]
-  const named = head !== undefined && !YEAR_SEGMENT.test(head) && head !== 'fields' && !tabOfSlug(head)
+  const named = head !== undefined && !YEAR_SEGMENT.test(head) && head !== 'fields' && head !== FINANCE_SLUG && !tabOfSlug(head)
   const path = named ? `/${prefecture}/${head}` : `/${prefecture}`
   const [a, b, f, ...extra] = named ? rest.slice(1) : rest
   const props = await (async () => {
     if (extra.length) throw new HTTPException(404, { res: notFound() })
-    if (a === undefined) return jurisdictionProps(c, path)
+    if (a === undefined) return entryProps(c, path)
+    if (a === FINANCE_SLUG) return b === undefined ? { ...(await jurisdictionProps(c, path)), tab: 'overview' as const } : Promise.reject(new HTTPException(404, { res: notFound() }))
     if (a === 'fields') return b !== undefined && f === undefined ? fieldProps(c, path, b) : Promise.reject(new HTTPException(404, { res: notFound() }))
     if (!YEAR_SEGMENT.test(a)) return b === undefined ? tabProps(c, path, a) : a === 'projects' && f === undefined ? projectProps(c, path, b) : Promise.reject(new HTTPException(404, { res: notFound() }))
-    if (b === undefined) return toOverview(path)
+    if (b === undefined) return toYearMoney(c, path, a)
     if (b === 'fields') return f !== undefined ? fieldProps(c, path, f, a) : Promise.reject(new HTTPException(404, { res: notFound() }))
     return f === undefined ? tabProps(c, path, b, a) : Promise.reject(new HTTPException(404, { res: notFound() }))
   })()
@@ -225,10 +238,10 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
   const setsu = entry && flow && phase
     ? defer(async () => {
         const [expenditure, revenue] = await Promise.all([
-          loadSetsuByMoku(env, entry.code, year, mokuIds, phase, account),
+          loadMokuBreakdowns(env, entry.code, year, mokuIds, phase, account),
           revenueMokuIds.length ? loadRevenueSetsuByMoku(env, entry.code, year, revenueMokuIds, phase).catch(() => new Map()) : new Map(),
         ])
-        return Object.fromEntries([...expenditure, ...revenue])
+        return { setsu: Object.fromEntries([...expenditure.setsu, ...revenue]), projects: Object.fromEntries(expenditure.projects) }
       })
     : undefined
   return { ...props, ...(headline ? { data: { ...props.data, headline } } : {}), ...(snapshot ? { snapshot } : {}), ...(flow ? { flow } : {}), ...(extras ? { extras } : {}), ...(setsu ? { setsu } : {}) }
@@ -246,6 +259,7 @@ export const jurisdictionHead = (p: JurisdictionProps): Head => {
   if (p.kind !== 'page') return emptyHead(p.entry)
   if (p.projectFull) return projectHead(p.data, p.projectFull)
   if (p.project) return projectFallbackHead(p.data, p.project)
+  if (p.tab === 'overview') return financeHead(p.data)
   const year = p.year ?? appPageYears(p.data)[0]
   const opened = year === undefined ? undefined : p.snapshot?.years[String(year)]
   return pageHead(p.data, p.year, p.tab ? { tab: p.tab } : undefined, opened && year !== undefined ? { year, kind: opened.kind, yen: opened.total, originTitle: opened.originTitle, areas: areasOfFields(opened.fields) } : undefined)
