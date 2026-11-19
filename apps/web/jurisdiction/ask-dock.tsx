@@ -111,7 +111,8 @@ export function AskDock({ name, code, sitekey, year, section, detail, page, ask 
 }) {
   const [open, setOpen] = React.useState(true)
   // key は会話の画面を作り直す単位。作り置きの答えから始めた会話は、続けて聞いて server の会話ができると id だけが変わる
-  const [chat, setChat] = React.useState<{ id: string; key: string; session: StoredSession; live: boolean }>()
+  // title は会話の見出し。最初に聞いた問いにする（頁の名前だと、どの会話も同じ見出しになる）
+  const [chat, setChat] = React.useState<{ id: string; key: string; session: StoredSession; live: boolean; title: string }>()
   const connectRef = React.useRef<(() => Promise<{ id: string; session: StoredSession }>) | undefined>(undefined)
   const [drawer, setDrawer] = React.useState(false)
   const [quote, setQuote] = React.useState('')
@@ -310,7 +311,7 @@ export function AskDock({ name, code, sitekey, year, section, detail, page, ask 
   }
 
   const start = (id: string, session: StoredSession) => {
-    setChat({ id, key: id, session, live: true })
+    setChat({ id, key: id, session, live: true, title: session.pending ?? name })
     setDrawer(true)
     setOpen(false)
     setQuote('')
@@ -330,7 +331,7 @@ export function AskDock({ name, code, sitekey, year, section, detail, page, ask 
         ],
       }
       void import('../chat/conversation').catch(() => {})
-      setChat({ id: `preset-${at}`, key: `preset-${at}`, session, live: false })
+      setChat({ id: `preset-${at}`, key: `preset-${at}`, session, live: false, title: question })
       setDrawer(true)
       setOpen(false)
       setQuote('')
@@ -361,7 +362,7 @@ export function AskDock({ name, code, sitekey, year, section, detail, page, ask 
     >
       <span aria-hidden="true" className="mb-2 h-1.5 w-10 rounded-full bg-border md:hidden" />
       <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-2" onPointerDown={(e) => e.stopPropagation()}>
-        <span className="flex items-center gap-2 text-sm text-muted-foreground"><RobotIcon className="size-4 text-primary" aria-hidden="true" />{name}について</span>
+        <span className="flex min-w-0 items-center gap-2 text-sm text-muted-foreground"><RobotIcon className="size-4 shrink-0 text-primary" aria-hidden="true" /><span className="truncate">{chat.title}</span></span>
         <div className="flex items-center gap-1 text-muted-foreground">
           {chat.live ? <Hint label="会話を別の頁で開く"><Link href={`/s/${chat.id}`} aria-label="会話を別の頁で開く" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><ArrowSquareOutIcon className="size-4" /></Link></Hint> : null}
           <Hint label="新しい会話"><button type="button" onClick={restart} aria-label="新しい会話" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><NotePencilIcon className="size-4" /></button></Hint>
