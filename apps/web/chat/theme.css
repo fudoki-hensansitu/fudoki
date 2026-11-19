@@ -47,6 +47,12 @@
   --color-brand-foreground: var(--brand-foreground);
   --color-emblem: var(--emblem);
   --color-paper: var(--paper);
+  /* 読み物（/about）の絵の面と帯。データの面には使わない */
+  --color-night: var(--night);
+  --color-night-foreground: var(--night-foreground);
+  --color-sakura: var(--sakura);
+  --color-kincha: var(--kincha);
+  --color-ai: var(--ai);
   --color-brand-fill: var(--brand-fill);
   --color-brand-fill-hover: var(--brand-fill-hover);
   --color-brand-fill-foreground: var(--brand-fill-foreground);
