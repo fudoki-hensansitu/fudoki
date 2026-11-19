@@ -445,7 +445,7 @@ const withSetsu = (flow: PageFlow, byMoku: MokuBreakdowns): PageFlow => {
 }
 
 function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開いているタブか。スマホは隣のタブも描くので、URL を書き換えるのは開いているタブだけにする */ active: boolean }) {
-  const { v, d, res, page, flow, flowFailed, pickAccount, setsu: setsuProp, openField, setYear, yearHref } = useApp()
+  const { v, d, res, page, flow, flowFailed, pickAccount, setsu: setsuProp, openField, openProject, setYear, yearHref } = useApp()
   const y = d.years[String(v.year)]
   const total: YearTotal | undefined = y?.kind === phase ? { year: v.year, yen: y.total, kan: [] } : undefined
   // 収録はあるが、今の頁のデータが別の資料（スマホで隣のタブを開いた頁など）なら、タブへ移って loader が読むまで待つ
@@ -495,6 +495,7 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
   // 詳細の引き出し（入る→使うの分野・何に使う？の区分）。入る→使うは一般会計なので、ほかの会計を開いているときは分野を押したら事業のタブへ移る
   const [detail, setDetail] = React.useState<MoneyDetailKey>()
   const wide = useMedia('(min-width: 768px)')
+  const projectLink = React.useMemo(() => ({ href: (id: string) => projectHref(page.path, id), open: openProject }), [page.path, openProject])
   const openFieldDetail = (id: string) => (current?.account === GENERAL ? setDetail({ kind: 'field', id }) : openField(id))
   const router = useRouter()
   const accounts = d.accounts ?? []
@@ -550,7 +551,7 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
       ) : null}
       {total ? <AccountCards accounts={accounts} account={account} setAccount={setAccount} /> : null}
       {picked && view === 'table' ? (
-        <FlowTable key={`${v.year}-${phase}-${account}`} flows={flows} revenue={current?.revenue} total={picked.yen} query={flowQuery} onQuery={(k, x) => setFlowQuery((f) => ({ ...f, [k]: x }))} onSetsu={(id) => setDetail({ kind: 'setsuItem', id })} onRetry={flowFailed && !drills ? () => void router.refresh({ preserveState: true, preserveScroll: true }) : undefined} />
+        <FlowTable key={`${v.year}-${phase}-${account}`} flows={flows} revenue={current?.revenue} total={picked.yen} query={flowQuery} onQuery={(k, x) => setFlowQuery((f) => ({ ...f, [k]: x }))} onSetsu={(id) => setDetail({ kind: 'setsuItem', id })} project={projectLink} onRetry={flowFailed && !drills ? () => void router.refresh({ preserveState: true, preserveScroll: true }) : undefined} />
       ) : picked ? (
         <Flow key={`${v.year}-${phase}-${account}`} flows={flows} revenue={current?.revenue} total={picked} onSetsu={(id) => setDetail({ kind: 'setsuItem', id })} onRetry={flowFailed && !drills ? () => void router.refresh({ preserveState: true, preserveScroll: true }) : undefined} bare natural className="scroll-mt-16 @4xl:scroll-mt-16" />
       ) : recorded ? (

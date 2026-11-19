@@ -29,7 +29,7 @@ import { formatShare, formatYen, type Drill } from './types'
 
 const LEVELS = ['款', '項', '目', '節'] as const
 /** 行の頭の印。目の下の事業は、節と同じ目の額の別の切り口なので、節と足さないよう額を出さない「事業」の行の下にまとめる（事業の行には印を付けない） */
-const labelOf = (n: Node) => (n.project || n.group ? '' : LEVELS[n.depth])
+const labelOf = (n: Node) => (n.group || n.depth > 3 ? '' : n.project ? '事業' : LEVELS[n.depth])
 const childLabelOf = (n: Node) => (n.group ? '事業' : LEVELS[n.depth + 1])
 
 interface Node {
@@ -46,6 +46,8 @@ interface Node {
   src?: string
   /** 歳出の節の節マスタの ID。あれば行を押すと節の詳細を開く */
   setsuId?: string
+  /** 事業の ID。あれば行を押すと事業の頁へ移る */
+  projectId?: string
   subRows?: Node[]
 }
 
@@ -57,10 +59,10 @@ const toNodes = (drills: Drill[]): Node[] =>
       subRows: k.moku.length ? k.moku.map((m) => ({
         id: m.id, name: m.name, yen: m.yen, missing: m.amountMissing, depth: 2, src: m.src,
         subRows: m.setsu.length || m.projects?.length ? [
-          ...m.setsu.map((s, k): Node => ({ id: `${m.id}:setsu:${k}`, name: s.name, yen: s.yen, missing: s.amountMissing, depth: 3, src: s.src, setsuId: s.setsuId })),
+          ...m.setsu.map((s, k): Node => ({ id: `${m.id}:setsu:${k}`, name: s.name, yen: s.yen, missing: s.amountMissing, depth: 3, src: s.src, setsuId: s.setsuId, ...(s.projectId ? { project: true as const, projectId: s.projectId } : {}) })),
           ...(m.projects?.length ? [{
             id: `${m.id}:projects`, name: '事業', yen: 0, depth: 3, group: true as const,
-            subRows: m.projects.map((s, j): Node => ({ id: `${m.id}:project:${j}`, name: s.name, yen: s.yen, missing: s.amountMissing, depth: 4, project: true as const, src: s.src })),
+            subRows: m.projects.map((s, j): Node => ({ id: `${m.id}:project:${j}`, name: s.name, yen: s.yen, missing: s.amountMissing, depth: 4, project: true as const, src: s.src, projectId: s.projectId })),
           }] : []),
         ] : undefined,
       })) : undefined,
@@ -80,7 +82,9 @@ const features = tableFeatures({
 const column = createColumnHelper<typeof features, Node>()
 const cls = (meta: unknown) => (meta as { className?: string } | undefined)?.className
 
-function Section({ title, drills, total, query, onQuery, onSetsu }: { title: string; drills: Drill[]; total: number; query: string; onQuery: (q: string) => void; /** 節の行を押したとき（節の詳細を開く） */ onSetsu?: (setsuId: string) => void }) {
+type ProjectLink = { href: (id: string) => string; open: (id: string) => void }
+
+function Section({ title, drills, total, query, onQuery, onSetsu, project }: { title: string; drills: Drill[]; total: number; query: string; onQuery: (q: string) => void; /** 節の行を押したとき（節の詳細を開く） */ onSetsu?: (setsuId: string) => void; /** 事業の行を押したとき（事業の頁へ移る） */ project?: ProjectLink }) {
   const data = React.useMemo(() => toNodes(drills), [drills])
   // 出典の分かる行が1つでもあれば、割合の右に出典の列を出す
   const hasSrc = React.useMemo(() => drills.some((d) => d.kan.src || d.kou.some((k) => k.src || k.moku.some((m) => m.src))), [drills])
@@ -128,7 +132,10 @@ function Section({ title, drills, total, query, onQuery, onSetsu }: { title: str
             <span className={cn('min-w-0 leading-snug [overflow-wrap:anywhere]', row.original.group && 'text-muted-foreground')}>
               {labelOf(row.original) ? <span className="mr-2 text-muted-foreground">{labelOf(row.original)}</span> : null}
               {/* 押すと詳細を開く節は、キーボードでも開けるようボタンにする */}
-              {onSetsu && row.original.setsuId && !row.getCanExpand() ? (
+              {/* 事業は事業の頁へのリンク。新しいタブでも開けるよう href を持ち、ふつうに押したときは頁の中で移る */}
+              {project && row.original.projectId ? (
+                <a href={project.href(row.original.projectId)} onClick={(e) => { e.stopPropagation(); if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; e.preventDefault(); project.open(row.original.projectId!) }} className="rounded-sm text-foreground underline decoration-dotted underline-offset-4 hover:text-primary focus-visible:outline-2 focus-visible:outline-ring">{row.original.name}</a>
+              ) : onSetsu && row.original.setsuId && !row.getCanExpand() ? (
                 <button type="button" onClick={(e) => { e.stopPropagation(); onSetsu(row.original.setsuId!) }} className="rounded-sm text-left focus-visible:outline-2 focus-visible:outline-ring">{row.original.name}</button>
               ) : row.original.name}
             </span>
@@ -168,7 +175,7 @@ function Section({ title, drills, total, query, onQuery, onSetsu }: { title: str
       ) : null,
       meta: { className: 'w-0 pr-0 text-right' },
     })] : []),
-  ]), [title, levels, depth, total, hasSrc, hasProjects, onSetsu])
+  ]), [title, levels, depth, total, hasSrc, hasProjects, onSetsu, project])
   const table = useTable({
     features,
     columns,
@@ -207,7 +214,7 @@ function Section({ title, drills, total, query, onQuery, onSetsu }: { title: str
             <TableRow className="hover:bg-transparent"><TableCell colSpan={columns.length} className="py-6 text-center">「{term}」に当てはまる{title}はありません</TableCell></TableRow>
           ) : null}
           {rows.map((row) => (
-            <TableRow key={row.id} onClick={row.getCanExpand() ? () => row.toggleExpanded() : onSetsu && row.original.setsuId ? () => onSetsu(row.original.setsuId!) : undefined} className={cn('text-foreground', (row.getCanExpand() || (onSetsu && row.original.setsuId)) && 'cursor-pointer')}>
+            <TableRow key={row.id} onClick={row.getCanExpand() ? () => row.toggleExpanded() : project && row.original.projectId ? () => project.open(row.original.projectId!) : onSetsu && row.original.setsuId ? () => onSetsu(row.original.setsuId!) : undefined} className={cn('text-foreground', (row.getCanExpand() || (project && row.original.projectId) || (onSetsu && row.original.setsuId)) && 'cursor-pointer')}>
               {row.getAllCells().map((cell) => (
                 <TableCell key={cell.id} className={cn('py-2', cls(cell.column.columnDef.meta))}>
                   <table.FlexRender cell={cell} />
@@ -225,7 +232,7 @@ function Section({ title, drills, total, query, onQuery, onSetsu }: { title: str
 export type FlowQuery = { expenditure: string; revenue: string }
 
 /** 歳出の表と、あれば一般会計の歳入の表。total は歳出の総額。探す語は歳出・歳入で別に持つ */
-export function FlowTable({ flows, revenue, total, query, onQuery, onRetry, onSetsu }: {
+export function FlowTable({ flows, revenue, total, query, onQuery, onRetry, onSetsu, project }: {
   flows: Drill[] | undefined
   revenue?: Drill[]
   total: number
@@ -235,6 +242,8 @@ export function FlowTable({ flows, revenue, total, query, onQuery, onRetry, onSe
   onRetry?: () => void
   /** 歳出の節の行を押したとき（節の詳細を開く） */
   onSetsu?: (setsuId: string) => void
+  /** 歳出の事業の行の行き先（事業の頁） */
+  project?: ProjectLink
 }) {
   if (!flows && onRetry) return (
     <div role="alert" className="flex flex-wrap items-center gap-2 py-6 text-sm text-destructive">
@@ -253,7 +262,7 @@ export function FlowTable({ flows, revenue, total, query, onQuery, onRetry, onSe
   const revenueTotal = (revenue ?? []).reduce((s, d) => s + (d.kan.amountMissing ? 0 : d.kan.yen), 0)
   return (
     <div className="flex flex-col gap-8">
-      <Section title="歳出" drills={flows} total={total} query={query.expenditure} onQuery={(q) => onQuery('expenditure', q)} onSetsu={onSetsu} />
+      <Section title="歳出" drills={flows} total={total} query={query.expenditure} onQuery={(q) => onQuery('expenditure', q)} onSetsu={onSetsu} project={project} />
       {revenue?.length ? <Section title="歳入" drills={revenue} total={revenueTotal} query={query.revenue} onQuery={(q) => onQuery('revenue', q)} /> : null}
     </div>
   )

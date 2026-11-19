@@ -20,6 +20,8 @@ export interface Setsu {
   setsuId?: string
   /** 名前が印字された出典の URL（PDF は #page= つき） */
   src?: string
+  /** 事業の行なら、その事業の ID（事業の頁へ移る） */
+  projectId?: string
   /** 出典に金額の印字がない。yen の 0 は表示に使わない */
   amountMissing?: true
 }

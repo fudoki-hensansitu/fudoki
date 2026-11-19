@@ -142,6 +142,24 @@ const byAmount = (a: { amount_yen: number | null }, b: { amount_yen: number | nu
 /** 目の内訳として出す分け方。節があれば節、無ければ事業（備考・説明の欄）。分け方の違う内訳は混ぜない */
 const pickBreakdown = (byBreakdown: Record<string, ApiDetail[]>) => byBreakdown['節']?.length ? byBreakdown['節'] : (byBreakdown['事業'] ?? [])
 
+/** その年度・資料・会計の事業の行（内訳の ID）から事業の ID。事業の行を押して事業の頁へ移るのに使う */
+async function projectIdsByDetail(env: Env, code: string, year: number, kind: DocumentKind, account: string): Promise<Map<string, string>> {
+  const column = kind === 'initial' ? 'initial_expenditure_detail_id' : 'settlement_expenditure_detail_id'
+  const out = new Map<string, string>()
+  let token: string | undefined
+  do {
+    const r = await apiCall(env)('search_projects', {
+      fiscal_year: { min: year, max: year },
+      where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [account] } },
+      page_size: 1000,
+      ...(token ? { page_token: token } : {}),
+    })
+    for (const y of r.project_years) if (y[column]) out.set(y[column], y.project_id)
+    token = r.next_page_token ?? undefined
+  } while (token)
+  return out
+}
+
 /** 目の直下の内訳（節、無ければ事業）。目の id ごとに大きい順 */
 export async function loadSetsuByMoku(env: Env, code: string, year: number, mokuIds: string[], kind: DocumentKind = 'settlement', account: string = ACCOUNT): Promise<Map<string, Setsu[]>> {
   return (await loadMokuBreakdowns(env, code, year, mokuIds, kind, account)).setsu
@@ -154,7 +172,11 @@ export async function loadMokuBreakdowns(env: Env, code: string, year: number, m
   // 年度・資料・自治体・会計・分け方・深さの条件と合わせても API の bind 上限（90）に収まる件数。区切った分は並べて読む
   const chunks = Array.from({ length: Math.ceil(mokuIds.length / 50) }, (_, i) => mokuIds.slice(i * 50, (i + 1) * 50))
   const origins: OriginUrls = new Map()
-  const pages = await Promise.all(chunks.map((ids) => searchAll(env, 'details', code, year, { depth: { eq: [1] }, breakdown: { eq: ['節', '事業'] }, subject_id: { eq: ids } }, kind, account, origins)))
+  // 事業の頁へ移れるよう、事業の行には事業の ID を添える。読めなくても内訳は出す
+  const [pages, projectIds] = await Promise.all([
+    Promise.all(chunks.map((ids) => searchAll(env, 'details', code, year, { depth: { eq: [1] }, breakdown: { eq: ['節', '事業'] }, subject_id: { eq: ids } }, kind, account, origins))),
+    projectIdsByDetail(env, code, year, kind, account).catch(() => new Map<string, string>()),
+  ])
   for (const rows of pages) {
     const groups = new Map<string, Record<string, ApiDetail[]>>()
     for (const n of rows) {
@@ -162,7 +184,10 @@ export async function loadMokuBreakdowns(env: Env, code: string, year: number, m
       ;(byBreakdown[n.breakdown] ??= []).push(n)
       groups.set(n.subject_id, byBreakdown)
     }
-    const toSetsu = (n: ApiDetail): Setsu => ({ name: n.name, ...amount(n), ...(n.expenditure_setsu_id ? { setsuId: n.expenditure_setsu_id } : {}), ...srcOf(n, origins) })
+    const toSetsu = (n: ApiDetail): Setsu => {
+      const projectId = n.breakdown === '事業' ? projectIds.get(n.detail_id) : undefined
+      return { name: n.name, ...amount(n), ...(n.expenditure_setsu_id ? { setsuId: n.expenditure_setsu_id } : {}), ...(projectId ? { projectId } : {}), ...srcOf(n, origins) }
+    }
     for (const [moku, byBreakdown] of groups) {
       const picked = pickBreakdown(byBreakdown)
       setsuByMoku.set(moku, [...picked].sort(byAmount).map(toSetsu))
