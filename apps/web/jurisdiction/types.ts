@@ -9,6 +9,8 @@ export interface Line {
   yen: number
   /** 出典に金額の印字がない。yen の 0 は表示に使わない */
   amountMissing?: true
+  /** 名前が印字された出典の URL（PDF は #page= つき）。歳出の行で、出典の分かるものだけ */
+  src?: string
 }
 
 export interface Setsu {
@@ -16,6 +18,8 @@ export interface Setsu {
   yen: number
   /** 法定の節（節マスタの ID。setsu-12、R1 以前は setsu-13-2019 など）。歳出の節で、節マスタに当たった行だけ */
   setsuId?: string
+  /** 名前が印字された出典の URL（PDF は #page= つき） */
+  src?: string
   /** 出典に金額の印字がない。yen の 0 は表示に使わない */
   amountMissing?: true
 }

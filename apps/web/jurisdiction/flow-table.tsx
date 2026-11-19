@@ -3,7 +3,7 @@
 // 金額は API が返した円をそのまま出し、割合はその歳出・歳入の総額に占める割合だけを画面で求める
 // 金額の見出しを押すと、同じ親の中で金額の多い順→少ない順→出典の順に並べ替える。金額未記載の行はいつも後ろに置く
 import * as React from 'react'
-import { ArrowDownIcon, ArrowUpIcon, ArrowsDownUpIcon, CaretRightIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
+import { ArrowDownIcon, ArrowSquareOutIcon, ArrowUpIcon, ArrowsDownUpIcon, CaretRightIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
 import {
   columnFilteringFeature,
   createColumnHelper,
@@ -35,17 +35,21 @@ interface Node {
   yen: number
   missing?: true
   depth: number
+  /** 名前が印字された出典の URL（PDF は頁つき） */
+  src?: string
+  /** 歳出の節の節マスタの ID。あれば行を押すと節の詳細を開く */
+  setsuId?: string
   subRows?: Node[]
 }
 
 const toNodes = (drills: Drill[]): Node[] =>
   drills.map((d) => ({
-    id: d.kan.id, name: d.kan.name, yen: d.kan.yen, missing: d.kan.amountMissing, depth: 0,
+    id: d.kan.id, name: d.kan.name, yen: d.kan.yen, missing: d.kan.amountMissing, depth: 0, src: d.kan.src,
     subRows: d.kou.length ? d.kou.map((k) => ({
-      id: k.id, name: k.name, yen: k.yen, missing: k.amountMissing, depth: 1,
+      id: k.id, name: k.name, yen: k.yen, missing: k.amountMissing, depth: 1, src: k.src,
       subRows: k.moku.length ? k.moku.map((m) => ({
-        id: m.id, name: m.name, yen: m.yen, missing: m.amountMissing, depth: 2,
-        subRows: m.setsu.length ? m.setsu.map((s, i) => ({ id: `${m.id}:setsu:${i}`, name: s.name, yen: s.yen, missing: s.amountMissing, depth: 3 })) : undefined,
+        id: m.id, name: m.name, yen: m.yen, missing: m.amountMissing, depth: 2, src: m.src,
+        subRows: m.setsu.length ? m.setsu.map((s, i) => ({ id: `${m.id}:setsu:${i}`, name: s.name, yen: s.yen, missing: s.amountMissing, depth: 3, src: s.src, setsuId: s.setsuId })) : undefined,
       })) : undefined,
     })) : undefined,
   }))
@@ -63,8 +67,10 @@ const features = tableFeatures({
 const column = createColumnHelper<typeof features, Node>()
 const cls = (meta: unknown) => (meta as { className?: string } | undefined)?.className
 
-function Section({ title, drills, total, query, onQuery }: { title: string; drills: Drill[]; total: number; query: string; onQuery: (q: string) => void }) {
+function Section({ title, drills, total, query, onQuery, onSetsu }: { title: string; drills: Drill[]; total: number; query: string; onQuery: (q: string) => void; /** 節の行を押したとき（節の詳細を開く） */ onSetsu?: (setsuId: string) => void }) {
   const data = React.useMemo(() => toNodes(drills), [drills])
+  // 出典の分かる行が1つでもあれば、割合の右に出典の列を出す
+  const hasSrc = React.useMemo(() => drills.some((d) => d.kan.src || d.kou.some((k) => k.src || k.moku.some((m) => m.src))), [drills])
   const depth = Math.max(0, ...drills.map((d) => (d.kou.some((k) => k.moku.some((m) => m.setsu.length > 0)) ? 3 : d.kou.some((k) => k.moku.length > 0) ? 2 : d.kou.length > 0 ? 1 : 0)))
   const levels = LEVELS.slice(0, depth + 1).join('・')
   // 開いた行は、探していないときと探しているときで分けて持つ。探し始めると当てはまる行の親をすべて開き、探し終えると前に開いていた行に戻す
@@ -130,8 +136,19 @@ function Section({ title, drills, total, query, onQuery }: { title: string; dril
       sortUndefined: 'last',
       meta: { className: 'text-right tabular-nums' },
     }),
-    column.display({ id: 'share', header: '割合', cell: (c) => formatShare(c.row.original.yen, total, c.row.original.missing) ?? '', meta: { className: 'pr-0 text-right tabular-nums' } }),
-  ]), [title, levels, depth, total])
+    column.display({ id: 'share', header: '割合', cell: (c) => formatShare(c.row.original.yen, total, c.row.original.missing) ?? '', meta: { className: cn('text-right tabular-nums', !hasSrc && 'pr-0') } }),
+    ...(hasSrc ? [column.display({
+      id: 'src',
+      header: () => <span className="sr-only">出典</span>,
+      // 出典の頁を新しいタブで開く。行を押すと開け閉めするので、リンクを押したときは行に伝えない
+      cell: (c) => c.row.original.src ? (
+        <a href={c.row.original.src} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} aria-label={`${c.row.original.name}の出典を開く`} className="-my-1 inline-flex items-center gap-1 rounded-md px-1 py-1 text-xs whitespace-nowrap text-muted-foreground no-underline hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring">
+          出典<ArrowSquareOutIcon aria-hidden="true" className="size-3.5" />
+        </a>
+      ) : null,
+      meta: { className: 'w-0 pr-0 text-right' },
+    })] : []),
+  ]), [title, levels, depth, total, hasSrc])
   const table = useTable({
     features,
     columns,
@@ -170,7 +187,7 @@ function Section({ title, drills, total, query, onQuery }: { title: string; dril
             <TableRow className="hover:bg-transparent"><TableCell colSpan={columns.length} className="py-6 text-center">「{term}」に当てはまる{title}はありません</TableCell></TableRow>
           ) : null}
           {rows.map((row) => (
-            <TableRow key={row.id} onClick={row.getCanExpand() ? () => row.toggleExpanded() : undefined} className={cn('text-foreground', row.getCanExpand() && 'cursor-pointer')}>
+            <TableRow key={row.id} onClick={row.getCanExpand() ? () => row.toggleExpanded() : onSetsu && row.original.setsuId ? () => onSetsu(row.original.setsuId!) : undefined} className={cn('text-foreground', (row.getCanExpand() || (onSetsu && row.original.setsuId)) && 'cursor-pointer')}>
               {row.getAllCells().map((cell) => (
                 <TableCell key={cell.id} className={cn('py-2', cls(cell.column.columnDef.meta))}>
                   <table.FlexRender cell={cell} />
@@ -188,7 +205,7 @@ function Section({ title, drills, total, query, onQuery }: { title: string; dril
 export type FlowQuery = { expenditure: string; revenue: string }
 
 /** 歳出の表と、あれば一般会計の歳入の表。total は歳出の総額。探す語は歳出・歳入で別に持つ */
-export function FlowTable({ flows, revenue, total, query, onQuery, onRetry }: {
+export function FlowTable({ flows, revenue, total, query, onQuery, onRetry, onSetsu }: {
   flows: Drill[] | undefined
   revenue?: Drill[]
   total: number
@@ -196,6 +213,8 @@ export function FlowTable({ flows, revenue, total, query, onQuery, onRetry }: {
   onQuery: (key: keyof FlowQuery, q: string) => void
   /** 読めなかったときに読み直す。あれば「読めませんでした」とボタンを出す */
   onRetry?: () => void
+  /** 歳出の節の行を押したとき（節の詳細を開く） */
+  onSetsu?: (setsuId: string) => void
 }) {
   if (!flows && onRetry) return (
     <div role="alert" className="flex flex-wrap items-center gap-2 py-6 text-sm text-destructive">
@@ -214,7 +233,7 @@ export function FlowTable({ flows, revenue, total, query, onQuery, onRetry }: {
   const revenueTotal = (revenue ?? []).reduce((s, d) => s + (d.kan.amountMissing ? 0 : d.kan.yen), 0)
   return (
     <div className="flex flex-col gap-8">
-      <Section title="歳出" drills={flows} total={total} query={query.expenditure} onQuery={(q) => onQuery('expenditure', q)} />
+      <Section title="歳出" drills={flows} total={total} query={query.expenditure} onQuery={(q) => onQuery('expenditure', q)} onSetsu={onSetsu} />
       {revenue?.length ? <Section title="歳入" drills={revenue} total={revenueTotal} query={query.revenue} onQuery={(q) => onQuery('revenue', q)} /> : null}
     </div>
   )

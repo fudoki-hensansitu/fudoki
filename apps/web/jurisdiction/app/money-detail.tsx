@@ -9,7 +9,8 @@ import { setsuGroupOf, setsuLabelOf, UNKNOWN_SETSU, type SetsuGroup } from '../s
 import type { Moku } from '../types'
 import { Amt } from './amount'
 
-export type MoneyDetailKey = { kind: 'field'; id: string } | { kind: 'setsu'; id: string }
+/** field は入る→使うの分野、setsu は何に使う？の節の区分、setsuItem は表・サンキーで押した節（節マスタの ID） */
+export type MoneyDetailKey = { kind: 'field'; id: string } | { kind: 'setsu'; id: string } | { kind: 'setsuItem'; id: string }
 
 type Row = { key: string; name: string; sub?: string; yen: number }
 
@@ -41,6 +42,17 @@ function setsuRows(moku: Moku[], id: string): { setsu: Row[]; moku: Row[] } {
     setsu: [...bySetsu].filter(([, yen]) => yen > 0).sort((a, b) => b[1] - a[1]).map(([name, yen]) => ({ key: name, name, yen })),
     moku: byMoku.sort((a, b) => b.yen - a.yen),
   }
+}
+
+/** 一つの節（R1 以前の同じ名前の節も含む）にお金を出している目 */
+function setsuItemRows(moku: Moku[], setsuId: string): Row[] {
+  const label = setsuLabelOf(setsuId)
+  const rows: Row[] = []
+  for (const m of moku) {
+    const yen = m.setsu.filter((s) => s.setsuId && setsuLabelOf(s.setsuId) === label).reduce((a, s) => a + s.yen, 0)
+    if (yen > 0) rows.push({ key: m.id, name: m.name, sub: pathOf(m), yen })
+  }
+  return rows.sort((a, b) => b.yen - a.yen)
 }
 
 function Rows({ title, rows, total }: { title: string; rows: Row[]; total: number }) {
@@ -97,26 +109,31 @@ export function MoneyDetail({ open, onClose, wide, moku, fields, groups, onProje
   const field = key?.kind === 'field' ? fields.find((f) => f.id === key.id) : undefined
   const group = key?.kind === 'setsu' ? groups.find((g) => g.id === key.id) : undefined
   const frame = field ? [...DOMAIN_FRAMES, OTHER_FRAME].find((f) => f.id === field.id) : undefined
-  const head = field ?? group
   const body = React.useMemo(() => {
     if (!key) return undefined
     if (key.kind === 'field') return { kind: 'field' as const, rows: fieldRows(moku, key.id) }
+    if (key.kind === 'setsuItem') return { kind: 'setsuItem' as const, rows: setsuItemRows(moku, key.id) }
     return { kind: 'setsu' as const, ...setsuRows(moku, key.id) }
   }, [key, moku])
+  // 押した節は、その会計の同じ節の和を見出しにし、入る区分を説明に出す
+  const item = key?.kind === 'setsuItem' && body?.kind === 'setsuItem' ? { name: setsuLabelOf(key.id) ?? '節', yen: body.rows.reduce((a, r) => a + r.yen, 0), group: groups.find((g) => g.id === setsuGroupOf(key.id))?.name } : undefined
+  const head = field ?? group ?? item
 
   return (
     <Drawer open={!!open} onOpenChange={(o) => { if (!o) onClose() }} swipeDirection={wide ? 'right' : 'down'}>
       <DrawerContent className="data-[swipe-axis=x]:sm:[--drawer-content-width:28rem]">
-        <DrawerHeader className="flex flex-row items-start justify-between gap-3 border-b border-border px-5 pt-5 pb-4 text-left">
+        <DrawerHeader className="flex flex-row items-start justify-between gap-3 border-b border-border px-5 pt-5 pb-4 text-left! md:text-left">
           <div className="min-w-0">
             <DrawerTitle className="text-base font-semibold">{head?.name}</DrawerTitle>
             {head ? <Amt yen={head.yen} className="mt-1 block text-base font-medium text-primary" /> : null}
             <DrawerDescription className="mt-2 text-sm text-muted-foreground">
               {key?.kind === 'field'
                 ? frame?.examples ? `${frame.examples}など。この分野に入る科目（目）を、額の多い順に並べています。` : 'この分野に入る科目（目）を、額の多い順に並べています。'
-                : key?.id === UNKNOWN_SETSU
-                  ? '予算書・決算書の内訳が節で分かれていない科目の分です。'
-                  : 'この区分に入る節と、この区分にお金を多く出している科目（目）です。'}
+                : item
+                  ? `${item.group ? `「何に使う？」の${item.group}に入る節です。` : ''}この節にお金を出している科目（目）を、額の多い順に並べています。`
+                  : key?.id === UNKNOWN_SETSU
+                    ? '予算書・決算書の内訳が節で分かれていない科目の分です。'
+                    : 'この区分に入る節と、この区分にお金を多く出している科目（目）です。'}
             </DrawerDescription>
           </div>
           <Button variant="ghost" size="icon" aria-label="閉じる" onClick={onClose} className="-mt-1 -mr-2 shrink-0 rounded-full">
@@ -124,7 +141,7 @@ export function MoneyDetail({ open, onClose, wide, moku, fields, groups, onProje
           </Button>
         </DrawerHeader>
         <div className="flex min-h-0 flex-1 flex-col gap-6 overflow-y-auto px-5 py-4">
-          {head && body?.kind === 'field' ? <Rows title="科目（目）" rows={body.rows} total={head.yen} /> : null}
+          {head && (body?.kind === 'field' || body?.kind === 'setsuItem') ? <Rows title="科目（目）" rows={body.rows} total={head.yen} /> : null}
           {head && body?.kind === 'setsu' && key?.id !== UNKNOWN_SETSU ? (
             <>
               <Rows title="節" rows={body.setsu} total={head.yen} />

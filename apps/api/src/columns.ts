@@ -70,6 +70,7 @@ const DERIVED_COLUMNS: Record<string, ColumnSpec> = Object.fromEntries(
       ['kou_name', 'string', '所属する項の出典の名称（項では自分）。款と、款の直下の目では NULL。', true],
       ['moku_code', 'string', '所属する出典の目番号（目では自分）。款・項では NULL。', true],
       ['moku_name', 'string', '所属する目の名称（目では自分）。款・項（内訳では項の直下の内訳）では NULL。', true],
+      ['source_page', 'integer', '名前が印字された出典の頁（origin_id の PDF の中で1から数える）。URL に #page=<頁> を付けるとその頁が開く。CSV の出典と、位置の分からない行では NULL。', true],
     ] as const
   ).map(([name, type, description, nullable, values]) => [name, { name, type, description, nullable, ...(values ? { values: [...values] } : {}) }])
 )
@@ -88,6 +89,9 @@ const SUBJECT_REMAINDER: ColumnSpec = {
   description:
     '末端でない科目（目を持つ項など）の直下の枝の根か。子の科目と並んで科目の額の一部を構成する（神戸市の福祉局の冊が目を立てずに印字した項の分、ADR 0030）。神戸市の2025年度一般会計は、科目の is_leaf の和にこの行を足しても款の和に 38,000円足りない（冊をまたいで足せない節がノードに無い）。depth = 1 の和の規則の外。',
 }
+
+/** 行の名前が印字された頁。位置の表は line_id が主キーなので1行を引く */
+const sourcePage = (id: 'subject_id' | 'detail_id') => `(SELECT l."source_page" FROM expenditure_location l WHERE l."line_id" = x."${id}")`
 
 /** 所属する款・項・目を、起点の科目 s・親 p・祖父母 g の段から求める式（目が款の直下にある資料がある） */
 const pathExprs = (s: string, p = 'p', g = 'g') => ({
@@ -131,9 +135,10 @@ export const SUBJECT_TABLE = searchView(
   'expenditure_subject',
   ['subject_id', 'node_key', 'parent_subject_id', 'expenditure_id', ...ROOT_COLUMNS.slice(0, 4), 'amount_phase', ...ROOT_COLUMNS.slice(4), 'level', 'code', 'name',
     'kan_code', 'kan_name', 'kou_code', 'kou_name', 'moku_code', 'moku_name', 'amount_yen', 'is_leaf',
-    'cofog_status', 'cofog_code', 'is_interfund_transfer', 'interfund_transfer_to', 'origin_id'],
+    'cofog_status', 'cofog_code', 'is_interfund_transfer', 'interfund_transfer_to', 'origin_id', 'source_page'],
   {
     ...pathExprs('x'),
+    source_page: sourcePage('subject_id'),
     amount_phase: AMOUNT_PHASE,
     is_leaf: `NOT EXISTS (SELECT 1 FROM expenditure_subject c WHERE c."parent_subject_id" = x."subject_id")`,
   },
@@ -148,9 +153,10 @@ export const DETAIL_TABLE = searchView(
   ['detail_id', 'node_key', 'parent_detail_id', 'subject_id', 'expenditure_id', ...ROOT_COLUMNS.slice(0, 4), 'amount_phase', ...ROOT_COLUMNS.slice(4),
     'kan_code', 'kan_name', 'kou_code', 'kou_name', 'moku_code', 'moku_name',
     'breakdown', 'source_heading', 'node_kind', 'depth', 'code', 'name', 'department', 'amount_yen', 'is_leaf', 'is_subject_remainder',
-    'expenditure_setsu_id', 'is_interfund_transfer', 'interfund_transfer_to', 'origin_id'],
+    'expenditure_setsu_id', 'is_interfund_transfer', 'interfund_transfer_to', 'origin_id', 'source_page'],
   {
     ...pathExprs('s'),
+    source_page: sourcePage('detail_id'),
     amount_phase: AMOUNT_PHASE,
     is_leaf: `NOT EXISTS (SELECT 1 FROM expenditure_detail c WHERE c."parent_detail_id" = x."detail_id")`,
     is_subject_remainder: `x."depth" = 1 AND EXISTS (SELECT 1 FROM expenditure_subject c WHERE c."parent_subject_id" = x."subject_id")`,
