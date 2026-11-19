@@ -3,6 +3,8 @@
 import * as React from 'react'
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle } from '@/components/ui/drawer'
 import { Button } from '@/components/ui/button'
+import { Title, titleVariants } from '@/components/ui/title'
+import { cn } from '@/lib/utils'
 import { XIcon } from '@phosphor-icons/react'
 import { DOMAIN_FRAMES, OTHER_FRAME, frameOf } from '../domains'
 import { setsuGroupOf, setsuLabelOf, unknownOf, UNKNOWN_SETSU, type SetsuGroup } from '../setsu-groups'
@@ -65,7 +67,7 @@ function Rows({ title, rows, total }: { title: string; rows: Row[]; total: numbe
   const rest = rows.slice(LIMIT)
   return (
     <section className="flex flex-col gap-1">
-      <h3 className="text-sm font-semibold text-muted-foreground">{title}</h3>
+      <Title size="headline" as="h3" className="text-muted-foreground">{title}</Title>
       <ul className="flex flex-col">
         {shown.map((r) => (
           <li key={r.key} className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-4 border-b border-border py-3 last:border-b-0">
@@ -135,8 +137,11 @@ export function MoneyDetail({ open, onClose, wide, moku, units, fields, groups, 
       <DrawerContent className="data-[swipe-axis=x]:sm:[--drawer-content-width:28rem]">
         <DrawerHeader className="flex flex-row items-start justify-between gap-3 border-b border-border px-5 pt-5 pb-4 text-left! md:text-left">
           <div className="min-w-0">
-            <DrawerTitle className="text-base font-semibold">{head?.name}</DrawerTitle>
-            {head ? <Amt yen={head.yen} className="mt-1 block text-base font-medium text-primary" /> : null}
+            {/* 名前と金額は横に並べ、入らなければ金額を次の行へ送る */}
+            <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <DrawerTitle className={titleVariants({ size: 'h3' })}>{head?.name}</DrawerTitle>
+              {head ? <Amt yen={head.yen} className={cn(titleVariants({ size: 'h3' }), 'text-primary')} /> : null}
+            </div>
             {/* 見て分かること（何を並べているか）は書かず、見ても分からないことだけを添える */}
             {desc ? <DrawerDescription className="mt-2 text-sm text-muted-foreground">{desc}</DrawerDescription> : null}
           </div>
