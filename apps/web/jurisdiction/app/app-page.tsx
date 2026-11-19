@@ -1201,7 +1201,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
             <Link href="/" aria-label="風土記 ホーム" className="mt-4 inline-flex md:hidden"><BrandMark className="size-8 text-primary" /></Link>
             {hero}
             <Separator />
-            <div className="pt-6"><QuestionFeedView feed={questions} onOpen={(q) => ask.current?.openPreset(q.q)} /></div>
+            <div className="pt-6"><QuestionFeedView feed={questions} onOpen={(q) => ask.current?.openPreset(q.q)} onAsk={() => ask.current?.openAsk()} /></div>
           </>
         ) : (
         <>

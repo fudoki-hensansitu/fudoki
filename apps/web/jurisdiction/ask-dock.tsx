@@ -90,6 +90,8 @@ export type PresetAnswer = { answer: string; follow: string[]; source: string }
 export interface AskHandle {
   /** 作り置きの答えのある問いで会話を開く。server の会話は続けて聞くときに作る */
   openPreset: (question: string) => void
+  /** 新しい会話で聞く欄を開く */
+  openAsk: () => void
 }
 
 export function AskDock({ name, code, sitekey, year, section, detail, page, ask = `${name}について質問`, preset, handle }: {
@@ -336,6 +338,7 @@ export function AskDock({ name, code, sitekey, year, section, detail, page, ask 
       setOpen(false)
       setQuote('')
     },
+    openAsk: () => restart(),
   }), [preset])
   const connect = async () => {
     if (!connectRef.current) throw new Error('会話を始められませんでした')
