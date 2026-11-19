@@ -16,6 +16,9 @@ import { projectTools } from './project/tools'
 import { revenueTools } from './revenue/tools'
 import type { Ctx } from './shared/context'
 import { JurisdictionCode } from './shared/model'
+import { jurisdictionNames, suggestionsFor } from './suggestions'
+import { tools } from './tools'
+import type { Suggestion } from '../../../packages/fiscal/suggestions'
 
 const op = <I extends z.ZodObject, O extends z.ZodType>(input: I, output: O, run: (ctx: Ctx, input: z.output<I>) => Promise<unknown>) => ({ input, output, run })
 const ofTool = <T extends { input: z.ZodObject; output: z.ZodType; run: (ctx: Ctx, input: Record<string, unknown>) => Promise<unknown> }>(t: T) => op(t.input as T['input'], t.output as T['output'], (ctx, input) => t.run(ctx, input as Record<string, unknown>))
@@ -48,11 +51,27 @@ export type WebOpOutput<N extends WebOpName> = z.output<(typeof WEB_OPS)[N]['out
 /** 失敗は投げずに返す（RPC を越えると例外の種類が失われるため）。status は公開の REST と同じ */
 export type WebResult<T> = { ok: true; value: T } | { ok: false; status: number; code: string; message: string }
 
+/** アシスタント（web の AI）に渡す tool の定義。web が AI SDK の tool に包む */
+export interface AssistantTool {
+  name: string
+  description: string
+  /** 入力の JSON Schema（root は object） */
+  inputSchema: Record<string, unknown>
+}
+
+/** アシスタントの tool の結果。suggestions は次の質問の候補（会話の画面が回答の下にチップで出す） */
+export interface AssistantToolResult {
+  value: unknown
+  suggestions: Suggestion[]
+}
+
 /** web の Worker が持つ binding の型（Service Binding・entrypoint Web） */
 export interface WebRpc {
   call<N extends WebOpName>(name: N, input: WebOpInput<N>): Promise<WebResult<WebOpOutput<N>>>
-  /** アシスタントの MCP。公開の /mcp と同じ tool を、同じ JSON-RPC で受ける */
-  mcp(request: Request): Promise<Response>
+  /** アシスタントに渡す tool の定義 */
+  tools(): Promise<AssistantTool[]>
+  /** アシスタントの tool を1回呼ぶ。入力の検査・kill switch は call と同じ */
+  runTool(name: string, input: unknown): Promise<WebResult<AssistantToolResult>>
 }
 
 /** kill switch: control の serving が 'on' 以外なら止める。読めないときも止める（公開の口と同じ） */
@@ -80,4 +99,41 @@ export async function callWebOp(env: Env, name: string, input: unknown): Promise
     console.error(e)
     return fail(500, 'INTERNAL', '内部エラー')
   }
+}
+
+const COUNT_SHEETS_DESCRIPTION =
+  'Count evaluation sheets matching the same input as search_evaluation_sheets. Rows are grouped by direction_code; each row\'s outlook carries grade A (expand) / B (continue) / C (review) / D (end), so add the size of every row that shares a grade to count a grade (D, for example, spans merge, complete, end and consider_end). A row with a null outlook collects sheets whose direction does not map. ' +
+  'Use it for "how many projects were judged to end or be reviewed" style questions instead of paging through search results. page_size, page_token and order_by are ignored.'
+
+/** アシスタントに渡す操作と説明。公開の MCP の tool は同じ説明を使い、web だけの操作はここで書く。名前は WEB_OPS の名前 */
+const ASSISTANT_TOOLS: { name: WebOpName; description: string; suggests: boolean }[] = [
+  ...tools.map((t) => ({ name: t.name as WebOpName, description: t.description, suggests: !!t.view })),
+  { name: 'count_evaluation_sheets', description: COUNT_SHEETS_DESCRIPTION, suggests: false },
+]
+
+let assistantToolDefs: AssistantTool[] | undefined
+/** isolate の中で一度だけ JSON Schema に変える */
+export function assistantTools(): AssistantTool[] {
+  assistantToolDefs ??= ASSISTANT_TOOLS.map(({ name, description }) => {
+    const { $schema: _, ...schema } = z.toJSONSchema(WEB_OPS[name].input, { io: 'input', target: 'draft-2020-12', unrepresentable: 'any' }) as Record<string, unknown>
+    return { name, description, inputSchema: { type: 'object', ...schema } }
+  })
+  return assistantToolDefs
+}
+
+export async function callAssistantTool(env: Env, name: string, input: unknown): Promise<WebResult<AssistantToolResult>> {
+  const def = ASSISTANT_TOOLS.find((t) => t.name === name)
+  if (!def) return { ok: false, status: 404, code: 'NOT_FOUND', message: `存在しない tool です: ${name}` }
+  const result = await callWebOp(env, name, input)
+  if (!result.ok) return result
+  let suggestions: Suggestion[] = []
+  if (def.suggests) {
+    try {
+      suggestions = suggestionsFor(name, result.value, await jurisdictionNames({ db: env.DB }, result.value))
+    } catch (e) {
+      // 候補は付け足しなので、作れなくても結果は返す
+      console.error(e)
+    }
+  }
+  return { ok: true, value: { value: result.value, suggestions } }
 }

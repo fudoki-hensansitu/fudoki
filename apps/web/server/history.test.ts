@@ -11,13 +11,9 @@ const tool = (toolName: string, output: unknown) =>
   ({ type: 'dynamic-tool', toolName, toolCallId: toolName, state: 'output-available', input: {}, output }) as UIMessage['parts'][number]
 
 test('toolText は長い結果を切り詰め、二度切っても変わらない', () => {
-  const once = toolText('search_expenditure_subjects', big(100_000))
+  const once = toolText(big(100_000))
   expect(once.length).toBeLessThan(MAX_TOOL_TEXT + 300)
-  expect(toolText('search_expenditure_subjects', { content: [{ type: 'text', text: once }] })).toBe(once)
-})
-
-test('render_expenditure_view の結果は画面に出した旨だけを AI に渡す', () => {
-  expect(toolText('render_expenditure_view', big(100_000))).not.toContain('あああ')
+  expect(toolText({ content: [{ type: 'text', text: once }] })).toBe(once)
 })
 
 test('forServer は大きな結果を何回呼んでも body の上限に収める', () => {
@@ -27,7 +23,7 @@ test('forServer は大きな結果を何回呼んでも body の上限に収め�
     messages.push({
       id: `a${i}`,
       role: 'assistant',
-      parts: [tool('search_expenditure_subjects', big(100_000)), tool('render_expenditure_view', big(100_000)), { type: 'text', text: '答え' }],
+      parts: [tool('search_expenditure_subjects', big(100_000)), tool('search_expenditure_details', big(100_000)), { type: 'text', text: '答え' }],
     })
   }
   const body = JSON.stringify({ id: 'x', messages: forServer(messages) })
