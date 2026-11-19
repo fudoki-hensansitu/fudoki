@@ -3,7 +3,8 @@
 The page stacks several small tables. The one this reading reads prints the revenue on the left and the expenditure
 on the right under one title line (`（３）令和6年度一般会計当初予算（単位：千円）`): over the right half only the
 heading `歳 出`, then one row per 款 with its name spaced out character by character (no printed number), its
-amount and its 構成比, and the row `歳出合計` at the foot. The amount column prints no heading of its own.
+amount and its 構成比, and the row `歳出合計` at the foot. The amount column prints no heading of its own. The left
+half prints the revenue the same way (`歳 入`, `歳入合計`): the profile's frame says which half is read.
 
 What the profile declares (measured on the page, in display coordinates):
 
@@ -81,8 +82,8 @@ class Reader(Reading):
         if len(inputs) != 1:
             raise ValueError('A paired summary is read from one original')
         source = inputs[0]
-        if source['format'] != 'pdf' or source['pdf_type'] != 'text' or source['direction'] != 'expenditure':
-            raise ValueError('A paired summary reads a text PDF of expenditure')
+        if source['format'] != 'pdf' or source['pdf_type'] != 'text' or source['direction'] not in ('expenditure', 'revenue'):
+            raise ValueError('A paired summary reads a text PDF of expenditure or revenue')
         if sha_file(source['path']) != source['sha256']:
             raise ValueError('Original SHA differs')
         profile = self.profile
@@ -177,9 +178,10 @@ class Reader(Reading):
         ]
         scope = [(page, w['box'], w['text']) for w in [*body, *total_row]]
         write_coverage_words(destination / f'{options["table_id"]}.parquet', scope, excluded_regions=regions)
+        side, other = ('右', '左の歳入') if source['direction'] == 'expenditure' else ('左', '右の歳出')
         notes = [
-            f'物理{page}頁の「{profile["title"]["text"]}」は歳入と歳出を左右に並べた表なので、右の「{frame["heading"]}」の枠だけを読んだ'
-            '（読み方 paired_summary）。左の歳入と頁の他の表は取り込んでいない。',
+            f'物理{page}頁の「{profile["title"]["text"]}」は歳入と歳出を左右に並べた表なので、{side}の「{frame["heading"]}」の枠だけを読んだ'
+            f'（読み方 paired_summary）。{other}と頁の他の表は取り込んでいない。',
             f'款の行 {len(nodes)} 行を、印字のとおり款として置いた。款の番号は印字されていない。項・目は印字されていない。',
             f'金額の欄に見出しの印字が無いので、表の題のとおり「{heading}」の見出しで持った。',
             f'金額の単位は表の題の「{profile["unit"]["printed"]}」。款の和と印字の「{profile["total_row"]["label"]}」が一致。',

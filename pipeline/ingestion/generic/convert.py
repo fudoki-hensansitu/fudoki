@@ -238,6 +238,7 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
             if band.kind == 'label' and RATIO_HEADER.search(''.join(band.header)) and band.x0 - band.offset < band.x1 - band.offset:
                 regions.append({'kind': '数量表', 'reason': '比率の欄（見出しが割合・率）。金額の欄ではない。',
                                 'pages': [[band.page, band.page]], 'x_range': [band.x0 - band.offset, band.x1 - band.offset]})
+    regions += joined_columns(regions)
     regions += [{'kind': '本文', 'reason': '表の一部でない欄（設定で読まないと宣言した列。施策番号など）。金額ではない。',
                  'pages': [[band.page, band.page]], 'x_range': [band.x0 - band.offset, band.x1 - band.offset]}
                 for logical in logicals for band in logical.bands if band.ignored]
@@ -287,6 +288,28 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
     regions += [{'kind': '総括', 'reason': '合計の行。款の和には入れない統制値。見開きでは見出しの語が反対の頁にある。',
                  'page': note['page'], 'bbox': list(note['box'])} for note in totals]
     return regions
+
+
+def joined_columns(regions: list[dict]) -> list[dict]:
+    """A declared column that inner rules cut into several bands (清瀬市の歳入の説明: the boxes of 調定見込額 and
+    収入歩合 drawn in it, its amounts set across their rules), joined back into one x range per run of side-by-side
+    bands of the same kind and reason: a word that straddles an inner rule is the column's too (a straddling word
+    stays in scope for each band alone)."""
+    by_page = defaultdict(list)
+    for region in regions:
+        if 'x_range' in region and len(region.get('pages', [])) == 1 and region['pages'][0][0] == region['pages'][0][1]:
+            by_page[(region['pages'][0][0], region['kind'], region['reason'])].append(region['x_range'])
+    joined = []
+    for (page, kind, reason), ranges in by_page.items():
+        runs: list[list[float]] = []
+        for left, right in sorted(ranges):
+            if runs and left - runs[-1][1] <= .5:
+                runs[-1][1] = max(runs[-1][1], right)
+            else:
+                runs.append([left, right])
+        joined += [{'kind': kind, 'reason': reason, 'pages': [[page, page]], 'x_range': run}
+                   for run in runs if sum(1 for r in ranges if run[0] <= r[0] and r[1] <= run[1]) > 1]
+    return joined
 
 
 def funding_words(observed) -> list[tuple]:
@@ -489,12 +512,15 @@ def _build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
         spread=(layout or {}).get('spread'), header=(layout or {}).get('header'),
         repairs=frozenset((layout or {}).get('repairs', ())), codes_right=(layout or {}).get('codes') == 'right',
         text_layer=(layout or {}).get('text_layer'), ocr=ocr, workflow=options.get('workflow'),
-        row_gaps=bool(((layout or {}).get('rules') or {}).get('row_gaps')))
+        row_gaps=bool(((layout or {}).get('rules') or {}).get('row_gaps')),
+        rule_dark=((layout or {}).get('rules') or {}).get('dark'))
     kept, nodes, amounts, unresolved, codes = split_notes(built)
     by_node = [rule for rule in options.get('name_corrections', ()) if 'observation_id' not in rule]
     built.notes.extend({'kind': 'name correction', 'text': text} for text in correct_names(built.nodes, by_node))
     built.notes.extend({'kind': 'name correction', 'text': f'{rule["page"]}頁 {rule["observed_name"]}→{rule["corrected_name"]}'}
                        for rule in options.get('name_corrections', ()) if 'observation_id' in rule)
+    built.notes.extend({'kind': 'parent correction', 'text': text}
+                       for text in correct_parents(built.nodes, options.get('parent_corrections')))
     if options.get('continued_rows'):
         built.notes.append({'kind': 'continued rows', 'text': continue_volume(built.nodes, options['continued_rows'])})
     all_nodes = [*built.nodes, *nodes]
@@ -534,16 +560,19 @@ def continue_volume(nodes: list[dict], spec: dict) -> str:
             printed.append(found)
         if printed and len(printed) < len(spec['subjects']):
             heads = [n for n in nodes if n['parent_node_key'] == printed[-1]['node_key'] and n['axis_header'] != subject]
-    if subject is None or not heads:
+    # (a volume that starts at a 目 declares only its 款・項: the 目 goes under them, and no row is read at the head)
+    at_subject = len(spec['subjects']) < 3 and not spec['rows']
+    if subject is None or not (heads or at_subject):
         raise ValueError('continued_rows: the volume reads no row at the head with no parent')
     if spec['rows'] and any(n['axis_header'] != heads[0]['axis_header'] for n in heads):
         raise ValueError('continued_rows: the rows with no parent are on more than one axis')
-    # Rows read with no parent are on the first page. (Under the 款・項 the volume prints again, the rows are the
-    # 目's until the first 目 the volume prints, over as many spreads as it runs.)
-    if not printed and any(n['physical_page'] != first for n in heads):
+    # Rows read with no parent are on the first page, or all on the page after it (the right page of a spread, where
+    # a scan prints the 節: 多摩市 R2 決算). (Under the 款・項 the volume prints again, the rows are the 目's until
+    # the first 目 the volume prints, over as many spreads as it runs.)
+    if not printed and heads and (len({n['physical_page'] for n in heads}) > 1 or heads[0]['physical_page'] > first + 1):
         raise ValueError('continued_rows: a row with no parent is not on the first page')
-    axis = heads[0]['axis_header']
-    top = min(n['y0'] for n in heads)
+    axis = heads[0]['axis_header'] if heads else None
+    top = min(n['y0'] for n in heads or [n for n in nodes if n['physical_page'] == first])
     chain, parent = [], printed[-1]['node_key'] if printed else None
     for index, row in enumerate(spec['subjects']):
         if index < len(printed):
@@ -554,6 +583,17 @@ def continue_volume(nodes: list[dict], spec: dict) -> str:
                       'name_text': row.get('name'), 'physical_page': first,
                       'x0': box[0], 'y0': box[1], 'x1': box[2], 'y1': box[3]})
         parent = chain[-1]['node_key']
+    # A 項 or 目 the volume prints under the 款・項 it does not print (多摩市 R2 決算: the volume opens with the 目's
+    # 節 and then the next 項 and its siblings) goes under the last row read one level above it, a declared one
+    # until the volume prints its own: the builder left it with no parent, or under a row no level above it.
+    depths = {n['node_key']: n['depth'] for n in nodes}
+    last = {row['depth']: row['node_key'] for row in chain}
+    for n in nodes:
+        if n['axis_header'] != subject:
+            continue
+        if 1 < n['depth'] and depths.get(n['parent_node_key']) != n['depth'] - 1 and n['depth'] - 1 in last:
+            n['parent_node_key'] = last[n['depth'] - 1]
+        last = {d: key for d, key in last.items() if d < n['depth']} | {n['depth']: n['node_key']}
     under = parent
     rows = []
     for index, row in enumerate(spec['rows']):
@@ -600,8 +640,13 @@ def correct_names(nodes: list[dict], rules: list[dict] | None) -> list[str]:
         at = lambda n, name: n['physical_page'] == rule['page'] and n['name_text'] == name \
             and n['code_text'] == rule.get('code') and ('y' not in rule or abs(n['y0'] - rule['y']) <= 3)
         found = [n for n in nodes if at(n, rule['observed_name'])]
-        if not found and 'corrected_code' not in rule and len([n for n in nodes if at(n, rule['corrected_name'])]) == 1:
-            notes.append(f'{rule["observed_name"]}→{rule["corrected_name"]}（字形表で直っていた）')
+        # (the reading may print the number apart by itself now: `1年金総務費` read as `1` and `年金総務費`)
+        done = lambda n: at(n, rule['corrected_name']) if 'corrected_code' not in rule else \
+            n['physical_page'] == rule['page'] and n['name_text'] == rule['corrected_name'] \
+            and n['code_text'] == rule['corrected_code'] and ('y' not in rule or abs(n['y0'] - rule['y']) <= 3)
+        if not found and len([n for n in nodes if done(n)]) == 1:
+            notes.append(f'{rule["observed_name"]}→{rule["corrected_name"]}（' + ('字形表' if 'corrected_code' not in rule else '読み')
+                         + 'で直っていた）')
             continue
         if len(found) != 1:
             raise ValueError(f'A name correction must find one node: {rule["id"]} ({len(found)})')
@@ -610,6 +655,27 @@ def correct_names(nodes: list[dict], rules: list[dict] | None) -> list[str]:
             found[0]['code_text'] = rule['corrected_code']
         code = rule['corrected_code'] if 'corrected_code' in rule else rule.get('code')
         notes.append(f'{rule.get("code") or ""}{rule["observed_name"]}→{code or ""}{rule["corrected_name"]}')
+    return notes
+
+
+def correct_parents(nodes: list[dict], rules: list[dict] | None) -> list[str]:
+    """Items the reading put under the wrong parent because the original prints them out of line with it
+    (`parent_corrections`, each checked on the rendered page): 武蔵村山市の歳入 R6 prints the 節 of a 目 on the right
+    page of a spread 15pt higher than the 目 on the left page, at the height of the 目 above. A rule names the item and
+    its parent by page, code and name; each must find exactly one node, or the conversion stops."""
+    notes = []
+    for rule in rules or ():
+        def one(page, code, name, what, axis=None):
+            # (`axis` tells a 目 from the 節 under it that prints the same code and name, 東京都 R7 と場会計 p93)
+            found = [n for n in nodes if n['physical_page'] == page and n['code_text'] == code and n['name_text'] == name
+                     and (axis is None or n['axis_header'] == axis)]
+            if len(found) != 1:
+                raise ValueError(f'A parent correction must find one {what}: {rule["id"]} ({len(found)})')
+            return found[0]
+        child = one(rule['page'], rule['code'], rule['name'], 'item', rule.get('axis'))
+        parent = one(rule['parent_page'], rule['parent_code'], rule['parent_name'], 'parent')
+        child['parent_node_key'] = parent['node_key']
+        notes.append(f'{rule["page"]}頁 {rule["code"] or ""}{rule["name"]}→{rule["parent_code"] or ""}{rule["parent_name"]}の下')
     return notes
 
 

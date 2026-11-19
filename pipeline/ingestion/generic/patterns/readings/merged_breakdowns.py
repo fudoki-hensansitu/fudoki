@@ -246,11 +246,15 @@ class Reader(Reading):
         """
         if vcols is _DEFAULT:
             vcols = self.BUDGET_RULES
-        label_words = [w for w in left_words if w['xMax'] <= self.LABEL_RIGHT]
-        if not label_words:
-            return None
         amount_words = [w for w in left_words
                         if vcols[0][0] <= w['xMin'] < vcols[-1][1] and self.AMOUNT_PART.fullmatch(w['text'])]
+        # The head of an amount the text layer cut off (`2` `6,886,995,` `000`, 132021 競輪事業 2025年度決算) may end
+        # inside the label edge; a digit word abutting the rest of an amount is the amount's, not a subject number.
+        label_words = [w for w in left_words if w['xMax'] <= self.LABEL_RIGHT
+                       and not (w in amount_words and any(abs(w['xMax'] - o['xMin']) < 0.5 and abs(w['yMin'] - o['yMin']) < 1
+                                                          for o in amount_words if o is not w))]
+        if not label_words:
+            return None
         compact_label = ''.join(w['text'] for w in label_words)
         if '歳出合計' in compact_label:
             return {'kind': 'total', 'top': top,
@@ -303,6 +307,15 @@ class Reader(Reading):
         zone = [w for w in left_words if w['xMin'] >= self.SETSU_NUM_LEFT]
         amount_words = [w for w in zone if w['xMin'] >= self.SETSU_AMOUNT_LEFT
                         and self.AMOUNT_PART.fullmatch(w['text'])]
+        # A long amount starts left of the amount column, its head cut off as its own word that abuts the rest
+        # (`29,` `686,506,00` `0`, 132021 競輪事業 2025年度決算 22節): the abutting head belongs to the amount.
+        while amount_words:
+            first = min(amount_words, key=lambda w: w['xMin'])
+            head = [w for w in zone if w not in amount_words and self.AMOUNT_PART.fullmatch(w['text'])
+                    and abs(w['xMax'] - first['xMin']) < 0.5 and abs(w['yMin'] - first['yMin']) < 1]
+            if not head:
+                break
+            amount_words.append(head[0])
         num_words = [w for w in zone if self.SETSU_NUM_LEFT <= w['xMin'] < self.SETSU_NUM_RIGHT
                      and re.match(r'^[0-9]', w['text'])]
         digits = ''
@@ -317,7 +330,8 @@ class Reader(Reading):
             if amount_words or num_words:
                 raise ValueError(f'Section row without number at page {page}, y={top}: {zone}')
             return None
-        name_words = [w for w in zone if self.SETSU_NAME_LEFT <= w['xMin'] < self.SETSU_NAME_RIGHT]
+        name_words = [w for w in zone if self.SETSU_NAME_LEFT <= w['xMin'] < self.SETSU_NAME_RIGHT
+                      and w not in amount_words]
         for rest in remainders:
             name_words.append({'xMin': self.SETSU_NAME_LEFT, 'xMax': self.SETSU_NAME_LEFT,
                                'yMin': min(w['yMin'] for w in num_words),
@@ -535,8 +549,10 @@ class Reader(Reading):
             # coverage check keeps digits honest (amount words match amounts
             # first, and only name/code text may cover the rest).
             pos = self.location(item['page'], item['row'])
-            amount_pos = self.amount_positions(['金額'], {'金額': item['金額']},
-                                          {'金額': item.get('_amount_words', [])}, item['page'])
+            # An item whose name runs onto the next spread prints its amount there (132021 国保 2025年度決算 p495→497).
+            amount_words = item.get('_amount_words', [])
+            amount_pos = self.amount_positions(['金額'], {'金額': item['金額']}, {'金額': amount_words},
+                                               amount_words[0].get('_page', item['page']) if amount_words else item['page'])
             if item['kind'] == 'jigyou':
                 flush_leaf()
                 flush_heading(1)
@@ -616,6 +632,7 @@ class Reader(Reading):
             return ctx
 
         for left_page, right_page in pairs:
+            carried = current_key  # the 目 whose notes may run on from the spread before
             rules, vedges = edges.get(left_page, ([], []))
             if not rules or len(rules) < 3:
                 raise ValueError(f'No row rules on left page {left_page}')
@@ -704,6 +721,12 @@ class Reader(Reading):
             owner = current_key
             for top, bottom in bands:
                 if top < first_data:
+                    # Above the spread's first row the right page may still print the notes of the 目 the spread
+                    # before left open (132021 国保 2025年度決算 p497: the 返還金 of 償還金及び還付金 above the
+                    # reprinted `5 1 1`). The column heads (備考) print no digits.
+                    rw = [w for w in right_words if top <= w['yMin'] < bottom and w['xMin'] > self.NOTE_LEFT]
+                    if carried is not None and rw and any(re.search(r'[0-9]', w['text']) for w in rw):
+                        moku_cell[carried].append({'page': right_page, 'words': rw})
                     continue
                 if top in band_owner:
                     owner = band_owner[top]
@@ -740,7 +763,8 @@ class Reader(Reading):
             items = []
             for chunk in moku_cell.get(key, []):
                 before = len(unconfirmed)
-                cell_notes = self.parse_cell(chunk['words'], setsu_names, unconfirmed, items)
+                cell_notes = self.parse_cell([{**w, '_page': chunk['page']} for w in chunk['words']],
+                                             setsu_names, unconfirmed, items)
                 for entry in unconfirmed[before:]:
                     entry.setdefault('page', chunk['page'])
                 notes.extend(cell_notes)

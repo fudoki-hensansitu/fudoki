@@ -1,0 +1,14 @@
+/* 紹介（/about）の画面の画像はライト・ダークの2枚を持ち、今のテーマの方だけを出す（nav/theme.ts の data-theme、無ければ端末の設定） */
+:root[data-theme=dark] .shot-light{display:none}
+:root[data-theme=dark] .shot-dark{display:block}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme=light]) .shot-light{display:none}
+  :root:not([data-theme=light]) .shot-dark{display:block}
+}
+/* 冒頭の絵は開いたときに一度だけ浮き上がる */
+.about-rise{animation:about-rise 600ms cubic-bezier(.2,.8,.2,1) both}
+@keyframes about-rise{from{opacity:0;transform:translateY(16px)}}
+@media (prefers-reduced-motion:reduce){.about-rise{animation:none}}
+/* 暗い帯（比べの表）の罫と、比べる側の薄い文字。token に透明度を後から付けないので CSS で混ぜる */
+.about-night-line{border-color:color-mix(in srgb,var(--night-foreground) 18%,transparent)}
+.about-night-dim{color:color-mix(in srgb,var(--night-foreground) 70%,transparent)}

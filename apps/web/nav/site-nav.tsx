@@ -1,7 +1,7 @@
 // 全ページの左に置くサイドバー（shadcn の Sidebar）。pages/layout.tsx が置き、頁の間を移っても描き直さない
 import * as React from 'react'
 import { Link } from './link'
-import { ChatIcon, CircleHalfIcon, DesktopIcon, GearSixIcon, GithubLogoIcon, HouseIcon, MoonIcon, PlugIcon, RobotIcon, SidebarSimpleIcon, SunIcon, XLogoIcon } from '@phosphor-icons/react'
+import { ChatIcon, CircleHalfIcon, DesktopIcon, GearSixIcon, GithubLogoIcon, HouseIcon, MagnifyingGlassIcon, MoonIcon, PlugIcon, RobotIcon, SidebarSimpleIcon, SunIcon, XLogoIcon } from '@phosphor-icons/react'
 import {
   Sidebar,
   SidebarContent,
@@ -23,8 +23,9 @@ import { LOGO_G, LOGO_WIDTH } from '../logo'
 import { FEEDBACK } from './feedback'
 import { applyTheme, currentTheme, DEFAULT_THEME, type Theme } from './theme'
 import { ArrowsLeftRightIcon } from '@phosphor-icons/react'
-import { NavContent, useCompareHref } from './nav-content'
+import { NavContent } from './nav-content'
 import { readNavOpen, saveNavOpen } from './nav-state'
+import { TownPalette } from './town-palette'
 
 
 export const NAV_SECTIONS = ['home', 'assistant', 'compare'] as const
@@ -74,7 +75,7 @@ export const Item = ({ href, label, icon, active, onClick }: { href: string; lab
         render={<NavLink href={href} aria-current={active ? 'page' : undefined} onClick={onClick} />}
         isActive={active}
         tooltip={state === 'collapsed' && !isMobile ? label : undefined}
-        className="h-10 gap-3 px-3 text-sm group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-2.5! [&_svg]:size-5"
+        className="h-10 gap-3 px-3 text-sm group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-3! [&_svg]:size-5"
       >
         {icon}
         <span>{label}</span>
@@ -98,7 +99,7 @@ function ThemeItem({ theme, onPick }: { theme: Theme; onPick: (t: Theme) => void
         <SidebarMenuButton
           render={<DropdownMenuTrigger />}
           tooltip={state === 'collapsed' && !isMobile ? 'テーマ' : undefined}
-          className="h-10 gap-3 px-3 text-sm group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-2.5! [&_svg]:size-5"
+          className="h-10 gap-3 px-3 text-sm group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-3! [&_svg]:size-5"
         >
           <CircleHalfIcon />
           <span>テーマ</span>
@@ -137,7 +138,7 @@ const Social = ({ href, label, icon, className }: { href: string; label: string;
   </a>
 )
 
-const BOTTOM_ITEM = 'flex h-full w-full flex-col items-center justify-center gap-0.5 text-[11px] leading-none text-muted-foreground aria-[current=page]:text-primary data-popup-open:text-foreground [&_svg]:size-5'
+const BOTTOM_ITEM = 'flex h-full w-full flex-col items-center justify-center gap-1 text-xs leading-none text-muted-foreground aria-[current=page]:text-primary data-popup-open:text-foreground [&_svg]:size-5'
 
 /** 下へ読み進めている間は隠し、上へ戻したら出す。隠れている間は html に data-nav-hidden を付け、下に固定した入力などが --bottom-nav で下がる */
 function useHideOnScroll() {
@@ -193,14 +194,27 @@ function SettingsMenu({ theme, onPick, className }: { theme: Theme; onPick: (t: 
   )
 }
 
+/** 下の帯の「探す」。サイドバーの「まちを探す」と同じパレットを開く */
+function SearchItem({ className }: { className: string }) {
+  const [open, setOpen] = React.useState(false)
+  return (
+    <>
+      <button type="button" onClick={() => setOpen(true)} aria-haspopup="dialog" data-popup-open={open || undefined} className={className}>
+        <MagnifyingGlassIcon />
+        探す
+      </button>
+      <TownPalette open={open} onOpenChange={setOpen} />
+    </>
+  )
+}
+
 /** 幅の狭い画面では、サイドバーの代わりに画面の下へ並べる。入らないものは「設定」にまとめる */
 function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Theme; onPick: (t: Theme) => void }) {
   const [hidden, setHidden] = useHideOnScroll()
-  const compare = useCompareHref()
   const items = [
-    { href: '/', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
-    { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
-    { href: compare, label: 'まち比べ', icon: <ArrowsLeftRightIcon />, active: active === 'compare' },
+    { href: '/', label: 'ホーム', Icon: HouseIcon, active: active === 'home' },
+    { href: '/assistant', label: 'アシスタント', Icon: RobotIcon, active: active === 'assistant' },
+    { href: '/compare', label: 'まち比べ', Icon: ArrowsLeftRightIcon, active: active === 'compare' },
   ]
   return (
     <nav
@@ -212,14 +226,23 @@ function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Them
     >
       {/* 上にだけ線を引いて中身と分ける。下端は画面の端なので線を引かない */}
       <Separator />
-      <ul className="grid h-14 grid-cols-4">
+      <ul className="grid h-14 grid-cols-5">
         {items.map((i) => (
-          <li key={i.href}>
-            <NavLink href={i.href} aria-current={i.active ? 'page' : undefined} className={BOTTOM_ITEM}>
-              {i.icon}
-              {i.label}
-            </NavLink>
-          </li>
+          <React.Fragment key={i.href}>
+            <li>
+              <NavLink href={i.href} aria-current={i.active ? 'page' : undefined} className={BOTTOM_ITEM}>
+                {/* 今いる頁の icon は塗りつぶし（fill）にして、色だけでなく形でも選択中とわかるようにする */}
+                <i.Icon weight={i.active ? 'fill' : 'regular'} />
+                {i.label}
+              </NavLink>
+            </li>
+            {/* 探すはホームの隣（サイドバーで頭にあるのと同じ順） */}
+            {i.href === '/' ? (
+              <li>
+                <SearchItem className={BOTTOM_ITEM} />
+              </li>
+            ) : null}
+          </React.Fragment>
         ))}
         <li>
           <SettingsMenu theme={theme} onPick={onPick} className={BOTTOM_ITEM} />

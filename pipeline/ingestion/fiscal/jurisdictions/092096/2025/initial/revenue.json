@@ -1,0 +1,611 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "092096",
+    "fiscal_year": 2025,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "5869cac4b6c1d24e925e276073fa9c375d151c5a646deeb3ac2b4903dccaed89"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-ocr-1",
+          "origin_sha256": "5869cac4b6c1d24e925e276073fa9c375d151c5a646deeb3ac2b4903dccaed89",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "d54741e93df64e90c68db3d107ff9af0b90545546d51c7f300ee530c967947ee",
+          "bytes": 1205761
+        },
+        {
+          "id": "general-initial-ocr-2",
+          "origin_sha256": "5869cac4b6c1d24e925e276073fa9c375d151c5a646deeb3ac2b4903dccaed89",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "33f21a7de950681b811f09bc67dbfc1c130f95d66b5481ae4141bff4e9ee7894",
+          "bytes": 2857583
+        },
+        {
+          "id": "general-initial-ocr-3",
+          "origin_sha256": "5869cac4b6c1d24e925e276073fa9c375d151c5a646deeb3ac2b4903dccaed89",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "37537017caed423bb4c29a38686eab74cecb770c8a11bc34432941905995e295",
+          "bytes": 1432655
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の根拠や内訳の注記で、節の額を分ける内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p13-jidosha-juryo-zei",
+            "page": 13,
+            "code": "2",
+            "observed_name": "自動車重量譲与稅",
+            "corrected_name": "自動車重量譲与税",
+            "reason": "Paddle が「税」を中国語の字形の「稅」と読んだ。原典の画像では「税」と印字している。字形の対応表に足すと保存済みの他の表の名前も変わりうるので、この行だけを宣言する。"
+          },
+          {
+            "id": "p36-silver-center",
+            "page": 36,
+            "code": "1",
+            "observed_name": "シルバー人材センタ一運営資金",
+            "corrected_name": "シルバー人材センター運営資金",
+            "reason": "「センター」の長音「ー」を Paddle が漢数字の「一」に読んだ。字形の対応表は1字ずつで、カタカナの直後の「一」だけを直す規則は置けないので、この行だけを宣言する。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6adfda59fd9f8471e2e1095c572144ab0634cc9aeb11619eacfd56e3107fba77"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-initial-ocr-1",
+          "origin_sha256": "6adfda59fd9f8471e2e1095c572144ab0634cc9aeb11619eacfd56e3107fba77",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "580eb2ad4493da9e2501f85f4e02f34198fdfe7409f2a7591e3674d8db20887d",
+          "bytes": 1007836
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の根拠や内訳の注記で、節の額を分ける内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p7-kouki-shien-zei",
+            "page": 7,
+            "code": "2",
+            "observed_name": "後期高齢者支援金分現年課稅分",
+            "corrected_name": "後期高齢者支援金分現年課税分",
+            "reason": "Paddle が「税」を中国語の字形の「稅」と読んだ。原典の画像では「税」と印字している。字形の対応表に足すと保存済みの他の表の名前も変わりうるので、この行だけを宣言する。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6adfda59fd9f8471e2e1095c572144ab0634cc9aeb11619eacfd56e3107fba77"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-initial-ocr-1",
+          "origin_sha256": "6adfda59fd9f8471e2e1095c572144ab0634cc9aeb11619eacfd56e3107fba77",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              33,
+              34,
+              35,
+              36,
+              37
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "2aa8fee0e307219dd2d075c98214df1373882ea641e51ebe7209631a58963095",
+          "bytes": 467006
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の根拠や内訳の注記で、節の額を分ける内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6adfda59fd9f8471e2e1095c572144ab0634cc9aeb11619eacfd56e3107fba77"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-initial-ocr-1",
+          "origin_sha256": "6adfda59fd9f8471e2e1095c572144ab0634cc9aeb11619eacfd56e3107fba77",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "4c7f5af383aa3f1542f4a8b8e387df1b14f7703473f2ce27308193169da8579a",
+          "bytes": 1096175
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計（保険事業勘定）",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の根拠や内訳の注記で、節の額を分ける内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ]
+    },
+    {
+      "id": "care-service-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6adfda59fd9f8471e2e1095c572144ab0634cc9aeb11619eacfd56e3107fba77"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "care-service-initial-ocr-1",
+          "origin_sha256": "6adfda59fd9f8471e2e1095c572144ab0634cc9aeb11619eacfd56e3107fba77",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              79,
+              80,
+              81
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "4d95f7679ca10499b2ebeb7ebe26a0836ba246db4b53fc66e5fee84a0b5dc440",
+          "bytes": 172935
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計（介護サービス事業勘定）",
+        "table_id": "care-service-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の根拠や内訳の注記で、節の額を分ける内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-service-initial"
+        }
+      ]
+    },
+    {
+      "id": "holiday-clinic-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "2e5a9d2fce39c6639a9cf549655bc29b6de930ce4e51381a064c7eaf9631f012"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "holiday-clinic-initial-ocr-1",
+          "origin_sha256": "2e5a9d2fce39c6639a9cf549655bc29b6de930ce4e51381a064c7eaf9631f012",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "7acb2abc0aec1007a1f772b147755bec087ab539fc5480d068c01cce4ebc0125",
+          "bytes": 375796
+        }
+      ],
+      "options": {
+        "account": "休日夜間急患診療所特別会計",
+        "table_id": "holiday-clinic-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の根拠や内訳の注記で、節の額を分ける内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "holiday-clinic-initial"
+        }
+      ]
+    },
+    {
+      "id": "industrial-park-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "2e5a9d2fce39c6639a9cf549655bc29b6de930ce4e51381a064c7eaf9631f012"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "industrial-park-initial-ocr-1",
+          "origin_sha256": "2e5a9d2fce39c6639a9cf549655bc29b6de930ce4e51381a064c7eaf9631f012",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              22,
+              23,
+              24,
+              25,
+              26,
+              27
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "070604eb0d9306fba736f4aacafa50573a8ab5d714cce74379d5e18aa16a4348",
+          "bytes": 356289
+        }
+      ],
+      "options": {
+        "account": "産業団地整備事業特別会計",
+        "table_id": "industrial-park-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の根拠や内訳の注記で、節の額を分ける内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "industrial-park-initial"
+        }
+      ]
+    }
+  ]
+}

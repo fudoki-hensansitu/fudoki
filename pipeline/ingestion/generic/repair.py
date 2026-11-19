@@ -83,7 +83,7 @@ def rules() -> tuple[tuple[str, str, re.Pattern | None], ...]:
 # --- 1. invisible glyphs -----------------------------------------------------
 
 def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, character_map: dict[str, str] | None = None,
-            line_clips: bool = False, em_boxes: bool = False):
+            line_clips: bool = False, em_boxes: bool = False, white_cover: bool = False):
     """(box, character, visible) of every drawn character, in Poppler's top-left coordinates.
 
     Visibility belongs to the text object that draws the character: visible
@@ -92,45 +92,69 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
     object's own bounds are too, so either the character box or the object's bounds meeting it is visible
     (281000 draws each page as a form scaled from 72×72).
     `line_clips` (the repair `line_clips`): `patterns/repairs/line_clips.py`. `em_boxes` (the repair `em_boxes`): a
-    character's box is its em square, not its ink (`patterns/repairs/em_boxes.py`).
+    character's box is its em square, not its ink (`patterns/repairs/em_boxes.py`). `white_cover` (the repair
+    `white_cover`): a character a later white filled path covers is hidden (`patterns/repairs/white_cover.py`).
     """
     import pypdfium2.raw as raw
     page = pdf[number - 1]
-    left, _, _, top = page.get_mediabox()  # Poppler's words are measured from the MediaBox, even when a CropBox is smaller
+    left, bottom, _, top = page.get_mediabox()  # Poppler's words are measured from the MediaBox, even when a CropBox is smaller
+    # A page turned a quarter (`/Rotate 90`, the spreads of 132047's 決算書) is read by Poppler as shown: its x runs up
+    # the page's y and its y along the page's x. pdfium's boxes are in the page's own space.
+    turned = page.get_rotation() == 90
+    view = (lambda l, b, r, t: (b - bottom, l - left, t - bottom, r - left)) if turned else \
+        (lambda l, b, r, t: (l - left, top - t, r - left, top - b))
     textpage = page.get_textpage()
     clips: dict[int, tuple | None] = {}
 
     def clip_of(handle):
-        """The clip rectangle of an object (page space), or None when it has none."""
+        """The clip rectangle of an object (page space): the intersection of its clip paths' boxes, as the PDF
+        intersects each clip it sets. () when they do not meet (nothing of the object is drawn), None when it has no
+        clip. A copy of another page's text clipped to two rectangles that do not meet draws nothing, though the box
+        around both meets it (世田谷区の予算書 2023 p54: a line of 説明 read into the 説明 heading)."""
         address = ctypes.cast(handle, ctypes.c_void_p).value
         if address not in clips:
             clip = raw.FPDFPageObj_GetClipPath(handle)
-            box = None
-            if clip and raw.FPDFClipPath_CountPaths(clip) > 0:
+            box, boxes = None, []
+            for i in range(raw.FPDFClipPath_CountPaths(clip) if clip else 0):
                 xs, ys = [], []
-                for i in range(raw.FPDFClipPath_CountPaths(clip)):
-                    for j in range(raw.FPDFClipPath_CountPathSegments(clip, i)):
-                        segment = raw.FPDFClipPath_GetPathSegment(clip, i, j)
-                        x, y = ctypes.c_float(), ctypes.c_float()
-                        raw.FPDFPathSegment_GetPoint(segment, x, y)
-                        xs.append(x.value); ys.append(y.value)
-                box = (min(xs), min(ys), max(xs), max(ys)) if xs else None
-            clips[address] = box
+                for j in range(raw.FPDFClipPath_CountPathSegments(clip, i)):
+                    segment = raw.FPDFClipPath_GetPathSegment(clip, i, j)
+                    x, y = ctypes.c_float(), ctypes.c_float()
+                    raw.FPDFPathSegment_GetPoint(segment, x, y)
+                    xs.append(x.value); ys.append(y.value)
+                if xs:
+                    boxes.append((min(xs), min(ys), max(xs), max(ys)))
+            # A path read as a line (under 1pt across) is no clip to meet: pdfium gives such a box for a clip under which
+            # the text still prints (`595.3 8.5 595.3 841.9` beside the frame of 中央区の予算書 2023 p2). With only such
+            # paths, the box around them stands (`line_clips`).
+            areas = [b for b in boxes if b[2] - b[0] >= 1 and b[3] - b[1] >= 1]
+            if areas:
+                box = (max(b[0] for b in areas), max(b[1] for b in areas), min(b[2] for b in areas), min(b[3] for b in areas))
+            elif boxes:
+                box = (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
+            clips[address] = box if box is None or (box[0] <= box[2] and box[1] <= box[3]) else ()
         return clips[address]
 
     def inside(box, clip) -> bool:
         # box and clip as (left, bottom, right, top) in PDF space
-        return clip is None or (box[0] < clip[2] and box[2] > clip[0] and box[1] < clip[3] and box[3] > clip[1])
+        return clip is None or clip != () and (box[0] < clip[2] and box[2] > clip[0] and box[1] < clip[3] and box[3] > clip[1])
 
     paths = []
     flat_paths: set[int] = set()
+    cover = load_pattern("repairs", "white_cover") if white_cover else None
+    order: dict[int, int] = {}  # the place of each top-level object in the drawing order
+    covers: list = []
     for index in range(raw.FPDFPage_CountObjects(page.raw)):
         handle = raw.FPDFPage_GetObject(page.raw, index)
+        if cover is not None:
+            order[ctypes.cast(handle, ctypes.c_void_p).value] = index
         if raw.FPDFPageObj_GetType(handle) == raw.FPDF_PAGEOBJ_PATH:
             l, b, r, t = (ctypes.c_float() for _ in range(4))
             raw.FPDFPageObj_GetBounds(handle, l, b, r, t)
-            paths.append(((l.value - left, top - t.value, r.value - left, top - b.value),
+            paths.append((view(l.value, b.value, r.value, t.value),
                           inside((l.value, b.value, r.value, t.value), clip_of(handle))))
+            if cover is not None and paths[-1][1] and cover.covers(raw, handle):
+                covers.append((index, (l.value, b.value, r.value, t.value)))
             if line_clips and not paths[-1][1] and load_pattern("repairs", "line_clips").flat(clip_of(handle)):
                 flat_paths.add(len(paths) - 1)
     found = []
@@ -152,6 +176,8 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
         # The character box is in page space; compare it, not the object's bounds,
         # with the clip (object bounds come back in another space on some PDFs).
         visible = inside((l.value, b.value, r.value, t.value), clip_of(handle)) if handle else True
+        if visible and covers and handle and (at := order.get(ctypes.cast(handle, ctypes.c_void_p).value)) is not None:
+            visible = not cover.hidden((l.value, b.value, r.value, t.value), at, covers)
         if not visible and form_clips:
             ol, ob, orr, ot = (ctypes.c_float() for _ in range(4))
             raw.FPDFPageObj_GetBounds(handle, ol, ob, orr, ot)
@@ -159,7 +185,7 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
         char = (character_map or {}).get(chr(code), chr(code))
         if not char:
             continue  # declared to drop (`character_map`)
-        found.append(((l.value - left, top - t.value, r.value - left, top - b.value), char, visible))
+        found.append((view(l.value, b.value, r.value, t.value), char, visible))
         if line_clips and not visible and handle and load_pattern("repairs", "line_clips").flat(clip_of(handle)):
             flat.add(len(found) - 1)
     width = page.get_width()
@@ -277,7 +303,7 @@ def drop_invisible(pdf_path: Path, pages: list[Page], report: Report, repairs: f
     pdf = pdfium.PdfDocument(str(pdf_path))
     try:
         read = lambda number: _glyphs(pdf, number, 'opening_cell' in repairs, form_clips, character_map, 'line_clips' in repairs,
-                                      'em_boxes' in repairs)
+                                      'em_boxes' in repairs, 'white_cover' in repairs)
         cached = {page.number: read(page.number) for page in pages} if 'line_clips' in repairs else {}
         offset = load_pattern("repairs", "line_clips").offset([found for found, _ in cached.values()]) if cached else 0.0
         for page in pages:
@@ -636,13 +662,19 @@ def repair(pdf_path: Path | None, pages: list[Page], repairs: frozenset = frozen
             report.invisible_error = f'{type(error).__name__}: {error}'
             report.hidden_glyphs = report.hidden_rules = 0
     minus = document_quirk('delta_minus')
+    marks = document_quirk('substituted_glyphs')
+    across = document_quirk('digits_across_rules')
     strokes = document_quirk('glyph_strokes')
     for page in pages:
         if minus is not None:
             minus.module.replace(page)
+        if marks is not None:
+            marks.module.replace(page)
         if strokes is not None:
             strokes.module.drop(page)
         repair_positions(page, report, 'split_at_rules' in repairs)
+        if across is not None:
+            across.module.split(page)
         join_vertical(page, report, 'stacked_rows' in repairs, 'spaced_letters' in repairs)
         if 'justified_names' in repairs:
             load_pattern("repairs", "justified_names").join(page)

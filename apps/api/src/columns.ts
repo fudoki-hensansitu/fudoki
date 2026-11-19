@@ -30,7 +30,7 @@ export const DOCUMENT_KINDS = ['settlement', 'initial'] as const
 /** 検索の対象の表（歳出の科目・内訳、事業評価のシート、事業の年度） */
 export interface FiscalTable {
   /** 操作名に使う複数形（page_token の指紋に入れる） */
-  kind: 'subjects' | 'details' | 'evaluation_sheets' | 'project_years'
+  kind: 'subjects' | 'details' | 'revenue_subjects' | 'revenue_details' | 'evaluation_sheets' | 'project_years'
   table: string
   primaryKey: string
   /** document_kind の列があり、検索で必ず1つに絞る表か */
@@ -70,6 +70,7 @@ const DERIVED_COLUMNS: Record<string, ColumnSpec> = Object.fromEntries(
       ['kou_name', 'string', '所属する項の出典の名称（項では自分）。款と、款の直下の目では NULL。', true],
       ['moku_code', 'string', '所属する出典の目番号（目では自分）。款・項では NULL。', true],
       ['moku_name', 'string', '所属する目の名称（目では自分）。款・項（内訳では項の直下の内訳）では NULL。', true],
+      ['source_page', 'integer', '名前が印字された出典の頁（origin_id の PDF の中で1から数える）。URL に #page=<頁> を付けるとその頁が開く。CSV の出典と、位置の分からない行では NULL。', true],
     ] as const
   ).map(([name, type, description, nullable, values]) => [name, { name, type, description, nullable, ...(values ? { values: [...values] } : {}) }])
 )
@@ -89,6 +90,9 @@ const SUBJECT_REMAINDER: ColumnSpec = {
     '末端でない科目（目を持つ項など）の直下の枝の根か。子の科目と並んで科目の額の一部を構成する（神戸市の福祉局の冊が目を立てずに印字した項の分、ADR 0030）。神戸市の2025年度一般会計は、科目の is_leaf の和にこの行を足しても款の和に 38,000円足りない（冊をまたいで足せない節がノードに無い）。depth = 1 の和の規則の外。',
 }
 
+/** 行の名前が印字された頁。位置の表は line_id が主キーなので1行を引く */
+const sourcePage = (id: 'subject_id' | 'detail_id') => `(SELECT l."source_page" FROM expenditure_location l WHERE l."line_id" = x."${id}")`
+
 /** 所属する款・項・目を、起点の科目 s・親 p・祖父母 g の段から求める式（目が款の直下にある資料がある） */
 const pathExprs = (s: string, p = 'p', g = 'g') => ({
   kan_code: `CASE WHEN ${s}."level" = '款' THEN ${s}."code" WHEN ${p}."level" = '款' THEN ${p}."code" ELSE ${g}."code" END`,
@@ -100,9 +104,9 @@ const pathExprs = (s: string, p = 'p', g = 'g') => ({
 })
 
 /** 列の並びと、それぞれを求める式から検索の対象を作る。表の列は表名の別名 x から引く */
-function searchView(kind: FiscalTable['kind'], table: string, order: readonly string[], exprs: Record<string, string>, from: string, extra: Record<string, ColumnSpec>): FiscalTable {
+function searchView(kind: FiscalTable['kind'], table: string, order: readonly string[], exprs: Record<string, string>, from: string, extra: Record<string, ColumnSpec>, rootTable = 'expenditure'): FiscalTable {
   const own = TABLES[table]!
-  const root = TABLES['expenditure']!.columns
+  const root = TABLES[rootTable]!.columns
   const specOf = (name: string): ColumnSpec =>
     extra[name] ?? DERIVED_COLUMNS[name] ?? own.columns.find((c) => c.name === name) ?? root.find((c) => c.name === name) ?? (() => { throw new Error(`${table}.${name} の列の定義が無い`) })()
   const columns = order.map(specOf)
@@ -131,9 +135,10 @@ export const SUBJECT_TABLE = searchView(
   'expenditure_subject',
   ['subject_id', 'node_key', 'parent_subject_id', 'expenditure_id', ...ROOT_COLUMNS.slice(0, 4), 'amount_phase', ...ROOT_COLUMNS.slice(4), 'level', 'code', 'name',
     'kan_code', 'kan_name', 'kou_code', 'kou_name', 'moku_code', 'moku_name', 'amount_yen', 'is_leaf',
-    'cofog_status', 'cofog_code', 'is_interfund_transfer', 'interfund_transfer_to', 'origin_id'],
+    'cofog_status', 'cofog_code', 'is_interfund_transfer', 'interfund_transfer_to', 'origin_id', 'source_page'],
   {
     ...pathExprs('x'),
+    source_page: sourcePage('subject_id'),
     amount_phase: AMOUNT_PHASE,
     is_leaf: `NOT EXISTS (SELECT 1 FROM expenditure_subject c WHERE c."parent_subject_id" = x."subject_id")`,
   },
@@ -148,9 +153,10 @@ export const DETAIL_TABLE = searchView(
   ['detail_id', 'node_key', 'parent_detail_id', 'subject_id', 'expenditure_id', ...ROOT_COLUMNS.slice(0, 4), 'amount_phase', ...ROOT_COLUMNS.slice(4),
     'kan_code', 'kan_name', 'kou_code', 'kou_name', 'moku_code', 'moku_name',
     'breakdown', 'source_heading', 'node_kind', 'depth', 'code', 'name', 'department', 'amount_yen', 'is_leaf', 'is_subject_remainder',
-    'expenditure_setsu_id', 'is_interfund_transfer', 'interfund_transfer_to', 'origin_id'],
+    'expenditure_setsu_id', 'is_interfund_transfer', 'interfund_transfer_to', 'origin_id', 'source_page'],
   {
     ...pathExprs('s'),
+    source_page: sourcePage('detail_id'),
     amount_phase: AMOUNT_PHASE,
     is_leaf: `NOT EXISTS (SELECT 1 FROM expenditure_detail c WHERE c."parent_detail_id" = x."detail_id")`,
     is_subject_remainder: `x."depth" = 1 AND EXISTS (SELECT 1 FROM expenditure_subject c WHERE c."parent_subject_id" = x."subject_id")`,
@@ -158,6 +164,62 @@ export const DETAIL_TABLE = searchView(
   `expenditure_detail x JOIN expenditure_subject s ON s."subject_id" = x."subject_id" ${rootAndPath('s')}`,
   { is_leaf: DETAIL_LEAF, is_subject_remainder: SUBJECT_REMAINDER }
 )
+
+// --- 歳入の科目の検索。歳出の科目と同じ形（根・所属する款・項・目・子の有無を SQL の中で求める） ---
+
+const REVENUE_LEAF: ColumnSpec = {
+  name: 'is_leaf',
+  type: 'boolean',
+  nullable: false,
+  description: '科目の子を持たないか（目と、目の無い項・款）。同じ資料の is_leaf の行の和が歳入の総額。',
+}
+const REVENUE_CATEGORY: ColumnSpec = {
+  ...TABLES['fiscal_revenue_category']!.columns.find((c) => c.name === 'category')!,
+  nullable: true,
+  description:
+    '所属する款の歳入の区分（風土記の判断。款の名前で fiscal_revenue_category を引く）。まちの税・国・都道府県から配られるお金・国・都道府県の支出金・借入れ・その他。辞書に無い款（一般会計以外・都道府県など）は NULL。',
+}
+const revenuePath = pathExprs('x')
+
+/** 歳入の款・項・目。同じ資料・会計の款の和が総額 */
+export const REVENUE_SUBJECT_TABLE = searchView(
+  'revenue_subjects',
+  'revenue_subject',
+  ['subject_id', 'node_key', 'parent_subject_id', 'revenue_id', ...ROOT_COLUMNS.slice(0, 4), 'amount_phase', ...ROOT_COLUMNS.slice(4), 'level', 'code', 'name',
+    'kan_code', 'kan_name', 'kou_code', 'kou_name', 'moku_code', 'moku_name', 'amount_yen', 'is_leaf', 'category', 'origin_id'],
+  {
+    ...revenuePath,
+    amount_phase: AMOUNT_PHASE,
+    is_leaf: `NOT EXISTS (SELECT 1 FROM revenue_subject c WHERE c."parent_subject_id" = x."subject_id")`,
+    // 区分は市区町村の一般会計の款だけ（get_revenue と同じ。都道府県はコード6桁の3〜5桁目が 000）
+    category: `(SELECT k."category" FROM fiscal_revenue_category k WHERE k."kan_name" = ${revenuePath.kan_name} ` +
+      `AND e."account_kind" = '一般会計' AND substr(e."jurisdiction_code", 3, 3) <> '000')`,
+  },
+  `revenue_subject x JOIN revenue e ON e."revenue_id" = x."revenue_id" ` +
+    `LEFT JOIN revenue_subject p ON p."subject_id" = x."parent_subject_id" LEFT JOIN revenue_subject g ON g."subject_id" = p."parent_subject_id"`,
+  { is_leaf: REVENUE_LEAF, category: REVENUE_CATEGORY },
+  'revenue'
+)
+/** 歳入の科目の下の内訳（節と、その下の印字）。同じ科目の depth = 1 の和が科目の額。歳出の節マスタとは別の区分 */
+export const REVENUE_DETAIL_TABLE = searchView(
+  'revenue_details',
+  'revenue_detail',
+  ['detail_id', 'node_key', 'parent_detail_id', 'subject_id', 'revenue_id', ...ROOT_COLUMNS.slice(0, 4), 'amount_phase', ...ROOT_COLUMNS.slice(4),
+    'kan_code', 'kan_name', 'kou_code', 'kou_name', 'moku_code', 'moku_name',
+    'source_heading', 'node_kind', 'depth', 'code', 'name', 'amount_yen', 'is_leaf', 'origin_id'],
+  {
+    ...pathExprs('s'),
+    amount_phase: AMOUNT_PHASE,
+    is_leaf: `NOT EXISTS (SELECT 1 FROM revenue_detail c WHERE c."parent_detail_id" = x."detail_id")`,
+  },
+  `revenue_detail x JOIN revenue_subject s ON s."subject_id" = x."subject_id" JOIN revenue e ON e."revenue_id" = x."revenue_id" ` +
+    `LEFT JOIN revenue_subject p ON p."subject_id" = s."parent_subject_id" LEFT JOIN revenue_subject g ON g."subject_id" = p."parent_subject_id"`,
+  { is_leaf: DETAIL_LEAF },
+  'revenue'
+)
+/** 歳入の科目が印字された位置（line_id は subject_id） */
+export const REVENUE_LOCATION_TABLE = 'revenue_location'
+export const REVENUE_LOCATION_SELECT_LIST = selectList(TABLES[REVENUE_LOCATION_TABLE]!.columns)
 
 /** 科目・内訳の行が印字された位置（line_id は subject_id か detail_id） */
 export const LOCATION_TABLE = 'expenditure_location'

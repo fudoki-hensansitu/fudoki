@@ -1,0 +1,123 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131172",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-setsu",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "612a0b3c6423405b7ef0d77d9c104f44c3af191d3643d3879eaa6d1f3682f8cc"
+        }
+      ],
+      "options": {
+        "table_id": "general-setsu",
+        "account": "一般会計",
+        "part": "detail",
+        "workflow": {
+          "reading": {
+            "pattern": "clipped_columns",
+            "profile": "fiscal/jurisdictions/131172/layouts/text_settlement_revenue/reading.json"
+          },
+          "components": [
+            "clipped_words"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-setsu"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-setsu",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "612a0b3c6423405b7ef0d77d9c104f44c3af191d3643d3879eaa6d1f3682f8cc"
+        }
+      ],
+      "options": {
+        "table_id": "kaigo-setsu",
+        "account": "介護保険会計",
+        "part": "detail",
+        "workflow": {
+          "reading": {
+            "pattern": "clipped_columns",
+            "profile": "fiscal/jurisdictions/131172/layouts/text_settlement_revenue/reading.json"
+          },
+          "components": [
+            "clipped_words"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-setsu"
+        }
+      ]
+    },
+    {
+      "id": "kokuho-setsu",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "612a0b3c6423405b7ef0d77d9c104f44c3af191d3643d3879eaa6d1f3682f8cc"
+        }
+      ],
+      "options": {
+        "table_id": "kokuho-setsu",
+        "account": "国民健康保険事業会計",
+        "part": "detail",
+        "workflow": {
+          "reading": {
+            "pattern": "clipped_columns",
+            "profile": "fiscal/jurisdictions/131172/layouts/text_settlement_revenue/reading.json"
+          },
+          "components": [
+            "clipped_words"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-setsu"
+        }
+      ]
+    },
+    {
+      "id": "kouki-setsu",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "612a0b3c6423405b7ef0d77d9c104f44c3af191d3643d3879eaa6d1f3682f8cc"
+        }
+      ],
+      "options": {
+        "table_id": "kouki-setsu",
+        "account": "後期高齢者医療会計",
+        "part": "detail",
+        "workflow": {
+          "reading": {
+            "pattern": "clipped_columns",
+            "profile": "fiscal/jurisdictions/131172/layouts/text_settlement_revenue/reading.json"
+          },
+          "components": [
+            "clipped_words"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-setsu"
+        }
+      ]
+    }
+  ]
+}

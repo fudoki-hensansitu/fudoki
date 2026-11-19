@@ -45,6 +45,230 @@
           "table_id": "general-expenditure"
         }
       ]
+    },
+    {
+      "id": "national-health-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5446798e49e83ac53fd76f368ecb9299433f8eea59491d3d17b3538d51e16915"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5446798e49e83ac53fd76f368ecb9299433f8eea59491d3d17b3538d51e16915"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "elderly-medical-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "care-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5446798e49e83ac53fd76f368ecb9299433f8eea59491d3d17b3538d51e16915"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "care-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "school-lunch-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5446798e49e83ac53fd76f368ecb9299433f8eea59491d3d17b3538d51e16915"
+        }
+      ],
+      "options": {
+        "account": "学校給食費会計",
+        "table_id": "school-lunch-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "school-lunch-expenditure"
+        }
+      ]
     }
   ]
 }

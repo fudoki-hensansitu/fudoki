@@ -1,0 +1,247 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131024",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "cd6a87145f6d5d98eed622c519b21a5e6c915b46a3210b7c8c816de899ec1b94"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の計上説明は節ごとの算定の基（調定見込額・収入歩合・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  }
+                },
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "59d651d645e077dd7ec681603462ae21d2b85ada9b8abf66d9444d206375c824"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の計上説明は節ごとの算定の基（調定見込額・収入歩合・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  }
+                },
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b627b605b2d0e960d6b41cf5fc889ec82fb04f9e34cecd1d45832a8f9acfe28a"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の計上説明は節ごとの算定の基（調定見込額・収入歩合・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  }
+                },
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a8048f4a253c83ea7c07963ce6205d268ccd8e789de57950b46b1004ff3e8581"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の計上説明は節ごとの算定の基（調定見込額・収入歩合・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  }
+                },
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    }
+  ]
+}

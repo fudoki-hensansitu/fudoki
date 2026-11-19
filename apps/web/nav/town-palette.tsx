@@ -6,6 +6,7 @@ import { Command, CommandDialog, CommandEmpty, CommandInput, CommandItem, Comman
 import { MoreDots } from '@/components/more-dots'
 import type { MapEntry } from '../jurisdiction/index-table'
 import { useTownSearch } from '../home/towns'
+import { Emblem } from '../home/town-picker'
 
 export function TownPalette({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const { visit } = useRouter()
@@ -16,7 +17,7 @@ export function TownPalette({ open, onOpenChange }: { open: boolean; onOpenChang
     visit(e.path)
   }
   return (
-    <CommandDialog open={open} onOpenChange={onOpenChange} title="まちを探す" description="自治体名で探して、そのまちの頁を開きます">
+    <CommandDialog open={open} onOpenChange={onOpenChange} title="まちを探す" description="自治体名で探して開きます">
       <Command shouldFilter={false}>
         <CommandInput placeholder="自治体名で探す（例：品川）" value={q} onValueChange={setQ} />
         <CommandList>
@@ -33,8 +34,10 @@ export function TownPalette({ open, onOpenChange }: { open: boolean; onOpenChang
           </CommandEmpty>
           {(entries ?? []).map((e) => (
             <CommandItem key={e.code} value={e.code} onSelect={() => pick(e)}>
+              {/* 名前だけでなく紋章でも見分けられるようにする（2026-11-18 yuito） */}
+              <Emblem code={e.code} name={e.name} className="size-8 rounded-lg p-1" />
               {e.name}
-              <span className="text-[11px] text-muted-foreground">{e.kind === '都道府県' ? '都道府県' : e.prefecture}</span>
+              <span className="text-xs text-muted-foreground">{e.kind === '都道府県' ? '都道府県' : e.prefecture}</span>
             </CommandItem>
           ))}
           {hasMore ? <MoreDots key={moreKey} onVisible={more} /> : null}

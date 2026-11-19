@@ -1044,6 +1044,138 @@
           "table_id": "general-expenditure-detail"
         }
       ]
+    },
+    {
+      "id": "forest-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "1c2c2325cf2801c38cbb87729164035389fff598d68ff17d8d332d7f22b63064"
+        }
+      ],
+      "options": {
+        "account": "都民の森管理運営事業特別会計",
+        "table_id": "forest-expenditure",
+        "pages": [
+          [
+            10,
+            12
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "事業": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                },
+                "予算現額／区分／節": {
+                  "kind": "label",
+                  "axis_header": "節"
+                }
+              },
+              "rules": {
+                "row_gaps": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "amounts": "next_row",
+              "fourth_level_axis": "事業"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "備考": {
+                "pattern": "indent",
+                "quirks": {
+                  "headings": true,
+                  "under": "節"
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "forest-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "furusato-village-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3e1052edba79ee6b2e671a8fc89caeb05ed0f37caa2d2ee90a56602adf3aa531"
+        }
+      ],
+      "options": {
+        "account": "山のふるさと村管理運営事業特別会計",
+        "table_id": "furusato-village-expenditure",
+        "pages": [
+          [
+            10,
+            12
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "事業": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                },
+                "予算現額／区分／節": {
+                  "kind": "label",
+                  "axis_header": "節"
+                }
+              },
+              "rules": {
+                "row_gaps": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "amounts": "next_row",
+              "fourth_level_axis": "事業"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "備考": {
+                "pattern": "indent",
+                "quirks": {
+                  "headings": true,
+                  "under": "節"
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "furusato-village-expenditure"
+        }
+      ]
     }
   ]
 }

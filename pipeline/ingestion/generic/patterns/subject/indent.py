@@ -34,9 +34,12 @@ def alignment(all_items, codes_right, glued=None):
             if group.subject and group.mode == 'indent':
                 for item in found[id(group)]:
                     if item.code is not None and item.role == 'node' and item.glyphs:
-                        code_starts[item.level].append(item.glyphs[0].x0)
-                        if len(item.glyphs[0].text) == 1:
-                            digit_widths[item.level].append(item.glyphs[0].x1 - item.glyphs[0].x0)
+                        # Where the code starts: a code printed between the two lines of its name (`第一号被保険` / `1` /
+                        # `者保険料`, 渋谷区 R6 決算の介護保険の歳入, `code_between_name_lines`) is not the name line above it.
+                        code = next((g for g in item.glyphs if normalize(digits_of(g)).startswith(item.code)), item.glyphs[0])
+                        code_starts[item.level].append(code.x0)
+                        if len(code.text) == 1:
+                            digit_widths[item.level].append(code.x1 - code.x0)
     # Codes set right across the whole subject column (a 款 `5` and `10` of nested boxes): a two-digit code starts
     # one digit before a one-digit code of its level, so it is read at the position the one-digit codes start.
     # (A two-digit code the text layer cuts after its first digit, `1` `3.文` of `13.文化費`, is a two-digit one.)
@@ -61,12 +64,17 @@ def alignment(all_items, codes_right, glued=None):
         gap = max(common) - min(common) if common else 0
         if common and 3 < gap and (gap <= 6.5 or abs(gap - digit) <= .6):
             right_set.add(level)
-    return one_width, codes_set_right, right_set
+    # A scan (every page OCR) reads a staircase by its columns; a text document's few OCR pages read it as its text
+    # pages do, from where the codes start, or one level starts at two values (132080 決算 R6 p382, 項 at the 款's).
+    scan = all(logical.ocr for logical, _, _ in all_items)
+    return one_width, codes_set_right, right_set, scan
 
 
 def align(logical, group, kept, alignment):
-    one_width, codes_set_right, right_set = alignment
+    one_width, codes_set_right, right_set, scan = alignment
     run_into = document_quirk('code_run_into_name')
+    across = document_quirk('codes_across_level_rules')  # codes that run past their level's box
+    marked = document_quirk('codes_before_marks')  # codes moved left by the mark of a dropped subject
     glued = document_quirk('glued_subject_codes')
     digits_of = glued.module.digits if glued is not None else (lambda glyph: glyph.text)
     # Join at the name's position before learning subject levels from the code's start.
@@ -80,15 +88,23 @@ def align(logical, group, kept, alignment):
         lead = (coded or item.glyphs[0]) if glued is not None else item.glyphs[0]
         band = group.bands[item.level] if 0 <= item.level < len(group.bands) else None
         narrow = len(group.bands) >= 3 and all(b.x1 - b.x0 < 20 for b in group.bands[:-1])
-        if run_into is not None and codes_set_right and item.code is not None and run_into.module.set_right(item):
+        staircase = band is not None and item.code is not None and narrow and item.level in right_set and across is None
+        if staircase and logical.ocr and scan:
+            # A staircase of narrow level columns with the codes set right: the column is the level, not where the
+            # digits start (`5` and `10` of one 目 start 5pt apart). On a scan this holds whether OCR reads the code as
+            # a word of its own (`1` `一般管理費`) or glued to the name (`2秘書事務費`, 瑞穂町 R5 決算).
+            item.indent = band.x0
+        elif run_into is not None and codes_set_right and item.code is not None and run_into.module.set_right(item):
             item.indent += one_width if len(item.code) == 2 else 0
         elif run_into is None and codes_set_right and item.code is not None and re.fullmatch(r'[0-9]{1,2}', digits_of(lead)):
             # A two-digit code the text layer cuts after its first digit (`1` `3.文`) is two-digit too.
             item.indent += one_width if 2 in (len(item.code), len(digits_of(lead))) else 0
-        elif band is not None and item.code is not None and narrow and item.level in right_set:
-            # A staircase of narrow level columns with the codes set right: the column is the level,
-            # not where the digits start (`5` and `10` of one 目 start 5pt apart).
+        elif staircase:
             item.indent = band.x0
+        if across is not None:
+            across.module.align(item, across.value, group.bands)
+        if marked is not None:
+            marked.module.align(item, marked.value)
 
 
 def learn_levels(all_items, codeless=None, stray=None):
@@ -133,6 +149,7 @@ def learn_levels(all_items, codeless=None, stray=None):
     if stray is not None:  # the quirk `stray_subject_starts`
         subject_levels = stray.module.fold(subject_levels)
     centres = [sum(c) / len(c) for c in subject_levels]
+    marked = document_quirk('abolished_level_marks')
     for _, ordered, found in all_items:
         for group in ordered:
             if group.subject and group.mode == 'indent':
@@ -146,6 +163,11 @@ def learn_levels(all_items, codeless=None, stray=None):
                     if item.code is None and (dropped := ABOLISHED.fullmatch(normalize(item.name or ''))) is not None \
                             and dropped.group(1) in SUBJECT_LEVELS and 0 <= SUBJECT_LEVELS.index(dropped.group(1)) - above < len(centres):
                         item.level = SUBJECT_LEVELS.index(dropped.group(1)) - above
+                    # A dropped subject marked `廃目` where its code would stand: the quirk `abolished_level_marks`.
+                    if item.code is None and marked is not None and (split := marked.module.split(normalize(item.name or ''))) \
+                            and 0 <= SUBJECT_LEVELS.index(split[0]) - above < len(centres):
+                        item.level = SUBJECT_LEVELS.index(split[0]) - above
+                        item.name = split[1]
                     item.level_name = SUBJECT_LEVELS[item.level + above] if item.level + above < len(SUBJECT_LEVELS) else None
     # A 項・目 printed without its code: the quirk `codeless_name_levels`.
     if codeless is not None:

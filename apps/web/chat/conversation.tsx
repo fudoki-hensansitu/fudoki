@@ -1,6 +1,6 @@
 // 会話の本体。履歴はブラウザだけが持ち、送るたびに web の Worker（/api/chat）へ渡す。
 // 会話の画面（/s/:id）は頁全体を、自治体の個別ページは下から出す drawer の中を、scroller としてスクロールする。
-// AI が描画 tool を呼んだ結果は、apps/api の MCP Apps の View を iframe に置いて見せる（独自の表は作らない）
+// AI が tool を呼んだところは印だけを出す（表とグラフはまだ出さない）
 import * as React from 'react'
 import { useChat } from '@ai-sdk/react'
 import { DefaultChatTransport, type DynamicToolUIPart, type UIMessage } from 'ai'
@@ -15,14 +15,13 @@ import { Composer } from './composer'
 import { forServer, MAX_CONTEXT, splitContext } from './history'
 import { Markdown } from './markdown'
 import { saveSession, type StoredSession } from './store'
-import { ViewFrame } from './view-frame'
 
 /** 頁の端からこの距離以内なら、その側のフェードは出さない */
 const FADE_EDGE_PX = 4
 /** 一番下からこの距離以内なら、読み終えて追っていると見なす */
 const NEAR_BOTTOM_PX = 120
 
-type Metadata = { apps?: Record<string, string>; context?: string }
+type Metadata = { context?: string }
 type ChatMessage = UIMessage<Metadata>
 
 const TOOL_LABELS: Record<string, string> = {
@@ -35,7 +34,14 @@ const TOOL_LABELS: Record<string, string> = {
   search_evaluation_sheets: '評価シートを検索',
   get_project: '事業を開く',
   search_projects: '事業を検索',
-  render_expenditure_view: '表とグラフを用意',
+  count_evaluation_sheets: '評価シートを数える',
+  get_revenue: '歳入を開く',
+  search_revenue_subjects: '歳入を検索',
+  search_revenue_details: '歳入の内訳を検索',
+  get_revenue_line: '歳入の科目・内訳を開く',
+  get_population: '人口を確認',
+  get_local_finance: '財政の指標を確認',
+  fetch_page: '頁を読む',
   read_source_page: '資料を読む',
 }
 
@@ -71,7 +77,6 @@ export function Conversation({
   context,
   beforeComposer,
   onSend,
-  movableViews = false,
 }: {
   id: string
   stored: StoredSession
@@ -80,16 +85,13 @@ export function Conversation({
   /** 会話をスクロールする箱。無ければ頁全体 */
   scroller?: React.RefObject<HTMLElement | null>
   autoFocus?: boolean
-  /** 送るたびに読む、頁で見ているもの（自治体の頁の画面・選んだ文）。表とグラフの View が渡す文脈の前に足す */
+  /** 送るたびに読む、頁で見ているもの（自治体の頁の画面・選んだ文） */
   context?: () => string | undefined
   /** 続けて聞く入力欄の上に出すもの（選んだ文など） */
   beforeComposer?: React.ReactNode
   /** 続けて聞いたとき（選んだ文を外すなど） */
   onSend?: () => void
-  /** 表とグラフを会話の横のパネルへ移せるか。会話の頁だけ。自治体の頁のように会話がパネルの中にあるときは移さない */
-  movableViews?: boolean
 }) {
-  const viewContext = React.useRef(stored.viewContext ?? '')
   // 頁の文脈は質問ごとに読み、その発言の metadata に持たせる（server が選んだ文は質問の直前の利用者の発言に、見ている画面は最後の質問のものだけを system prompt に入れる）
   const contextRef = React.useRef(context)
   contextRef.current = context
@@ -99,7 +101,7 @@ export function Conversation({
         api: '/api/chat',
         headers: { Authorization: `Bearer ${stored.token}` },
         prepareSendMessagesRequest: ({ messages }) => ({
-          body: { id, messages: forServer(messages), ...(stored.entry ? { entry: stored.entry } : {}), ...(viewContext.current ? { viewContext: viewContext.current } : {}) },
+          body: { id, messages: forServer(messages), ...(stored.entry ? { entry: stored.entry } : {}) },
         }),
       }),
     [id, stored.token],
@@ -109,7 +111,7 @@ export function Conversation({
     messages: (stored.messages ?? []) as ChatMessage[],
     transport,
     onFinish: ({ messages }) => {
-      return saveSession(id, { token: stored.token, expiresAt: stored.expiresAt, messages, ...(stored.entry ? { entry: stored.entry } : {}), ...(viewContext.current ? { viewContext: viewContext.current } : {}) })
+      return saveSession(id, { token: stored.token, expiresAt: stored.expiresAt, messages, ...(stored.entry ? { entry: stored.entry } : {}) })
     },
   })
   const busy = status === 'submitted' || status === 'streaming'
@@ -125,7 +127,7 @@ export function Conversation({
   React.useEffect(() => {
     if (sent.current || !stored.pending) return
     sent.current = true
-    saveSession(id, { token: stored.token, expiresAt: stored.expiresAt, messages: stored.messages, ...(stored.entry ? { entry: stored.entry } : {}), ...(stored.viewContext ? { viewContext: stored.viewContext } : {}) })
+    saveSession(id, { token: stored.token, expiresAt: stored.expiresAt, messages: stored.messages, ...(stored.entry ? { entry: stored.entry } : {}) })
     // 入口で書いた最初の質問は、書いたときの文脈（選んだ文を含む）で送る
     send(stored.pending, stored.pendingContext)
   }, [id, stored, send])
@@ -186,7 +188,6 @@ export function Conversation({
     status === 'submitted' ||
     (status === 'streaming' &&
       (last === undefined || last.type === 'step-start' || (last.type === 'dynamic-tool' && (last.state === 'output-available' || last.state === 'output-error'))))
-  const apps = (m: ChatMessage) => m.metadata?.apps ?? {}
   return (
     <div className={`flex w-full flex-col ${scroller ? 'min-h-full' : 'min-h-dvh'}`}>
       <div className="sticky top-0 z-20 bg-background">
@@ -208,13 +209,6 @@ export function Conversation({
                         </Bubble>
                       )
                     if (p.type !== 'dynamic-tool') return null
-                    const uri = apps(m)[p.toolName]
-                    const output = p.state === 'output-available' ? (p.output as { isError?: boolean; structuredContent?: unknown }) : undefined
-                    // View は結果の structuredContent を描く。履歴から復元した結果で structuredContent が無いときは印だけにする
-                    if (uri && output && !output.isError && output.structuredContent)
-                      return (
-                        <ViewFrame key={i} token={stored.token} uri={uri} movable={movableViews} input={p.input} output={output} onContext={(text) => (viewContext.current = text.slice(0, 2000))} />
-                      )
                     return <ToolMarker key={i} part={p} />
                   })}
                 </MessageContent>
@@ -224,7 +218,7 @@ export function Conversation({
           {suggestions.length > 0 ? (
             <div className="flex flex-wrap gap-2">
               {suggestions.map((s) => (
-                <Button key={s.label} variant="outline" size="sm" className="h-auto whitespace-normal py-1.5 text-left" onClick={() => send(s.prompt)}>
+                <Button key={s.label} variant="outline" size="sm" className="h-auto whitespace-normal py-2 text-left" onClick={() => send(s.prompt)}>
                   {s.label}
                 </Button>
               ))}
@@ -264,9 +258,9 @@ export function Conversation({
 function ContextNote({ text }: { text: string }) {
   const { quote, screen } = splitContext(text)
   return (
-    <div className="mb-1.5 ml-auto flex max-w-[85%] flex-col items-end gap-1 text-xs text-muted-foreground">
+    <div className="mb-2 ml-auto flex max-w-[85%] flex-col items-end gap-1 text-xs text-muted-foreground">
       {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
-      {quote ? <blockquote className="line-clamp-3 border-l-2 border-primary/60 pl-2.5 text-left">{quote}</blockquote> : null}
+      {quote ? <blockquote className="line-clamp-3 border-l-2 border-primary/60 pl-3 text-left">{quote}</blockquote> : null}
       {screen ? (
         <details className="group/ctx text-right">
           <summary className="cursor-pointer list-none select-none hover:text-foreground [&::-webkit-details-marker]:hidden">見ていた画面を添えています</summary>

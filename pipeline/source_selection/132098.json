@@ -24,6 +24,20 @@
               "scope": [
                 {
                   "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 24,
+                      "end": 24
+                    },
+                    {
+                      "start": 26,
+                      "end": 81
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -33,6 +47,20 @@
                     {
                       "start": 82,
                       "end": 169
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 194,
+                      "end": 194
+                    },
+                    {
+                      "start": 196,
+                      "end": 199
                     }
                   ]
                 },
@@ -52,6 +80,20 @@
                 },
                 {
                   "account": "介護保険事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 220,
+                      "end": 220
+                    },
+                    {
+                      "start": 222,
+                      "end": 225
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険事業会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -66,6 +108,20 @@
                 },
                 {
                   "account": "後期高齢者医療事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 246,
+                      "end": 246
+                    },
+                    {
+                      "start": 248,
+                      "end": 249
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療事業会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -75,6 +131,20 @@
                     {
                       "start": 250,
                       "end": 252
+                    }
+                  ]
+                },
+                {
+                  "account": "鶴川駅南土地区画整理事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 266,
+                      "end": 266
+                    },
+                    {
+                      "start": 268,
+                      "end": 269
                     }
                   ]
                 },
@@ -187,11 +257,31 @@
               "scope": [
                 {
                   "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 23,
+                      "end": 79
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 80,
                       "end": 187
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 199,
+                      "end": 202
                     }
                   ]
                 },
@@ -207,6 +297,16 @@
                 },
                 {
                   "account": "介護保険事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 221,
+                      "end": 226
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険事業会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -217,11 +317,31 @@
                 },
                 {
                   "account": "後期高齢者医療事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 245,
+                      "end": 247
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療事業会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 248,
                       "end": 249
+                    }
+                  ]
+                },
+                {
+                  "account": "鶴川駅南土地区画整理事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 261,
+                      "end": 261
                     }
                   ]
                 },
@@ -330,11 +450,31 @@
               "scope": [
                 {
                   "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 23,
+                      "end": 83
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 84,
                       "end": 188
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 199,
+                      "end": 201
                     }
                   ]
                 },
@@ -350,6 +490,16 @@
                 },
                 {
                   "account": "介護保険事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 217,
+                      "end": 222
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険事業会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -360,11 +510,31 @@
                 },
                 {
                   "account": "後期高齢者医療事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 241,
+                      "end": 243
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療事業会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 244,
                       "end": 245
+                    }
+                  ]
+                },
+                {
+                  "account": "鶴川駅南土地区画整理事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 257,
+                      "end": 257
                     }
                   ]
                 },
@@ -890,11 +1060,31 @@
               "scope": [
                 {
                   "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 23,
+                      "end": 78
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 79,
                       "end": 184
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 195,
+                      "end": 199
                     }
                   ]
                 },
@@ -910,6 +1100,16 @@
                 },
                 {
                   "account": "介護保険事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 219,
+                      "end": 224
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険事業会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -920,11 +1120,31 @@
                 },
                 {
                   "account": "後期高齢者医療事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 243,
+                      "end": 245
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療事業会計",
                   "direction": "expenditure",
                   "pages": [
                     {
                       "start": 246,
                       "end": 248
+                    }
+                  ]
+                },
+                {
+                  "account": "鶴川駅南土地区画整理事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 259,
+                      "end": 259
                     }
                   ]
                 },

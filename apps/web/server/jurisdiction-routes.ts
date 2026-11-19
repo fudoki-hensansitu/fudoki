@@ -10,9 +10,13 @@ import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, Fetcher, RateLimiter } from './env'
 import type { OgInput } from './og'
+import type { ReceiptOgInput } from './og-receipt'
+import { yearView } from '../jurisdiction/app/data'
+import { perHeadParts } from '../home/per-head'
 import { appYears, loadFieldSubjects, loadYearSnapshot } from './app-data'
 import { loadCatalog, loadCatalogEntry, loadSettlementSummary, searchCatalog, type CatalogEntry } from './jurisdiction'
-import { FudokiApiError } from './fudoki-api'
+import { apiCall, FudokiApiError } from './fudoki-api'
+import { TAB_SLUGS } from '../jurisdiction/types'
 
 // 応答は CDN（Void の ISR、void.config.ts の routing.revalidate）に置く。Worker の中には置かず、毎回 API から組む。
 // 自治体の一覧だけは、1つの頁を組むあいだに何度も引くので、同じ isolate の中で1分だけ使い回す
@@ -65,12 +69,63 @@ export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<
   }
 }
 
-/** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口・一覧・アシスタントだけで答える */
+/** ホームのレシートの OG 画像の中身（routes/jurisdictions/[code]/receipt.png.ts）。年度を省けば頁の最新の年度。収録・人口・その年度が無ければ null */
+export async function receiptOgInput(env: Env, code: string, year?: number): Promise<ReceiptOgInput | null> {
+  const entry = await loadCatalogEntry(env, code)
+  if (!entry) return null
+  const y = year ?? appYears(entry)[0]?.year
+  if (y === undefined || !appYears(entry).some((x) => x.year === y)) return null
+  const d = await loadYearSnapshot(env, entry, y)
+  if (!d.pop || !d.years[String(y)]) return null
+  const v = yearView(d)
+  const { sum, parts } = perHeadParts(v.fields, v.total, d.pop)
+  return { name: entry.name, year: y, settled: v.word === '決算', total: v.total, perHead: sum, rows: v.fields.map((f, i) => ({ name: f.name, yen: parts[i]! })) }
+}
+
+/** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口・アシスタント・まち比べだけで答える */
 export async function sitemapResponse(env: Env): Promise<Response> {
   try {
     return new Response(sitemapXml(await catalog(env), pageYearsOf), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
   } catch {
     return new Response(sitemapXml([]), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'no-store' } })
+  }
+}
+
+/** 事業の sitemap に載せる、自治体ごとの事業の数の上限（最新の年度の金額の大きい順）。検索の1頁の上限と同じ */
+const PROJECT_SITEMAP_SIZE = 1000
+const XML_HEADERS = { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=3600' }
+const xmlEscape = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+
+/** 事業の sitemap の目次（/sitemap-projects.xml）。収録のある自治体ごとの事業の sitemap（/jurisdictions/<code>/sitemap.xml）を並べる */
+export async function projectSitemapIndexResponse(env: Env): Promise<Response> {
+  try {
+    const entries = (await catalog(env)).filter((e) => e.settlementYears.length > 0)
+    const body = entries.map((e) => `<sitemap><loc>https://fudoki.dev/jurisdictions/${e.code}/sitemap.xml</loc></sitemap>`).join('')
+    return new Response(`<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${body}</sitemapindex>\n`, { headers: XML_HEADERS })
+  } catch {
+    return new Response('風土記の API に繋がりませんでした\n', { status: 502, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } })
+  }
+}
+
+/** 自治体の事業の sitemap（/jurisdictions/<code>/sitemap.xml）。頁で選べる最新の年度の事業を、金額の大きい順に PROJECT_SITEMAP_SIZE 件まで載せる。
+ * 収録の無い自治体は 404 */
+export async function projectSitemapResponse(env: Env, code: string): Promise<Response> {
+  try {
+    const entry = await loadCatalogEntry(env, code)
+    const latest = entry && entry.settlementYears.length > 0 ? appYears(entry)[0] : undefined
+    if (!entry || !latest) return new Response('Not Found\n', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
+    const r = await apiCall(env)('search_projects', {
+      fiscal_year: { min: latest.year, max: latest.year },
+      where: { jurisdiction_code: { eq: [code] } },
+      order_by: [{ column: latest.kind === 'initial' ? 'budget_yen' : 'settled_yen', desc: true }],
+      page_size: PROJECT_SITEMAP_SIZE,
+    })
+    const base = `https://fudoki.dev${jurisdictionPath(code)}/${TAB_SLUGS.projects}/`
+    const ids = [...new Set(r.project_years.map((y) => y.project_id))]
+    const body = ids.map((id) => `<url><loc>${xmlEscape(base + encodeURIComponent(id))}</loc></url>`).join('')
+    return new Response(`<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${body}</urlset>\n`, { headers: XML_HEADERS })
+  } catch {
+    return new Response('風土記の API に繋がりませんでした\n', { status: 502, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } })
   }
 }
 
@@ -84,7 +139,7 @@ const CURSOR_MAX = 512
 const BROWSER_CACHE = 'public, max-age=300'
 
 /** 一覧の1件を、検索の候補の形にする */
-const toMapEntry = (e: CatalogEntry): MapEntry => ({ code: e.code, name: e.name, prefecture: e.prefecture, kind: jurisdictionKind(e.code, e.name), path: jurisdictionPath(e.code), latestYear: pageYearsOf(e)[0] })
+const toMapEntry = (e: CatalogEntry): MapEntry => ({ code: e.code, name: e.name, prefecture: e.prefecture, kind: jurisdictionKind(e.code, e.name), path: jurisdictionPath(e.code) })
 
 /** 町を探す（/api/jurisdictions?name=&cursor=）。決算を収録した自治体を名前で探し、api の頁送り（list_jurisdictions の page_token）のまま TOWN_PAGE 件ずつ返す。
  * 一覧を全部は読まない。next は続きの cursor（無ければ null）。?code= ならその自治体だけを配列で返す（うちのまちの名前を引く） */
@@ -110,7 +165,7 @@ export async function jurisdictionSearchResponse(env: Env, request: Request): Pr
   }
 }
 
-/** 頁の1年度のデータ。ホームのうちのまちの札（/api/jurisdictions/:code?year=）が読む。年度が無ければ最新の年度と、評価のある最新の年度の評価シート */
+/** 頁の1年度のデータ。ホームのうちのまちの札（/api/jurisdictions/:code?year=）が読む。年度が無ければ最新の年度。款項目と年度の一覧だけ */
 export async function jurisdictionSnapshotResponse(env: Env, request: Request, code: string): Promise<Response> {
   try {
     const yearParam = new URL(request.url).searchParams.get('year') ?? undefined
@@ -121,7 +176,7 @@ export async function jurisdictionSnapshotResponse(env: Env, request: Request, c
     if (!entry) throw new HttpError(404, 'NOT_FOUND', 'この自治体は収録されていません')
     const year = yearParam === undefined ? appYears(entry)[0]?.year : Number(yearParam)
     if (year === undefined || !appYears(entry).some((y) => y.year === year)) throw new HttpError(404, 'NOT_FOUND', 'この年度は頁にありません')
-    return new Response(JSON.stringify(await loadYearSnapshot(env, entry, year, { evaluated: yearParam === undefined })), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': BROWSER_CACHE } })
+    return new Response(JSON.stringify(await loadYearSnapshot(env, entry, year)), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': BROWSER_CACHE } })
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e)
     return errorResponse(new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした'))

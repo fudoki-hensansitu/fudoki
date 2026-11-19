@@ -1,0 +1,418 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131199",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "2a45b29d4917d5e771ecb89210fb6ce6733de6e83f1f36b1623cb3738d500573"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "funded_explanation",
+            "options": {
+              "columns": {
+                "本年度／予算額": {
+                  "heading": "本年度予算額"
+                },
+                "前年度／予算額": {
+                  "heading": "前年度予算額"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "本本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "前年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "比較／増減率": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・見込額など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "2a45b29d4917d5e771ecb89210fb6ce6733de6e83f1f36b1623cb3738d500573"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "funded_explanation",
+            "options": {
+              "columns": {
+                "本年度／予算額": {
+                  "heading": "本年度予算額"
+                },
+                "前年度／予算額": {
+                  "heading": "前年度予算額"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "本本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "前年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "比較／増減率": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・見込額など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial-revenue"
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "2a45b29d4917d5e771ecb89210fb6ce6733de6e83f1f36b1623cb3738d500573"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "care-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "funded_explanation",
+            "options": {
+              "columns": {
+                "本年度／予算額": {
+                  "heading": "本年度予算額"
+                },
+                "前年度／予算額": {
+                  "heading": "前年度予算額"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "本本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "前年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "比較／増減率": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・見込額など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "2a45b29d4917d5e771ecb89210fb6ce6733de6e83f1f36b1623cb3738d500573"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業特別会計",
+        "table_id": "elderly-medical-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "funded_explanation",
+            "options": {
+              "columns": {
+                "本年度／予算額": {
+                  "heading": "本年度予算額"
+                },
+                "前年度／予算額": {
+                  "heading": "前年度予算額"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "本本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "前年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "比較／増減率": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・見込額など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            456,
+            465
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial-revenue"
+        }
+      ]
+    },
+    {
+      "id": "tobu-tojo-grade-separation-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "2a45b29d4917d5e771ecb89210fb6ce6733de6e83f1f36b1623cb3738d500573"
+        }
+      ],
+      "options": {
+        "account": "東武東上線連続立体化事業特別会計",
+        "table_id": "tobu-tojo-grade-separation-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "funded_explanation",
+            "options": {
+              "columns": {
+                "本年度／予算額": {
+                  "heading": "本年度予算額"
+                },
+                "前年度／予算額": {
+                  "heading": "前年度予算額"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "本本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "前年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "比較／増減率": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・見込額など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            478,
+            483
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "tobu-tojo-grade-separation-initial-revenue"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,97 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132276",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8ab7daeac5735f06305e4a3208ca941ede02a484987ee990b699d768a823cee4"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "carried_names": true,
+                "title_amount": "本年度予算額"
+              },
+              "text_layer": {
+                "crop_box": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "pages": [
+          [
+            12,
+            13
+          ],
+          [
+            16,
+            59
+          ]
+        ],
+        "excluded_boxes": [
+          {
+            "id": "p58-revenue-total",
+            "page": 58,
+            "bbox": [
+              40,
+              52,
+              560,
+              142
+            ],
+            "kind": "総括",
+            "reason": "明細の最後の頁の「歳入合計」の表。題字を枠の外に印字し、行に名前が無いので合計の行と読めない。款の和と比べる統制値で、総括の頁の歳入合計と同じ額。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-revenue"
+        }
+      ]
+    }
+  ]
+}

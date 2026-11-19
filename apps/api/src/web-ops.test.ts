@@ -1,7 +1,7 @@
 import { expect, test } from 'bun:test'
-import { createApp, tools, webMcp } from './app'
+import { createApp, tools } from './app'
 import { insertJurisdiction, testDb } from './testing'
-import { callWebOp, WEB_OPS } from './web-ops'
+import { assistantTools, callAssistantTool, callWebOp, WEB_OPS } from './web-ops'
 
 /** MCP の応答の body（SSE か JSON） */
 const rpcBody = async (res: Response) => {
@@ -18,7 +18,7 @@ const setup = () => {
 
 test('web の内部の口は、公開の MCP と同じ tool と get_jurisdiction を同じ入力で呼ぶ', async () => {
   const { env } = setup()
-  expect(Object.keys(WEB_OPS).sort()).toEqual([...tools.map((t) => t.name), 'get_jurisdiction', 'list_expenditures', 'search_similar_expenditures', 'count_evaluation_sheets'].sort())
+  expect(Object.keys(WEB_OPS).sort()).toEqual([...tools.map((t) => t.name), 'get_jurisdiction', 'list_expenditures', 'count_evaluation_sheets'].sort())
   const list = await callWebOp(env, 'list_jurisdictions', { name: '品川' })
   expect(list.ok && (list.value as { jurisdictions: { name: string }[] }).jurisdictions.map((j) => j.name)).toEqual(['品川区'])
   const one = await callWebOp(env, 'get_jurisdiction', { jurisdiction_code: '131091' })
@@ -37,18 +37,26 @@ test('kill switch が off なら内部の口も止める', async () => {
   const { env, sqlite } = setup()
   sqlite.query(`UPDATE control SET value = 'off' WHERE key = 'serving'`).run()
   expect(await callWebOp(env, 'list_jurisdictions', {})).toMatchObject({ ok: false, status: 503 })
-  const res = await webMcp(env, new Request('https://api.fudoki.dev/mcp', { method: 'POST', headers: { 'content-type': 'application/json' }, body: '{}' }))
-  expect(res.status).toBe(503)
+  expect(await callAssistantTool(env, 'list_jurisdictions', {})).toMatchObject({ ok: false, status: 503 })
 })
 
-test('アシスタントの MCP は公開の /mcp と同じ tool の一覧を返す', async () => {
+test('アシスタントの tool は公開の /mcp の tool（描画 tool を除く）と同じ名前・説明に、web だけの操作を足したもの', async () => {
   const { env } = setup()
   const body = JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list', params: {} })
   const init = { method: 'POST', headers: { 'content-type': 'application/json', accept: 'application/json, text/event-stream', 'mcp-protocol-version': '2025-06-18' }, body }
-  const names = async (res: Response) => ((await rpcBody(res)) as { result: { tools: { name: string }[] } }).result.tools.map((t) => t.name)
-  const internal = await webMcp(env, new Request('https://api.fudoki.dev/mcp', init))
-  expect(internal.status).toBe(200)
-  const pub = await createApp().fetch(new Request('https://api.fudoki.dev/mcp', init), env)
-  expect(await names(internal)).toEqual(await names(pub))
-  expect((await webMcp(env, new Request('https://api.fudoki.dev/mcp'))).status).toBe(405)
+  const pub = ((await rpcBody(await createApp().fetch(new Request('https://api.fudoki.dev/mcp', init), env))) as { result: { tools: { name: string; description: string; inputSchema: unknown }[] } }).result.tools
+  const defs = assistantTools()
+  const byName = new Map(defs.map((d) => [d.name, d]))
+  for (const t of pub.filter((t) => t.name !== 'render_expenditure_view')) expect(byName.get(t.name)).toMatchObject({ description: t.description, inputSchema: { type: 'object' } })
+  expect(defs.map((d) => d.name)).toContain('count_evaluation_sheets')
+  for (const d of defs) expect(Object.keys(WEB_OPS)).toContain(d.name)
+})
+
+test('アシスタントの tool は結果を返し、WEB_OPS に無い名前や tool にしていない操作は 404', async () => {
+  const { env } = setup()
+  const r = await callAssistantTool(env, 'list_jurisdictions', { name: '品川' })
+  expect(r.ok && (r.value.value as { jurisdictions: { name: string }[] }).jurisdictions.map((j) => j.name)).toEqual(['品川区'])
+  expect(await callAssistantTool(env, 'get_jurisdiction', { jurisdiction_code: '131091' })).toMatchObject({ ok: false, status: 404 })
+  expect(await callAssistantTool(env, 'drop_tables', {})).toMatchObject({ ok: false, status: 404 })
+  expect(await callAssistantTool(env, 'list_jurisdictions', { unknown: 1 })).toMatchObject({ ok: false, status: 400 })
 })

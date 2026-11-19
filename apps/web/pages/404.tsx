@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button'
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 import { Link } from '../nav/link'
 import { OtherTowns } from '../home/onboarding'
+import { titleVariants } from '@/components/ui/title'
 
 /** 見つからない頁。ホームとまちの検索へ戻す */
 export default function NotFound() {
@@ -13,8 +14,8 @@ export default function NotFound() {
           <EmptyMedia variant="icon" className="size-11 rounded-full text-muted-foreground [&_svg:not([class*='size-'])]:size-6">
             <SignpostIcon aria-hidden="true" />
           </EmptyMedia>
-          <EmptyTitle className="text-xl font-semibold">頁が見つかりませんでした</EmptyTitle>
-          <EmptyDescription className="text-[15px]">
+          <EmptyTitle className={titleVariants({ size: 'h3' })}>頁が見つかりませんでした</EmptyTitle>
+          <EmptyDescription className="text-sm">
             <span className="inline-block">URL が変わったか、</span>
             <span className="inline-block">まだ収録していない頁かもしれません。</span>
           </EmptyDescription>

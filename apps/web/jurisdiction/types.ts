@@ -9,21 +9,37 @@ export interface Line {
   yen: number
   /** 出典に金額の印字がない。yen の 0 は表示に使わない */
   amountMissing?: true
+  /** 名前が印字された出典の URL（PDF は #page= つき）。歳出の行で、出典の分かるものだけ */
+  src?: string
 }
 
 export interface Setsu {
   name: string
   yen: number
+  /** 法定の節（節マスタの ID。setsu-12、R1 以前は setsu-13-2019 など）。歳出の節で、節マスタに当たった行だけ */
+  setsuId?: string
+  /** 名前が印字された出典の URL（PDF は #page= つき） */
+  src?: string
+  /** 事業の行なら、その事業の ID（事業の頁へ移る） */
+  projectId?: string
   /** 出典に金額の印字がない。yen の 0 は表示に使わない */
   amountMissing?: true
 }
 
 export interface Moku extends Line {
   setsu: Setsu[]
+  /** 節と並んで印字された事業（同じ目の額の別の切り口なので節と足さない）。節が無い目では setsu に事業が入り、ここは空 */
+  projects?: Setsu[]
   /** 自治体の科目の款・項の名前。分野で分けた図でも、目から事業を引くのに使う */
   path?: [string | null, string | null]
   /** 目に付いた COFOG のコード（09.1 など）。分野の流れに組み直すのに使う */
   cofog?: string | null
+}
+
+/** loader が defer で渡す目の内訳（目の id ごと）。setsu は歳入の目の節も含む */
+export interface MokuBreakdowns {
+  setsu: Record<string, Setsu[]>
+  projects: Record<string, Setsu[]>
 }
 
 export interface Kou extends Line {
@@ -47,6 +63,8 @@ export interface PageFlow {
   drills: Drill[]
   /** 項の行が無い目（drills の木に入らない）。分野の図はこれも足す */
   loose: Moku[]
+  /** 同じ年度・資料の一般会計の歳入（款 → 項 → 目）。流れの図の左に出す。歳入の無い自治体・年度と特別会計では空 */
+  revenue?: Drill[]
 }
 
 export interface Project extends Line {
@@ -90,7 +108,7 @@ export const formatPeople = (people: number) => (people >= 1e4 ? `${(people / 1e
 /** 基準日（2026-01-01）を「2026年1月1日」に */
 export const formatAsOf = (asOf: string) => asOf.replace(/^(\d+)-0?(\d+)-0?(\d+)$/, '$1年$2月$3日')
 
-/** 市町村の決算の指標の1年度（総務省「市町村別決算状況調」の普通会計）。金額は円、比率は %。出典の「-」（該当なし）は null */
+/** 自治体の決算の指標の1年度（普通会計。市区町村は総務省「市町村別決算状況調」、都道府県は地方財政状況調査で、標準財政規模・実質赤字比率・連結実質赤字比率・基金は null）。金額は円、比率は %。出典の「-」（該当なし）は null */
 export interface LocalFinance {
   year: number
   /** 歳出総額 */
@@ -178,10 +196,12 @@ export interface Headline {
 export const appPageYears = (d: { settlementYears: number[]; budgetYears: number[] }) =>
   [...new Set([...d.settlementYears, ...d.budgetYears])].sort((a, b) => b - a).slice(0, 3)
 
-/** 自治体の頁のタブ。まとめは自治体の頁そのもの、ほかは1段下げる（/tokyo/shinagawa/projects） */
+/** 自治体の頁のタブ。予算・決算・事業は年度の段の下（/tokyo/shinagawa/2026/budget）、財政（overview）は年度の段を持たない（/tokyo/shinagawa/finance）。自治体の頁そのもの（/tokyo/shinagawa）は最新の年度の予算を出す */
 export type PageTab = 'overview' | 'projects' | 'money' | 'settled'
 export const TAB_SLUGS = { projects: 'projects', money: 'budget', settled: 'settlement' } as const satisfies Record<Exclude<PageTab, 'overview'>, string>
 export const TAB_LABELS: Record<Exclude<PageTab, 'overview'>, string> = { projects: '事業', money: '予算', settled: '決算' }
+/** 財政のタブの段。財政は年度をまたぐ指標なので年度の段を持たない */
+export const FINANCE_SLUG = 'finance'
 export const tabOfSlug = (slug: string) => (Object.entries(TAB_SLUGS).find(([, s]) => s === slug)?.[0] as Exclude<PageTab, 'overview'> | undefined)
 /** その年度に当初予算・決算（一般会計）を収録しているか。予算・決算のタブはどの年度にも出し、収録の無い年度はタブの中で「まだ収録していない」と出す */
 export const hasDocument = (d: { settlementYears: number[]; initialYears: number[] }, year: number, kind: 'initial' | 'settlement') => (kind === 'initial' ? d.initialYears : d.settlementYears).includes(year)

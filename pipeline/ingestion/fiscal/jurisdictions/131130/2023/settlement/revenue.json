@@ -1,0 +1,279 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131130",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "23ea40851def66052f9f40e6a6d19bf86848595124ef9734c1be2ffea66801e8"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／節区分": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "金額": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の名前と額・担当の部課の再掲で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "glued_subject_codes": true,
+            "code_between_name_lines": true,
+            "yen_split_amounts": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-settlement"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "23ea40851def66052f9f40e6a6d19bf86848595124ef9734c1be2ffea66801e8"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-insurance-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／節区分": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "金額": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の名前と額・担当の部課の再掲で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "glued_subject_codes": true,
+            "code_between_name_lines": true,
+            "yen_split_amounts": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-settlement"
+        }
+      ]
+    },
+    {
+      "id": "care-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "23ea40851def66052f9f40e6a6d19bf86848595124ef9734c1be2ffea66801e8"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "care-insurance-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／節区分": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "金額": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の名前と額・担当の部課の再掲で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "glued_subject_codes": true,
+            "code_between_name_lines": true,
+            "yen_split_amounts": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-insurance-settlement"
+        }
+      ]
+    },
+    {
+      "id": "late-stage-elderly-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "23ea40851def66052f9f40e6a6d19bf86848595124ef9734c1be2ffea66801e8"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業会計",
+        "table_id": "late-stage-elderly-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／節区分": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "金額": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の名前と額・担当の部課の再掲で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "glued_subject_codes": true,
+            "code_between_name_lines": true,
+            "yen_split_amounts": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "late-stage-elderly-settlement"
+        }
+      ]
+    }
+  ]
+}

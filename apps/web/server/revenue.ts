@@ -1,5 +1,5 @@
 // 自治体の一般会計の歳入（款と区分）。apps/api の get_revenue を内部の RPC で読む。
-// 読めないときは空で返し、頁は「何で賄う？」の節を出さずに描く（まとめの一節なので、頁全体は止めない）
+// 読めないときは空で返し、頁は予算・決算タブの入る→使うを出さずに描く（頁全体は止めない）
 import type { RevenueDoc } from '../jurisdiction/types'
 import type { Env } from './env'
 import { apiCall } from './fudoki-api'

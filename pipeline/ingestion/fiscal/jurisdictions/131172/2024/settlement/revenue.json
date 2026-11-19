@@ -1,0 +1,158 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131172",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-setsu",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "12b1e95c026d5c3f112cd7bc15adbbd759a61711dc88db83b28c22e81ecfe508"
+        }
+      ],
+      "options": {
+        "table_id": "general-setsu",
+        "account": "一般会計",
+        "part": "detail",
+        "workflow": {
+          "reading": {
+            "pattern": "clipped_columns",
+            "profile": "fiscal/jurisdictions/131172/layouts/text_settlement_revenue/reading.json"
+          },
+          "components": [
+            "clipped_words"
+          ]
+        },
+        "name_corrections": [
+          {
+            "id": "p46-saiinyu-saishutsu-gai",
+            "page": 46,
+            "observation_id": "p46:full-page:a0:result0:r53",
+            "observed_name": "歲入歳出外現金利子",
+            "corrected_name": "歳入歳出外現金利子",
+            "reason": "原典の画像では「歳」と印字されている。Paddle は「歳」を中国語の字形「歲」で読んだ。"
+          },
+          {
+            "id": "p51-sainyu-goukei",
+            "page": 51,
+            "observation_id": "p51:full-page:a0:result0:r64",
+            "observed_name": "歲入合計",
+            "corrected_name": "歳入合計",
+            "reason": "原典の画像では「歳」と印字されている。Paddle は「歳」を中国語の字形「歲」で読んだ。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-setsu"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-setsu-ocr-1",
+          "origin_sha256": "12b1e95c026d5c3f112cd7bc15adbbd759a61711dc88db83b28c22e81ecfe508",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              45,
+              46,
+              51
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "3dd57863a81dfe5567226065cf86ee06063b63fb689ec2f72ebabb9ee83d2a8d",
+          "bytes": 2052127
+        }
+      ]
+    },
+    {
+      "id": "kaigo-setsu",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "12b1e95c026d5c3f112cd7bc15adbbd759a61711dc88db83b28c22e81ecfe508"
+        }
+      ],
+      "options": {
+        "table_id": "kaigo-setsu",
+        "account": "介護保険会計",
+        "part": "detail",
+        "workflow": {
+          "reading": {
+            "pattern": "clipped_columns",
+            "profile": "fiscal/jurisdictions/131172/layouts/text_settlement_revenue/reading.json"
+          },
+          "components": [
+            "clipped_words"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-setsu"
+        }
+      ]
+    },
+    {
+      "id": "kokuho-setsu",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "12b1e95c026d5c3f112cd7bc15adbbd759a61711dc88db83b28c22e81ecfe508"
+        }
+      ],
+      "options": {
+        "table_id": "kokuho-setsu",
+        "account": "国民健康保険事業会計",
+        "part": "detail",
+        "workflow": {
+          "reading": {
+            "pattern": "clipped_columns",
+            "profile": "fiscal/jurisdictions/131172/layouts/text_settlement_revenue/reading.json"
+          },
+          "components": [
+            "clipped_words"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-setsu"
+        }
+      ]
+    },
+    {
+      "id": "kouki-setsu",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "12b1e95c026d5c3f112cd7bc15adbbd759a61711dc88db83b28c22e81ecfe508"
+        }
+      ],
+      "options": {
+        "table_id": "kouki-setsu",
+        "account": "後期高齢者医療会計",
+        "part": "detail",
+        "workflow": {
+          "reading": {
+            "pattern": "clipped_columns",
+            "profile": "fiscal/jurisdictions/131172/layouts/text_settlement_revenue/reading.json"
+          },
+          "components": [
+            "clipped_words"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-setsu"
+        }
+      ]
+    }
+  ]
+}

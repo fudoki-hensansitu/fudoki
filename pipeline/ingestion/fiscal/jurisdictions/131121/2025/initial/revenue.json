@@ -1,0 +1,329 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131121",
+    "fiscal_year": 2025,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "bbb53fc863a5e22f1871b04f74e33b1229311ca29418a358221f21261a89f75d"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "listed_sources",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の名前と額・調定見込額・徴収率などの積算で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "shifted_hidden_copies": true,
+            "digits_across_rules": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "28a9aba96f6373e64ffed5e42496fb231e07aeb2d1d1aa7f3fdc6963ba8f8086"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "listed_sources",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の名前と額・調定見込額・徴収率などの積算で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "text_layer": {
+                "character_map": {
+                  "\u0003": "",
+                  "\u000f": ",",
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "shifted_hidden_copies": {
+              "pages": {
+                "31": {
+                  "hide": [
+                    [
+                      684.5,
+                      282.4
+                    ],
+                    [
+                      684.5,
+                      417.6
+                    ]
+                  ],
+                  "show": [
+                    [
+                      804.8,
+                      417.8
+                    ]
+                  ]
+                }
+              },
+              "reason": "p31 の文字層は、説明の「1 国民健康保険事業会計関係事務従事職員の人件費」の番号 1 の写しを 120pt 左（節の「給料」の後ろ）と、さらに 135pt 上の行にも持つ。写しは字の並びにならず描画でも印字と区別できないので、写しの2字を隠し、120pt 右の印字の 1 を残す。"
+            },
+            "digits_across_rules": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8ebe2125783d287c4ed835960a4d4f996b8e9b1f89f31f7398499bcc3a2f6588"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "listed_sources",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の名前と額・調定見込額・徴収率などの積算で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "shifted_hidden_copies": true,
+            "digits_across_rules": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4611512a9433f50984dbedca31e519f1dc00153c23184e7169b723a4e9950011"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "listed_sources",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の名前と額・調定見込額・徴収率などの積算で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "shifted_hidden_copies": true,
+            "digits_across_rules": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ]
+    },
+    {
+      "id": "school-lunch-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "75662fcf5ebe39d9e53750d535b575ca0e027c355777d37c298afb77c020159a"
+        }
+      ],
+      "options": {
+        "account": "学校給食費会計",
+        "table_id": "school-lunch-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "listed_sources",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の名前と額・調定見込額・徴収率などの積算で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "shifted_hidden_copies": true,
+            "digits_across_rules": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "school-lunch-initial"
+        }
+      ]
+    }
+  ]
+}

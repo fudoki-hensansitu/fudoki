@@ -1,0 +1,339 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132110",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "0476d545ad22d68c16d32f8e1a82e009dc4cbd5cca9cf8c3282726cf9811f582"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "pages": [
+          [
+            25,
+            25
+          ],
+          [
+            27,
+            27
+          ],
+          [
+            29,
+            29
+          ],
+          [
+            31,
+            31
+          ],
+          [
+            33,
+            33
+          ],
+          [
+            35,
+            35
+          ],
+          [
+            37,
+            37
+          ],
+          [
+            39,
+            39
+          ],
+          [
+            41,
+            41
+          ],
+          [
+            43,
+            43
+          ],
+          [
+            45,
+            45
+          ],
+          [
+            47,
+            47
+          ],
+          [
+            49,
+            49
+          ],
+          [
+            51,
+            51
+          ],
+          [
+            53,
+            53
+          ],
+          [
+            55,
+            55
+          ],
+          [
+            57,
+            57
+          ],
+          [
+            59,
+            59
+          ],
+          [
+            61,
+            61
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（課税基本台数・税率・調定見込額・収入歩合など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_code_at_top": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-initial-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a143b4d25d447e2df59382f46a510a706c41029a81e9a265f38c02c4856c69e6"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-insurance-revenue",
+        "pages": [
+          [
+            17,
+            17
+          ],
+          [
+            19,
+            19
+          ],
+          [
+            21,
+            21
+          ],
+          [
+            23,
+            23
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（課税基本台数・税率・調定見込額・収入歩合など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_code_at_top": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a143b4d25d447e2df59382f46a510a706c41029a81e9a265f38c02c4856c69e6"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-revenue",
+        "pages": [
+          [
+            77,
+            77
+          ],
+          [
+            79,
+            79
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（課税基本台数・税率・調定見込額・収入歩合など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_code_at_top": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-revenue"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-insurance-initial-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a143b4d25d447e2df59382f46a510a706c41029a81e9a265f38c02c4856c69e6"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "long-term-care-insurance-revenue",
+        "pages": [
+          [
+            111,
+            111
+          ],
+          [
+            113,
+            113
+          ],
+          [
+            115,
+            115
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（課税基本台数・税率・調定見込額・収入歩合など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_code_at_top": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-insurance-revenue"
+        }
+      ]
+    }
+  ]
+}

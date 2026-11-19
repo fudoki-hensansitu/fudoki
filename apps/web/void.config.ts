@@ -1,4 +1,4 @@
-// 公開 web の Worker（fudoki）の設定。build（vite build）が cf の形で .cloudflare/output/v0 に書き出し、deploy・preview は cf がそれを読む。
+// 公開 web の Worker（fudoki）の設定。build（vite build）が cf の形で .cloudflare/output/v1 に書き出し、deploy・preview は cf がそれを読む。
 // データ（D1・R2・KV など）の binding は持たせず、データは apps/api に Service Binding で聞く（pipeline/verify/boundaries.ts が検査する）。
 // 例外は web 自身のデータの D1（binding DB・fudoki-web。AI との会話の保存と、外部サービスから引く参照データ）だけ。風土記のデータではなく、web だけが使う別の D1 にする
 import { defineConfig } from 'void/config'
@@ -44,16 +44,24 @@ export default defineConfig({
       // ホームと自治体の頁（都道府県自体の頁・市区町村の頁・年度・タブ・分野）。データは取り込みのときだけ変わる
       '/': 3600,
       ...Object.fromEntries(Object.values(prefectures.slugs).flatMap((slug) => [[`/${slug}`, 3600], [`/${slug}/*`, 3600]])),
-      // 比べる頁（まちと年度は query）
+      // まち比べ（一覧と問いの頁。選んだまちの ?town は画面が読むので key に入れない）
       '/compare': 3600,
+      '/compare/*': 3600,
       '/sitemap.xml': 3600,
+      // 事業の sitemap（目次と自治体ごと）。事業は取り込みのときだけ変わるので1日置く
+      '/sitemap-projects.xml': 86400,
+      '/jurisdictions/*/sitemap.xml': 86400,
       // 自治体の OG 画像（routes/jurisdictions/[code]/og.png.ts）。最新の決算の金額から描く。同じ下にある紋章の SVG（静的資産）は外す
       '/jurisdictions/*/og.png': 86400,
+      // ホームのレシートをシェアしたときの OG 画像（routes/jurisdictions/[code]/receipt.png.ts）
+      '/jurisdictions/*/receipt.png': 86400,
     },
-    // ISR の key は既定で query を落とす。予算・決算のタブの頁は ?account= で流れの会計を、まち比べは ?a=&ay=&ak=&b=&by=&bk= でまちと年度・資料を分けるので key に残す
+    // ISR の key は既定で query を落とす。予算・決算のタブの頁は ?account= で流れの会計を分けるので key に残す
     revalidateQueryAllowlist: {
       ...Object.fromEntries(Object.values(prefectures.slugs).map((slug) => [`/${slug}/*`, ['account']])),
-      '/compare': ['a', 'ay', 'ak', 'b', 'by', 'bk'],
+      // ホームは、シェアされたリンクの ?town=&year= で head の OG 画像だけを変える（頁の中身は変えない）
+      '/': ['town', 'year'],
+      '/jurisdictions/*/receipt.png': ['year'],
     },
   },
   // 全頁の head の既定。頁ごとの title・説明・canonical は各頁の .server.ts の head。theme-color は middleware/01.site.ts

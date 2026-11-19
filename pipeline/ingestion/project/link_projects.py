@@ -6,13 +6,20 @@ dbt の `int_project__line_ids`（Python model）が、build のたびに `int_p
 
 1. 当初予算の事業の行を1つずつ、事業の1年度にする。
 2. 同じ年度の決算の行を、会計・款・項・目と名前の並びが同じ当初予算の行に結ぶ。並びが両方に同じ数だけあるときだけ、印字の順で結ぶ。
-   並びの中は印字の順（int_project__lines の print_order）で並べる。結べない決算の行は、決算の行だけを持つ事業の1年度にする。
+   並びの中は印字の順（int_project__lines の print_order）で並べる。結べなかった残りどうしは、上の段から、親が同じ事業の1年度と
+   決まった中で、数を除いた名前（下の「数を除いた名前」）で同じ決まりで結ぶ（当初予算は「7歳~69歳分16,124,513×0.7=」、決算は「7歳~69歳分0.7」、
+   当初予算は「105園定員7,576人」、決算は「105園延82,972人」と印字する事業）。
+   結べない決算の行は、決算の行だけを持つ事業の1年度にする。
 3. 前の年度の事業の1年度と、上の段から結ぶ。目の直下は会計・款・項・目と名前、その下は親が同じ事業の中で名前が、
    両方に1つずつあるときだけ同じ事業にする。名前で結べなかった残りどうしは、名前から数と単位（「105園」「延83,703人」）を
-   除いて同じ決まりで結ぶ（園の数・定員のように年度で変わる数を名前に印字する事業）。前の年度に無い事業は新しい事業にする（手順4の Jev はまだ使わない）。
+   除いて同じ決まりで結ぶ（園の数・定員のように年度で変わる数を名前に印字する事業）。数を除いた名前は、それに加えて名前の末尾の
+   数と式（「16,124,513×0.7=」）も除く。前の年度に無い事業は新しい事業にする（手順4の Jev はまだ使わない）。
 
 名前は NFKC にし、【所管課】から後ろ・末尾の [所管課]・「(うち…)」の注記・空白を除いて比べる。
-事業ID は事業の最初の年度の行の鍵の sha256。毎回計算し直しても、最初の年度の行が変わらない限り同じ ID になる。
+事業ID は事業の最初の年度の行の、年度と資料（当初予算・決算）を除いた鍵（自治体・会計・款・項・目・比べる名前の並び）の sha256。
+過去の年度を取り込んで最初の年度が前に延びても、その年度の行が同じ科目・名前なら ID は変わらない（年度を鍵に入れると、
+過去の年度を足すたびに以降の年度の事業が全部別の ID になり、D1 の事業の表が丸ごと書き直しになった）。同じ鍵の別の事業
+（一度終わって同じ名前で始めた事業、同じ年度に同じ並びが2つある行）は、後から現れたほうに始めた年度を足して分ける（同じ年度の中では、当初予算の行を持つほう、印字の順で先のほうを先にする）。
 """
 from __future__ import annotations
 
@@ -22,17 +29,25 @@ import re
 import unicodedata
 from collections import defaultdict
 from dataclasses import dataclass, field
+from functools import cache
 
 # 所管課を [] で印字する自治体（中央区・八王子など）。[1人分]・[科目存置] のような注記は所管課の語尾で外す
 DEPARTMENT_BRACKET = re.compile(r'\[[^\[\]0-9]*(?:課|部|局|室|所|係|センター|委員会|館)\]\s*$')
 KEY = ('jurisdiction_code', 'fiscal_year', 'document_kind', 'account_name', 'kan_name', 'kou_name', 'moku_name', 'path')
 
 
-# 名前に印字された数と単位（「105園」「延83,703人」）。年度で変わるので、前の年度と結ぶときの2回目だけ除いて比べる。
+# 名前に印字された数と単位（「105園」「延83,703人」「定員7,576人」）。年度・資料で変わるので、名前で結べなかった残りだけ除いて比べる。
+# 数に付く「延」「約」「定員」も除く（当初予算は「105園定員7,576人」、決算は「105園延82,972人」と印字する事業）。
 # 単位の付かない数と「第1」のような番号は、別の事業を見分ける数なので除かない
-COUNT = re.compile(r'(?<![第0-9,.])(?:延|約)?[0-9][0-9,.]*(?:か所|箇所|ヶ所|カ所|世帯|施設|団体|園|人|件|校|名|回|台|戸|床|室|館|個|点|冊|枚|日|か月|ヶ月|月|年|千円|万円|円|kW|t|%)')
+COUNT = re.compile(r'(?<![第0-9,.])(?:延べ?|約|定員)?[0-9][0-9,.]*(?:か所|箇所|ヶ所|カ所|世帯|施設|団体|園|人|件|校|名|回|台|戸|床|室|館|個|点|冊|枚|日|か月|ヶ月|月|年|千円|万円|円|kW|t|%)')
 
 
+# 名前の末尾に印字された数と式（「16,124,513×0.7=」「0.7」）。人数や率のように年度・資料で変わる。「第1」のような番号は除かない
+TRAILING_NUMBERS = re.compile(r'(?<![第0-9,.])[0-9][0-9,.×=\s]*$')
+
+
+# Names repeat across lines, years and sheets; one build normalizes the same text many times.
+@cache
 def normalize(name: str) -> str:
     """名前を比べる形。NFKC、【所管課】から後ろ（所管課と注記）、末尾の [所管課]、「(うち…)」の内訳の注記（職員費の退職手当負担金の額など、年度で変わる）と空白を除く。"""
     text = DEPARTMENT_BRACKET.sub('', re.sub(r'【.*$', '', unicodedata.normalize('NFKC', name)))
@@ -96,6 +111,18 @@ def name_paths(lines: list[Line]) -> dict[str, tuple]:
     return {x.detail_id: path(x) for x in lines}
 
 
+def pair_in_order(budget: list[Line], settled: list[Line]) -> list[Year]:
+    """同じ数の当初予算と決算の行を、印字の順で組にする"""
+    pairs = zip(sorted(budget, key=lambda x: x.print_order), sorted(settled, key=lambda x: x.print_order))
+    return [Year(initial=b, settlement=s) for b, s in pairs]
+
+
+@cache
+def loose(name: str) -> str:
+    """比べる名前（normalize 済み）から数を除いた形"""
+    return TRAILING_NUMBERS.sub('', COUNT.sub('', name))
+
+
 def build_years(docs: dict[str, list[Line]]) -> list[Year]:
     """手順1・2: 1つの年度の事業の1年度"""
     initial, settlement = docs.get('initial', []), docs.get('settlement', [])
@@ -106,13 +133,26 @@ def build_years(docs: dict[str, list[Line]]) -> list[Year]:
     for x in settlement:
         groups[(x.scope, paths[x.detail_id])][1].append(x)
     years: list[Year] = []
+    rest: list[Line] = []
     for budget, settled in groups.values():
         if len(budget) == len(settled):
-            pairs = zip(sorted(budget, key=lambda x: x.print_order), sorted(settled, key=lambda x: x.print_order))
-            years += [Year(initial=b, settlement=s) for b, s in pairs]
+            years += pair_in_order(budget, settled)
         else:
-            years += [Year(initial=b) for b in budget] + [Year(settlement=s) for s in settled]
+            rest += budget + settled
+    # 名前の並びで結べなかった残りは、上の段から、親が同じ事業の1年度の中で、数を除いた名前でもう一度組にする
+    # （親を名前で比べると、数だけ違う別の親の子どうしを結んでしまう）
     owner = {x.detail_id: y for y in years for x in y.lines}
+    for depth in sorted({len(paths[x.detail_id]) for x in rest}):
+        loose_groups: dict[tuple, tuple[list[Line], list[Line]]] = defaultdict(lambda: ([], []))
+        for x in rest:
+            if len(paths[x.detail_id]) == depth:
+                parent = owner.get(x.parent_detail_id) if x.parent_detail_id else None
+                key = (x.scope, id(parent) if parent else None, loose(paths[x.detail_id][-1]))
+                loose_groups[key][0 if x.key[2] == 'initial' else 1].append(x)
+        for budget, settled in loose_groups.values():
+            made = pair_in_order(budget, settled) if len(budget) == len(settled) else [Year(initial=b) for b in budget] + [Year(settlement=s) for s in settled]
+            years += made
+            owner |= {x.detail_id: y for y in made for x in y.lines}
     for y in years:
         parent = y.line.parent_detail_id
         if parent:
@@ -133,7 +173,8 @@ def unique_pairs(current: list[Year], previous: list[Year], key) -> list[tuple[Y
 
 
 def without_counts(name: str) -> str:
-    return COUNT.sub('', normalize(name))
+    """数を除いた名前。数と単位（「105園」）と、名前の末尾の数と式（「16,124,513×0.7=」）を除く"""
+    return loose(normalize(name))
 
 
 def pair(current: list[Year], previous: list[Year], key) -> list[Year]:
@@ -157,20 +198,31 @@ def link_previous(current: list[Year], previous: list[Year]) -> None:
         queue += pair(parent.children, parent.previous.children, lambda y, name: name)  # type: ignore[union-attr]
 
 
-def project_id(line: Line) -> str:
-    return hashlib.sha256(json.dumps(['project', *map(str, line.key)], ensure_ascii=False).encode()).hexdigest()
+def project_id(line: Line, *salt: object) -> str:
+    """年度と資料を除いた鍵の sha256。salt は同じ鍵の別の事業を分けるときに足す"""
+    jurisdiction_code, _, _, *scope, path = line.key
+    names = [normalize(name) for name in json.loads(path)]
+    key = ['project', jurisdiction_code, *map(str, scope), names, *map(str, salt)]
+    return hashlib.sha256(json.dumps(key, ensure_ascii=False).encode()).hexdigest()
 
 
 def assign(years_by_year: dict[int, list[Year]]) -> None:
-    """事業ID。前の年度と結んだものは前の年度の ID、残りは新しい ID"""
+    """事業ID。前の年度と結んだものは前の年度の ID、残りは新しい ID（既に使った ID と重なれば始めた年度を足して分ける）"""
+    taken: set[str] = set()
     for fiscal_year in sorted(years_by_year):
         used: set[str] = set()
-        for y in years_by_year[fiscal_year]:
+        # 同じ鍵の事業のどちらが無印の ID を取るかを行の並びに左右させない（int_project__lines に ORDER BY は無い）
+        for y in sorted(years_by_year[fiscal_year], key=lambda y: (y.initial is None, y.line.print_order, y.line.detail_id)):
             if y.previous and y.previous.project_id and y.previous.project_id not in used:
                 y.project_id, y.method = y.previous.project_id, 'continued'
             else:
-                y.project_id, y.method = project_id(y.line), 'new'
+                candidate, n = project_id(y.line), 0
+                while candidate in taken:
+                    n += 1
+                    candidate = project_id(y.line, fiscal_year, *([n] if n > 1 else []))
+                y.project_id, y.method = candidate, 'new'
             used.add(y.project_id)
+            taken.add(y.project_id)
 
 
 def link(rows) -> list[tuple[str, str, str]]:

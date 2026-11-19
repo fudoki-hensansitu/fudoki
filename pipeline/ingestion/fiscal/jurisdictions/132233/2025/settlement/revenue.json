@@ -1,0 +1,287 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132233",
+    "fiscal_year": 2025,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "40e3bf2dde00d3e52adb81c4d9ac7b3e8a0848b039983e93868f6f963f808c4a"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "令和6年度／決算額": {
+                  "heading": "前年度決算額"
+                },
+                "令和7年度／構成比": {
+                  "kind": "ignore"
+                },
+                "令和6年度／構成比": {
+                  "kind": "ignore"
+                },
+                "対前年度比較／増減率": {
+                  "kind": "ignore"
+                },
+                "区分": {
+                  "heading": "款"
+                },
+                "対前年度比較／増減額": {
+                  "heading": "比較"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          },
+          "quirks": {
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kokuho",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "40e3bf2dde00d3e52adb81c4d9ac7b3e8a0848b039983e93868f6f963f808c4a"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "kokuho-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "令和6年度／決算額": {
+                  "heading": "前年度決算額"
+                },
+                "令和7年度／構成比": {
+                  "kind": "ignore"
+                },
+                "令和6年度／構成比": {
+                  "kind": "ignore"
+                },
+                "対前年度比較／増減率": {
+                  "kind": "ignore"
+                },
+                "区分": {
+                  "heading": "款"
+                },
+                "対前年度比較／増減額": {
+                  "heading": "比較"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "40e3bf2dde00d3e52adb81c4d9ac7b3e8a0848b039983e93868f6f963f808c4a"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "令和6年度／決算額": {
+                  "heading": "前年度決算額"
+                },
+                "令和7年度／構成比": {
+                  "kind": "ignore"
+                },
+                "令和6年度／構成比": {
+                  "kind": "ignore"
+                },
+                "対前年度比較／増減率": {
+                  "kind": "ignore"
+                },
+                "区分": {
+                  "heading": "款"
+                },
+                "対前年度比較／増減額": {
+                  "heading": "比較"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-revenue"
+        }
+      ]
+    },
+    {
+      "id": "toshikaku",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "40e3bf2dde00d3e52adb81c4d9ac7b3e8a0848b039983e93868f6f963f808c4a"
+        }
+      ],
+      "options": {
+        "account": "都市核地区土地区画整理事業特別会計",
+        "table_id": "toshikaku-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "令和6年度／決算額": {
+                  "heading": "前年度決算額"
+                },
+                "令和7年度／構成比": {
+                  "kind": "ignore"
+                },
+                "令和6年度／構成比": {
+                  "kind": "ignore"
+                },
+                "対前年度比較／増減率": {
+                  "kind": "ignore"
+                },
+                "区分": {
+                  "heading": "款"
+                },
+                "対前年度比較／増減額": {
+                  "heading": "比較"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "toshikaku-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "40e3bf2dde00d3e52adb81c4d9ac7b3e8a0848b039983e93868f6f963f808c4a"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "令和6年度／決算額": {
+                  "heading": "前年度決算額"
+                },
+                "令和7年度／構成比": {
+                  "kind": "ignore"
+                },
+                "令和6年度／構成比": {
+                  "kind": "ignore"
+                },
+                "対前年度比較／増減率": {
+                  "kind": "ignore"
+                },
+                "区分": {
+                  "heading": "款"
+                },
+                "対前年度比較／増減額": {
+                  "heading": "比較"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          },
+          "quirks": {
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue"
+        }
+      ]
+    }
+  ]
+}

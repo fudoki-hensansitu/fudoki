@@ -152,6 +152,180 @@
           "table_id": "chushajo-expenditure-notes"
         }
       ]
+    },
+    {
+      "id": "kaigo-settlement-details",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "71b7aa9ebd5359cc35dd8fc938d3eb9c2578b5de34c241c9e6bd92a8ee25fcc7"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "part": "detail",
+        "table_prefix": "kaigo-expenditure",
+        "emit": [
+          "details"
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "merged_breakdowns",
+            "profile": "fiscal/jurisdictions/132021/layouts/text_settlement/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-expenditure-details"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-settlement-notes",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "71b7aa9ebd5359cc35dd8fc938d3eb9c2578b5de34c241c9e6bd92a8ee25fcc7"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "part": "detail",
+        "table_prefix": "kaigo-expenditure",
+        "emit": [
+          "notes"
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "merged_breakdowns",
+            "profile": "fiscal/jurisdictions/132021/layouts/text_settlement/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-expenditure-notes"
+        }
+      ]
+    },
+    {
+      "id": "kokuho-settlement-details",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "71b7aa9ebd5359cc35dd8fc938d3eb9c2578b5de34c241c9e6bd92a8ee25fcc7"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "part": "detail",
+        "table_prefix": "kokuho-expenditure",
+        "emit": [
+          "details"
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "merged_breakdowns",
+            "profile": "fiscal/jurisdictions/132021/layouts/text_settlement/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-expenditure-details"
+        }
+      ]
+    },
+    {
+      "id": "kokuho-settlement-notes",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "71b7aa9ebd5359cc35dd8fc938d3eb9c2578b5de34c241c9e6bd92a8ee25fcc7"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "part": "detail",
+        "table_prefix": "kokuho-expenditure",
+        "emit": [
+          "notes"
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "merged_breakdowns",
+            "profile": "fiscal/jurisdictions/132021/layouts/text_settlement/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-expenditure-notes"
+        }
+      ]
+    },
+    {
+      "id": "keirin-settlement-details",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "71b7aa9ebd5359cc35dd8fc938d3eb9c2578b5de34c241c9e6bd92a8ee25fcc7"
+        }
+      ],
+      "options": {
+        "account": "競輪事業特別会計",
+        "part": "detail",
+        "table_prefix": "keirin-expenditure",
+        "emit": [
+          "details"
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "merged_breakdowns",
+            "profile": "fiscal/jurisdictions/132021/layouts/text_settlement/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "keirin-expenditure-details"
+        }
+      ]
+    },
+    {
+      "id": "keirin-settlement-notes",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "71b7aa9ebd5359cc35dd8fc938d3eb9c2578b5de34c241c9e6bd92a8ee25fcc7"
+        }
+      ],
+      "options": {
+        "account": "競輪事業特別会計",
+        "part": "detail",
+        "table_prefix": "keirin-expenditure",
+        "emit": [
+          "notes"
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "merged_breakdowns",
+            "profile": "fiscal/jurisdictions/132021/layouts/text_settlement/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "keirin-expenditure-notes"
+        }
+      ]
     }
   ]
 }

@@ -1,0 +1,420 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "133621",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7db43ef69aafff3c724c891e678272d5b249cd642bc226e74a7de6abd96a1c94"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "前年度予算額": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-business-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7db43ef69aafff3c724c891e678272d5b249cd642bc226e74a7de6abd96a1c94"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計（事業勘定）",
+        "table_id": "national-health-insurance-business-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "前年度予算額": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-business-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-clinic-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7db43ef69aafff3c724c891e678272d5b249cd642bc226e74a7de6abd96a1c94"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計（直診勘定）",
+        "table_id": "national-health-insurance-clinic-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "前年度予算額": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-clinic-revenue"
+        }
+      ]
+    },
+    {
+      "id": "water-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7db43ef69aafff3c724c891e678272d5b249cd642bc226e74a7de6abd96a1c94"
+        }
+      ],
+      "options": {
+        "account": "簡易水道事業特別会計",
+        "table_id": "water-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "前年度予算額": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "water-revenue"
+        }
+      ]
+    },
+    {
+      "id": "septic-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7db43ef69aafff3c724c891e678272d5b249cd642bc226e74a7de6abd96a1c94"
+        }
+      ],
+      "options": {
+        "account": "合併処理浄化槽事業特別会計",
+        "table_id": "septic-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "前年度予算額": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "septic-revenue"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-business-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7db43ef69aafff3c724c891e678272d5b249cd642bc226e74a7de6abd96a1c94"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計（事業勘定）",
+        "table_id": "long-term-care-business-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "前年度予算額": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-business-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7db43ef69aafff3c724c891e678272d5b249cd642bc226e74a7de6abd96a1c94"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業特別会計",
+        "table_id": "elderly-medical-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、同じノードに当初予算の額が二重に付くため。款の額は明細の頁の本年度で確かめる。"
+                  }
+                },
+                "前年度予算額": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、同じノードに当初予算の額が二重に付くため。款の額は明細の頁の本年度で確かめる。"
+                  }
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-revenue"
+        }
+      ]
+    }
+  ]
+}

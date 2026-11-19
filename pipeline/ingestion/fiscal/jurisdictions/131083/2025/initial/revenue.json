@@ -1,0 +1,111 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131083",
+    "fiscal_year": 2025,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5d3b25227cf411f301c6ea445f39afdf3c4693a9f3509d7b4be42528e73bf99a"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "reading": {
+            "pattern": "facing_explanations",
+            "profile": "fiscal/jurisdictions/131083/layouts/text_budget_revenue/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "36e7d914f4778b237fcea6334e6b84a5832f42cb4477f1081dc2a0b24b97f593"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "reading": {
+            "pattern": "facing_explanations",
+            "profile": "fiscal/jurisdictions/131083/layouts/text_budget_revenue/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "36e7d914f4778b237fcea6334e6b84a5832f42cb4477f1081dc2a0b24b97f593"
+        }
+      ],
+      "options": {
+        "account": "介護保険会計",
+        "table_id": "care-initial",
+        "workflow": {
+          "reading": {
+            "pattern": "facing_explanations",
+            "profile": "fiscal/jurisdictions/131083/layouts/text_budget_revenue/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "36e7d914f4778b237fcea6334e6b84a5832f42cb4477f1081dc2a0b24b97f593"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "reading": {
+            "pattern": "facing_explanations",
+            "profile": "fiscal/jurisdictions/131083/layouts/text_budget_revenue/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1490 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132292",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-revenue-01",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "284c095b790b56b3b4f1cdbeb658b49f0d1d231629db3828967a78e961c5b8ca"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-01",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-01"
+        }
+      ]
+    },
+    {
+      "id": "general-revenue-02",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "381501b3dde48f00cc29e4960e854facf824abcdaca3b2b8836e8b04bddcb896"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-02",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-02"
+        }
+      ]
+    },
+    {
+      "id": "general-revenue-03",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "12e9c7108f22e123e2d7fd3e64cbfb0d89eddd436f804afb745988a2a5b0ee8d"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-03",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-03"
+        }
+      ]
+    },
+    {
+      "id": "general-revenue-04",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8145e2cb8be26b84f7d3a75df2d8230902b6f61d10dd5a36f3b80ee39e5e72fc"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-04",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-04"
+        }
+      ]
+    },
+    {
+      "id": "general-revenue-05",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "bd18993850e17ddf8e5090bace8ea00e5de54ee0c6ef8d06609dc0bc24112f0d"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-05",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-05"
+        }
+      ]
+    },
+    {
+      "id": "general-revenue-06",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8ab747e0649650666416bc2536fc98c7e99753eb58f1b7124ee0a9e685140de3"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-06",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-06"
+        }
+      ]
+    },
+    {
+      "id": "general-revenue-07",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "1719b7ae7cb4f02dfee3512ba98c51ff4ca92a9720bafb0d07ba0e33a37d177a"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-07",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-07"
+        }
+      ]
+    },
+    {
+      "id": "general-revenue-08",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "fccc6118dcc9ea43ed6a63d12fd97635211df83b7ed25a2805d4abce327c31f2"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-08",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-08"
+        }
+      ]
+    },
+    {
+      "id": "general-revenue-09",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "1ac1cf550e47b145a53cc7f7af6340623d694df7059f1db09a60d6b92197356c"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-09",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-09"
+        }
+      ]
+    },
+    {
+      "id": "general-revenue-10",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "30b5a5f8df3d413766a2befaafd4d030c6778913f837071bcd025be97a38432f"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-10",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-10"
+        }
+      ]
+    },
+    {
+      "id": "general-revenue-11",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "87b916cda705d39b287ae190438fdaac57a95dbf1afa6ebcd99462995d826dd2"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-11",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-11"
+        }
+      ]
+    },
+    {
+      "id": "general-revenue-12",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "311d0c589246eb8407948bc8584e91d39d390ead5c7320ad92ae60e2b3ec8b64"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-12",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-12"
+        }
+      ]
+    },
+    {
+      "id": "general-revenue-13",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "9b56b15b00c100b5c11306c8b5aafe8b91b90b652bac4732cdd2c37be774b815"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-13",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-13"
+        }
+      ]
+    },
+    {
+      "id": "general-revenue-14",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "f22b900504ffdca2abe9197f8279b57774fac6129e86de3ea1295e96c4088e2c"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-14",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-14"
+        }
+      ]
+    },
+    {
+      "id": "general-revenue-15",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "0928ae384ddd71a265dd7ec1635a4a6fc53e7ac8333ffed04d99012cb9f4b658"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-15",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-15"
+        }
+      ]
+    },
+    {
+      "id": "general-revenue-16",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6399298da1414109c27f751b3259f933e28014106ae1c320c7e1242a6fdf7294"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-16",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-16"
+        }
+      ]
+    },
+    {
+      "id": "general-revenue-17",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "56d0898833458f385fd37760cb46d493c80027da1a9fceb2b514812ff77f89f7"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-17",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-17"
+        }
+      ]
+    },
+    {
+      "id": "general-revenue-18",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "2806545329fdb445619aa1ebfa67c2720c60f68296ef2053d16e19b61c1596a2"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-18",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-18"
+        }
+      ]
+    },
+    {
+      "id": "general-revenue-19",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ae988b76225322583e4fb948e529963e6d5bffec46ba339265dab845ee6d6487"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-19",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-19"
+        }
+      ]
+    },
+    {
+      "id": "general-revenue-20",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7fa4e4406ddc775db4abd07063054aa49704f28c96eda19db2d72aa52dbccd2c"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-20",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-20"
+        }
+      ]
+    },
+    {
+      "id": "general-revenue-21",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "54fcb7d0ade72894c2815aa580436cdb48a23ddf926a296b9550b04e58784e09"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-21",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-21"
+        }
+      ]
+    },
+    {
+      "id": "parking-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ae341a91b1f81a95734f7890151722ddd4786ef13a5798e04156ebca06ebcbde"
+        }
+      ],
+      "options": {
+        "account": "駐車場事業特別会計",
+        "table_id": "parking-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        },
+        "pages": [
+          [
+            3,
+            6
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "parking-revenue"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "293e8de3982bd86d713132d4a39187f285d34feb69555f3b6f2cfb202e3ec08e"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        },
+        "pages": [
+          [
+            3,
+            11
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "1afd0ce49f66e8adc4d7c4321fc43853271b534f7cf9ad67fb7927adb43d76fa"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "unnumbered_abolished_names": true,
+            "code_between_name_lines": true
+          }
+        },
+        "pages": [
+          [
+            3,
+            6
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-revenue"
+        }
+      ]
+    }
+  ]
+}

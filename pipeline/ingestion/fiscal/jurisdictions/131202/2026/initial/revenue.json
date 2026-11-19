@@ -1,0 +1,398 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131202",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "59aa51aaa085325263df7f2a2b04f6a26f4a7c17e3b746ef92b9b607e3171f4a"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_blocks",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（収入見込額・交付率・単価など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-ocr-1",
+          "origin_sha256": "59aa51aaa085325263df7f2a2b04f6a26f4a7c17e3b746ef92b9b607e3171f4a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ]
+          },
+          "sha256": "c2e9522de8881b8251009d64237fec6d3e2588302ee71cd3cc4fbef319ffea8d",
+          "bytes": 2602650
+        },
+        {
+          "id": "general-revenue-ocr-2",
+          "origin_sha256": "59aa51aaa085325263df7f2a2b04f6a26f4a7c17e3b746ef92b9b607e3171f4a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ]
+          },
+          "sha256": "3927ed7ad286a2eb31430332e02ec530e9fbc8e4e23aecaf3671e3dc415219d0",
+          "bytes": 3037244
+        },
+        {
+          "id": "general-revenue-ocr-3",
+          "origin_sha256": "59aa51aaa085325263df7f2a2b04f6a26f4a7c17e3b746ef92b9b607e3171f4a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ]
+          },
+          "sha256": "058705f77a0df7fdc79ce351c6b18eb94f45fcf5c5786fc8398f5222d056cdd9",
+          "bytes": 3210773
+        },
+        {
+          "id": "general-revenue-ocr-4",
+          "origin_sha256": "59aa51aaa085325263df7f2a2b04f6a26f4a7c17e3b746ef92b9b607e3171f4a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40
+            ]
+          },
+          "sha256": "6d4587c0c2d107e94cd76b07d9331913275c09170683eb670cc20ccccd0abada",
+          "bytes": 2428040
+        },
+        {
+          "id": "general-revenue-ocr-5",
+          "origin_sha256": "59aa51aaa085325263df7f2a2b04f6a26f4a7c17e3b746ef92b9b607e3171f4a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47
+            ]
+          },
+          "sha256": "f84af692f06f9d254040e719cbdd56b52b2cddeb7b003827b5dc54c6ef290f3f",
+          "bytes": 1437016
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "f7e3ca324672d35e7177ef880718cd2a751ba897aa25a7a9b8ba9fd99afea146"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_blocks",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（収入見込額・交付率・単価など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-revenue-ocr-1",
+          "origin_sha256": "f7e3ca324672d35e7177ef880718cd2a751ba897aa25a7a9b8ba9fd99afea146",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7
+            ]
+          },
+          "sha256": "d27b2398a6f5b87092c4bc5126b045588674e4965b216f193c9808698a884a51",
+          "bytes": 1453696
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6f109dde08baba06270d0f2a1fc94855eb1283020c15adfd8f615ae922b4599a"
+        }
+      ],
+      "options": {
+        "account": "介護保険会計",
+        "table_id": "care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_blocks",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（収入見込額・交付率・単価など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "care-revenue-ocr-1",
+          "origin_sha256": "6f109dde08baba06270d0f2a1fc94855eb1283020c15adfd8f615ae922b4599a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ]
+          },
+          "sha256": "e620abe06ee6930476e89050e3fbc3c60915a867f0f413fdb2b40876bed75e65",
+          "bytes": 2186736
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "803ad27216f555f366cdd6fc8989a8ff1391b08669bf727d3fd558c62b500127"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_blocks",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（収入見込額・交付率・単価など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-revenue-ocr-1",
+          "origin_sha256": "803ad27216f555f366cdd6fc8989a8ff1391b08669bf727d3fd558c62b500127",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          "sha256": "fb9611e168e93c8190cfc2b76c28fc985da36b03838158d30897221c3e1ebbbd",
+          "bytes": 814789
+        }
+      ]
+    }
+  ]
+}

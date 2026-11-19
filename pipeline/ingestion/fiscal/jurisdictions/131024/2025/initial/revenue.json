@@ -1,0 +1,336 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131024",
+    "fiscal_year": 2025,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "95899a316c3b52e4195c923a4bd79416ec4b6c080297b09562b820ee8fc667a2"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の計上説明は節ごとの算定の基（調定見込額・収入歩合・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  }
+                },
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "d92b301b57ba8c0496a3136f5795fb3807d95879056697ce37d6a066f477782d"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の計上説明は節ごとの算定の基（調定見込額・収入歩合・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  }
+                },
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-initial-revenue-ocr-fine-1",
+          "origin_sha256": "d92b301b57ba8c0496a3136f5795fb3807d95879056697ce37d6a066f477782d",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "ae127071cefe81478360282f9a0cd68b9d5e9d533b534334660d9ebb815883e9",
+          "bytes": 1514638
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "99d32ba7f18a8669af14f08dd7090ea48ad64b2032163b0c0e141dc81e8b6e11"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の計上説明は節ごとの算定の基（調定見込額・収入歩合・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  }
+                },
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "care-initial-revenue-ocr-fine-1",
+          "origin_sha256": "99d32ba7f18a8669af14f08dd7090ea48ad64b2032163b0c0e141dc81e8b6e11",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "1fa6d0a39161b46e2eb1ed426de75b3ef4a61a169a47165bbc0aaf73dce79f94",
+          "bytes": 2271898
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "c53a2356406a65ec227a1adb0ba6fbd0c917e4ed7a6e2ae4c78756e5fab21e93"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の計上説明は節ごとの算定の基（調定見込額・収入歩合・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  }
+                },
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-initial-revenue-ocr-fine-1",
+          "origin_sha256": "c53a2356406a65ec227a1adb0ba6fbd0c917e4ed7a6e2ae4c78756e5fab21e93",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "ecf3889a6c2654ee937d4bc1c50c0950f33328df7c893ccd0e5623f49d1e68ce",
+          "bytes": 1115276
+        }
+      ]
+    }
+  ]
+}

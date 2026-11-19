@@ -62,6 +62,10 @@ def words(pdf: Path, first: int, last: int, character_map: dict[str, str] | None
         source = re.sub(invalid, lambda hit: escape((character_map or {}).get(hit[0], '')), source)
         if (unmapped := (character_map or {}).get('\ufffd')) is not None:
             source = source.replace('\ufffd', escape(unmapped))  # a glyph Poppler could not map, declared
+        # A font that maps digits to unrelated ideographs (131156 R5 決算書 p17・p269・p270・p278: `0`–`9` to U+3EDC–U+3EE5
+        # and `,` to U+3ED8): the declared characters of CJK Extension A, in the words' text only.
+        if ideographs := {k: v for k, v in (character_map or {}).items() if '\u3400' <= k <= '\u4dbf'}:
+            source = source.translate(str.maketrans(ideographs))
         pages = {}
         for number, page in enumerate(ET.fromstring(source).findall('.//{*}page'), first):
             items = [Word(w.text or '', *(float(w.get(k)) for k in ('xMin', 'yMin', 'xMax', 'yMax')))
@@ -158,6 +162,19 @@ def covered_by_notes(page, items: list[Word]) -> list[Word]:
         # The note's text: the last run of words in the box that reads as it
         own = next((inside[start:end] for end in range(len(inside), 0, -1) for start in range(end - 1, -1, -1)
                     if box[4] and ''.join(items[index].text for index in inside[start:end]) == box[4]), [])
+        if box[4] and inside and not own:
+            # A note of several lines that repeats what is printed under it (港区の決算書 2023–2025, a name wrapped
+            # over four lines): the lines of the note and of the print interleave, so no run reads as the note. The
+            # printed words are the ones the page's own characters make (pdfplumber does not read annotations).
+            printed = [index for index in inside if _page_chars_in(page, items[index], left, top)]
+            pasted = [index for index in inside if index not in printed]
+            if printed and pasted and ''.join(items[index].text for index in pasted) == box[4]:
+                # The note is what the page shows, whether it repeats the print, corrects a word of it (`保護` over
+                # `保健`) or adds a last line the print left out (`費`): the printed words under it are dropped.
+                placed.update(_note_over_print([items[index] for index in printed],
+                                               [items[index] for index in pasted], pasted))
+                dropped.update(printed)
+                continue
         if box[4] and inside and not own:  # the note's text is not read where it is pasted: what it corrects is unknown
             raise ValueError(f'a note `{box[4]}` covers printed words but its text is not read in their place')
         covered = [items[index] for index in inside if index not in own]
@@ -178,10 +195,42 @@ def covered_by_notes(page, items: list[Word]) -> list[Word]:
     return [placed.get(index, word) for index, word in enumerate(items) if index not in dropped]
 
 
+FIGURE = re.compile(r'[\d,，.．△▲+＋\-－−‐―ー%％()（）円千万百億]*')  # an amount, a nil mark, a ratio or a unit
+COPIED_TEXT_SHARE = .1  # a hidden copy repeats the names too (a third or more of the pairs in the measured documents)
+
+
+def _note_over_print(printed: list[Word], pasted: list[Word], indices: list[int]) -> dict:
+    """Where the words of a note of several lines go once the printed words under it are dropped. The note's lines
+    are set a little above and to the left of the print's and closer together, so its first line would not meet the
+    amounts printed on the print's first line and its code would read as a deeper level: the note is moved onto the
+    print, its own line pitch kept. The left edge is matched on the lines after the first (the first also carries
+    the code, which the note joins to the name), or on the first lines when neither wraps."""
+    after_first = lambda words: [word for word in words if word.y0 > min(w.y0 for w in words) + .5]
+    a, b = after_first(printed), after_first(pasted)
+    dx = min(w.x0 for w in a) - min(w.x0 for w in b) if a and b else min(w.x0 for w in printed) - min(w.x0 for w in pasted)
+    dy = min(word.y0 for word in printed) - min(word.y0 for word in pasted)
+    return {index: Word(word.text, word.x0 + dx, word.y0 + dy, word.x1 + dx, word.y1 + dy)
+            for index, word in zip(indices, pasted)}
+
+
+def _page_chars_in(page, word: Word, left: float, top: float) -> bool:
+    """Whether the page's own characters (not an annotation's) inside the word's box read as the word."""
+    inside = [char for char in getattr(page, 'chars', ())
+              if word.x0 - .5 <= (char['x0'] + char['x1']) / 2 - left <= word.x1 + .5
+              and word.y0 - .5 <= (char['top'] + char['bottom']) / 2 - top <= word.y1 + .5
+              and not char['text'].isspace()]
+    return ''.join(char['text'] for char in sorted(inside, key=lambda char: char['x0'])) == word.text
+
+
 def drop_hidden_copies(pdf: Path, number: int, width: float, items: list[Word]) -> list[Word]:
     """Some documents print every word twice, the second copy a fixed distance to the side and not visible
     (a layer the page's clip hides): Poppler reads both. A page where a good share of the words have a twin at one
-    common distance is rendered, and in each half of the page the words of the side that shows no ink are dropped."""
+    common distance is rendered, and in each half of the page the words of the side that shows no ink are dropped.
+
+    A copy of every word repeats the names and headings as well as the figures. Twins that are all figures are
+    neighbouring amount columns printing the same amount on many rows (a 調定額 and the 収入済額 equal to it, 0 in
+    every column of a row): both show ink, and dropping one side would drop printed amounts. A page of real copies
+    that this keeps reads every amount twice, which the save gate's sum checks stop; a dropped amount passes them."""
     by_place: dict[tuple, list[int]] = {}
     for index, word in enumerate(items):
         by_place.setdefault((word.text, round(word.y0)), []).append(index)
@@ -203,6 +252,8 @@ def drop_hidden_copies(pdf: Path, number: int, width: float, items: list[Word]) 
             for b in members:
                 if abs(items[b].x0 - items[a].x0 - shift) < .6 and abs(items[b].y0 - items[a].y0) < .3:
                     pairs.append((a, b))
+    if sum(not FIGURE.fullmatch(items[a].text) for a, _ in pairs) < COPIED_TEXT_SHARE * len(pairs):
+        return items
     import numpy as np
     from PIL import Image
     with tempfile.TemporaryDirectory() as directory:
@@ -412,17 +463,51 @@ def observe(pdf: Path, pages: list[int], cache: Path | None = None,
     return result
 
 
-def cropped(pdf: Path, pages: list[Page]) -> list[Page]:
+def polyline_rules(pdf: Path, pages: list[Page]) -> list[Page]:
+    """The pages with the straight strokes of their paths as rules too (the layout setting `text_layer.polyline_rules`).
+
+    A table may close its frame with one path of straight segments instead of lines (目黒区の予算説明書の歳入: the
+    bottom of each page's frame is a path `m` up the left edge's last row, then `l` across the bottom): its horizontal
+    and vertical segments are rules like a line's, or the rows above the bottom fall outside the table."""
+    import pdfplumber
+    result = []
+    with pdfplumber.open(pdf) as document:
+        for observed in pages:
+            page = document.pages[observed.number - 1]
+            added = []
+            for curve in page.curves:
+                path = curve.get('path') or []
+                if not curve.get('stroke') or not _dark(curve.get('stroking_color', 0)) or any(op not in ('m', 'l') for op, *_ in path):
+                    continue
+                points = curve['pts']
+                for (x0, y0), (x1, y1) in zip(points, points[1:]):
+                    if abs(x1 - x0) < 1 and abs(y1 - y0) >= 1:
+                        added.append(Rule((x0 + x1) / 2, min(y0, y1), (x0 + x1) / 2, max(y0, y1)))
+                    elif abs(y1 - y0) < 1 and abs(x1 - x0) >= 1:
+                        added.append(Rule(min(x0, x1), (y0 + y1) / 2, max(x0, x1), (y0 + y1) / 2))
+            added = _to_poppler(page, added)
+            page.close()
+            result.append(Page(observed.number, observed.width, observed.height, observed.words,
+                               merge_rules(list(observed.rules) + added)) if added else observed)
+    return result
+
+
+def cropped(pdf: Path, pages: list[Page], sheet_of=None) -> list[Page]:
     """The pages cut to their CropBox (the layout setting `text_layer.crop_box`).
 
     A sheet printed two pages up is shown page by page through a CropBox over each half (131211's 予算説明書): the
     text layer and the drawing hold the whole sheet on both pages. Only the words whose middle is inside the box,
-    and the rules cut to it, are the page's."""
+    and the rules cut to it, are the page's. `sheet_of(number, boxes)` (the quirk `left_sheet_crop`) names another
+    page whose sheet a page is cut from."""
     import pdfplumber
     result = []
     with pdfplumber.open(pdf) as document:
+        boxes = {page.number: document.pages[page.number - 1].cropbox for page in pages}
+        sheets = {page.number: page for page in pages}
         for page in pages:
-            left, top, right, bottom = document.pages[page.number - 1].cropbox
+            left, top, right, bottom = boxes[page.number]
+            if sheet_of is not None and (source := sheets[sheet_of(page.number, boxes)]) is not page:
+                page = Page(page.number, page.width, page.height, source.words, source.rules)
             inside = lambda x, y: left <= x <= right and top <= y <= bottom
             words = [w for w in page.words if inside((w.x0 + w.x1) / 2, (w.y0 + w.y1) / 2)]
             rules = []

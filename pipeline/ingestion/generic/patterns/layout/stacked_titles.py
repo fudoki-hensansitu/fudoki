@@ -14,7 +14,8 @@ from ingestion.generic.layout import Glyph, lines, normalize, runs, text
 # A 款・項 abolished for the year prints no number (`款 特別区債 … 0千円`, 品川区 R8 歳入): it still prints its amount.
 TITLE = re.compile(r'^([0-9]*)(款|項)(.+)$')
 # A running title naming the 款 and the 項 on one line (`（款） 2 政策経営費 （項） 1 政策経営費`, 131164), over a table of 目.
-RUNNING = re.compile(r'^[(（]款[)）]([0-9]+)(.+?)(?:[(（]項[)）]([0-9]+)(.+))?$')
+# A 項 abolished for the year prints no number (`（款） 17 繰入金 （項） 財政調整基金繰入金`, 131164 R7 p91).
+RUNNING = re.compile(r'^[(（]款[)）]([0-9]+)(.+?)(?:[(（]項[)）]([0-9]*)(.+))?$')
 # The amount at the right end of a title, with the unit it prints (`24,930,655千円`).
 AMOUNT = re.compile(r'^([△▲]?[0-9]{1,3}(?:,[0-9]{3})*)(百万円|千円|円)$')
 REACH = 3  # how far a vertical rule may stand outside the band's edges and still be one of its columns'
@@ -67,11 +68,11 @@ def titles(logical: layout.Logical, heading: str | None) -> list[tuple[str, str,
             cut = next((i for i, g in enumerate(name) if '項' in g.text), len(name))
             kan, kou = name[:cut] or name, name[cut:] or name
             found.append(('款', running.group(1), running.group(2), kan, None))
-            if running.group(3):
+            if running.group(4):
                 low = max(g.y0 for g in kan) + .01
                 height = max(g.y1 - g.y0 for g in kan)
                 kou = [Glyph(g.text, g.x0, low, g.x1, low + height, g.page, g.offset) for g in kou]
-                found.append(('項', running.group(3), running.group(4), kou, None))
+                found.append(('項', running.group(3) or None, running.group(4), kou, None))
             continue
         if not match or (not match.group(1) and amount is None):
             continue

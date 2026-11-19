@@ -13,7 +13,7 @@
     "frame_heading": {
       "type": "string",
       "minLength": 1,
-      "description": "The heading of the expenditure frame on the left page (支出済額); the column years are the first line of year digits below it."
+      "description": "The heading of the frame read on the left page (支出済額 for expenditure, 収入済額 for revenue); the column years are the first line of year digits below it."
     },
     "left_columns": {
       "type": "array",
@@ -56,6 +56,14 @@
         }
       },
       "description": "Amounts each row must balance: a heading and the headings that add up to it (予算現額 = 支出済額 + 不用額 + 翌年度繰越額). A number read into the wrong column breaks it, and the conversion stops."
+    },
+    "subtotals": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Labels of rows that sum the 款 above them (小計, between 自主財源 and 依存財源): no 款, and excluded from coverage on both pages."
     }
   }
 }

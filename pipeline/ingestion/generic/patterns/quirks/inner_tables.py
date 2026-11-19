@@ -23,9 +23,9 @@ OPTIONS = {
     "additionalProperties": False,
     "required": [
         "marker",
-        "left",
-        "heading"
+        "left"
     ],
+    "anyOf": [{"required": ["heading"]}, {"required": ["excluded"]}],
     "description": "Blocks printed under a subject row across the amount columns, where the column rules stop (131199: 事業説明 and a boxed 事務事業 table under each 目). They are cut out before the columns are read; the boxed table whose first column header is `heading` becomes a breakdown of the subject above, on the axis `heading`.",
     "properties": {
         "marker": {
@@ -37,6 +37,18 @@ OPTIONS = {
             "type": "string",
             "minLength": 1,
             "description": "The header of the deepest subject column; a block runs right of the rule left of it."
+        },
+        "excluded": {
+            "type": "object",
+            "additionalProperties": False,
+            "required": ["kind", "reason"],
+            "properties": {"kind": {"type": "string", "minLength": 1}, "reason": {"type": "string", "minLength": 1}},
+            "description": "The blocks are no breakdown: cut out and left out whole, as this exclusion (131199 決算 歳入: the 説明 under each 目, a table of 区分 by 予算現額・調定額・決算額)."
+        },
+        "right": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The header of the column right of the blocks, when they stop at its rule (131199 決算 歳入: `節`, whose 区分 column runs on beside the 説明); without it a block runs to the right frame."
         },
         "heading": {
             "type": "string",
@@ -62,6 +74,7 @@ class Block:
     bottom: float
     left: float
     words: list[Word] = field(default_factory=list)
+    right: float = float('inf')
     rules: list[Rule] = field(default_factory=list)
 
 
@@ -96,13 +109,20 @@ def blocks_of(page: Page, setting: dict) -> list[Block]:
     if not before or not edges:
         return []
     x, left_x = max(before), max(edges)
+    right_x = float('inf')
+    if setting.get('right') is not None:
+        right = _word(page, setting['right'])
+        stops = [r.x0 for r in verticals if right is not None and marker.x1 < r.x0 < right.x0 and r.y0 <= right.y0 and right.y1 <= r.y1]
+        if not stops:
+            return []
+        right_x = max(stops)
     frame = [r for r in verticals if abs(r.x0 - min(edges)) < 1]
     bottom = max(r.y1 for r in frame)
     spans = sorted((r.y0, r.y1) for r in verticals if abs(r.x0 - x) < 1)
     found, reach = [], spans[0][1]
     for y0, y1 in spans[1:] + [(bottom, bottom)]:
         if y0 - reach > 2:
-            found.append(Block(page.number, reach, y0, left_x))
+            found.append(Block(page.number, reach, y0, left_x, right=right_x))
         reach = max(reach, y1)
     return found
 
@@ -117,7 +137,7 @@ def cut(pages: list[Page], setting: dict) -> tuple[list[Page], list[Block]]:
             continue
 
         def inside(x: float, y: float) -> Block | None:
-            return next((b for b in found if b.top < y < b.bottom and x > b.left + 1), None)
+            return next((b for b in found if b.top < y < b.bottom and b.left + 1 < x < b.right - 1), None)
 
         words, rules = [], []
         for word in page.words:
@@ -130,7 +150,7 @@ def cut(pages: list[Page], setting: dict) -> tuple[list[Page], list[Block]]:
                     block.rules.append(rule)
                     continue
             else:
-                block = next((b for b in found if b.top + 1 < rule.y0 < b.bottom - 1 and rule.x0 > b.left + 1), None)
+                block = next((b for b in found if b.top + 1 < rule.y0 < b.bottom - 1 and b.left + 1 < rule.x0 < b.right - 1), None)
                 if block:
                     block.rules.append(rule)
                     continue
@@ -244,11 +264,12 @@ def rows(block: Block, heading: str) -> tuple[list[Row], list[Word], list[str], 
     return found, outside, headers, figures
 
 
-def in_prose(blocks: list[Block], page: int, box) -> bool:
-    """A box that lies in a block's prose, outside its boxed tables: no amount column's."""
+def in_prose(blocks: list[Block], page: int, box, whole: bool = False) -> bool:
+    """A box that lies in a block's prose, outside its boxed tables: no amount column's. `whole`: the blocks are left
+    out whole (the option `excluded`), their tables too."""
     x, y = (box[0] + box[2]) / 2, (box[1] + box[3]) / 2
-    return any(b.page == page and b.top < y < b.bottom and x > b.left + 1
-               and not any(xs[0] - 1 <= x <= xs[-1] + 1 and top - 1 <= y <= bottom + 1 for xs, top, bottom in tables(b))
+    return any(b.page == page and b.top < y < b.bottom and b.left + 1 < x < b.right - 1
+               and not (not whole and any(xs[0] - 1 <= x <= xs[-1] + 1 and top - 1 <= y <= bottom + 1 for xs, top, bottom in tables(b)))
                for b in blocks)
 
 
@@ -260,6 +281,8 @@ def attach(built, blocks: list[Block], setting: dict, unit: str = '円') -> tupl
     """Lay the boxed tables' rows under the subject above each block, as a breakdown on the axis `heading`.
     The words of the blocks outside the tables (the prose) and the words of the figures ruled inside a table's
     first column are returned for the coverage check."""
+    if 'excluded' in setting:  # the blocks are left out whole (their words are excluded from coverage by the caller)
+        return [(block.page, w) for block in blocks for w in block.words], []
     axis = setting['heading']
     subjects = sorted((n for n in built.nodes if n.get('level_header')), key=lambda n: (n['physical_page'], n['y0']))
     prose: list[tuple[int, Word]] = []

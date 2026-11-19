@@ -177,12 +177,12 @@ def link_projects(sheets: list[Sheet], subjects: dict[str, dict[str, tuple[str, 
     by_id = {line.detail_id: line for line in lines}
     under: dict[str, list[Line]] = defaultdict(list)
     children: dict[str, list[Line]] = defaultdict(list)
-    by_year: dict[tuple, list[Line]] = defaultdict(list)
+    by_name: dict[tuple, list[Line]] = defaultdict(list)
     for line in lines:
         under[line.subject_id].append(line)
         if line.parent_detail_id:
             children[line.parent_detail_id].append(line)
-        by_year[line.jurisdiction_code, line.fiscal_year].append(line)
+        by_name[line.jurisdiction_code, line.fiscal_year, normalize(line.name)].append(line)
 
     def descendants(roots: list[Line]) -> list[Line]:
         out, stack = [], list(roots)
@@ -209,8 +209,8 @@ def link_projects(sheets: list[Sheet], subjects: dict[str, dict[str, tuple[str, 
             found = topmost(narrow_by_department(found, sheet), by_id)
         else:
             method = 'name'
-            scope = [line for line in by_year[sheet.jurisdiction_code, sheet.fiscal_year]
-                     if same_account(sheet.account, line.account_name, line.account_kind) and normalize(line.name) == name]
+            scope = [line for line in by_name[sheet.jurisdiction_code, sheet.fiscal_year, name]
+                     if same_account(sheet.account, line.account_name, line.account_kind)]
             found = topmost(narrow_by_department(scope, sheet), by_id)
             if len({line.project_id for line in found}) != 1:
                 found = []

@@ -1,0 +1,361 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132110",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b7dd484aeadc32b447bda330a2263284a6ecb4547375bdc5461f6773c20297af"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "pages": [
+          [
+            24,
+            24
+          ],
+          [
+            26,
+            26
+          ],
+          [
+            28,
+            28
+          ],
+          [
+            30,
+            30
+          ],
+          [
+            32,
+            32
+          ],
+          [
+            34,
+            34
+          ],
+          [
+            36,
+            36
+          ],
+          [
+            38,
+            38
+          ],
+          [
+            40,
+            40
+          ],
+          [
+            42,
+            42
+          ],
+          [
+            44,
+            44
+          ],
+          [
+            46,
+            46
+          ],
+          [
+            48,
+            48
+          ],
+          [
+            50,
+            50
+          ],
+          [
+            52,
+            52
+          ],
+          [
+            54,
+            54
+          ],
+          [
+            56,
+            56
+          ],
+          [
+            58,
+            58
+          ]
+        ],
+        "parent_corrections": [
+          {
+            "id": "special-land-tax-kou",
+            "page": 28,
+            "code": null,
+            "name": "特別土地保有税",
+            "parent_page": 24,
+            "parent_code": "1",
+            "parent_name": "市税",
+            "reason": "物理28頁の項「特別土地保有税」は前年度にだけあった項で、番号を印字せず本年度の欄も空（前年度 1 千円）。番号の無い行を直前の項5 都市計画税の子に読むが、原画では款1 市税の項で、款の前年度・比較は印字された項の和とこの項を含めて一致する。"
+          }
+        ],
+        "excluded_boxes": [
+          {
+            "id": "p28-special-land-tax-moku",
+            "page": 28,
+            "bbox": [
+              360,
+              526,
+              540,
+              540
+            ],
+            "kind": "親の繰り返し",
+            "reason": "物理28頁の目「特別土地保有税」（番号なし、前年度 1・比較 △1 千円）は、すぐ上の項「特別土地保有税」の唯一の目で、項と同じ金額を繰り返す。番号の無い2行を1つの科目に読むので、目の行の数字は項の金額の繰り返しとして除く。"
+          }
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（課税基本台数・税率・調定見込額・収入歩合など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_code_at_top": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-initial-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5bdae57e859a2e0d5ca354deb16577c408541da66ace2fc38aa51cf9f1864c4b"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-insurance-revenue",
+        "pages": [
+          [
+            18,
+            18
+          ],
+          [
+            20,
+            20
+          ],
+          [
+            22,
+            22
+          ],
+          [
+            24,
+            24
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（課税基本台数・税率・調定見込額・収入歩合など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_code_at_top": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5bdae57e859a2e0d5ca354deb16577c408541da66ace2fc38aa51cf9f1864c4b"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-revenue",
+        "pages": [
+          [
+            78,
+            78
+          ],
+          [
+            80,
+            80
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（課税基本台数・税率・調定見込額・収入歩合など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_code_at_top": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-revenue"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-insurance-initial-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5bdae57e859a2e0d5ca354deb16577c408541da66ace2fc38aa51cf9f1864c4b"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "long-term-care-insurance-revenue",
+        "pages": [
+          [
+            112,
+            112
+          ],
+          [
+            114,
+            114
+          ],
+          [
+            116,
+            116
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（課税基本台数・税率・調定見込額・収入歩合など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_code_at_top": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-insurance-revenue"
+        }
+      ]
+    }
+  ]
+}

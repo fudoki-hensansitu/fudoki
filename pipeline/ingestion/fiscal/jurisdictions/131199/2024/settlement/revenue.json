@@ -1,0 +1,1568 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131199",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-detail",
+        "pages": [
+          [
+            54,
+            245
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true,
+                "line_pieces": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考は収入の内容・相手先・件数などの説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                }
+              }
+            }
+          },
+          "quirks": {
+            "inner_tables": {
+              "marker": "当初予算額",
+              "left": "目",
+              "right": "節",
+              "excluded": {
+                "kind": "歳入の説明",
+                "reason": "各目の下の（説明）の表は、目の予算現額・調定額・決算額を区分（現年分・滞納繰越分など）ごとに示す説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "auto-p84-full-page-a0-result0-r19",
+            "page": 84,
+            "observation_id": "p84:full-page:a0:result0:r19",
+            "observed_name": "地域センタ一使用料及び美術館使用料等の実績による増",
+            "corrected_name": "地域センター使用料及び美術館使用料等の実績による増",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p84-full-page-a0-result0-r27",
+            "page": 84,
+            "observation_id": "p84:full-page:a0:result0:r27",
+            "observed_name": "2情報処理センタ一使用料",
+            "corrected_name": "2情報処理センター使用料",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p84-full-page-a0-result1-r23",
+            "page": 84,
+            "observation_id": "p84:full-page:a0:result1:r23",
+            "observed_name": "一使用料",
+            "corrected_name": "ー使用料",
+            "reason": "原典の画像では前の行の末尾のカタカナに続く長音「ー」で行が始まる。Paddle は「ー」を漢字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p96-full-page-a0-result0-r48",
+            "page": 96,
+            "observation_id": "p96:full-page:a0:result0:r48",
+            "observed_name": "(2）証明·閱覧手数料",
+            "corrected_name": "(2）証明·閲覧手数料",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p110-full-page-a0-result0-r50",
+            "page": 110,
+            "observation_id": "p110:full-page:a0:result0:r50",
+            "observed_name": "（1）個人番号力一ド交付事務費",
+            "corrected_name": "（1）個人番号カード交付事務費",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p148-full-page-a0-result0-r29",
+            "page": 148,
+            "observation_id": "p148:full-page:a0:result0:r29",
+            "observed_name": "（16）保育所等利用多子世带負担",
+            "corrected_name": "（16）保育所等利用多子世帯負担",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p150-full-page-a0-result0-r54",
+            "page": 150,
+            "observation_id": "p150:full-page:a0:result0:r54",
+            "observed_name": "ネ一タ一配置促進事業費補",
+            "corrected_name": "ネーター配置促進事業費補",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p152-full-page-a0-result0-r15",
+            "page": 152,
+            "observation_id": "p152:full-page:a0:result0:r15",
+            "observed_name": "(30）とうきようママパパ応援事",
+            "corrected_name": "(30）とうきょうママパパ応援事",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p154-full-page-a0-result0-r37",
+            "page": 154,
+            "observation_id": "p154:full-page:a0:result0:r37",
+            "observed_name": "(5)とうきようママパパ応援事",
+            "corrected_name": "(5)とうきょうママパパ応援事",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p166-full-page-a0-result0-r37",
+            "page": 166,
+            "observation_id": "p166:full-page:a0:result0:r37",
+            "observed_name": "（8）教育支援センタ一機能強化",
+            "corrected_name": "（8）教育支援センター機能強化",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p168-full-page-a0-result0-r51",
+            "page": 168,
+            "observation_id": "p168:full-page:a0:result0:r51",
+            "observed_name": "センタ一整備支援事業費補",
+            "corrected_name": "センター整備支援事業費補",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p170-full-page-a0-result0-r38",
+            "page": 170,
+            "observation_id": "p170:full-page:a0:result0:r38",
+            "observed_name": "センタ一整備支援事業費補",
+            "corrected_name": "センター整備支援事業費補",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p188-full-page-a0-result1-r33",
+            "page": 188,
+            "observation_id": "p188:full-page:a0:result1:r33",
+            "observed_name": "1 土地壳払収入",
+            "corrected_name": "1 土地売払収入",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p188-full-page-a0-result1-r45",
+            "page": 188,
+            "observation_id": "p188:full-page:a0:result1:r45",
+            "observed_name": "1 不用品壳払収入",
+            "corrected_name": "1 不用品売払収入",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p196-full-page-a0-result0-r22",
+            "page": 196,
+            "observation_id": "p196:full-page:a0:result0:r22",
+            "observed_name": "〔前年度歲計剩余金",
+            "corrected_name": "〔前年度歳計剩余金",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p224-full-page-a0-result0-r16",
+            "page": 224,
+            "observation_id": "p224:full-page:a0:result0:r16",
+            "observed_name": "(5）揭示板広告収入",
+            "corrected_name": "(5）掲示板広告収入",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p230-full-page-a0-result0-r22",
+            "page": 230,
+            "observation_id": "p230:full-page:a0:result0:r22",
+            "observed_name": "（36）企業活性化センタ一管理業",
+            "corrected_name": "（36）企業活性化センター管理業",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p238-full-page-a0-result0-r14",
+            "page": 238,
+            "observation_id": "p238:full-page:a0:result0:r14",
+            "observed_name": "志村健康福祉センタ一",
+            "corrected_name": "志村健康福祉センター",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "p55-funou-142-digit-1",
+            "page": 55,
+            "observation_id": "p55:digit-1:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理55頁のこの行の不納欠損額は 188,947,296 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 188,947,296 と宣言する。"
+          },
+          {
+            "id": "p55-funou-163-digit-2",
+            "page": 55,
+            "observation_id": "p55:digit-2:r0",
+            "observed": "2",
+            "reason": "原典の画像では、物理55頁のこの行の不納欠損額は 186,524,216 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 186,524,216 と宣言する。"
+          },
+          {
+            "id": "p55-funou-163-digit-3",
+            "page": 55,
+            "observation_id": "p55:digit-3:r0",
+            "observed": "6",
+            "reason": "原典の画像では、物理55頁のこの行の不納欠損額は 186,524,216 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 186,524,216 と宣言する。"
+          },
+          {
+            "id": "p55-funou-163-digit-4",
+            "page": 55,
+            "observation_id": "p55:digit-4:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理55頁のこの行の不納欠損額は 186,524,216 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 186,524,216 と宣言する。"
+          },
+          {
+            "id": "p55-funou-163-digit-5",
+            "page": 55,
+            "observation_id": "p55:digit-5:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理55頁のこの行の不納欠損額は 186,524,216 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 186,524,216 と宣言する。"
+          },
+          {
+            "id": "p55-funou-184-digit-6",
+            "page": 55,
+            "observation_id": "p55:digit-6:r0",
+            "observed": "2",
+            "reason": "原典の画像では、物理55頁のこの行の不納欠損額は 186,524,216 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 186,524,216 と宣言する。"
+          },
+          {
+            "id": "p55-funou-184-digit-7",
+            "page": 55,
+            "observation_id": "p55:digit-7:r0",
+            "observed": "6",
+            "reason": "原典の画像では、物理55頁のこの行の不納欠損額は 186,524,216 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 186,524,216 と宣言する。"
+          },
+          {
+            "id": "p55-funou-184-digit-8",
+            "page": 55,
+            "observation_id": "p55:digit-8:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理55頁のこの行の不納欠損額は 186,524,216 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 186,524,216 と宣言する。"
+          },
+          {
+            "id": "p55-funou-184-digit-9",
+            "page": 55,
+            "observation_id": "p55:digit-9:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理55頁のこの行の不納欠損額は 186,524,216 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 186,524,216 と宣言する。"
+          },
+          {
+            "id": "p55-funou-238-digit-10",
+            "page": 55,
+            "observation_id": "p55:digit-10:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理55頁のこの行の不納欠損額は 183,524,758 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 183,524,758 と宣言する。"
+          },
+          {
+            "id": "p211-funou-142-digit-0",
+            "page": 211,
+            "observation_id": "p211:digit-0:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理211頁のこの行の不納欠損額は 188,886,185 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 188,886,185 と宣言する。"
+          },
+          {
+            "id": "p211-funou-142-digit-1",
+            "page": 211,
+            "observation_id": "p211:digit-1:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理211頁のこの行の不納欠損額は 188,886,185 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 188,886,185 と宣言する。"
+          },
+          {
+            "id": "p211-funou-227-digit-2",
+            "page": 211,
+            "observation_id": "p211:digit-2:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理211頁のこの行の不納欠損額は 188,046,785 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 188,046,785 と宣言する。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p55-funou-142",
+            "page": 55,
+            "boxes": [
+              [
+                275.0,
+                141.8,
+                323.9,
+                155.8
+              ]
+            ],
+            "amount": "188,947,296",
+            "reason": "原典の画像では、物理55頁のこの行の不納欠損額は 188,947,296 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 188,947,296 と宣言する。"
+          },
+          {
+            "id": "p55-funou-163",
+            "page": 55,
+            "boxes": [
+              [
+                275.0,
+                163.2,
+                323.9,
+                177.2
+              ]
+            ],
+            "amount": "186,524,216",
+            "reason": "原典の画像では、物理55頁のこの行の不納欠損額は 186,524,216 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 186,524,216 と宣言する。"
+          },
+          {
+            "id": "p55-funou-184",
+            "page": 55,
+            "boxes": [
+              [
+                274.5,
+                184.2,
+                323.9,
+                198.2
+              ]
+            ],
+            "amount": "186,524,216",
+            "reason": "原典の画像では、物理55頁のこの行の不納欠損額は 186,524,216 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 186,524,216 と宣言する。"
+          },
+          {
+            "id": "p55-funou-238",
+            "page": 55,
+            "boxes": [
+              [
+                275.0,
+                237.8,
+                323.9,
+                251.8
+              ]
+            ],
+            "amount": "183,524,758",
+            "reason": "原典の画像では、物理55頁のこの行の不納欠損額は 183,524,758 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 183,524,758 と宣言する。"
+          },
+          {
+            "id": "p199-funou-142",
+            "page": 199,
+            "boxes": [
+              [
+                270.5,
+                141.8,
+                323.9,
+                155.8
+              ]
+            ],
+            "amount": "293,766,607",
+            "reason": "原典の画像では、物理199頁のこの行の不納欠損額は 293,766,607 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 293,766,607 と宣言する。"
+          },
+          {
+            "id": "p209-funou-590",
+            "page": 209,
+            "boxes": [
+              [
+                270.5,
+                590.5,
+                324.4,
+                604.5
+              ]
+            ],
+            "amount": "289,154,144",
+            "reason": "原典の画像では、物理209頁のこの行の不納欠損額は 289,154,144 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 289,154,144 と宣言する。"
+          },
+          {
+            "id": "p211-funou-142",
+            "page": 211,
+            "boxes": [
+              [
+                275.0,
+                141.8,
+                323.9,
+                155.8
+              ]
+            ],
+            "amount": "188,886,185",
+            "reason": "原典の画像では、物理211頁のこの行の不納欠損額は 188,886,185 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 188,886,185 と宣言する。"
+          },
+          {
+            "id": "p211-funou-227",
+            "page": 211,
+            "boxes": [
+              [
+                274.7,
+                227.2,
+                323.9,
+                241.2
+              ]
+            ],
+            "amount": "188,046,785",
+            "reason": "原典の画像では、物理211頁のこの行の不納欠損額は 188,046,785 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 188,046,785 と宣言する。"
+          },
+          {
+            "id": "p245-funou-665",
+            "page": 245,
+            "boxes": [
+              [
+                270.5,
+                665.2,
+                324.8,
+                679.2
+              ]
+            ],
+            "amount": "488,520,483",
+            "reason": "原典の画像では、物理245頁のこの行の不納欠損額は 488,520,483 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 488,520,483 と宣言する。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-ocr-1",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63
+            ]
+          },
+          "sha256": "683efdfad953714ed4d597d14791d1785fc603287a4e697a9128ccdc6a0cec4b",
+          "bytes": 1903579
+        },
+        {
+          "id": "general-revenue-ocr-2",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70,
+              71,
+              72,
+              73
+            ]
+          },
+          "sha256": "b457d40f18dea5900fea2d98407083f82d5960067d4df0948e2fb964b82d609c",
+          "bytes": 1248664
+        },
+        {
+          "id": "general-revenue-ocr-3",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80,
+              81,
+              82,
+              83
+            ]
+          },
+          "sha256": "b861dbe53268068fa37ad1e502cc733f6f3ee738154feaffef0ba7133ffe645f",
+          "bytes": 1702361
+        },
+        {
+          "id": "general-revenue-ocr-4",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90,
+              91,
+              92,
+              93
+            ]
+          },
+          "sha256": "4c02087c15a3cbe9137c4999aee6fadd71e1f820414b21eacc0caced1f5e16fb",
+          "bytes": 2607406
+        },
+        {
+          "id": "general-revenue-ocr-5",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              94,
+              95,
+              96,
+              97,
+              98,
+              99,
+              100,
+              101,
+              102,
+              103
+            ]
+          },
+          "sha256": "8b801793f99a237f4f47c668493622a9e9609c7d19e67d028947c30597b307ec",
+          "bytes": 2228857
+        },
+        {
+          "id": "general-revenue-ocr-6",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              104,
+              105,
+              106,
+              107,
+              108,
+              109,
+              110,
+              111,
+              112,
+              113
+            ]
+          },
+          "sha256": "cf7b5ff90f5cb0fe50c1c3be2db80f790078d14414fdf9033c285863e1b1da15",
+          "bytes": 2145896
+        },
+        {
+          "id": "general-revenue-ocr-7",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              114,
+              115,
+              116,
+              117,
+              118,
+              119,
+              120,
+              121,
+              122,
+              123
+            ]
+          },
+          "sha256": "405e143d7793f796adfecfb3ed1fe8cb329e6a65bf6151090083795f829e63e2",
+          "bytes": 1988787
+        },
+        {
+          "id": "general-revenue-ocr-8",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              124,
+              125,
+              126,
+              127,
+              128,
+              129,
+              130,
+              131,
+              132,
+              133
+            ]
+          },
+          "sha256": "6460ef4c262b20aae38628e95bdc3b6a638b1ac768b29272c0c71c4600607944",
+          "bytes": 1981635
+        },
+        {
+          "id": "general-revenue-ocr-9",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              134,
+              135,
+              136,
+              137,
+              138,
+              139,
+              140,
+              141,
+              142,
+              143
+            ]
+          },
+          "sha256": "338bb67a578fb05943dc74b77ec8c14ae6a76d5845a0e68e2caedaa9a52378f1",
+          "bytes": 2012002
+        },
+        {
+          "id": "general-revenue-ocr-10",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              144,
+              145,
+              146,
+              147,
+              148,
+              149,
+              150,
+              151,
+              152,
+              153
+            ]
+          },
+          "sha256": "7909bf007e24c8115261fb9b6236c981a2bf7988ce137d788fd64612af5b4a42",
+          "bytes": 1775980
+        },
+        {
+          "id": "general-revenue-ocr-11",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              154,
+              155,
+              156,
+              157,
+              158,
+              159,
+              160,
+              161,
+              162,
+              163
+            ]
+          },
+          "sha256": "fe74844d021bced0faf59c09eec4282e66a90368ebba577531b248aa318b9d1a",
+          "bytes": 1946459
+        },
+        {
+          "id": "general-revenue-ocr-12",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              164,
+              165,
+              166,
+              167,
+              168,
+              169,
+              170,
+              171,
+              172,
+              173
+            ]
+          },
+          "sha256": "5f9392c743f0dc2f68785f1359374fb926f6134fef10d62acb6421cc1cc79539",
+          "bytes": 1897059
+        },
+        {
+          "id": "general-revenue-ocr-13",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              174,
+              175,
+              176,
+              177,
+              178,
+              179,
+              180,
+              181,
+              182,
+              183
+            ]
+          },
+          "sha256": "d270c6cfee5561c0edceede30a5c1e3f89f3f6e1b86436ab9e67a5d34cc81f0f",
+          "bytes": 1963981
+        },
+        {
+          "id": "general-revenue-ocr-14",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              184,
+              185,
+              186,
+              187,
+              188,
+              189,
+              190,
+              191,
+              192,
+              193
+            ]
+          },
+          "sha256": "181a023399804de8144ffffa478e57f07fa8b044e8e7f4c578af679d1cbd01b2",
+          "bytes": 2088693
+        },
+        {
+          "id": "general-revenue-ocr-15",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              194,
+              195,
+              196,
+              197,
+              198,
+              199,
+              200,
+              201,
+              202,
+              203
+            ]
+          },
+          "sha256": "950ca6fb13ba236333d72ed5665d2fa5da46f54aabd46d191aac825df89b2905",
+          "bytes": 2057296
+        },
+        {
+          "id": "general-revenue-ocr-16",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              204,
+              205,
+              206,
+              207,
+              208,
+              209,
+              210,
+              211,
+              212,
+              213
+            ]
+          },
+          "sha256": "0851d5440cfc586f2098752f465d7f71d54ad409335437e2add1cc175a640f1a",
+          "bytes": 2258091
+        },
+        {
+          "id": "general-revenue-ocr-17",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              214,
+              215,
+              216,
+              217,
+              218,
+              219,
+              220,
+              221,
+              222,
+              223
+            ]
+          },
+          "sha256": "5684106abcf96ede1ad1fe8032932941ded6a45ab4e7606e7a79c40340129340",
+          "bytes": 1887526
+        },
+        {
+          "id": "general-revenue-ocr-18",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              224,
+              225,
+              226,
+              227,
+              228,
+              229,
+              230,
+              231,
+              232,
+              233
+            ]
+          },
+          "sha256": "419ade0fa07a4e2850c9e1655327a43ff30b073c3e5071e33c59f38a6d5af8b6",
+          "bytes": 1868458
+        },
+        {
+          "id": "general-revenue-ocr-19",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              234,
+              235,
+              236,
+              237,
+              238,
+              239,
+              240,
+              241,
+              242,
+              243
+            ]
+          },
+          "sha256": "fa513e5bc9cb063907c49985f52de71db8a25f7c307be9a14c983e072911bb99",
+          "bytes": 1502044
+        },
+        {
+          "id": "general-revenue-ocr-20",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              244,
+              245
+            ]
+          },
+          "sha256": "e74a42f2d0bf0f4b6ee71d56ee8e6d92b85cdfbd6b6e36146b755522bbd83539",
+          "bytes": 448910
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "nhi-revenue-detail",
+        "pages": [
+          [
+            462,
+            487
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true,
+                "line_pieces": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考は収入の内容・相手先・件数などの説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                }
+              }
+            }
+          },
+          "quirks": {
+            "digit_set_codes": 4.0,
+            "inner_tables": {
+              "marker": "当初予算額",
+              "left": "目",
+              "right": "節",
+              "excluded": {
+                "kind": "歳入の説明",
+                "reason": "各目の下の（説明）の表は、目の予算現額・調定額・決算額を区分（現年分・滞納繰越分など）ごとに示す説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "auto-p476-full-page-a0-result1-r20",
+            "page": 476,
+            "observation_id": "p476:full-page:a0:result1:r20",
+            "observed_name": "1 物品壳払収入",
+            "corrected_name": "1 物品売払収入",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p480-full-page-a0-result0-r22",
+            "page": 480,
+            "observation_id": "p480:full-page:a0:result0:r22",
+            "observed_name": "〔前年度歲計剩余金",
+            "corrected_name": "〔前年度歳計剩余金",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p463-funou-163",
+            "page": 463,
+            "boxes": [
+              [
+                274.7,
+                163.0,
+                323.9,
+                177.0
+              ]
+            ],
+            "amount": "613,277,646",
+            "reason": "原典の画像では、物理463頁のこの行の不納欠損額は 613,277,646 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 613,277,646 と宣言する。"
+          },
+          {
+            "id": "p463-funou-313",
+            "page": 463,
+            "boxes": [
+              [
+                275.7,
+                312.8,
+                323.9,
+                326.8
+              ]
+            ],
+            "amount": "415,330,282",
+            "reason": "原典の画像では、物理463頁のこの行の不納欠損額は 415,330,282 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 415,330,282 と宣言する。"
+          },
+          {
+            "id": "p487-funou-660",
+            "page": 487,
+            "boxes": [
+              [
+                274.7,
+                660.2,
+                324.4,
+                674.2
+              ]
+            ],
+            "amount": "617,708,208",
+            "reason": "原典の画像では、物理487頁のこの行の不納欠損額は 617,708,208 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 617,708,208 と宣言する。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "p463-funou-313-digit-1",
+            "page": 463,
+            "observation_id": "p463:digit-1:r0",
+            "observed": "4",
+            "reason": "原典の画像では、物理463頁のこの行の不納欠損額は 415,330,282 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 415,330,282 と宣言する。"
+          },
+          {
+            "id": "p463-funou-313-digit-2",
+            "page": 463,
+            "observation_id": "p463:digit-2:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理463頁のこの行の不納欠損額は 415,330,282 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 415,330,282 と宣言する。"
+          },
+          {
+            "id": "p487-funou-660-digit-0",
+            "page": 487,
+            "observation_id": "p487:digit-0:r0",
+            "observed": "6",
+            "reason": "原典の画像では、物理487頁のこの行の不納欠損額は 617,708,208 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 617,708,208 と宣言する。"
+          },
+          {
+            "id": "p487-funou-660-digit-2",
+            "page": 487,
+            "observation_id": "p487:digit-2:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理487頁のこの行の不納欠損額は 617,708,208 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 617,708,208 と宣言する。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-revenue-ocr-1",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              462,
+              463,
+              464,
+              465,
+              466,
+              467,
+              468,
+              469,
+              470,
+              471
+            ]
+          },
+          "sha256": "dca8c456a0b58d8e379389d75cf4ea655ac12f410d15db86ef73947467f5337f",
+          "bytes": 1560697
+        },
+        {
+          "id": "nhi-revenue-ocr-2",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              472,
+              473,
+              474,
+              475,
+              476,
+              477,
+              478,
+              479,
+              480,
+              481
+            ]
+          },
+          "sha256": "18e98607a953a73e0498bdb6e0b23d6e460e60791f642f981357dc3d0992c2ae",
+          "bytes": 1328563
+        },
+        {
+          "id": "nhi-revenue-ocr-3",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              482,
+              483,
+              484,
+              485,
+              486,
+              487
+            ]
+          },
+          "sha256": "9ce4b255a53d2f2f492c8031e150ba143d9c00644e3d6efa68f9cbd4928c7b70",
+          "bytes": 1152018
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "kaigo-revenue-detail",
+        "pages": [
+          [
+            526,
+            551
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true,
+                "line_pieces": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考は収入の内容・相手先・件数などの説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                }
+              }
+            }
+          },
+          "quirks": {
+            "digit_set_codes": 4.0,
+            "inner_tables": {
+              "marker": "当初予算額",
+              "left": "目",
+              "right": "節",
+              "excluded": {
+                "kind": "歳入の説明",
+                "reason": "各目の下の（説明）の表は、目の予算現額・調定額・決算額を区分（現年分・滞納繰越分など）ごとに示す説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-revenue-ocr-1",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              526,
+              527,
+              528,
+              529,
+              530,
+              531,
+              532,
+              533,
+              534,
+              535
+            ]
+          },
+          "sha256": "fff8ee1ae8006ffea70857e73273023a31ac9a97c4903670a875ca1047e2a39a",
+          "bytes": 1748081
+        },
+        {
+          "id": "kaigo-revenue-ocr-2",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              536,
+              537,
+              538,
+              539,
+              540,
+              541,
+              542,
+              543,
+              544,
+              545
+            ]
+          },
+          "sha256": "dab18ffb9886b04df8bf68f57fe5775dbd30ed97a1932f9d621d1b8dde5a415a",
+          "bytes": 1606728
+        },
+        {
+          "id": "kaigo-revenue-ocr-3",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              546,
+              547,
+              548,
+              549,
+              550,
+              551
+            ]
+          },
+          "sha256": "3f78b15680e146ed76e1f22fb597018f6f524b75276e5921e1e0de267d149d19",
+          "bytes": 936384
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業特別会計",
+        "table_id": "kouki-revenue-detail",
+        "pages": [
+          [
+            584,
+            595
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true,
+                "line_pieces": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考は収入の内容・相手先・件数などの説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                }
+              }
+            }
+          },
+          "quirks": {
+            "digit_set_codes": 4.0,
+            "inner_tables": {
+              "marker": "当初予算額",
+              "left": "目",
+              "right": "節",
+              "excluded": {
+                "kind": "歳入の説明",
+                "reason": "各目の下の（説明）の表は、目の予算現額・調定額・決算額を区分（現年分・滞納繰越分など）ごとに示す説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+              }
+            }
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p585-funou-142-digit-0",
+            "page": 585,
+            "observation_id": "p585:digit-0:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理585頁のこの行の不納欠損額は 13,976,707 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 13,976,707 と宣言する。"
+          },
+          {
+            "id": "p585-funou-163-digit-2",
+            "page": 585,
+            "observation_id": "p585:digit-2:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理585頁のこの行の不納欠損額は 13,976,707 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 13,976,707 と宣言する。"
+          },
+          {
+            "id": "p585-funou-195-digit-4",
+            "page": 585,
+            "observation_id": "p585:digit-4:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理585頁のこの行の不納欠損額は 13,976,707 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 13,976,707 と宣言する。"
+          },
+          {
+            "id": "p585-funou-249-digit-6",
+            "page": 585,
+            "observation_id": "p585:digit-6:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理585頁のこの行の不納欠損額は 13,976,707 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 13,976,707 と宣言する。"
+          },
+          {
+            "id": "p595-funou-612-digit-0",
+            "page": 595,
+            "observation_id": "p595:digit-0:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理595頁のこの行の不納欠損額は 13,976,707 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 13,976,707 と宣言する。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p585-funou-142",
+            "page": 585,
+            "boxes": [
+              [
+                278.8,
+                141.8,
+                323.4,
+                155.8
+              ]
+            ],
+            "amount": "13,976,707",
+            "reason": "原典の画像では、物理585頁のこの行の不納欠損額は 13,976,707 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 13,976,707 と宣言する。"
+          },
+          {
+            "id": "p585-funou-163",
+            "page": 585,
+            "boxes": [
+              [
+                278.8,
+                163.2,
+                323.4,
+                177.2
+              ]
+            ],
+            "amount": "13,976,707",
+            "reason": "原典の画像では、物理585頁のこの行の不納欠損額は 13,976,707 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 13,976,707 と宣言する。"
+          },
+          {
+            "id": "p585-funou-195",
+            "page": 585,
+            "boxes": [
+              [
+                278.3,
+                195.2,
+                323.9,
+                209.2
+              ]
+            ],
+            "amount": "13,976,707",
+            "reason": "原典の画像では、物理585頁のこの行の不納欠損額は 13,976,707 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 13,976,707 と宣言する。"
+          },
+          {
+            "id": "p585-funou-249",
+            "page": 585,
+            "boxes": [
+              [
+                279.0,
+                248.8,
+                323.4,
+                262.8
+              ]
+            ],
+            "amount": "13,976,707",
+            "reason": "原典の画像では、物理585頁のこの行の不納欠損額は 13,976,707 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 13,976,707 と宣言する。"
+          },
+          {
+            "id": "p595-funou-612",
+            "page": 595,
+            "boxes": [
+              [
+                279.0,
+                611.8,
+                323.4,
+                625.8
+              ]
+            ],
+            "amount": "13,976,707",
+            "reason": "原典の画像では、物理595頁のこの行の不納欠損額は 13,976,707 と印字されている。OCR はこの欄を行として読めず、数字の一部だけを1字ずつ拾った。原画で読み、欄の中の枠で 13,976,707 と宣言する。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-revenue-ocr-1",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              584,
+              585,
+              586,
+              587,
+              588,
+              589,
+              590,
+              591,
+              592,
+              593
+            ]
+          },
+          "sha256": "330a394088feb33757f17026c25bb4ad0ac6a3b179aad5712d54dad911ce30e0",
+          "bytes": 1625063
+        },
+        {
+          "id": "kouki-revenue-ocr-2",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              594,
+              595
+            ]
+          },
+          "sha256": "e9e4dc01fceb9456077f53884c0ee595ae497fc159e844189cd9d96829e6d6b2",
+          "bytes": 371104
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "tobu",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935"
+        }
+      ],
+      "options": {
+        "account": "東武東上線連続立体化事業特別会計",
+        "table_id": "tobu-revenue-detail",
+        "pages": [
+          [
+            614,
+            619
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true,
+                "line_pieces": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考は収入の内容・相手先・件数などの説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                }
+              }
+            }
+          },
+          "quirks": {
+            "digit_set_codes": 4.0,
+            "inner_tables": {
+              "marker": "当初予算額",
+              "left": "目",
+              "right": "節",
+              "excluded": {
+                "kind": "歳入の説明",
+                "reason": "各目の下の（説明）の表は、目の予算現額・調定額・決算額を区分（現年分・滞納繰越分など）ごとに示す説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "auto-p618-full-page-a0-result0-r22",
+            "page": 618,
+            "observation_id": "p618:full-page:a0:result0:r22",
+            "observed_name": "〔前年度歲計剩余金",
+            "corrected_name": "〔前年度歳計剩余金",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "tobu-revenue-ocr-1",
+          "origin_sha256": "d6f058873af9b102ca864338a57da7c5c95161d1a4d2e95104f4dc92380af935",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              614,
+              615,
+              616,
+              617,
+              618,
+              619
+            ]
+          },
+          "sha256": "f83801c56b423f539f07c58d809bf96a8b3f5f98363a13c90577806fdf1f4f0c",
+          "bytes": 721709
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "tobu-revenue-detail"
+        }
+      ]
+    }
+  ]
+}

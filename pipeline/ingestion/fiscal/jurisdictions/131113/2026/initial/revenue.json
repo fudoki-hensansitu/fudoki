@@ -1,0 +1,371 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131113",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a9f49a590393fbd72608f7a6f2c1060034a95ffeae37a3c20a1bd5990de456df"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の上に財源の種類（都支出金・使用料及び手数料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源の列と組で読む財源の分解で、歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "款項目": {
+                  "heading": "科目"
+                },
+                "前年度": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の名前と額・積算で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "revision_history": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "caddaf75444cf0325770ef5b7cb940111b579137b1a7508ba240f7b4d712ae32"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の上に財源の種類（都支出金・使用料及び手数料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源の列と組で読む財源の分解で、歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "款項目": {
+                  "heading": "科目"
+                },
+                "前年度": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の名前と額・積算で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "revision_history": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ]
+    },
+    {
+      "id": "late-elderly-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ea2366a8cab5b864d8e51ad75dc6907ca65605e8af530d2a1ad1fe93dbd13402"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "late-elderly-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の上に財源の種類（都支出金・使用料及び手数料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源の列と組で読む財源の分解で、歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "款項目": {
+                  "heading": "科目"
+                },
+                "前年度": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の名前と額・積算で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "revision_history": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "late-elderly-initial"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "0392e792e6e0b027484a632c50227e828189244933c8dcbd2badf13653313821"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の上に財源の種類（都支出金・使用料及び手数料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源の列と組で読む財源の分解で、歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "款項目": {
+                  "heading": "科目"
+                },
+                "前年度": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の名前と額・積算で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "revision_history": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ]
+    }
+  ]
+}

@@ -1,8 +1,9 @@
 name: sync-d1
 # main に入った取り込み・dbt の変更を、marts に build して本番 D1（fudoki-api）へ差分で写す（ADR 0040）。
 # publish の前に、取り込みの PR が変えた宣言を main のコードで変換し、保存の関門を通った表と受領書を R2 に置く（ingestion:store、ADR 0051）。
-# 範囲は serving/publish.py（bun run --cwd pipeline publish）が差分から決める。取り込みの宣言・選定・自治体の列を持つ seed だけならその自治体だけ、
-# 全自治体に効く変更なら全件。事業と評価シートのつなぎは build のたびに計算する。
+# 範囲は serving/publish.py の判定（scope）で決める。push は、取り込みの宣言・選定・自治体の列を持つ seed が変わった自治体だけを流す。
+# 全自治体に効く変更（共通の seed・dbt のモデル・build のコード）は push では流さず、毎日の refresh-check の後の全件（refresh-check が自治体を空にして起動する）か手動の実行で出す。
+# 事業と評価シートのつなぎは build のたびに計算する。
 on:
   push:
     branches: [main]
@@ -14,9 +15,6 @@ on:
       - uv.lock
       - pyproject.toml
       - mise.toml
-  # 週に1回、写しがあっても D1 を全行読んで比べ、写しと D1 のずれ（手での書き込みなど）を直す（月曜 04:00 JST）
-  schedule:
-    - cron: '0 19 * * 0'
   workflow_dispatch:
     inputs:
       jurisdictions:
@@ -25,7 +23,7 @@ on:
         default: ''
 permissions:
   contents: read
-  # actions: write は古い pipeline-cache を消すため（読むだけなら read で足りる）
+  # actions: write は古い cache を消すため（読むだけなら read で足りる）
   actions: write
 # R2 への保存（store）と D1 への同期（sync）は別の job にし、concurrency も分ける。
 # store は merge のたびにすぐ流し、前の run の D1 同期（全件だと30分を超える）の後ろに並ばない。
@@ -40,13 +38,14 @@ jobs:
       group: ingestion-store
       cancel-in-progress: false
     outputs:
-      args: ${{ steps.scope.outputs.args }}
+      args: ${{ steps.targets.outputs.args || steps.scope.outputs.args }}
+      none: ${{ steps.targets.outputs.none }}
       store: ${{ steps.store.outcome }}
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      # 手動の実行は自治体コード（空なら全件）、週1の照合は全件。push は最後に成功した push の同期からの差分
+      # 手動の実行（refresh-check からの起動を含む）は自治体コード（空なら全件）。push は最後に成功した push の同期からの差分
       # （取り消された run・落ちた run の範囲も次の run が拾う）。見つからなければ全件
       - id: scope
         env:
@@ -89,36 +88,7 @@ jobs:
             sleep "$wait"
           done
           exit 1
-      # R2 から戻した cache。build が読む小さいもの（取り込みの表・OCR の観測・事業評価の読んだ結果、保存は sync job）と、
-      # 変換し直しが読む出典（大きい、保存はこの job）に分ける
-      - id: build-restore
-        if: steps.scope.outputs.since != ''
-        uses: actions/cache/restore@v6
-        with:
-          path: |
-            pipeline/.cache/objects/fiscal/ingestion
-            pipeline/.cache/objects/project
-            pipeline/.cache/project
-            pipeline/.cache/source-page-text
-          key: pipeline-build-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
-          restore-keys: pipeline-build-${{ hashFiles('mise.toml') }}-
-      # 分ける前の pipeline-cache から一度だけ戻す（分けた cache がまだ無い回）。全部消えたら外してよい
-      - if: steps.scope.outputs.since != '' && steps.build-restore.outputs.cache-matched-key == ''
-        uses: actions/cache/restore@v6
-        with:
-          path: pipeline/.cache
-          key: pipeline-cache-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
-          restore-keys: pipeline-cache-${{ hashFiles('mise.toml') }}-
-      - id: origins-restore
-        if: steps.scope.outputs.since != ''
-        uses: actions/cache/restore@v6
-        with:
-          path: pipeline/.cache/objects/fiscal/source-selection
-          key: pipeline-origins-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
-          restore-keys: pipeline-origins-${{ hashFiles('mise.toml') }}-
-      - id: origins-before
-        if: steps.scope.outputs.since != ''
-        run: echo "files=$(find pipeline/.cache/objects/fiscal/source-selection -type f -printf '%P %s\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
+      # 出典の PDF と build の入力は cache せず、要るものを R2 から取る（変換し直すのは変わった管理 JSON の出典だけ）
       # PDF から読んだ字と位置（変換し直しで一番重い）。中身が増えた回だけ保存し、後の PR の check と refresh-check が読む
       - if: steps.scope.outputs.since != ''
         uses: actions/cache/restore@v6
@@ -136,27 +106,25 @@ jobs:
         run: mise install conda:mupdf@1.28.6
       # 手動の実行は R2 に置かない（置くのは merge された宣言の表だけ）。since が古くても、受領書の宣言と指紋が今と同じ表は変換し直さない（store.to_convert）
       # 落ちた管理 JSON があっても、ほかは置き終えてから job を落とす。sync はそれでも流す（下の sync の if）
+      # push は宣言・選定・自治体の列を持つ seed が変わった自治体だけを流す。共通の seed・dbt のモデル・build のコードの
+      # 変更は自治体に絞れないので push では流さず、refresh-check の後の全件か手動の実行で出す
       - id: store
         if: steps.scope.outputs.since != ''
         run: bun run --cwd pipeline ingestion:store -- --since ${{ steps.scope.outputs.since }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      - id: origins-after
-        if: ${{ !cancelled() && steps.scope.outputs.since != '' }}
-        run: echo "files=$(find pipeline/.cache/objects/fiscal/source-selection -type f -printf '%P %s\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
-      # 中身が変わった回（と、分けた cache がまだ無い回）だけ保存する。古いキーは保存の前に消す（新旧を同時に持つと repo の上限 10GB を超え、他の cache が追い出される）
-      - id: origins-clear
-        if: ${{ !cancelled() && steps.origins-restore.outcome == 'success' && (steps.origins-after.outputs.files != steps.origins-before.outputs.files || steps.origins-restore.outputs.cache-matched-key == '') }}
+      # 範囲の判定は保存の後に置く（判定が落ちても R2 への保存は止めない）
+      - id: targets
+        if: ${{ !cancelled() && steps.scope.outputs.args == format('--since {0}', steps.scope.outputs.since) }}
+        working-directory: pipeline
         env:
-          GH_TOKEN: ${{ github.token }}
+          SINCE: ${{ steps.scope.outputs.since }}
         run: |
-          gh cache list --repo "${{ github.repository }}" --key pipeline-origins- --limit 100 --json key --jq '.[].key' |
-            while read -r key; do gh cache delete "$key" --repo "${{ github.repository }}" || true; done
-      - if: ${{ !cancelled() && steps.scope.outputs.since != '' && steps.origins-clear.outcome == 'success' }}
-        uses: actions/cache/save@v6
-        with:
-          path: pipeline/.cache/objects/fiscal/source-selection
-          key: pipeline-origins-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
+          found=$(uv run python -c 'import json, os; from serving.publish import scope; print(json.dumps(scope(os.environ["SINCE"], "HEAD"), ensure_ascii=False))')
+          echo "$found"
+          codes=$(echo "$found" | jq -r '.jurisdictions[]')
+          echo "args=$(for c in $codes; do printf -- '--jurisdiction %s ' "$c"; done)" >> "$GITHUB_OUTPUT"
+          [ -n "$codes" ] || echo "none=true" >> "$GITHUB_OUTPUT"
       - id: observation-after
         if: ${{ !cancelled() && steps.scope.outputs.since != '' }}
         run: echo "files=$(find pipeline/.cache/generic-observation -type f -printf '%P %s\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
@@ -183,7 +151,7 @@ jobs:
     needs: store
     # 保存（ingestion:store）が一部の管理 JSON で落ちても、ほかの自治体の同期は止めない。保存されなかった新しい資料は
     # build から外れ（prepare の not_stored）、run は赤いままなので範囲の起点は進まず、直した後の run が拾い直す
-    if: ${{ !cancelled() && (needs.store.result == 'success' || needs.store.outputs.store == 'failure') }}
+    if: ${{ !cancelled() && needs.store.outputs.none != 'true' && (needs.store.result == 'success' || needs.store.outputs.store == 'failure') }}
     runs-on: ubuntu-latest
     timeout-minutes: 180
     # serving:sync は同時に2つ流せない（`<表>__new` が衝突する）。前の同期を止めず、順に流す。
@@ -211,31 +179,10 @@ jobs:
             sleep "$wait"
           done
           exit 1
-      # build が読む小さい cache（取り込みの表・OCR の観測・事業評価の読んだ結果と頁の文字）。中身が変わった回だけ保存する
-      - id: build-restore
-        uses: actions/cache/restore@v6
-        with:
-          path: |
-            pipeline/.cache/objects/fiscal/ingestion
-            pipeline/.cache/objects/project
-            pipeline/.cache/project
-            pipeline/.cache/source-page-text
-          key: pipeline-build-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
-          restore-keys: pipeline-build-${{ hashFiles('mise.toml') }}-
-      # 分ける前の pipeline-cache から一度だけ戻す（分けた cache がまだ無い回）。全部消えたら外してよい
-      - if: steps.build-restore.outputs.cache-matched-key == ''
-        uses: actions/cache/restore@v6
-        with:
-          path: pipeline/.cache
-          key: pipeline-cache-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
-          restore-keys: pipeline-cache-${{ hashFiles('mise.toml') }}-
-      # Actions の cache が無い回は、R2 の束（main の sync job が置く）から戻す。足りない表は build が1個ずつ取る
-      - if: steps.build-restore.outputs.cache-matched-key == ''
-        run: bun run --cwd pipeline ingestion:bundle restore
+      # build の入力（受領書の一覧の表・事業評価の読んだ結果と頁の文字）は R2 の束から読む。足りないものは build が1個ずつ取る
+      - run: bun run --cwd pipeline ingestion:bundle restore
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      - id: build-before
-        run: echo "files=$(find pipeline/.cache/objects/fiscal/ingestion pipeline/.cache/objects/project pipeline/.cache/project pipeline/.cache/source-page-text -type f -printf '%P %s %T@\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
       # 前回の同期で D1 に入れた表の写し。最新のものを戻し、D1 の印と合うかは sync_d1 が確かめる（合わなければ D1 を読む）
       - uses: actions/cache/restore@v6
         with:
@@ -246,12 +193,17 @@ jobs:
         run: echo "sha=$(sha256sum "$RUNNER_TEMP/d1-snapshot/snapshot.duckdb" 2>/dev/null | cut -c1-64)" >> "$GITHUB_OUTPUT"
       - run: >-
           bun run --cwd pipeline publish -- --database-id b9b6f209-083e-45b3-a896-1014a17a15f9 ${{ needs.store.outputs.args }}
-          --snapshot "$RUNNER_TEMP/d1-snapshot/snapshot.duckdb" ${{ github.event_name == 'schedule' && '--verify-all' || '' }}
+          --snapshot "$RUNNER_TEMP/d1-snapshot/snapshot.duckdb"
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          # 全件の build は 4GB だと int_fiscal__rows で DuckDB の上限に当たる。public repo の runner は 16GB
+          FUDOKI_DUCKDB_MEMORY_LIMIT: 12GB
       # build が読んだもの（受領書の一覧の表・事業評価の読んだ結果と頁の文字）を R2 の束にする。中身が同じなら置き直さない。
-      # 束は cache が消えたときの戻り道なので、置けなくても同期は失敗にしない
-      - run: bun run --cwd pipeline ingestion:bundle save
+      # 束は cache が消えたときの戻り道なので、置けなくても同期は失敗にしない。
+      # publish が落ちても置く（build が R2 から1件ずつ取った表・読んだ評価シートを、次の run が束から読めるように。
+      # 成功した回だけ置くと、失敗が続くあいだ束が古いままになり、次の run がまた1件ずつ取り直して遅くなる）
+      - if: ${{ !cancelled() }}
+        run: bun run --cwd pipeline ingestion:bundle save
         continue-on-error: true
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -273,32 +225,12 @@ jobs:
             while read -r key; do
               [ "$key" = "$KEEP" ] || gh cache delete "$key" --repo "${{ github.repository }}" || true
             done
-      - id: build-after
-        if: ${{ !cancelled() }}
-        run: echo "files=$(find pipeline/.cache/objects/fiscal/ingestion pipeline/.cache/objects/project pipeline/.cache/project pipeline/.cache/source-page-text -type f -printf '%P %s %T@\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
-      # 中身が変わった回（と、分けた cache がまだ無い回）だけ保存する。古いキーは保存の前に消す（新旧を同時に持つと repo の上限 10GB を超え、他の cache が追い出される）
-      - id: build-clear
-        if: ${{ !cancelled() && steps.build-restore.outcome == 'success' && (steps.build-after.outputs.files != steps.build-before.outputs.files || steps.build-restore.outputs.cache-matched-key == '') }}
+      # 使わなくなった cache（build の入力の pipeline-build・pipeline-cache、出典の pipeline-origins）を消す。どれも無くなったら、この step は外してよい
+      - if: ${{ !cancelled() && github.event_name == 'push' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh cache list --repo "${{ github.repository }}" --key pipeline-build- --limit 100 --json key --jq '.[].key' |
-            while read -r key; do gh cache delete "$key" --repo "${{ github.repository }}" || true; done
-      - id: build-save
-        if: ${{ !cancelled() && steps.build-clear.outcome == 'success' }}
-        uses: actions/cache/save@v6
-        with:
-          path: |
-            pipeline/.cache/objects/fiscal/ingestion
-            pipeline/.cache/objects/project
-            pipeline/.cache/project
-            pipeline/.cache/source-page-text
-          key: pipeline-build-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
-      # 分ける前の pipeline-cache（約4.4GB）を、分けた cache ができてから消す。全部消えたら、この step は外してよい
-      # 出典の cache（pipeline-origins）は push の回の store job が作るので、push の回だけ消す
-      - if: ${{ !cancelled() && github.event_name == 'push' && steps.build-restore.outcome == 'success' && (steps.build-save.outcome == 'success' || steps.build-restore.outputs.cache-matched-key != '') }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh cache list --repo "${{ github.repository }}" --key pipeline-cache- --limit 100 --json key --jq '.[].key' |
-            while read -r key; do gh cache delete "$key" --repo "${{ github.repository }}" || true; done
+          for prefix in pipeline-build- pipeline-cache- pipeline-origins-; do
+            gh cache list --repo "${{ github.repository }}" --key "$prefix" --limit 100 --json key --jq '.[].key' |
+              while read -r key; do gh cache delete "$key" --repo "${{ github.repository }}" || true; done
+          done

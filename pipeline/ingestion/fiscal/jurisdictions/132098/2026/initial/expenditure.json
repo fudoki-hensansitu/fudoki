@@ -104,6 +104,422 @@
           "table_id": "general-initial"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "f9e99acf44bde0c045f1d5a8ded72b318ee7a8461e01de0efaed231ee74e750e"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-insurance-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。本年度予算額を財源の種類（国都支出金・地方債・その他・一般財源）に分けた額で、支出の目的の木には加わらない。歳出の木は本年度・前年度・比較の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。本年度予算額を財源の種類（国都支出金・地方債・その他・一般財源）に分けた額で、支出の目的の木には加わらない。歳出の木は本年度・前年度・比較の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。本年度予算額を財源の種類（国都支出金・地方債・その他・一般財源）に分けた額で、支出の目的の木には加わらない。歳出の木は本年度・前年度・比較の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。本年度予算額を財源の種類（国都支出金・地方債・その他・一般財源）に分けた額で、支出の目的の木には加わらない。歳出の木は本年度・前年度・比較の金額で確かめる。"
+                  }
+                },
+                "構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "歳出総括の頁（款別の本年度・前年度・財源内訳と構成比）の構成比の欄を取り込まない。百分率で金額ではないため。総括の頁は歳出合計の印字のために読む。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true
+                },
+                "quirks": {
+                  "listed_highlights": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        },
+        "pages": [
+          [
+            200,
+            204
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "f9e99acf44bde0c045f1d5a8ded72b318ee7a8461e01de0efaed231ee74e750e"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。本年度予算額を財源の種類（国都支出金・地方債・その他・一般財源）に分けた額で、支出の目的の木には加わらない。歳出の木は本年度・前年度・比較の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。本年度予算額を財源の種類（国都支出金・地方債・その他・一般財源）に分けた額で、支出の目的の木には加わらない。歳出の木は本年度・前年度・比較の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。本年度予算額を財源の種類（国都支出金・地方債・その他・一般財源）に分けた額で、支出の目的の木には加わらない。歳出の木は本年度・前年度・比較の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。本年度予算額を財源の種類（国都支出金・地方債・その他・一般財源）に分けた額で、支出の目的の木には加わらない。歳出の木は本年度・前年度・比較の金額で確かめる。"
+                  }
+                },
+                "構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "歳出総括の頁（款別の本年度・前年度・財源内訳と構成比）の構成比の欄を取り込まない。百分率で金額ではないため。総括の頁は歳出合計の印字のために読む。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true
+                },
+                "quirks": {
+                  "listed_highlights": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        },
+        "pages": [
+          [
+            226,
+            230
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "f9e99acf44bde0c045f1d5a8ded72b318ee7a8461e01de0efaed231ee74e750e"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。本年度予算額を財源の種類（国都支出金・地方債・その他・一般財源）に分けた額で、支出の目的の木には加わらない。歳出の木は本年度・前年度・比較の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。本年度予算額を財源の種類（国都支出金・地方債・その他・一般財源）に分けた額で、支出の目的の木には加わらない。歳出の木は本年度・前年度・比較の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。本年度予算額を財源の種類（国都支出金・地方債・その他・一般財源）に分けた額で、支出の目的の木には加わらない。歳出の木は本年度・前年度・比較の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。本年度予算額を財源の種類（国都支出金・地方債・その他・一般財源）に分けた額で、支出の目的の木には加わらない。歳出の木は本年度・前年度・比較の金額で確かめる。"
+                  }
+                },
+                "構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "歳出総括の頁（款別の本年度・前年度・財源内訳と構成比）の構成比の欄を取り込まない。百分率で金額ではないため。総括の頁は歳出合計の印字のために読む。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true
+                },
+                "quirks": {
+                  "listed_highlights": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        },
+        "pages": [
+          [
+            250,
+            252
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    },
+    {
+      "id": "land-readjustment-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "f9e99acf44bde0c045f1d5a8ded72b318ee7a8461e01de0efaed231ee74e750e"
+        }
+      ],
+      "options": {
+        "account": "鶴川駅南土地区画整理事業会計",
+        "table_id": "land-readjustment-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。本年度予算額を財源の種類（国都支出金・地方債・その他・一般財源）に分けた額で、支出の目的の木には加わらない。歳出の木は本年度・前年度・比較の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。本年度予算額を財源の種類（国都支出金・地方債・その他・一般財源）に分けた額で、支出の目的の木には加わらない。歳出の木は本年度・前年度・比較の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。本年度予算額を財源の種類（国都支出金・地方債・その他・一般財源）に分けた額で、支出の目的の木には加わらない。歳出の木は本年度・前年度・比較の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。本年度予算額を財源の種類（国都支出金・地方債・その他・一般財源）に分けた額で、支出の目的の木には加わらない。歳出の木は本年度・前年度・比較の金額で確かめる。"
+                  }
+                },
+                "構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "歳出総括の頁（款別の本年度・前年度・財源内訳と構成比）の構成比の欄を取り込まない。百分率で金額ではないため。総括の頁は歳出合計の印字のために読む。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true
+                },
+                "quirks": {
+                  "listed_highlights": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        },
+        "pages": [
+          [
+            270,
+            271
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-readjustment-initial"
+        }
+      ]
     }
   ]
 }

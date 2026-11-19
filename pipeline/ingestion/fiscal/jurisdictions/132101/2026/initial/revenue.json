@@ -1,0 +1,211 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132101",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "3cbb672476d3ea39b3daaa9764c2edfcab9a9c8b554117d5e43f250e494ce48a"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-ocr-1",
+          "origin_sha256": "3cbb672476d3ea39b3daaa9764c2edfcab9a9c8b554117d5e43f250e494ce48a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "66831763462b97391f5a7f76783d5350aa0bd1843094ce4dfb3f1515e0706ae0",
+          "bytes": 3553142
+        },
+        {
+          "id": "general-initial-ocr-2",
+          "origin_sha256": "3cbb672476d3ea39b3daaa9764c2edfcab9a9c8b554117d5e43f250e494ce48a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "eff4ff3417656b936a096b672c04073a198519e112326c1c9b3ca99407b9eb2e",
+          "bytes": 4430888
+        },
+        {
+          "id": "general-initial-ocr-3",
+          "origin_sha256": "3cbb672476d3ea39b3daaa9764c2edfcab9a9c8b554117d5e43f250e494ce48a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "70fcd887756e2f89ca39077baa74cd00da5c089fe7f57d7b228602ae081bf669",
+          "bytes": 4107245
+        },
+        {
+          "id": "general-initial-ocr-4",
+          "origin_sha256": "3cbb672476d3ea39b3daaa9764c2edfcab9a9c8b554117d5e43f250e494ce48a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              39,
+              40,
+              41,
+              42,
+              43
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6a70fc8525431a97494629f6ef80d6c59462b9e5b05296a791686fd27e3e5fcb",
+          "bytes": 1757042
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "pages": [
+          [
+            9,
+            43
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p40-delta-r91",
+            "page": 40,
+            "observation_id": "p40:full-page:a0:result0:r91",
+            "observed": "194,935",
+            "reason": "原画は比較の欄の「△ 194,935」（雑入の減）。OCR が離れて印字した「△」を読まず、数字だけを読んだので、この読みを除き、符号を含めて amount_readings で読む。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p40-delta-r91",
+            "page": 40,
+            "boxes": [
+              [
+                250.0,
+                422.6,
+                318.9,
+                432.2
+              ]
+            ],
+            "amount": "△194,935",
+            "reason": "原画で確かめた雑入の比較の金額 △194,935（本年度 229,306 − 前年度 424,241）。"
+          }
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収入率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明／説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収入率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。 見開きの右頁の説明の欄の見出しを2段に読む頁があるので、その見出しにも同じ除外を書く。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "細節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "spread_stacked_tables": true,
+            "unopened_brackets": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    }
+  ]
+}

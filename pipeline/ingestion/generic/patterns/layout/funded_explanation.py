@@ -240,7 +240,12 @@ def read(pages, **options):
     start = max((band.x0 for _, band in merged), default=0)
     for logical in logicals:
         logical.level_titles = titles(logical)
+    # A revenue book prints in this column the 積算 of each 節 (調定額・収入額・収入率), not a breakdown: the column
+    # declared `excluded` under its heading (`説明`) is not read, and its digits are the declared exclusion.
+    declared = ((options.get('columns') or {}).get(HEADING) or {}).get('excluded')
     for logical, explanation in merged:
-        explanation = aligned(explanation, start)
-        logical.bands.append(snapped(explanation))
+        explanation = snapped(aligned(explanation, start))
+        if declared:
+            explanation = replace(explanation, kind=None, excluded=declared)
+        logical.bands.append(explanation)
     return logicals

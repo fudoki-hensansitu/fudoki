@@ -213,7 +213,7 @@ bun run dev:api                          # API をローカルで起動（web �
 bun run inspect:mcp                      # MCP Inspector を本番の MCP（api.fudoki.dev/mcp）向けに起動
 ```
 
-CI は apps・packages の `verify-apps`（Python を使わない）と、pipeline の `verify-pipeline` に分け、どちらも型検査・lint・test だけを回す。build は deploy と web の preview に任せる。lint の rule は apps/web の oxlint（DESIGN.md の token 以外の色を見つける JS plugin だけを有効にしている）と、repo の決まりの検査（`pipeline/verify/`）だけを持つ。
+CI は apps・packages の `verify-apps`（Python を使わない）と、pipeline の `verify-pipeline` に分け、どちらも型検査・lint・test だけを回す。build は deploy と web の preview に任せる。lint の rule は apps/web の oxlint（DESIGN.md から外れた色・余白・文字の大きさ・太さを見つける JS plugin だけを有効にしている）と、repo の決まりの検査（`pipeline/verify/`）だけを持つ。
 
 unit テストは、金額の正しさ・公開 API の安全性（認証・入力の上限・SQL の bind・停止スイッチなど）・壊すと利用者に届く契約（MCP の出力 schema など）のように、間違えると困るものに限って書く。画面や細かい振る舞いはローカルの e2e（smoke）で確かめ、CI では回さない。
 
@@ -245,4 +245,4 @@ unit テストは、金額の正しさ・公開 API の安全性（認証・入�
 - マーケティングの計画・marketingskills が読む product-marketing、repo をまたいで使うアカウント（X・メールなど）→ home repo（`fudoki-hensansitu/home`、private）
 - 歳出・歳入のドメインモデルとクラス図 → `docs/prd/fiscal-records/fiscal-domain-model.md`
 - 外部から取り込んだ skill → `.agents/skills/shadcn/`（`shadcn/ui` から skillctrl で取得。取得元と hash は `skills-lock.json`・`.agents/skillctrl/lock.json`）。他の `.agents/skills/` は repo で書いたもの。Claude Code へは `.claude/skills/` の相対 symlink で渡す
-- PR レビュー → Pullfrog。設定の正本は `.github/pullfrog.config.sh`（変えるときはこの script を直して実行する）。追加コミットも自動で再レビューし（`review.re-review=true`）、`@pullfrog` で手動依頼もできる
+- PR レビュー → Pullfrog。設定の正本は `.github/pullfrog.config.sh`（変えるときはこの script を直して実行する）。初回レビューは自動、追加コミットの再レビューは無効（`review.re-review=false`）。追加レビューは必要時に `@pullfrog` で依頼する

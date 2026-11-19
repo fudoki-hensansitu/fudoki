@@ -1,0 +1,292 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131237",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8c9698e18182a8cbeddaaacaccc308e78b108ddcb872054c168abc31494ac177"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較増(△)減": {
+                  "kind": "amount",
+                  "heading": "比較"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "説明は収入の内容・算定の根拠・所管課などの説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "next_number_counts": true,
+            "codeless_name_levels": true
+          }
+        },
+        "pages": [
+          [
+            50,
+            143
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-revenue"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8c9698e18182a8cbeddaaacaccc308e78b108ddcb872054c168abc31494ac177"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "nhi-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較増(△)減": {
+                  "kind": "amount",
+                  "heading": "比較"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "説明は収入の内容・算定の根拠・所管課などの説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "next_number_counts": true
+          }
+        },
+        "pages": [
+          [
+            524,
+            533
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "nhi-initial-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8c9698e18182a8cbeddaaacaccc308e78b108ddcb872054c168abc31494ac177"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "kaigo-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較増(△)減": {
+                  "kind": "amount",
+                  "heading": "比較"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "説明は収入の内容・算定の根拠・所管課などの説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "next_number_counts": true
+          }
+        },
+        "pages": [
+          [
+            570,
+            579
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-initial-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8c9698e18182a8cbeddaaacaccc308e78b108ddcb872054c168abc31494ac177"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-initial-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較増(△)減": {
+                  "kind": "amount",
+                  "heading": "比較"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "説明は収入の内容・算定の根拠・所管課などの説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "next_number_counts": true
+          }
+        },
+        "pages": [
+          [
+            612,
+            617
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-initial-revenue"
+        }
+      ]
+    }
+  ]
+}

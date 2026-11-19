@@ -94,6 +94,696 @@
           "table_id": "general-initial"
         }
       ]
+    },
+    {
+      "id": "kokuho-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "2a280ba0674760724104280566e82cfcf37894c8f29ee049ff17ea878d9e0745"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "kokuho-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度(前年度)<比較>": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 24
+                },
+                "財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "notes": [
+                    "（特定財源"
+                  ]
+                }
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "pages": [
+          [
+            16,
+            33
+          ]
+        ],
+        "excluded_boxes": [
+          {
+            "id": "p32-expenditure-total",
+            "page": 32,
+            "bbox": [
+              60,
+              447,
+              256,
+              529
+            ],
+            "kind": "総括",
+            "reason": "明細の最後の頁の「歳出合計」の行。本年度・(前年度)・<比較> を3段に印字し、題字は中段にだけあるので、上段・下段の金額が合計の行と読めない。款の和と比べる統制値。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-initial"
+        }
+      ]
+    },
+    {
+      "id": "kouki-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "46c4155ba7e21bd7faaf85d606ca098ab156cb9e83493b876db3ce84953322c2"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度(前年度)<比較>": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 24
+                },
+                "財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "notes": [
+                    "（特定財源"
+                  ]
+                }
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "pages": [
+          [
+            12,
+            19
+          ]
+        ],
+        "excluded_boxes": [
+          {
+            "id": "p18-expenditure-total",
+            "page": 18,
+            "bbox": [
+              60,
+              142,
+              256,
+              224
+            ],
+            "kind": "総括",
+            "reason": "明細の最後の頁の「歳出合計」の行。本年度・(前年度)・<比較> を3段に印字し、題字は中段にだけあるので、上段・下段の金額が合計の行と読めない。款の和と比べる統制値。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-initial"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8f26829d56fa61b5ac08dada3e8021ca6ddb099ab3c47e5b95caa0939b53476b"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度(前年度)<比較>": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 24
+                },
+                "財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "notes": [
+                    "（特定財源"
+                  ]
+                }
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "pages": [
+          [
+            18,
+            31
+          ]
+        ],
+        "excluded_boxes": [
+          {
+            "id": "p30-expenditure-total",
+            "page": 30,
+            "bbox": [
+              60,
+              495,
+              256,
+              577
+            ],
+            "kind": "総括",
+            "reason": "明細の最後の頁の「歳出合計」の行。本年度・(前年度)・<比較> を3段に印字し、題字は中段にだけあるので、上段・下段の金額が合計の行と読めない。款の和と比べる統制値。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-initial"
+        }
+      ]
+    },
+    {
+      "id": "boshi-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "9474f3693345f5944a97379b65dc1db8d9479822556371b713dc3f47fd8e1baa"
+        }
+      ],
+      "options": {
+        "account": "母子・父子福祉資金特別会計",
+        "table_id": "boshi-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度(前年度)<比較>": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 24
+                },
+                "財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "notes": [
+                    "（特定財源"
+                  ]
+                }
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "pages": [
+          [
+            8,
+            11
+          ]
+        ],
+        "excluded_boxes": [
+          {
+            "id": "p10-expenditure-total",
+            "page": 10,
+            "bbox": [
+              60,
+              238,
+              256,
+              320
+            ],
+            "kind": "総括",
+            "reason": "明細の最後の頁の「歳出合計」の行。本年度・(前年度)・<比較> を3段に印字し、題字は中段にだけあるので、上段・下段の金額が合計の行と読めない。款の和と比べる統制値。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "boshi-initial"
+        }
+      ]
+    },
+    {
+      "id": "tochi-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "952499dd8a25e64c5b10c06a34d6f62e0abe12750f535b082bfb88cfee3d41c9"
+        }
+      ],
+      "options": {
+        "account": "土地取得事業特別会計",
+        "table_id": "tochi-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度(前年度)<比較>": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 24
+                },
+                "財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "notes": [
+                    "（特定財源"
+                  ]
+                }
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "pages": [
+          [
+            8,
+            9
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "tochi-initial"
+        }
+      ]
+    },
+    {
+      "id": "parking-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "46e948a1ea7a5fabaa36a876966b237d9f5fde0446c472ff37c562a00dc1ebd4"
+        }
+      ],
+      "options": {
+        "account": "駐車場事業特別会計",
+        "table_id": "parking-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度(前年度)<比較>": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 24
+                },
+                "財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "notes": [
+                    "（特定財源"
+                  ]
+                }
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "pages": [
+          [
+            8,
+            11
+          ]
+        ],
+        "excluded_boxes": [
+          {
+            "id": "p10-expenditure-total",
+            "page": 10,
+            "bbox": [
+              60,
+              351,
+              256,
+              433
+            ],
+            "kind": "総括",
+            "reason": "明細の最後の頁の「歳出合計」の行。本年度・(前年度)・<比較> を3段に印字し、題字は中段にだけあるので、上段・下段の金額が合計の行と読めない。款の和と比べる統制値。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "parking-initial"
+        }
+      ]
+    },
+    {
+      "id": "kariire-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "248759d1f25b2ca31e3b338f2c0d2288c130cc86bca87f305120bc8243bbaff3"
+        }
+      ],
+      "options": {
+        "account": "借入金管理特別会計",
+        "table_id": "kariire-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度(前年度)<比較>": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 24
+                },
+                "財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "notes": [
+                    "（特定財源"
+                  ]
+                }
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "pages": [
+          [
+            10,
+            13
+          ]
+        ],
+        "excluded_boxes": [
+          {
+            "id": "p12-expenditure-total",
+            "page": 12,
+            "bbox": [
+              60,
+              351,
+              256,
+              433
+            ],
+            "kind": "総括",
+            "reason": "明細の最後の頁の「歳出合計」の行。本年度・(前年度)・<比較> を3段に印字し、題字は中段にだけあるので、上段・下段の金額が合計の行と読めない。款の和と比べる統制値。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kariire-initial"
+        }
+      ]
+    },
+    {
+      "id": "kyuyo-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "86688bda1be9090d9c017c4b438c978dfd6a355e3fef2fcb9d227847bc493142"
+        }
+      ],
+      "options": {
+        "account": "給与及び公共料金特別会計",
+        "table_id": "kyuyo-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度(前年度)<比較>": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 24
+                },
+                "財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "notes": [
+                    "（特定財源"
+                  ]
+                }
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "pages": [
+          [
+            6,
+            9
+          ]
+        ],
+        "excluded_boxes": [
+          {
+            "id": "p8-expenditure-total",
+            "page": 8,
+            "bbox": [
+              60,
+              206,
+              256,
+              288
+            ],
+            "kind": "総括",
+            "reason": "明細の最後の頁の「歳出合計」の行。本年度・(前年度)・<比較> を3段に印字し、題字は中段にだけあるので、上段・下段の金額が合計の行と読めない。款の和と比べる統制値。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kyuyo-initial"
+        }
+      ]
     }
   ]
 }

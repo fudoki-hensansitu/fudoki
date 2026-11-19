@@ -707,6 +707,808 @@
           "table_id": "general-initial-6"
         }
       ]
+    },
+    {
+      "id": "kokuho-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "642695ad218612256f556977c8ff132c856ea505b8065108c66de1f571f37c64"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "kokuho-initial",
+        "pages": [
+          [
+            18,
+            53
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内／特定財源／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "marks": {
+                    "◎": 1
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "code_run_into_name": true,
+            "padded_runs": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kokuho-initial-ocr-1",
+          "origin_sha256": "642695ad218612256f556977c8ff132c856ea505b8065108c66de1f571f37c64",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "514827aea55f7ab7c6d12d8a2cc22d8e7a5e2d5e8f1016589fb6cc729ddb8f5e",
+          "bytes": 1217894
+        },
+        {
+          "id": "kokuho-initial-ocr-2",
+          "origin_sha256": "642695ad218612256f556977c8ff132c856ea505b8065108c66de1f571f37c64",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "082ee1c4dfd12e88c2f07fd0deaeb1b7214c1ec4c1b406a8aafc569adb1db0fb",
+          "bytes": 584564
+        },
+        {
+          "id": "kokuho-initial-ocr-3",
+          "origin_sha256": "642695ad218612256f556977c8ff132c856ea505b8065108c66de1f571f37c64",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "3ac1768a07b26ad0fdd8370d6013b080f703f008f6ab5950118b8e0f492980f3",
+          "bytes": 686119
+        },
+        {
+          "id": "kokuho-initial-ocr-4",
+          "origin_sha256": "642695ad218612256f556977c8ff132c856ea505b8065108c66de1f571f37c64",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              48,
+              49,
+              50,
+              51,
+              52,
+              53
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "ba485f9db2ac473301136b6b3cb5c749d373dc35920b5aca9cee6cee7b4a5060",
+          "bytes": 285436
+        }
+      ]
+    },
+    {
+      "id": "yochi-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "38b8a396cfb74e4457ce039c072635e85669628aa1130e1c2b301c461f22e693"
+        }
+      ],
+      "options": {
+        "account": "用地特別会計",
+        "table_id": "yochi-initial",
+        "pages": [
+          [
+            12,
+            17
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内／特定財源／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "marks": {
+                    "◎": 1
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "code_run_into_name": true,
+            "padded_runs": true,
+            "codes_across_level_rules": 4.5
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "yochi-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "yochi-initial-ocr-1",
+          "origin_sha256": "38b8a396cfb74e4457ce039c072635e85669628aa1130e1c2b301c461f22e693",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "93de11aa32db693706b49ffd6a2e7b21757eb76b344b46cbddb31ccacaf6f777",
+          "bytes": 320577
+        }
+      ]
+    },
+    {
+      "id": "kaigo-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "398d5959020974619ee60f18ecddcca5949738c875dc444970c8460469a75687"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "kaigo-initial",
+        "pages": [
+          [
+            18,
+            51
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内／特定財源／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "marks": {
+                    "◎": 1
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "code_run_into_name": true,
+            "padded_runs": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kaigo-initial-ocr-1",
+          "origin_sha256": "398d5959020974619ee60f18ecddcca5949738c875dc444970c8460469a75687",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "e4415bedc55337fe93823bf34bee04c0738321d4e7e2e9c57c8b71c88f2d1f5d",
+          "bytes": 946976
+        },
+        {
+          "id": "kaigo-initial-ocr-2",
+          "origin_sha256": "398d5959020974619ee60f18ecddcca5949738c875dc444970c8460469a75687",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "e5f20c467a95049cd05bc7ddb985a8af6d9947ab5c8d52e07492c1a10fde9e22",
+          "bytes": 622830
+        },
+        {
+          "id": "kaigo-initial-ocr-3",
+          "origin_sha256": "398d5959020974619ee60f18ecddcca5949738c875dc444970c8460469a75687",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "665b0697a0501ab16d283e320b0fb976c09378065fc757359e0df59b521432b1",
+          "bytes": 788247
+        },
+        {
+          "id": "kaigo-initial-ocr-4",
+          "origin_sha256": "398d5959020974619ee60f18ecddcca5949738c875dc444970c8460469a75687",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              48,
+              49,
+              50,
+              51
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "9c90a74b4001bbb610b1d8752c3f46e988edb1613cdbdbb9082ecff3a2a9e44a",
+          "bytes": 198199
+        }
+      ]
+    },
+    {
+      "id": "kouki-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "3d76cbe63f79693e252a126d091c10ce02ec718b1b47fe01962231bed7d6145a"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-initial",
+        "pages": [
+          [
+            14,
+            29
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内／特定財源／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "marks": {
+                    "◎": 1
+                  }
+                },
+                "quirks": {
+                  "line_starts": [
+                    {
+                      "page": 23,
+                      "y": 294.2,
+                      "shift": -10.0,
+                      "reason": "原画は「◎高齢者保健事業・介護予防一体的実施事業費」。OCR が前の欄の金額と1語に読み、◎を落として名前の始まりを1字右に置いた。ほかの事業の名前と同じく◎の位置から始まる。"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "quirks": {
+            "code_run_into_name": true,
+            "padded_runs": true,
+            "codes_across_level_rules": 4.5
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p20-kou-code",
+            "page": 20,
+            "observation_id": "p20:full-page:a0:result0:r19",
+            "observed": "5O",
+            "reason": "原典の画像で、頁20の項の番号は「5」だけを印字している。OCR は番号の右の墨の点を「O」と読み「5O」とした。この読みを除き、番号を原画の位置で読む。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "p20-kou-code",
+            "page": 20,
+            "box": [
+              69.6,
+              152.6,
+              74.6,
+              162.4
+            ],
+            "code": "5",
+            "reason": "原典の画像で、頁20の項の番号は「5」だけを印字している。OCR は番号の右の墨の点を「O」と読み「5O」とした。この読みを除き、番号を原画の位置で読む。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kouki-initial-ocr-1",
+          "origin_sha256": "3d76cbe63f79693e252a126d091c10ce02ec718b1b47fe01962231bed7d6145a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "e0aed88952c33f65046322680f83438dacfdb9bde3bb1a5d327578eeec8aa737",
+          "bytes": 803567
+        },
+        {
+          "id": "kouki-initial-ocr-2",
+          "origin_sha256": "3d76cbe63f79693e252a126d091c10ce02ec718b1b47fe01962231bed7d6145a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              24,
+              25,
+              26,
+              27,
+              28,
+              29
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "5b98c3199a9cea231b17c425a86b47446ffc5aea7022941e3593aeec349c3526",
+          "bytes": 261469
+        }
+      ]
     }
   ]
 }

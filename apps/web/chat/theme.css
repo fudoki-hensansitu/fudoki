@@ -47,6 +47,15 @@
   --color-brand-foreground: var(--brand-foreground);
   --color-emblem: var(--emblem);
   --color-paper: var(--paper);
+  /* 読み物（/about）の絵の面と帯。データの面には使わない */
+  --color-night: var(--night);
+  --color-night-foreground: var(--night-foreground);
+  --color-sakura: var(--sakura);
+  --color-kincha: var(--kincha);
+  --color-ai: var(--ai);
+  /* 出典の頁を写す面（PDF の白） */
+  --color-page: var(--page);
+  --color-page-foreground: var(--page-foreground);
   --color-brand-fill: var(--brand-fill);
   --color-brand-fill-hover: var(--brand-fill-hover);
   --color-brand-fill-foreground: var(--brand-fill-foreground);
@@ -77,4 +86,9 @@
   :root:has(#site-nav [data-slot="sidebar"][data-state="collapsed"]) { --nav-w: 3.5rem; }
   .site { display: flex; }
   .site-main { flex: 1; }
+  /* 会話を横に開いている間は、本文と会話をそれぞれの箱でスクロールさせ、横に並べる（nav/page-scroll.ts）。
+     window のスクロールのままだと、頁のスクロールバーが会話の右に出て二重になり、会話が本文の中に載って見える */
+  :root[data-side-panel] { overflow: hidden; }
+  :root[data-side-panel] .site { height: 100dvh; min-height: 0; }
+  :root[data-side-panel] .site-main { overflow-y: auto; margin-right: var(--side-panel); }
 }

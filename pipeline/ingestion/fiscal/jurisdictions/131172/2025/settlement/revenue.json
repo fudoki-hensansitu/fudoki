@@ -1,0 +1,149 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131172",
+    "fiscal_year": 2025,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-setsu",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e212e8b9a9b2700433c3f0b6045c73736b34475681e8c68259f9dc043e48f512"
+        }
+      ],
+      "options": {
+        "table_id": "general-setsu",
+        "account": "一般会計",
+        "part": "detail",
+        "workflow": {
+          "reading": {
+            "pattern": "clipped_columns",
+            "profile": "fiscal/jurisdictions/131172/layouts/text_settlement_revenue/reading.json"
+          },
+          "components": [
+            "clipped_words"
+          ]
+        },
+        "name_corrections": [
+          {
+            "id": "p27-genen-kazei",
+            "page": 27,
+            "observation_id": "p27:full-page:a0:result0:r40",
+            "observed_name": "現年课税分",
+            "corrected_name": "現年課税分",
+            "reason": "原典の画像では「現年課税分」と印字されている。Paddle は「課」を中国語の字形「课」で読んだ。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-setsu"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-setsu-ocr-1",
+          "origin_sha256": "e212e8b9a9b2700433c3f0b6045c73736b34475681e8c68259f9dc043e48f512",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              27,
+              52
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "b17e404b88f80e97a0e70f862d71b33e40dd60d9840a6c684cb5b7c07a0976b7",
+          "bytes": 1081092
+        }
+      ]
+    },
+    {
+      "id": "kaigo-setsu",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e212e8b9a9b2700433c3f0b6045c73736b34475681e8c68259f9dc043e48f512"
+        }
+      ],
+      "options": {
+        "table_id": "kaigo-setsu",
+        "account": "介護保険会計",
+        "part": "detail",
+        "workflow": {
+          "reading": {
+            "pattern": "clipped_columns",
+            "profile": "fiscal/jurisdictions/131172/layouts/text_settlement_revenue/reading.json"
+          },
+          "components": [
+            "clipped_words"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-setsu"
+        }
+      ]
+    },
+    {
+      "id": "kokuho-setsu",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e212e8b9a9b2700433c3f0b6045c73736b34475681e8c68259f9dc043e48f512"
+        }
+      ],
+      "options": {
+        "table_id": "kokuho-setsu",
+        "account": "国民健康保険事業会計",
+        "part": "detail",
+        "workflow": {
+          "reading": {
+            "pattern": "clipped_columns",
+            "profile": "fiscal/jurisdictions/131172/layouts/text_settlement_revenue/reading.json"
+          },
+          "components": [
+            "clipped_words"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-setsu"
+        }
+      ]
+    },
+    {
+      "id": "kouki-setsu",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e212e8b9a9b2700433c3f0b6045c73736b34475681e8c68259f9dc043e48f512"
+        }
+      ],
+      "options": {
+        "table_id": "kouki-setsu",
+        "account": "後期高齢者医療会計",
+        "part": "detail",
+        "workflow": {
+          "reading": {
+            "pattern": "clipped_columns",
+            "profile": "fiscal/jurisdictions/131172/layouts/text_settlement_revenue/reading.json"
+          },
+          "components": [
+            "clipped_words"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-setsu"
+        }
+      ]
+    }
+  ]
+}

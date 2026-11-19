@@ -1,0 +1,182 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132055",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "bd369426767fa7a48908eea8aceeba90a80883828e41921d1bc625298e8a01a6"
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-ocr-1",
+          "origin_sha256": "bd369426767fa7a48908eea8aceeba90a80883828e41921d1bc625298e8a01a6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63,
+              64
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true,
+            "merged_lines": true
+          },
+          "sha256": "d277d4d9692d2ce85a6f698249e9660dd71386953e0b3987d147fca5ea5dd7ae",
+          "bytes": 12142704
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "pages": [
+          [
+            1,
+            64
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の内訳（課税標準額・税率・調定見込額・収納率、事業ごとの補助金の名前と額）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "partial_headings": true,
+            "marked_subjects": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "general-revenue-p31-r8-mark",
+            "page": 31,
+            "observation_id": "p31:full-page:a0:result0:r8",
+            "observed_name": "衛生費都負担金",
+            "corrected_name": "○衛生費都負担金",
+            "reason": "物理31頁の廃止した目「衛生費都負担金」（本年度 0・前年度 1,022・比較 △1,022）。番号の代わりに ○ を印字するが、OCR は ○ を読み落とし、続きの頁に印字し直した項「都負担金」の見出しと読まれた。原典の描画で ○ を確かめ、字を戻す。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "general-revenue-p31-r6",
+            "page": 31,
+            "observation_id": "p31:full-page:a0:result0:r6",
+            "observed": "17",
+            "reason": "物理31頁の頭に印字し直した款・項の番号「17」「1」（名前は印字しない）。下の廃止した目「○衛生費都負担金」と1つの行に読まれ、項「都負担金」の印字し直しとされて金額が項と食い違った。原典の描画で番号だけの印字し直しであることを確かめ、この読みは使わない（款・項は前の頁から続く）。"
+          },
+          {
+            "id": "general-revenue-p31-r7",
+            "page": 31,
+            "observation_id": "p31:full-page:a0:result0:r7",
+            "observed": "1",
+            "reason": "物理31頁の頭に印字し直した款・項の番号「17」「1」（名前は印字しない）。下の廃止した目「○衛生費都負担金」と1つの行に読まれ、項「都負担金」の印字し直しとされて金額が項と食い違った。原典の描画で番号だけの印字し直しであることを確かめ、この読みは使わない（款・項は前の頁から続く）。"
+          }
+        ]
+      }
+    }
+  ]
+}

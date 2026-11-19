@@ -1,0 +1,159 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "133035",
+    "fiscal_year": 2025,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "22eac7b82c2b4e4bd9b93c16790e3f82ac672f61d48474fb403e32eb81f916f0"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-revenue-ocr-1",
+          "origin_sha256": "22eac7b82c2b4e4bd9b93c16790e3f82ac672f61d48474fb403e32eb81f916f0",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a8f7bb898c4710641d95810edcfda02c37f6920adb865cd91edd6469ca9b94db",
+          "bytes": 2914937
+        },
+        {
+          "id": "general-initial-revenue-ocr-2",
+          "origin_sha256": "22eac7b82c2b4e4bd9b93c16790e3f82ac672f61d48474fb403e32eb81f916f0",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "29a751fea10b896016f2c4a8d3120b9073d36127d47e64c31a534817314314ca",
+          "bytes": 3126107
+        },
+        {
+          "id": "general-initial-revenue-ocr-3",
+          "origin_sha256": "22eac7b82c2b4e4bd9b93c16790e3f82ac672f61d48474fb403e32eb81f916f0",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              37,
+              38,
+              39,
+              40,
+              41
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "8509aec7fd4837bcf3fc3144cbbb7076d6f6a65850aa7544fd0fc5919c3d5038",
+          "bytes": 982052
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額",
+                  "kind": "amount"
+                },
+                "前年度": {
+                  "heading": "前年度予算額",
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "目(事業)": {
+                  "heading": "目"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "broken_column_rules": true,
+            "titles_on_one_line": true,
+            "glued_titles": true,
+            "project_blocks": true,
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            17,
+            41
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    }
+  ]
+}

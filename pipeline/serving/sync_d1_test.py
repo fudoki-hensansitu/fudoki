@@ -51,7 +51,7 @@ class StatementTest(unittest.TestCase):
         self.assertEqual(con.execute('select * from t order by rowid').fetchall(), [("o'k", None), ('z', 3)])
 
     def test_pack_respects_batch_size(self):
-        stmts = iter(['x' * 400_000] * 5)
+        stmts = iter(['x' * (sync_d1.MAX_BATCH_BYTES * 2 // 5)] * 5)
         batches = list(sync_d1.pack(stmts))
         self.assertEqual([len(b) for b in batches], [2, 2, 1])
 

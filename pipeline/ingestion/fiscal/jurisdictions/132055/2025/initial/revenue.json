@@ -1,0 +1,197 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132055",
+    "fiscal_year": 2025,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7a20b6211f42d38632dc1998ea5197c271a7b776b66cf2ed8e3f5361f4c961ed"
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-ocr-1",
+          "origin_sha256": "7a20b6211f42d38632dc1998ea5197c271a7b776b66cf2ed8e3f5361f4c961ed",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70,
+              71,
+              72
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true,
+            "merged_lines": true
+          },
+          "sha256": "cc0cefd4139f410dcbbd4936a35d41643e4bea9b006644a8594e9f7d73acf984",
+          "bytes": 13631475
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "pages": [
+          [
+            1,
+            72
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の内訳（課税標準額・税率・調定見込額・収納率、事業ごとの補助金の名前と額）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "partial_headings": true,
+            "marked_subjects": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "general-revenue-p63-r68-mark",
+            "page": 63,
+            "observation_id": "p63:full-page:a0:result0:r68",
+            "observed_name": "吉川英治記念館事業基金",
+            "corrected_name": "○吉川英治記念館事業基金繰入金",
+            "reason": "物理63頁の廃止した目「吉川英治記念館事業基金繰入金」（本年度 0・前年度 1,082・比較 △1,082）。番号の代わりに ○ を印字し、名前の2行目「繰入金」を字間を空けて刷る。OCR は ○ を読み落とし、2行目を字ごとに読んで別の目と読んだ。原典の描画で印字を確かめ、○ と2行目を名前に戻し、字ごとの読みは使わない。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "general-revenue-p63-r72",
+            "page": 63,
+            "observation_id": "p63:full-page:a0:result0:r72",
+            "observed": "繰",
+            "reason": "物理63頁の廃止した目「吉川英治記念館事業基金繰入金」（本年度 0・前年度 1,082・比較 △1,082）。番号の代わりに ○ を印字し、名前の2行目「繰入金」を字間を空けて刷る。OCR は ○ を読み落とし、2行目を字ごとに読んで別の目と読んだ。原典の描画で印字を確かめ、○ と2行目を名前に戻し、字ごとの読みは使わない。"
+          },
+          {
+            "id": "general-revenue-p63-r73",
+            "page": 63,
+            "observation_id": "p63:full-page:a0:result0:r73",
+            "observed": "入",
+            "reason": "物理63頁の廃止した目「吉川英治記念館事業基金繰入金」（本年度 0・前年度 1,082・比較 △1,082）。番号の代わりに ○ を印字し、名前の2行目「繰入金」を字間を空けて刷る。OCR は ○ を読み落とし、2行目を字ごとに読んで別の目と読んだ。原典の描画で印字を確かめ、○ と2行目を名前に戻し、字ごとの読みは使わない。"
+          },
+          {
+            "id": "general-revenue-p63-r74",
+            "page": 63,
+            "observation_id": "p63:full-page:a0:result0:r74",
+            "observed": "金",
+            "reason": "物理63頁の廃止した目「吉川英治記念館事業基金繰入金」（本年度 0・前年度 1,082・比較 △1,082）。番号の代わりに ○ を印字し、名前の2行目「繰入金」を字間を空けて刷る。OCR は ○ を読み落とし、2行目を字ごとに読んで別の目と読んだ。原典の描画で印字を確かめ、○ と2行目を名前に戻し、字ごとの読みは使わない。"
+          }
+        ]
+      }
+    }
+  ]
+}

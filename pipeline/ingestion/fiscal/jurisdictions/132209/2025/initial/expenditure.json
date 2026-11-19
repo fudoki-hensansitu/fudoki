@@ -1382,6 +1382,658 @@
           "table_id": "general-initial-13"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "f0c5dc5bb7cf261b61e025e6f6cad8be5ba40555a2cf43b82b7d5b63d35c9512"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-insurance-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "節／区分": {
+                  "heading": "節"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "setsu_lines"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "code_after_amount": true,
+            "codeless_beside_repeated_code": true,
+            "unnumbered_abolished_names": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p36-delta-r28",
+            "page": 36,
+            "observation_id": "p36:full-page:a0:result0:r28",
+            "observed": "△3007",
+            "reason": "OCR が項「高額療養費」の比較増減 △300 に、右の欄の 701,500 の最初の 7 を重ねて読んだ（△3007）。この読みを除き、比較増減を読む。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p36-delta-r28",
+            "page": 36,
+            "boxes": [
+              [
+                297.5,
+                152.9,
+                325.0,
+                164.9
+              ]
+            ],
+            "amount": "△300",
+            "reason": "原画で確かめた項「高額療養費」の比較増減 △300（701,500−701,800）。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-initial-ocr-1",
+          "origin_sha256": "f0c5dc5bb7cf261b61e025e6f6cad8be5ba40555a2cf43b82b7d5b63d35c9512",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "2326177d9fa89665e5991ef70e30daa8b0b33aa2cbea382aceb491a6a4a4c8ce",
+          "bytes": 1626372
+        },
+        {
+          "id": "national-health-insurance-initial-ocr-2",
+          "origin_sha256": "f0c5dc5bb7cf261b61e025e6f6cad8be5ba40555a2cf43b82b7d5b63d35c9512",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "14b23ef7f19c601f3a799cbf1dc382e0adb5dde838b392399089fa0c71a3453a",
+          "bytes": 1149364
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "06ae9db253fbf832ac76e261935b3dde186c198469d4cd8180bb0fe8fa108c64"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "節／区分": {
+                  "heading": "節"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "setsu_lines"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "code_after_amount": true,
+            "codeless_beside_repeated_code": true,
+            "unnumbered_abolished_names": true,
+            "framed_spread_pages": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p42-row-r29",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r29",
+            "observed": "6,786,0226, 489, 788",
+            "reason": "OCR が項「介護サービス等諸費」の行の隣り合う2つの金額を罫をまたいで1語に読んだ（6,786,0226, 489, 788）。この読みを除き、欄ごとに読む。"
+          },
+          {
+            "id": "p42-row-r30",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r30",
+            "observed": "296, 2342, 552, 221",
+            "reason": "OCR が項「介護サービス等諸費」の行の隣り合う2つの金額を罫をまたいで1語に読んだ（296, 2342, 552, 221）。この読みを除き、欄ごとに読む。"
+          },
+          {
+            "id": "p66-row-r29",
+            "page": 66,
+            "observation_id": "p66:full-page:a0:result0:r29",
+            "observed": "△2771",
+            "reason": "OCR が目「包括的支援事業・任意事業費」の比較増減 △277 に罫の線を1と読んで続けた（△2771）。この読みを除き、原画の値を読む。"
+          },
+          {
+            "id": "p73-row-r31",
+            "page": 73,
+            "observation_id": "p73:full-page:a0:result0:r31",
+            "observed": "800",
+            "reason": "節の金額の欄の右の罫が細節「手数料」の 800 の最後の桁を切り、0 が説明の欄に入る。この読みを除き、原画の値を読む。"
+          },
+          {
+            "id": "p75-row-r14",
+            "page": 75,
+            "observation_id": "p75:full-page:a0:result0:r14",
+            "observed": "396",
+            "reason": "節の金額の欄の右の罫が細節「手数料」の 396 の最後の桁を切り、6 が説明の番号 18 に付いて 618 になる。この読みを除き、原画の値を読む。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p42-row-current",
+            "page": 42,
+            "boxes": [
+              [
+                160.3,
+                185.3,
+                223.6,
+                195.1
+              ]
+            ],
+            "amount": "6,786,022",
+            "reason": "原画で確かめた項「介護サービス等諸費」の本年度予算額 6,786,022。"
+          },
+          {
+            "id": "p42-row-previous",
+            "page": 42,
+            "boxes": [
+              [
+                224.2,
+                185.3,
+                273.5,
+                195.1
+              ]
+            ],
+            "amount": "6,489,788",
+            "reason": "原画で確かめた項「介護サービス等諸費」の前年度予算額 6,489,788。"
+          },
+          {
+            "id": "p42-row-delta",
+            "page": 42,
+            "boxes": [
+              [
+                286.7,
+                185.3,
+                324.8,
+                195.1
+              ]
+            ],
+            "amount": "296,234",
+            "reason": "原画で確かめた項「介護サービス等諸費」の比較増減 296,234。"
+          },
+          {
+            "id": "p42-row-funding",
+            "page": 42,
+            "boxes": [
+              [
+                325.3,
+                185.3,
+                373.3,
+                195.1
+              ]
+            ],
+            "amount": "2,552,221",
+            "reason": "原画で確かめた項「介護サービス等諸費」の財源内訳の欄の 2,552,221。"
+          },
+          {
+            "id": "p66-row-delta",
+            "page": 66,
+            "boxes": [
+              [
+                298.5,
+                277.4,
+                334.0,
+                288.5
+              ]
+            ],
+            "amount": "△277",
+            "reason": "原画で確かめた目「包括的支援事業・任意事業費」の比較増減 △277。"
+          },
+          {
+            "id": "p73-row-fee",
+            "page": 73,
+            "boxes": [
+              [
+                203.0,
+                324.0,
+                216.5,
+                335.3
+              ]
+            ],
+            "amount": "800",
+            "reason": "原画で確かめた細節「手数料」の金額 800。"
+          },
+          {
+            "id": "p75-row-fee",
+            "page": 75,
+            "boxes": [
+              [
+                203.0,
+                277.7,
+                216.5,
+                288.7
+              ]
+            ],
+            "amount": "396",
+            "reason": "原画で確かめた細節「手数料」の金額 396。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-initial-ocr-1",
+          "origin_sha256": "06ae9db253fbf832ac76e261935b3dde186c198469d4cd8180bb0fe8fa108c64",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c85944ef030c617f068719678c5a336d343cc96c380e2b844f69bd1142698ed6",
+          "bytes": 1782850
+        },
+        {
+          "id": "long-term-care-initial-ocr-2",
+          "origin_sha256": "06ae9db253fbf832ac76e261935b3dde186c198469d4cd8180bb0fe8fa108c64",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "64e27208da8b2ab0f4a3d15ef2666f4119a4cca199113b89c9d3a401a0c3f802",
+          "bytes": 2036333
+        },
+        {
+          "id": "long-term-care-initial-ocr-3",
+          "origin_sha256": "06ae9db253fbf832ac76e261935b3dde186c198469d4cd8180bb0fe8fa108c64",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63,
+              64,
+              65
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9a4de420d1828e88c4853669d45f9f48706398c933c756def4a02af490402e4d",
+          "bytes": 1786232
+        },
+        {
+          "id": "long-term-care-initial-ocr-4",
+          "origin_sha256": "06ae9db253fbf832ac76e261935b3dde186c198469d4cd8180bb0fe8fa108c64",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              66,
+              67,
+              68,
+              69,
+              70,
+              71,
+              72,
+              73,
+              74,
+              75
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "de6346e6ca33f065fa3de7f42cda19958b062c4a17f14af7a95ac38e039bf444",
+          "bytes": 1973445
+        },
+        {
+          "id": "long-term-care-initial-ocr-5",
+          "origin_sha256": "06ae9db253fbf832ac76e261935b3dde186c198469d4cd8180bb0fe8fa108c64",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              76,
+              77,
+              78,
+              79,
+              80,
+              81
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c2701d65b1ccf64d01a9e2563f5a40fc55a351afda4a5523afa437465989377d",
+          "bytes": 517140
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6e10145174ffa46751cd59dd0a5ed5315555ace69d7011a82660629d0fc99ec3"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "節／区分": {
+                  "heading": "節"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "setsu_lines"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "code_after_amount": true,
+            "codeless_beside_repeated_code": true,
+            "unnumbered_abolished_names": true,
+            "framed_spread_pages": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-initial-ocr-1",
+          "origin_sha256": "6e10145174ffa46751cd59dd0a5ed5315555ace69d7011a82660629d0fc99ec3",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "568206d1853b1043f991d52313f7c25f9f6c54df9ec20fbfa014e8a30b6389a0",
+          "bytes": 1377187
+        },
+        {
+          "id": "elderly-medical-initial-ocr-2",
+          "origin_sha256": "6e10145174ffa46751cd59dd0a5ed5315555ace69d7011a82660629d0fc99ec3",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              32,
+              33,
+              34,
+              35,
+              36,
+              37
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9d16b29993b16969a6690e2566dea62b0936e92ba4808d0c10f53e3d2a0e69db",
+          "bytes": 453924
+        }
+      ]
     }
   ]
 }

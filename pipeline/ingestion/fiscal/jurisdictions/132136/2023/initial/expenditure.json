@@ -1,0 +1,577 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132136",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "8dd3bbfeee7a44f7173f8476c3a48c923b8d12cdbc37453d225d34de3b2c3cb3"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-insurance-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "staircase": true
+              },
+              "rules": {
+                "dark": 180
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position"
+              },
+              "説明": {
+                "pattern": "shape",
+                "quirks": {
+                  "glued_project_codes": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "partial_headings": true,
+            "code_after_amount": {
+              "code_digits": 6
+            },
+            "nearest_subject_code": true
+          }
+        },
+        "pages": [
+          [
+            22,
+            45
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-initial-ocr-1",
+          "origin_sha256": "8dd3bbfeee7a44f7173f8476c3a48c923b8d12cdbc37453d225d34de3b2c3cb3",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "0490855786fbd2f13ba00f4d66d3602c56cb6dec12f739f18a7aa030d1991916",
+          "bytes": 2268502
+        },
+        {
+          "id": "national-health-insurance-initial-ocr-2",
+          "origin_sha256": "8dd3bbfeee7a44f7173f8476c3a48c923b8d12cdbc37453d225d34de3b2c3cb3",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "bfd9f909812c3fddbad135f6a3872ceeed5c994033fc16bc0345e3db8568c57f",
+          "bytes": 1329765
+        },
+        {
+          "id": "national-health-insurance-initial-ocr-3",
+          "origin_sha256": "8dd3bbfeee7a44f7173f8476c3a48c923b8d12cdbc37453d225d34de3b2c3cb3",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              42,
+              43,
+              44,
+              45
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "1889fadd99103b2000b51dee25dbe10a3ebbfcf001566a3150508ddad9f7ea77",
+          "bytes": 424566
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "10258dabe26c2b5c568b93961af8e8cf9ae98dc7bf2ec6a9bd4423f7789dbbd3"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "staircase": true
+              },
+              "rules": {
+                "dark": 180
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position"
+              },
+              "説明": {
+                "pattern": "shape",
+                "quirks": {
+                  "glued_project_codes": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "partial_headings": true,
+            "code_after_amount": {
+              "code_digits": 6
+            },
+            "nearest_subject_code": true
+          }
+        },
+        "pages": [
+          [
+            22,
+            43
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-initial-ocr-1",
+          "origin_sha256": "10258dabe26c2b5c568b93961af8e8cf9ae98dc7bf2ec6a9bd4423f7789dbbd3",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "270270c0d7e0fe51afb01dcc3e8b321a03cb5c3432f7d9e627c08e18745c1fc2",
+          "bytes": 2170232
+        },
+        {
+          "id": "long-term-care-initial-ocr-2",
+          "origin_sha256": "10258dabe26c2b5c568b93961af8e8cf9ae98dc7bf2ec6a9bd4423f7789dbbd3",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "eb514629a2804f1d8b14135e72c1d86ea6286e5e94e9fc61a2a121c7b5f5800c",
+          "bytes": 1168482
+        },
+        {
+          "id": "long-term-care-initial-ocr-3",
+          "origin_sha256": "10258dabe26c2b5c568b93961af8e8cf9ae98dc7bf2ec6a9bd4423f7789dbbd3",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              42,
+              43
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "78b0ab54064954cc5c6a4e3726ca7e60ddb5b3a8c7924909bd9cd6e26b9c0050",
+          "bytes": 96408
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "92e5bfe6c8feeb11bff2ed28d35efdea2fa7260550cadce473616dde086ab04c"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "staircase": true
+              },
+              "rules": {
+                "dark": 180
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position"
+              },
+              "説明": {
+                "pattern": "shape",
+                "quirks": {
+                  "glued_project_codes": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "partial_headings": true,
+            "code_after_amount": {
+              "code_digits": 6
+            },
+            "nearest_subject_code": true
+          }
+        },
+        "pages": [
+          [
+            18,
+            29
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-initial-ocr-1",
+          "origin_sha256": "92e5bfe6c8feeb11bff2ed28d35efdea2fa7260550cadce473616dde086ab04c",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "1110e823dd624178211cfadba3c5255579fafd412af4aeb0f0e34c20f3c0f19a",
+          "bytes": 1353872
+        },
+        {
+          "id": "elderly-medical-initial-ocr-2",
+          "origin_sha256": "92e5bfe6c8feeb11bff2ed28d35efdea2fa7260550cadce473616dde086ab04c",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              28,
+              29
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "740482d04ae2d47264555fc78e63c2fd369292d6613f9dd365239a9af449fa31",
+          "bytes": 96293
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    },
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5ae08b8c8306372f7f48d4adfd044ba950f2cffcb84954e4023be467756b8f3d"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape",
+                "quirks": {
+                  "glued_project_codes": true,
+                  "names_over_pages": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "partial_headings": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p303-futankin",
+            "page": 303,
+            "code": "18",
+            "observed_name": "負担金補助",
+            "corrected_name": "負担金補助及び交付金",
+            "reason": "頁303の節「18 負担金補助」は名前の2行目「及び交付金」を次の右頁（305）の頭に印字する。頁の境で切れた名前をつなぐ。"
+          },
+          {
+            "id": "p305-koukahi",
+            "page": 305,
+            "code": "26",
+            "observed_name": "及び交付金公課費",
+            "corrected_name": "公課費",
+            "reason": "頁305の頭の「及び交付金」は頁303の節「18 負担金補助」の名前の続きで、節「26 公課費」の名前ではない。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    }
+  ]
+}

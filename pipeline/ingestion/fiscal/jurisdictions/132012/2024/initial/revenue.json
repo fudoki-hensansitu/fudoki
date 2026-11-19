@@ -1,0 +1,677 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132012",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3882232b257c70691f3eafe7d493f8224a32ba5394602897313839c5c490503d"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度(前年度)<比較>": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 24
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "excluded_boxes": [
+          {
+            "id": "p178-revenue-total",
+            "page": 178,
+            "bbox": [
+              60,
+              273,
+              345,
+              355
+            ],
+            "kind": "総括",
+            "reason": "明細の最後の頁の「歳入合計」の行。本年度・(前年度)・<比較> を3段に印字し、題字は中段にだけあるので、上段・下段の金額が合計の行と読めない。款の和と比べる統制値。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kokuho-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3882232b257c70691f3eafe7d493f8224a32ba5394602897313839c5c490503d"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "kokuho-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度(前年度)<比較>": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 24
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "excluded_boxes": [
+          {
+            "id": "p410-revenue-total",
+            "page": 410,
+            "bbox": [
+              60,
+              452,
+              345,
+              534
+            ],
+            "kind": "総括",
+            "reason": "明細の最後の頁の「歳入合計」の行。本年度・(前年度)・<比較> を3段に印字し、題字は中段にだけあるので、上段・下段の金額が合計の行と読めない。款の和と比べる統制値。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kouki-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3882232b257c70691f3eafe7d493f8224a32ba5394602897313839c5c490503d"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度(前年度)<比較>": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 24
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "excluded_boxes": [
+          {
+            "id": "p452-revenue-total",
+            "page": 452,
+            "bbox": [
+              60,
+              583,
+              345,
+              665
+            ],
+            "kind": "総括",
+            "reason": "明細の最後の頁の「歳入合計」の行。本年度・(前年度)・<比較> を3段に印字し、題字は中段にだけあるので、上段・下段の金額が合計の行と読めない。款の和と比べる統制値。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3882232b257c70691f3eafe7d493f8224a32ba5394602897313839c5c490503d"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度(前年度)<比較>": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 24
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "excluded_boxes": [
+          {
+            "id": "p488-revenue-total",
+            "page": 488,
+            "bbox": [
+              60,
+              273,
+              345,
+              355
+            ],
+            "kind": "総括",
+            "reason": "明細の最後の頁の「歳入合計」の行。本年度・(前年度)・<比較> を3段に印字し、題字は中段にだけあるので、上段・下段の金額が合計の行と読めない。款の和と比べる統制値。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-revenue"
+        }
+      ]
+    },
+    {
+      "id": "boshi-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3882232b257c70691f3eafe7d493f8224a32ba5394602897313839c5c490503d"
+        }
+      ],
+      "options": {
+        "account": "母子・父子福祉資金特別会計",
+        "table_id": "boshi-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度(前年度)<比較>": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 24
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "excluded_boxes": [
+          {
+            "id": "p522-revenue-total",
+            "page": 522,
+            "bbox": [
+              60,
+              354,
+              345,
+              436
+            ],
+            "kind": "総括",
+            "reason": "明細の最後の頁の「歳入合計」の行。本年度・(前年度)・<比較> を3段に印字し、題字は中段にだけあるので、上段・下段の金額が合計の行と読めない。款の和と比べる統制値。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "boshi-revenue"
+        }
+      ]
+    },
+    {
+      "id": "tochi-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3882232b257c70691f3eafe7d493f8224a32ba5394602897313839c5c490503d"
+        }
+      ],
+      "options": {
+        "account": "土地取得事業特別会計",
+        "table_id": "tochi-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度(前年度)<比較>": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 24
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "excluded_boxes": [
+          {
+            "id": "p538-revenue-total",
+            "page": 538,
+            "bbox": [
+              60,
+              436,
+              345,
+              518
+            ],
+            "kind": "総括",
+            "reason": "明細の最後の頁の「歳入合計」の行。本年度・(前年度)・<比較> を3段に印字し、題字は中段にだけあるので、上段・下段の金額が合計の行と読めない。款の和と比べる統制値。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "tochi-revenue"
+        }
+      ]
+    },
+    {
+      "id": "chushajo-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3882232b257c70691f3eafe7d493f8224a32ba5394602897313839c5c490503d"
+        }
+      ],
+      "options": {
+        "account": "駐車場事業特別会計",
+        "table_id": "chushajo-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度(前年度)<比較>": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 24
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "excluded_boxes": [
+          {
+            "id": "p550-revenue-total",
+            "page": 550,
+            "bbox": [
+              60,
+              697,
+              345,
+              779
+            ],
+            "kind": "総括",
+            "reason": "明細の最後の頁の「歳入合計」の行。本年度・(前年度)・<比較> を3段に印字し、題字は中段にだけあるので、上段・下段の金額が合計の行と読めない。款の和と比べる統制値。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "chushajo-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kariire-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3882232b257c70691f3eafe7d493f8224a32ba5394602897313839c5c490503d"
+        }
+      ],
+      "options": {
+        "account": "借入金管理特別会計",
+        "table_id": "kariire-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度(前年度)<比較>": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 24
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "excluded_boxes": [
+          {
+            "id": "p568-revenue-total",
+            "page": 568,
+            "bbox": [
+              60,
+              256,
+              345,
+              338
+            ],
+            "kind": "総括",
+            "reason": "明細の最後の頁の「歳入合計」の行。本年度・(前年度)・<比較> を3段に印字し、題字は中段にだけあるので、上段・下段の金額が合計の行と読めない。款の和と比べる統制値。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kariire-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kyuyo-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3882232b257c70691f3eafe7d493f8224a32ba5394602897313839c5c490503d"
+        }
+      ],
+      "options": {
+        "account": "給与及び公共料金特別会計",
+        "table_id": "kyuyo-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度(前年度)<比較>": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 24
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "excluded_boxes": [
+          {
+            "id": "p580-revenue-total",
+            "page": 580,
+            "bbox": [
+              60,
+              615,
+              345,
+              697
+            ],
+            "kind": "総括",
+            "reason": "明細の最後の頁の「歳入合計」の行。本年度・(前年度)・<比較> を3段に印字し、題字は中段にだけあるので、上段・下段の金額が合計の行と読めない。款の和と比べる統制値。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kyuyo-revenue"
+        }
+      ]
+    }
+  ]
+}

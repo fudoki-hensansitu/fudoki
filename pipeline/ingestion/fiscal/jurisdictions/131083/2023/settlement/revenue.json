@@ -1,0 +1,111 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131083",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4690fc381cc95b3ba26ce3b0c29fc3d44dcb7c89d9d7bfd368081c34e1c72c3e"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-settlement",
+        "workflow": {
+          "reading": {
+            "pattern": "facing_explanations",
+            "profile": "fiscal/jurisdictions/131083/layouts/text_settlement_2023_revenue/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-settlement"
+        }
+      ]
+    },
+    {
+      "id": "national-health-settlement",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "0c82296d4b7f3bf919e9afb0dd4ba31b1323d45c7fae05f6c858cd458854ad37"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険会計",
+        "table_id": "national-health-settlement",
+        "workflow": {
+          "reading": {
+            "pattern": "facing_explanations",
+            "profile": "fiscal/jurisdictions/131083/layouts/text_settlement_2023_revenue/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-settlement"
+        }
+      ]
+    },
+    {
+      "id": "care-settlement",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "0c82296d4b7f3bf919e9afb0dd4ba31b1323d45c7fae05f6c858cd458854ad37"
+        }
+      ],
+      "options": {
+        "account": "介護保険会計",
+        "table_id": "care-settlement",
+        "workflow": {
+          "reading": {
+            "pattern": "facing_explanations",
+            "profile": "fiscal/jurisdictions/131083/layouts/text_settlement_2023_revenue/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-settlement"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "0c82296d4b7f3bf919e9afb0dd4ba31b1323d45c7fae05f6c858cd458854ad37"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "elderly-medical-settlement",
+        "workflow": {
+          "reading": {
+            "pattern": "facing_explanations",
+            "profile": "fiscal/jurisdictions/131083/layouts/text_settlement_2023_revenue/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-settlement"
+        }
+      ]
+    }
+  ]
+}

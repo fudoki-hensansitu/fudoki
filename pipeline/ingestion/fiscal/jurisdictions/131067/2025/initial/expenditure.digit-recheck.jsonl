@@ -46,6 +46,7 @@
 {"fp":"940492173df008245e0788b8c4dc252d","p":0.04,"t":"care-initial"}
 {"fp":"97341369d081f4a8f91f32b8bad751e2","p":0.04,"t":"care-initial"}
 {"fp":"9cbb0bd9f23fbaf75ace7c31b21810c8","p":0.04,"t":"care-initial"}
+{"fp":"a681257007e80f1e4ce7dbfb046d3207","p":0.07,"t":"care-initial"}
 {"fp":"b0827080828ec60635431419e956a194","p":0.05,"t":"care-initial"}
 {"fp":"b170dbcb6637b7d47cc3013997cf28b0","p":0.04,"t":"care-initial"}
 {"fp":"b60585b3f9e01e8c7160c7185838d4d0","p":0.04,"t":"care-initial"}
@@ -86,6 +87,7 @@
 {"fp":"060092fe694a4564c6ddcc2c376c96ee","p":0.03,"t":"general-initial"}
 {"fp":"0631f64bc064fd7510a8c07333c54173","p":0.04,"t":"general-initial"}
 {"fp":"06d3fc73799c3c99f03f82977e82068e","p":0.05,"t":"general-initial"}
+{"fp":"0713342d5b7867c35ca5af433c17d969","p":0.04,"t":"general-initial"}
 {"fp":"07254109550c6e254bec7c1b3926d36a","p":0.04,"t":"general-initial"}
 {"fp":"072de710fcb28165705e934d63bb5c4e","p":0.04,"t":"general-initial"}
 {"fp":"07388fe16dadfdbbc4a098af878b0908","p":0.04,"t":"general-initial"}
@@ -312,7 +314,6 @@
 {"fp":"42eefc4af539e176d85b4e80bdc6f2bb","p":0.04,"t":"general-initial"}
 {"fp":"42f2deb77657f57ca77dc5b41d582ca6","p":0.06,"t":"general-initial"}
 {"fp":"430408362a191d378cfc4708c4c95300","p":0.05,"t":"general-initial"}
-{"fp":"434320367f580428183313e6ab531cd4","p":0.31,"t":"general-initial"}
 {"fp":"43ecb2389217c50491b993c90c9a1e49","p":0.04,"t":"general-initial"}
 {"fp":"444b93cd3b8f2a456c6c099b0b262ebc","p":0.05,"t":"general-initial"}
 {"fp":"446274f31f2192f93e67bebcfd9e739b","p":0.05,"t":"general-initial"}
@@ -587,6 +588,7 @@
 {"fp":"8ffcfd5015f7179be7ed8466260af1c0","p":0.04,"t":"general-initial"}
 {"fp":"9019c8db3fc362d529cac0c126e47a96","p":0.04,"t":"general-initial"}
 {"fp":"906656f895ed588a257fd3c53156f4b0","p":0.05,"t":"general-initial"}
+{"fp":"90a396bd2d3e2e422610c7656eeeca4b","p":0.05,"t":"general-initial"}
 {"fp":"90a61674bc2e532952a98deccb40d075","p":0.05,"t":"general-initial"}
 {"fp":"90bf1bb5e22cb1b79fab265723493e6c","p":0.04,"t":"general-initial"}
 {"fp":"910c0b3bad9d7550dfc941305fc8fdaf","p":0.04,"t":"general-initial"}
@@ -670,6 +672,7 @@
 {"fp":"abd0e4b53cd86d03d9ebf813cc334f81","p":0.05,"t":"general-initial"}
 {"fp":"ac45f03df8c8a461a49724b5ce381dfd","p":0.04,"t":"general-initial"}
 {"fp":"ac5913dba9d2aca2129a01da73c653dd","p":0.04,"t":"general-initial"}
+{"fp":"ac7db348672f8f4bca48560ad7b7872e","p":0.04,"t":"general-initial"}
 {"fp":"acb17bc567fc8557f5ac471a80bcaa73","p":0.04,"t":"general-initial"}
 {"fp":"aceb1503c4c98e1d55ab2e8800a4018a","p":0.04,"t":"general-initial"}
 {"fp":"ad17ab72ffbd0525b9fb9aa6bdd72fb3","p":0.05,"t":"general-initial"}
@@ -953,6 +956,8 @@
 {"fp":"f5332b37852ad695de12d783f9cbf623","p":0.04,"t":"geriatric-facility-initial"}
 {"fp":"6995f53b449975de576f190567584e36","p":0.05,"t":"hospital-initial"}
 {"fp":"d9f652de5880616ea0bbe63542451b1e","p":0.04,"t":"hospital-initial"}
+{"fp":"03dc17c8ed2c11250f3c572e9700f519","p":0.04,"t":"national-health-initial"}
+{"fp":"0a08f980eb7c4babf2d6c2fc212de8e9","p":0.04,"t":"national-health-initial"}
 {"fp":"109de4b9663554c90134130e216453e5","p":0.05,"t":"national-health-initial"}
 {"fp":"16041ff347a4311844c5b334aee02339","p":0.05,"t":"national-health-initial"}
 {"fp":"1d3b9d48f6b2a0d386b8ac20689a2bfc","p":0.46,"t":"national-health-initial"}

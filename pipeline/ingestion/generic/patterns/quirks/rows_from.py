@@ -6,6 +6,18 @@ OPTIONS = {'type': 'object', 'additionalProperties': False, 'required': ['name',
            'properties': {'name': {'type': 'string', 'minLength': 1}, 'amount': {'type': 'string', 'minLength': 1}}}
 
 
+def downwards(glyph) -> list:
+    """A name printed downwards that Poppler reads as one tall word (`子ども発達支援課`), one glyph per letter: an amount
+    printed beside its second letter is on the item's line."""
+    from ingestion.generic.layout import Glyph
+    count = len(glyph.text)
+    if count < 2 or glyph.y1 - glyph.y0 < 1.5 * (glyph.x1 - glyph.x0):  # set across, not down
+        return [glyph]
+    step = (glyph.y1 - glyph.y0) / count
+    return [Glyph(letter, glyph.x0, glyph.y0 + n * step, glyph.x1, glyph.y0 + (n + 1) * step, glyph.page, glyph.offset)
+            for n, letter in enumerate(glyph.text)]
+
+
 def with_empty_rows(items: list, group, logical, declared: dict) -> list:
     from ingestion.generic.layout import lines
     from ingestion.generic.tree import Item
@@ -20,7 +32,7 @@ def with_empty_rows(items: list, group, logical, declared: dict) -> list:
         centre = lambda g: (g.y0 + g.y1) / 2
         if not any(top < centre(g) < bottom and any(c.isdigit() for c in g.text) for g in paid.words):
             continue
-        words = [g for g in named.words if top < centre(g) < bottom]
+        words = [glyph for g in named.words if top < centre(g) < bottom for glyph in downwards(g)]
         if words:
             printed = lines(words)
             top = min(printed[0], key=lambda g: g.y0)  # a name printed downwards is one tall word: its row is where it starts

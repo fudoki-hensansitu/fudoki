@@ -122,6 +122,444 @@
           "table_id": "general"
         }
       ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "754c8a1e88ac7c5b32534f1e3926658d9b16e040b556ad1e43ce65053d7d8ae4"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額(前年度予算額)(比較増減)": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 14
+                },
+                "本年度予算額の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "marks": {
+                    "(1": 2,
+                    "(2": 2,
+                    "(3": 2,
+                    "(4": 2,
+                    "(5": 2,
+                    "(6": 2,
+                    "(7": 2,
+                    "(8": 2,
+                    "(9": 2
+                  },
+                  "wrap": "amount_on_last_line"
+                },
+                "quirks": {
+                  "department_line": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracket_marks": true,
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "marked_subjects": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "rule_ink": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-initial-ocr-1",
+          "origin_sha256": "754c8a1e88ac7c5b32534f1e3926658d9b16e040b556ad1e43ce65053d7d8ae4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "edc770d9f67e0b52ad060578797c5332dc2fc55baaac2529b5395d500269f3df",
+          "bytes": 4841226
+        },
+        {
+          "id": "long-term-care-initial-ocr-2",
+          "origin_sha256": "754c8a1e88ac7c5b32534f1e3926658d9b16e040b556ad1e43ce65053d7d8ae4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              23,
+              24,
+              25,
+              26,
+              27
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "56cb8401bea9be45c9af32616a01ee3fc2c0f5b8820e3ba47bdae14b1934dc87",
+          "bytes": 1705816
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "2358603ba0aabcec31a49814632b37a798b0c3617ef0952e6641218cd15df644"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額(前年度予算額)(比較増減)": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 14
+                },
+                "本年度予算額の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財／源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。OCR が見出しの「特定財源」を2つの升に分けて読んだ列で、歳出の目の金額は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "marks": {
+                    "(1": 2,
+                    "(2": 2,
+                    "(3": 2,
+                    "(4": 2,
+                    "(5": 2,
+                    "(6": 2,
+                    "(7": 2,
+                    "(8": 2,
+                    "(9": 2
+                  },
+                  "wrap": "amount_on_last_line"
+                },
+                "quirks": {
+                  "department_line": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracket_marks": true,
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "marked_subjects": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "rule_ink": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-initial-ocr-1",
+          "origin_sha256": "2358603ba0aabcec31a49814632b37a798b0c3617ef0952e6641218cd15df644",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c51b417bcb2231b18eab09630308044e4d23df79064bef3a0a24ed683654fd2c",
+          "bytes": 1677201
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "c5d8d1b04559c5fe55057c7263ead3d8bcd354cd2d87a5818939568fb5e456d9"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額(前年度予算額)(比較増減)": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 14
+                },
+                "本年度予算額の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "marks": {
+                    "(1": 2,
+                    "(2": 2,
+                    "(3": 2,
+                    "(4": 2,
+                    "(5": 2,
+                    "(6": 2,
+                    "(7": 2,
+                    "(8": 2,
+                    "(9": 2
+                  },
+                  "wrap": "amount_on_last_line"
+                },
+                "quirks": {
+                  "department_line": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "marked_subjects": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ]
     }
   ]
 }

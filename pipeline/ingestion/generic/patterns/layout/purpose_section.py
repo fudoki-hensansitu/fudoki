@@ -22,15 +22,19 @@ def crossed(line, verticals) -> bool:
     return any(rule.y0 - 1 <= middle <= rule.y1 + 1 for rule in verticals)
 
 
-def section(page: Page) -> Page:
+def section(page: Page, title: str = TITLE, whole: bool = False) -> Page:
     """The page cut to the 目的別 table: its words and rules from below its title to the first line after the table
-    that no vertical rule crosses. A page without the title is an error (the pattern declares it)."""
+    that no vertical rule crosses. A page without the title is an error (the pattern declares it).
+
+    `title` names another section's table (`revenue_section`); with `whole` the title line, its mark `◎` aside, is
+    the title and nothing more (`◎ 歳 入`, where the lead sentence above also names 歳入)."""
     verticals = [rule for rule in page.rules if rule.vertical and rule.y1 - rule.y0 >= MIN_RULE]
     rows = sorted(lines(list(page.words)), key=lambda line: min(w.y0 for w in line))
+    printed = lambda line: normalize(text(line)).replace(' ', '')
     titles = [index for index, line in enumerate(rows)
-              if TITLE in normalize(text(line)).replace(' ', '') and not crossed(line, verticals)]
+              if (printed(line).lstrip('◎') == title if whole else title in printed(line)) and not crossed(line, verticals)]
     if len(titles) != 1:
-        raise ValueError(f'Page {page.number}: expected one title naming {TITLE} outside the tables, found {len(titles)}')
+        raise ValueError(f'Page {page.number}: expected one title naming {title} outside the tables, found {len(titles)}')
     start = titles[0]
     top = max(w.y1 for w in rows[start])
     bottom, inside = page.height, False
@@ -43,7 +47,7 @@ def section(page: Page) -> Page:
         elif any(word in normalize(text(line)).replace(' ', '') for word in SECTION):
             break  # the next section's title: the 目的別 title has no table of its own
     if not inside:
-        raise ValueError(f'Page {page.number}: no ruled table under the title naming {TITLE}')
+        raise ValueError(f'Page {page.number}: no ruled table under the title naming {title}')
     words = [w for w in page.words if top <= (w.y0 + w.y1) / 2 < bottom]
     rules = [r for r in page.rules if top <= min(r.y0, r.y1) and max(r.y0, r.y1) <= bottom]
     return Page(page.number, page.width, page.height, words, rules)

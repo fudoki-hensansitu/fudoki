@@ -1,15 +1,18 @@
 """Document quirk: a skewed scan reads a frame's rules short (132144). It loses the ends of the closing rule (148–502
 of a frame 72–571): the rule drawn where the frame's sides end across most of its columns closes the frame, if no rule
 across the whole frame lies between. It reads the header's bottom rule short of the frame's right edge: with no full
-rule above the first figure, the rule across most of the frame above it ends the header. It loses an end of the
+rule above the first figure, the rule across most of the frame above it ends the header (or one that also lost a few points of
+its left end). It loses an end of the
 opening rule and of the closing rule of a short frame (R8 p55: two stacked tables, the top rule 54–486 of a frame
 54–552): the rule drawn where the frame's sides start across most of its columns opens the frame, and a closing rule
-44pt under the last full rule closes it, if no rule across the whole frame lies between."""
+44pt under the last full rule closes it, if no rule across the whole frame lies between. A slanted closing rule read
+as pieces stepping a point or so down (R8 後期 p18) closes the frame when the pieces together cross most of its columns."""
 
 
 SCOPE = 'document'
 SHORT = 40  # points: how far past the last full rule a frame's sides run before the rule there closes it
 OPTIONS = {'const': True}
+LOST_END = 6  # points: how much of its left end the header's bottom rule may lose
 
 
 def bottom(page, frame: list, middle: list, horizontals: list, bottom: float) -> float:
@@ -18,6 +21,10 @@ def bottom(page, frame: list, middle: list, horizontals: list, bottom: float) ->
     sides = min(max((r.y1 for r in page.rules if r.vertical and abs(r.x0 - x) <= 3), default=bottom)
                 for x in (frame[0], frame[-1]))
     closing = [h for h in horizontals if abs(h.y0 - sides) <= 4 and most(h)]
+    if not closing:  # the closing rule read as pieces stepping down where it slants (R8 後期 p18: 53–256 at 729.2, 232–460 at 728.0)
+        near = [h for h in horizontals if abs(h.y0 - sides) <= 4]
+        if sum(1 for m in middle if any(_covers(h, m) for h in near)) >= max(2, .6 * len(middle)):
+            closing = near
     if sides - bottom > SHORT and closing and not any(bottom < h.y0 < sides - 4 and all(_covers(h, m) for m in middle)
                                                       for h in horizontals):
         return max(h.y0 for h in closing)
@@ -27,6 +34,8 @@ def bottom(page, frame: list, middle: list, horizontals: list, bottom: float) ->
 def header_bottom(horizontals: list, frame, reach: float, first: float) -> float | None:
     x0, x1, top, _, _ = frame
     wide = [h.y0 for h in horizontals if h.x0 <= x0 + reach and h.x1 - x0 >= .6 * (x1 - x0) and top + 1 < h.y0 <= first + 1]
+    if not wide:  # the rule lost a few points of its left end too (R8 後期 p19: 76–498 of a frame 70.5–567.5)
+        wide = [h.y0 for h in horizontals if h.x0 <= x0 + LOST_END and h.x1 - x0 >= .6 * (x1 - x0) and top + 1 < h.y0 <= first + 1]
     return max(wide) if wide else None
 
 

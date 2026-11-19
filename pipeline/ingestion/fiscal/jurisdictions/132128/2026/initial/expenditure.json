@@ -77,6 +77,291 @@
           "table_id": "general-initial"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "25b8d6c4e8e41845c76da7eec07d41cb7777c822344fab4391b6576052a03926"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の種類と額が目ごとに複数行で印字され、廃目の行には名前のない0だけが印字される。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "増減率": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                },
+                "quirks": {
+                  "unit_marked": "千円"
+                }
+              }
+            }
+          },
+          "quirks": {
+            "deducted_formulas": true,
+            "unnumbered_abolished_names": true,
+            "unnumbered_names_at_rule": true
+          },
+          "repairs": [
+            "spaced_letters"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ]
+    },
+    {
+      "id": "land-readjustment-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6d81e947b4d156b6b3c0717505bee67a179c8a32c79140003648ee0f89666774"
+        }
+      ],
+      "options": {
+        "account": "土地区画整理事業特別会計",
+        "table_id": "land-readjustment-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の種類と額が目ごとに複数行で印字され、廃目の行には名前のない0だけが印字される。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "増減率": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                },
+                "quirks": {
+                  "unit_marked": "千円"
+                }
+              }
+            }
+          },
+          "quirks": {
+            "deducted_formulas": true,
+            "unnumbered_abolished_names": true
+          },
+          "repairs": [
+            "spaced_letters"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-readjustment-initial"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "c6d7fafed79d176a61924f4180036b385757036c37498017ba12b8239642caa3"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の種類と額が目ごとに複数行で印字され、廃目の行には名前のない0だけが印字される。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "増減率": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                },
+                "quirks": {
+                  "unit_marked": "千円"
+                }
+              }
+            }
+          },
+          "quirks": {
+            "deducted_formulas": true,
+            "unnumbered_abolished_names": true
+          },
+          "repairs": [
+            "spaced_letters"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "247a90075e3db1aeb35f002da40a555b696757d8d51fe46186aa7a831297a304"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の種類と額が目ごとに複数行で印字され、廃目の行には名前のない0だけが印字される。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "増減率": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                },
+                "quirks": {
+                  "unit_marked": "千円"
+                }
+              }
+            }
+          },
+          "quirks": {
+            "deducted_formulas": true,
+            "unnumbered_abolished_names": true
+          },
+          "repairs": [
+            "spaced_letters"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
     }
   ]
 }

@@ -8,6 +8,36 @@
   "direction": "expenditure",
   "conversions": [
     {
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "expected_tables": [
+        {
+          "table_id": "general-detail"
+        }
+      ],
+      "id": "general-settlement",
+      "inputs": [
+        {
+          "sha256": "666f4a9bed4377f03801344a739a09a94d9576c47fe3af4700478a54d21aeb7a"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "annex_table_id": "general-annex",
+        "detail_table_id": "general-detail",
+        "funding_table_id": "general-funding",
+        "workflow": {
+          "reading": {
+            "pattern": "narrative_results",
+            "profile": "fiscal/jurisdictions/132012/layouts/text_settlement_report/reading.json"
+          },
+          "components": [
+            "narrative_subjects",
+            "narrative_projects"
+          ]
+        }
+      }
+    },
+    {
       "id": "kaigo-settlement-detail",
       "converter": "fiscal/layouts/workflow_text/convert.py",
       "inputs": [

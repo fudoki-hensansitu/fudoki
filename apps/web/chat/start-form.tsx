@@ -90,7 +90,7 @@ export function StartForm({
       {suggestions.length > 0 ? (
         <div className="mb-2 flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none]">
           {suggestions.map((q) => (
-            <button key={q} type="button" disabled={pending} onClick={() => void start(q)} className="shrink-0 rounded-full border bg-background px-3.5 py-1.5 text-[13px] transition-colors hover:border-primary hover:bg-accent hover:text-accent-foreground disabled:opacity-50">
+            <button key={q} type="button" disabled={pending} onClick={() => void start(q)} className="shrink-0 rounded-full border bg-background px-4 py-2 text-sm transition-colors hover:border-primary hover:bg-accent hover:text-accent-foreground disabled:opacity-50">
               {q}
             </button>
           ))}

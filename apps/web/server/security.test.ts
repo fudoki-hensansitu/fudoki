@@ -3,9 +3,9 @@ import { describe, expect, test } from 'bun:test'
 import { fetchRoute } from './routes.testing'
 import type { Env, RateLimiter } from './env'
 import { restRpc } from './fudoki-api'
-import { CHAT_RATE_LIMIT, MAX_MESSAGES, MAX_USER_TEXT, VIEW_RATE_LIMIT } from './limits'
+import { CHAT_RATE_LIMIT, MAX_CHAT_BODY_BYTES, MAX_MESSAGES, MAX_USER_TEXT, VIEW_RATE_LIMIT } from './limits'
 import { QUOTE_HEADING, parseChat } from './chat'
-import { parseRelay } from './relay'
+import { checkFetchUrl, fetchPageTool } from './fetch-page'
 import { issueSession, SITEVERIFY_URL, TURNSTILE_ACTION, TURNSTILE_TEST_SECRET, verifySession, verifyTurnstile } from './session'
 
 const SECRET = 'test-secret'
@@ -77,26 +77,6 @@ describe('Turnstile', () => {
   })
 })
 
-describe('View の中継の許可リスト', () => {
-  test('データの tool と風土記の View だけを通す', () => {
-    expect(parseRelay({ method: 'tools/call', params: { name: 'search_expenditure_subjects', arguments: { page_size: 1 } } })).toMatchObject({ params: { name: 'search_expenditure_subjects' } })
-    expect(parseRelay({ method: 'resources/read', params: { uri: 'ui://fudoki/view-06a8e196f6a7.html' } })).toMatchObject({ method: 'resources/read' })
-  })
-  test('描画 tool・事業評価・自治体の一覧・他の method・他の resource は 403', () => {
-    for (const body of [
-      { method: 'tools/call', params: { name: 'render_expenditure_view', arguments: {} } },
-      { method: 'tools/call', params: { name: 'search_evaluation_sheets', arguments: {} } },
-      { method: 'tools/call', params: { name: 'list_jurisdictions', arguments: {} } },
-      { method: 'tools/call', params: { name: '__proto__' } },
-      { method: 'tools/list', params: {} },
-      { method: 'resources/read', params: { uri: 'ui://other/view.html' } },
-      { method: 'resources/read', params: { uri: 'https://api.fudoki.dev/mcp' } },
-      { method: 'resources/read', params: { uri: 'ui://fudoki/../x' } },
-    ])
-      expect(() => parseRelay(body)).toThrow(expect.objectContaining({ status: 403 }))
-  })
-})
-
 describe('会話の入力の上限', () => {
   const user = (text: string, id: string = crypto.randomUUID()) => ({ id, role: 'user', parts: [{ type: 'text', text }] })
   test('文字数・件数・role・最後の発言を検査する', () => {
@@ -107,7 +87,6 @@ describe('会話の入力の上限', () => {
     expect(() => parseChat({ id, messages: [{ id: 'x', role: 'system', parts: [{ type: 'text', text: 'a' }] }] })).toThrow(expect.objectContaining({ status: 400 }))
     expect(() => parseChat({ id, messages: [{ id: 'x', role: 'user', parts: [{ type: 'file', url: 'data:' }] }] })).toThrow(expect.objectContaining({ status: 400 }))
     expect(() => parseChat({ id, messages: [user('a'), { id: 'y', role: 'assistant', parts: [] }] })).toThrow(expect.objectContaining({ status: 400 }))
-    expect(() => parseChat({ id, messages: [user('a')], viewContext: 'x'.repeat(2001) })).toThrow(expect.objectContaining({ status: 400 }))
   })
   test('選んだ文は質問の直前の別の利用者の発言に、画面は最後の質問のものだけを screen にし、長さを検査する', () => {
     const id = crypto.randomUUID()
@@ -130,9 +109,8 @@ describe('会話の入力の上限', () => {
 })
 
 describe('/api/* の入口', () => {
-  test('会話の token が無ければ chat も中継も 401、POST 以外は 405、別のサイトからは 403', async () => {
+  test('会話の token が無ければ chat は 401、POST 以外は 405、別のサイトからは 403', async () => {
     expect((await call(post('/api/chat', {}), env())).status).toBe(401)
-    expect((await call(post('/api/mcp', {}), env())).status).toBe(401)
     const get = await call(new Request('https://fudoki.dev/api/chat'), env())
     expect([get.status, get.headers.get('Allow')]).toEqual([405, 'POST'])
     expect((await call(post('/api/sessions', {}, { Origin: 'https://evil.example' }), env())).status).toBe(403)
@@ -142,8 +120,6 @@ describe('/api/* の入口', () => {
     const auth = { Authorization: `Bearer ${s.token}` }
     const limited = await call(post('/api/chat', { id: s.id, messages: [] }, auth), env({ CHAT_RATE_LIMIT: deny }))
     expect([limited.status, limited.headers.get('Retry-After')]).toEqual([429, String(CHAT_RATE_LIMIT.period)])
-    const relay = await call(post('/api/mcp', {}, auth), env({ VIEW_RATE_LIMIT: deny }))
-    expect([relay.status, relay.headers.get('Retry-After')]).toEqual([429, String(VIEW_RATE_LIMIT.period)])
     expect((await call(post('/api/sessions', { turnstileToken: 't' }), env({ CHAT_RATE_LIMIT: undefined }))).status).toBe(503)
   })
   test('別の会話の token では送れない', async () => {
@@ -153,16 +129,33 @@ describe('/api/* の入口', () => {
   })
   test('body の上限を超えたら 413', async () => {
     const s = await issueSession(SECRET)
-    const res = await call(post('/api/mcp', { method: 'tools/call', params: { name: 'search_expenditure_subjects', arguments: { x: 'a'.repeat(20_000) } } }, { Authorization: `Bearer ${s.token}` }), env())
+    const res = await call(post('/api/chat', { x: 'a'.repeat(MAX_CHAT_BODY_BYTES) }, { Authorization: `Bearer ${s.token}` }), env())
     expect(res.status).toBe(413)
   })
 })
 
-test('上流の MCP が JSON でない応答を返したら 502', async () => {
+test('api から tool の定義を受け取れなければ 502', async () => {
   const s = await issueSession(SECRET)
   const API = { fetch: async () => new Response('<html>Bad Gateway</html>', { status: 502, headers: { 'Content-Type': 'text/html' } }) }
-  const res = await call(post('/api/mcp', { method: 'tools/call', params: { name: 'search_expenditure_subjects', arguments: {} } }, { Authorization: `Bearer ${s.token}` }), env({ WEB: restRpc(API.fetch) }))
+  const body = { id: s.id, messages: [{ id: 'a', role: 'user', parts: [{ type: 'text', text: 'a' }] }] }
+  const res = await call(post('/api/chat', body, { Authorization: `Bearer ${s.token}` }), env({ WEB: restRpc(API.fetch), CHAT_MODEL: 'm', AI: {} }))
   expect(res.status).toBe(502)
+})
+
+describe('頁を読む tool（fetch_page）', () => {
+  test('許可したドメインの https だけを読む', () => {
+    expect(checkFetchUrl('https://fudoki.dev/about')).toBeInstanceOf(URL)
+    expect(checkFetchUrl('https://docs.fudoki.dev/')).toBeInstanceOf(URL)
+    for (const url of ['http://fudoki.dev/', 'https://evil.example/', 'https://fudoki.dev.evil.example/', 'https://api.fudoki.dev/v1/jurisdictions', 'https://user@fudoki.dev/', 'https://fudoki.dev:8443/', 'https://fudoki.dev/api/chat', 'nope'])
+      expect(typeof checkFetchUrl(url)).toBe('string')
+  })
+  test('別のドメインへの redirect はたどらない', async () => {
+    const seen: string[] = []
+    const fetcher = (async (url: string) => (seen.push(url), new Response(null, { status: 302, headers: { Location: 'https://evil.example/' } }))) as unknown as typeof fetch
+    const out = (await fetchPageTool({}, fetcher).execute!({ url: 'https://fudoki.dev/about' }, { toolCallId: 'x', messages: [], context: {} } as never)) as { isError?: boolean }
+    expect(out.isError).toBe(true)
+    expect(seen).toEqual(['https://fudoki.dev/about'])
+  })
 })
 
 describe('ログに会話を残さない', () => {

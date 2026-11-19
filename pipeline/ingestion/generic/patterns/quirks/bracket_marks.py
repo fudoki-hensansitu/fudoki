@@ -1,12 +1,12 @@
 """Document quirk: the opening bracket of a bracketed amount, printed apart from its figure, is read as a letter or digit
-(132144: `C`, `L`, `7`, `（し` left of `22,517)`). A word of one such mark with an amount next right of it on its line
+(132144: `C`, `L`, `7`, `（し` left of `22,517)`; 132152: `1`, `2` left of `△10,063)`). A word of one such mark with an amount next right of it on its line
 is the bracket and is dropped."""
 from dataclasses import replace
 import re
 
 SCOPE = 'document'
 OPTIONS = {'const': True}
-BRACKET_MARK = re.compile(r'[CLr71(（一|l]|[（(][しレ~（(]+')
+BRACKET_MARK = re.compile(r'[CLr712(（一|l]|[（(][しレ~（(]+')
 
 
 def drop(printed: list) -> list:
@@ -19,9 +19,9 @@ def drop(printed: list) -> list:
                      and 0 <= o.x0 - w.x1 <= 50]
             if not right:
                 return False
-            # A digit mark (`7`, `1`) may be a figure of its own: only before a bracketed or thousands amount is it
+            # A digit mark (`7`, `1`, `2`) may be a figure of its own: only before a bracketed or thousands amount is it
             # the bracket.
-            amount = r'[0-9]{1,3}(,[0-9]{3})+[)）]?|[0-9]+[)）]' if w.text.strip() in '71' else r'[0-9,]+[)）]?'
+            amount = r'[△▲]?(?:[0-9]{1,3}(,[0-9]{3})+[)）]?|[0-9]+[)）])' if w.text.strip() in '712' else r'[△▲]?[0-9,]+[)）]?'
             nearest = min(right, key=lambda o: (abs((o.y0 + o.y1) / 2 - (w.y0 + w.y1) / 2) > 3, o.x0))
             return re.fullmatch(amount, nearest.text.strip()) is not None
         kept = [w for w in page.words if not bracket(w)]

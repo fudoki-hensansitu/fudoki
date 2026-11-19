@@ -1,0 +1,395 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131059",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a24ca9ba0601064d181b565ba16b0ba34f55dc6a69173e14da6ef0fd0919b2b0"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "header": {
+                "title_amount": [
+                  "本年度予算額",
+                  "前年度予算額",
+                  "比較増減"
+                ]
+              },
+              "columns": {
+                "目／選挙費)": {
+                  "kind": "label",
+                  "heading": "目"
+                },
+                "歳出／本年／特定／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳（特定財源・一般財源、保険料等）の列を取り込まない。見出しが3段に割れて印字され、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "歳出／内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳（特定財源・一般財源、保険料等）の列を取り込まない。見出しが3段に割れて印字され、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "歳出／本年／国民健康保険料": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳（特定財源・一般財源、保険料等）の列を取り込まない。見出しが3段に割れて印字され、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "歳出／本年／保険料・交付金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳（特定財源・一般財源、保険料等）の列を取り込まない。見出しが3段に割れて印字され、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "歳出／本年／保険料": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳（特定財源・一般財源、保険料等）の列を取り込まない。見出しが3段に割れて印字され、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（単価×件数・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            43,
+            143
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a24da55a9394d1523f53ffc44ad6eab94fa7e4857b1ce7cc3fb8979cad1f98fe"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "header": {
+                "title_amount": [
+                  "本年度予算額",
+                  "前年度予算額",
+                  "比較増減"
+                ]
+              },
+              "columns": {
+                "目／選挙費)": {
+                  "kind": "label",
+                  "heading": "目"
+                },
+                "歳出／本年／特定／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳（特定財源・一般財源、保険料等）の列を取り込まない。見出しが3段に割れて印字され、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "歳出／内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳（特定財源・一般財源、保険料等）の列を取り込まない。見出しが3段に割れて印字され、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "歳出／本年／国民健康保険料": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳（特定財源・一般財源、保険料等）の列を取り込まない。見出しが3段に割れて印字され、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "歳出／本年／保険料・交付金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳（特定財源・一般財源、保険料等）の列を取り込まない。見出しが3段に割れて印字され、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "歳出／本年／保険料": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳（特定財源・一般財源、保険料等）の列を取り込まない。見出しが3段に割れて印字され、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（単価×件数・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            5,
+            17
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5f7da9420db373686d321a82c7b70c5e2aef78f4c82cf1e4516b9dd735404280"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "header": {
+                "title_amount": [
+                  "本年度予算額",
+                  "前年度予算額",
+                  "比較増減"
+                ]
+              },
+              "columns": {
+                "目／選挙費)": {
+                  "kind": "label",
+                  "heading": "目"
+                },
+                "歳出／本年／特定／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳（特定財源・一般財源、保険料等）の列を取り込まない。見出しが3段に割れて印字され、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "歳出／内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳（特定財源・一般財源、保険料等）の列を取り込まない。見出しが3段に割れて印字され、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "歳出／本年／国民健康保険料": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳（特定財源・一般財源、保険料等）の列を取り込まない。見出しが3段に割れて印字され、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "歳出／本年／保険料・交付金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳（特定財源・一般財源、保険料等）の列を取り込まない。見出しが3段に割れて印字され、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "歳出／本年／保険料": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳（特定財源・一般財源、保険料等）の列を取り込まない。見出しが3段に割れて印字され、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（単価×件数・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            5,
+            19
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "1a3118234b68d96c236919563063e8397eeeb5533258ff3b4ea707f07940197f"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "header": {
+                "title_amount": [
+                  "本年度予算額",
+                  "前年度予算額",
+                  "比較増減"
+                ]
+              },
+              "columns": {
+                "目／選挙費)": {
+                  "kind": "label",
+                  "heading": "目"
+                },
+                "歳出／本年／特定／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳（特定財源・一般財源、保険料等）の列を取り込まない。見出しが3段に割れて印字され、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "歳出／内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳（特定財源・一般財源、保険料等）の列を取り込まない。見出しが3段に割れて印字され、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "歳出／本年／国民健康保険料": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳（特定財源・一般財源、保険料等）の列を取り込まない。見出しが3段に割れて印字され、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "歳出／本年／保険料・交付金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳（特定財源・一般財源、保険料等）の列を取り込まない。見出しが3段に割れて印字され、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "歳出／本年／保険料": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "総括の頁の財源内訳（特定財源・一般財源、保険料等）の列を取り込まない。見出しが3段に割れて印字され、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（単価×件数・補助率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            5,
+            15
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    }
+  ]
+}

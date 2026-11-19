@@ -1,0 +1,732 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "134210",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4b468c75c40d3fb10e4c587af5c00aa8c4b0df6055bab584c43a8a3b06ea14a6"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "pages": [
+          [
+            94,
+            94
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "年度": {
+                  "kind": "ignore"
+                },
+                "不納欠損額": {
+                  "kind": "amount"
+                },
+                "未収入額": {
+                  "kind": "amount",
+                  "heading": "収入未済額"
+                },
+                "収入割合(%)／予算現額対増減額": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "予算現額に対する収入済額の増減の列を取り込まない。収入済額と予算現額の差で、金額そのものではない。"
+                  }
+                },
+                "収入割合(%)／予算対": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "収入割合の列を取り込まない。予算現額に対する割合で、金額ではない。"
+                  }
+                },
+                "収入割合(%)／調定対": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "収入割合の列を取り込まない。調定額に対する割合で、金額ではない。"
+                  }
+                },
+                "収入割合(%)／構成比": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "構成比の列を取り込まない。収入済額の合計に対する割合で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "prior_year_rows"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p94-three-line-name",
+            "page": 94,
+            "code": null,
+            "observed_name": "固有提供施設等所在",
+            "corrected_name": "国有提供施設等所在市町村助成交付金",
+            "reason": "款名を3行（国有提供施設等／所在市町村／助成交付金）に分けて印字し、3行目は前年度の行に載るので名称が2行目で切れ、1字目の「国」も文字の層が「固」に読む。原画の印字に直す。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kokuho-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4b468c75c40d3fb10e4c587af5c00aa8c4b0df6055bab584c43a8a3b06ea14a6"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "kokuho-revenue",
+        "pages": [
+          [
+            103,
+            103
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "年度": {
+                  "kind": "ignore"
+                },
+                "不納欠損額": {
+                  "kind": "amount"
+                },
+                "未収入額": {
+                  "kind": "amount",
+                  "heading": "収入未済額"
+                },
+                "収入割合(%)／予算現額対増減額": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "予算現額に対する収入済額の増減の列を取り込まない。収入済額と予算現額の差で、金額そのものではない。"
+                  }
+                },
+                "収入割合(%)／予算対": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "収入割合の列を取り込まない。予算現額に対する割合で、金額ではない。"
+                  }
+                },
+                "収入割合(%)／調定対": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "収入割合の列を取り込まない。調定額に対する割合で、金額ではない。"
+                  }
+                },
+                "収入割合(%)／構成比": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "構成比の列を取り込まない。収入済額の合計に対する割合で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "prior_year_rows"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kani-suido-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4b468c75c40d3fb10e4c587af5c00aa8c4b0df6055bab584c43a8a3b06ea14a6"
+        }
+      ],
+      "options": {
+        "account": "簡易水道事業特別会計",
+        "table_id": "kani-suido-revenue",
+        "pages": [
+          [
+            110,
+            110
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "年度": {
+                  "kind": "ignore"
+                },
+                "不納欠損額": {
+                  "kind": "amount"
+                },
+                "未収入額": {
+                  "kind": "amount",
+                  "heading": "収入未済額"
+                },
+                "収入割合(%)／予算現額対増減額": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "予算現額に対する収入済額の増減の列を取り込まない。収入済額と予算現額の差で、金額そのものではない。"
+                  }
+                },
+                "収入割合(%)／予算対": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "収入割合の列を取り込まない。予算現額に対する割合で、金額ではない。"
+                  }
+                },
+                "収入割合(%)／調定対": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "収入割合の列を取り込まない。調定額に対する割合で、金額ではない。"
+                  }
+                },
+                "収入割合(%)／構成比": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "構成比の列を取り込まない。収入済額の合計に対する割合で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "prior_year_rows"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kani-suido-revenue"
+        }
+      ]
+    },
+    {
+      "id": "takuchi-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4b468c75c40d3fb10e4c587af5c00aa8c4b0df6055bab584c43a8a3b06ea14a6"
+        }
+      ],
+      "options": {
+        "account": "宅地造成事業特別会計",
+        "table_id": "takuchi-revenue",
+        "pages": [
+          [
+            117,
+            117
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "年度": {
+                  "kind": "ignore"
+                },
+                "不納欠損額": {
+                  "kind": "amount"
+                },
+                "未収入額": {
+                  "kind": "amount",
+                  "heading": "収入未済額"
+                },
+                "収入割合(%)／予算現額対増減額": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "予算現額に対する収入済額の増減の列を取り込まない。収入済額と予算現額の差で、金額そのものではない。"
+                  }
+                },
+                "収入割合(%)／予算対": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "収入割合の列を取り込まない。予算現額に対する割合で、金額ではない。"
+                  }
+                },
+                "収入割合(%)／調定対": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "収入割合の列を取り込まない。調定額に対する割合で、金額ではない。"
+                  }
+                },
+                "収入割合(%)／構成比": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "構成比の列を取り込まない。収入済額の合計に対する割合で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "prior_year_rows"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "takuchi-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-hoken-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4b468c75c40d3fb10e4c587af5c00aa8c4b0df6055bab584c43a8a3b06ea14a6"
+        }
+      ],
+      "options": {
+        "account": "介護保険（保険事業勘定）特別会計",
+        "table_id": "kaigo-hoken-revenue",
+        "pages": [
+          [
+            124,
+            124
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "年度": {
+                  "kind": "ignore"
+                },
+                "不納欠損額": {
+                  "kind": "amount"
+                },
+                "未収入額": {
+                  "kind": "amount",
+                  "heading": "収入未済額"
+                },
+                "収入割合(%)／予算現額対増減額": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "予算現額に対する収入済額の増減の列を取り込まない。収入済額と予算現額の差で、金額そのものではない。"
+                  }
+                },
+                "収入割合(%)／予算対": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "収入割合の列を取り込まない。予算現額に対する割合で、金額ではない。"
+                  }
+                },
+                "収入割合(%)／調定対": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "収入割合の列を取り込まない。調定額に対する割合で、金額ではない。"
+                  }
+                },
+                "収入割合(%)／構成比": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "構成比の列を取り込まない。収入済額の合計に対する割合で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "prior_year_rows"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-hoken-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-service-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4b468c75c40d3fb10e4c587af5c00aa8c4b0df6055bab584c43a8a3b06ea14a6"
+        }
+      ],
+      "options": {
+        "account": "介護保険（介護サービス事業勘定）特別会計",
+        "table_id": "kaigo-service-revenue",
+        "pages": [
+          [
+            131,
+            131
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "年度": {
+                  "kind": "ignore"
+                },
+                "不納欠損額": {
+                  "kind": "amount"
+                },
+                "未収入額": {
+                  "kind": "amount",
+                  "heading": "収入未済額"
+                },
+                "収入割合(%)／予算現額対増減額": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "予算現額に対する収入済額の増減の列を取り込まない。収入済額と予算現額の差で、金額そのものではない。"
+                  }
+                },
+                "収入割合(%)／予算対": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "収入割合の列を取り込まない。予算現額に対する割合で、金額ではない。"
+                  }
+                },
+                "収入割合(%)／調定対": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "収入割合の列を取り込まない。調定額に対する割合で、金額ではない。"
+                  }
+                },
+                "収入割合(%)／構成比": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "構成比の列を取り込まない。収入済額の合計に対する割合で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "prior_year_rows"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-service-revenue"
+        }
+      ]
+    },
+    {
+      "id": "gesuido-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4b468c75c40d3fb10e4c587af5c00aa8c4b0df6055bab584c43a8a3b06ea14a6"
+        }
+      ],
+      "options": {
+        "account": "下水道事業特別会計",
+        "table_id": "gesuido-revenue",
+        "pages": [
+          [
+            138,
+            138
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "年度": {
+                  "kind": "ignore"
+                },
+                "不納欠損額": {
+                  "kind": "amount"
+                },
+                "未収入額": {
+                  "kind": "amount",
+                  "heading": "収入未済額"
+                },
+                "収入割合(%)／予算現額対増減額": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "予算現額に対する収入済額の増減の列を取り込まない。収入済額と予算現額の差で、金額そのものではない。"
+                  }
+                },
+                "収入割合(%)／予算対": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "収入割合の列を取り込まない。予算現額に対する割合で、金額ではない。"
+                  }
+                },
+                "収入割合(%)／調定対": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "収入割合の列を取り込まない。調定額に対する割合で、金額ではない。"
+                  }
+                },
+                "収入割合(%)／構成比": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "構成比の列を取り込まない。収入済額の合計に対する割合で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "prior_year_rows"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "gesuido-revenue"
+        }
+      ]
+    },
+    {
+      "id": "jokaso-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4b468c75c40d3fb10e4c587af5c00aa8c4b0df6055bab584c43a8a3b06ea14a6"
+        }
+      ],
+      "options": {
+        "account": "浄化槽事業特別会計",
+        "table_id": "jokaso-revenue",
+        "pages": [
+          [
+            146,
+            146
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "年度": {
+                  "kind": "ignore"
+                },
+                "不納欠損額": {
+                  "kind": "amount"
+                },
+                "未収入額": {
+                  "kind": "amount",
+                  "heading": "収入未済額"
+                },
+                "収入割合(%)／予算現額対増減額": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "予算現額に対する収入済額の増減の列を取り込まない。収入済額と予算現額の差で、金額そのものではない。"
+                  }
+                },
+                "収入割合(%)／予算対": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "収入割合の列を取り込まない。予算現額に対する割合で、金額ではない。"
+                  }
+                },
+                "収入割合(%)／調定対": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "収入割合の列を取り込まない。調定額に対する割合で、金額ではない。"
+                  }
+                },
+                "収入割合(%)／構成比": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "構成比の列を取り込まない。収入済額の合計に対する割合で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "prior_year_rows"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "jokaso-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kouki-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4b468c75c40d3fb10e4c587af5c00aa8c4b0df6055bab584c43a8a3b06ea14a6"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-revenue",
+        "pages": [
+          [
+            154,
+            154
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "年度": {
+                  "kind": "ignore"
+                },
+                "不納欠損額": {
+                  "kind": "amount"
+                },
+                "未収入額": {
+                  "kind": "amount",
+                  "heading": "収入未済額"
+                },
+                "収入割合(%)／予算現額対増減額": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "予算現額に対する収入済額の増減の列を取り込まない。収入済額と予算現額の差で、金額そのものではない。"
+                  }
+                },
+                "収入割合(%)／予算対": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "収入割合の列を取り込まない。予算現額に対する割合で、金額ではない。"
+                  }
+                },
+                "収入割合(%)／調定対": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "収入割合の列を取り込まない。調定額に対する割合で、金額ではない。"
+                  }
+                },
+                "収入割合(%)／構成比": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "構成比の列を取り込まない。収入済額の合計に対する割合で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "prior_year_rows"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue"
+        }
+      ]
+    }
+  ]
+}

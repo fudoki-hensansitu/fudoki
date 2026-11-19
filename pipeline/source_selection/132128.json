@@ -12,7 +12,7 @@
       "candidates": [
         {
           "id": "132128-2026-initial",
-          "title": "令和8年度 一般会計・特別会計・企業会計 歳出事項別明細書等",
+          "title": "令和8年度 一般会計・特別会計・企業会計 歳入・歳出事項別明細書等",
           "landing_url": "https://www.city.hino.lg.jp/shisei/gyozaisei/yosan/yosan/1030506.html",
           "inspected_at": "2026-10-07T15:34:19.984577+00:00",
           "files": [
@@ -185,11 +185,101 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/030/505/r8ippann_sainyujikoubetumeisai.pdf",
+              "sha256": "58b6c281b57483e864f4835f648a4c53dd97a6538557f37a86886b839741797e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 50
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/030/506/r8kokuho_sainyujikoubetumeisai.pdf",
+              "sha256": "ca02c37bf48be2b560c6ceff10c644da35d8de4aed7c37704465f45b013b2a56",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/030/506/r8kukaku_sainyuumeisai.pdf",
+              "sha256": "21bcff083947cb4e37ab537f0e0224a14e30868fdc49821717655f9f6e42b635",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "土地区画整理事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 8
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/030/506/r8kaigo_sainyujikoubetu.pdf",
+              "sha256": "c79b903fd1306ad58359591f510ca2aada53094b6060fd0185f3196195bfcc7c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 8
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/030/506/r8kouki_sainyu.pdf",
+              "sha256": "67f4765582306b2e1bdc11a19d908ddef3be4c6f2889acc2fc4830adb49dbf65",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "選定。令和8年度当初予算は一般会計予算頁(1030505)と特別会計予算頁(1030506)に分冊PDFで掲載。各会計の歳出事項別明細書は文字PDFで、款・項・目と節（事業名・財源内訳つき）の明細、金額は本年度予算額・前年度予算額で単位千円。企業会計は予算書及び説明書から収支明細頁のみを範囲指定（市立病院は収益的支出p9-12・資本的収支p13-14、下水道は予算実施計画p8-9・収益的支出p11-13・資本的支出p15、ともに款・項・目・節と予定額・単位千円）。会計構成は一般会計・国民健康保険・土地区画整理事業・介護保険・後期高齢者医療の各特別会計と市立病院事業・下水道事業の両企業会計で、掲載一覧と全件照合済み。",
+      "reason": "選定。令和8年度当初予算は一般会計予算頁(1030505)と特別会計予算頁(1030506)に分冊PDFで掲載。各会計の歳出事項別明細書は文字PDFで、款・項・目と節（事業名・財源内訳つき）の明細、金額は本年度予算額・前年度予算額で単位千円。企業会計は予算書及び説明書から収支明細頁のみを範囲指定（市立病院は収益的支出p9-12・資本的収支p13-14、下水道は予算実施計画p8-9・収益的支出p11-13・資本的支出p15、ともに款・項・目・節と予定額・単位千円）。会計構成は一般会計・国民健康保険・土地区画整理事業・介護保険・後期高齢者医療の各特別会計と市立病院事業・下水道事業の両企業会計で、掲載一覧と全件照合済み。 歳入は歳出と同じ掲載頁（会計ごと）の「歳入事項別明細書」を会計ごとに足した（一般会計50頁・国民健康保険特別会計7頁・土地区画整理事業特別会計8頁・介護保険特別会計8頁・後期高齢者医療特別会計5頁、全頁が歳入の款・項・目と節の明細。列は本年度予算額・前年度予算額・比較・増減率・節の区分と金額・説明、単位千円。説明の欄は節の内訳ではなく積算の説明）。",
       "selected_candidate_id": "132128-2026-initial",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -229,9 +319,34 @@
             "key": "fiscal/source-selection/132128/2026/initial-4.pdf",
             "sha256": "362254b0b25af7c9e281122bc9b5bea823bb508aaddcccded89cad67244eec6c",
             "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/030/506/r8gesuido_annashi.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2026/initial-9.pdf",
+            "sha256": "58b6c281b57483e864f4835f648a4c53dd97a6538557f37a86886b839741797e",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/030/505/r8ippann_sainyujikoubetumeisai.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2026/initial-12.pdf",
+            "sha256": "ca02c37bf48be2b560c6ceff10c644da35d8de4aed7c37704465f45b013b2a56",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/030/506/r8kokuho_sainyujikoubetumeisai.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2026/initial-8.pdf",
+            "sha256": "21bcff083947cb4e37ab537f0e0224a14e30868fdc49821717655f9f6e42b635",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/030/506/r8kukaku_sainyuumeisai.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2026/initial-11.pdf",
+            "sha256": "c79b903fd1306ad58359591f510ca2aada53094b6060fd0185f3196195bfcc7c",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/030/506/r8kaigo_sainyujikoubetu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2026/initial-10.pdf",
+            "sha256": "67f4765582306b2e1bdc11a19d908ddef3be4c6f2889acc2fc4830adb49dbf65",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/030/506/r8kouki_sainyu.pdf"
           }
         ],
-        "archived_at": "2026-10-07T15:34:41.325Z"
+        "archived_at": "2026-11-16T16:04:41.576Z"
       }
     },
     {
@@ -243,7 +358,7 @@
       "candidates": [
         {
           "id": "132128-2025-settlement",
-          "title": "令和7年度決算書 各会計歳出事項別明細書（正誤表による訂正後の掲載）",
+          "title": "令和7年度決算書 各会計歳入・歳出事項別明細書（正誤表による訂正後の掲載）",
           "landing_url": "https://www.city.hino.lg.jp/shisei/gyozaisei/yosan/kessan/1031982.html",
           "inspected_at": "2026-11-09T13:34:15.665342+00:00",
           "files": [
@@ -552,11 +667,101 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/0301sainyuu.pdf",
+              "sha256": "9ff5d145933ac92ac53d635961966ca73d9851bd3276dc6aec771eaa9eb1e419",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 27
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/1902sainyuu.pdf",
+              "sha256": "8d0f813833cbf2b7102d61027b19c8657d5636426fa1e137c08b746f93a99318",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/2303sainyuu.pdf",
+              "sha256": "59d76439ffcdc161e113bb0facfbc0c60e74b127fd5389531bba49396697a6f5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "土地区画整理事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/2708sainyuu.pdf",
+              "sha256": "6c12c5241e105adcd45af95b3d2cfddb99bdde178bb37b7b99a37e403ab0c0fe",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/3109sainyuu.pdf",
+              "sha256": "5696198c83982107c128721c3ba8e19a3b52e5e5898201790d71de21ee92e244",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 3
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "選定（一部会計不足）。令和7年度決算書頁(1031982)は正誤表（seigohyou2.pdf、款2総務費・項1総務管理費・目1一般管理費の事業「1 特別職及び職員人件費（職員課）」の支出済額 誤3,003,925,159→正3,004,207,994）に合わせて掲載を差し替え、旧掲載の会計別の歳出事項別明細書（01・02・03・08・09saisyutu7.pdf）は404になった。差し替え後の各会計歳出事項別明細書は文字PDFで、款・項・目と節の明細に当初予算額・補正予算額・繰越・流用・予算現額・支出済額・不用額・備考（事業名）の列、単位円。一般会計は款別13冊（0401gikai議会費〜1601yobi予備費）に分割掲載され、全冊を選定。特別会計は国民健康保険(2002saishutu)・土地区画整理事業(2403saishutu)・介護保険(2808saishutu)・後期高齢者医療(3209saishutu)の4会計。不足: 下水道事業会計は令和7年度決算書が未掲載（下水道決算一覧1018748の最新は令和6年度 reiwa6nenndo.pdf）、市立病院事業会計も決算書頁に令和7年度の掲載なし（市立病院サイト経営状況頁の最新は令和6年度決算書 r06_balance_sheet.pdf）。",
+      "reason": "選定（一部会計不足）。令和7年度決算書頁(1031982)は正誤表（seigohyou2.pdf、款2総務費・項1総務管理費・目1一般管理費の事業「1 特別職及び職員人件費（職員課）」の支出済額 誤3,003,925,159→正3,004,207,994）に合わせて掲載を差し替え、旧掲載の会計別の歳出事項別明細書（01・02・03・08・09saisyutu7.pdf）は404になった。差し替え後の各会計歳出事項別明細書は文字PDFで、款・項・目と節の明細に当初予算額・補正予算額・繰越・流用・予算現額・支出済額・不用額・備考（事業名）の列、単位円。一般会計は款別13冊（0401gikai議会費〜1601yobi予備費）に分割掲載され、全冊を選定。特別会計は国民健康保険(2002saishutu)・土地区画整理事業(2403saishutu)・介護保険(2808saishutu)・後期高齢者医療(3209saishutu)の4会計。不足: 下水道事業会計は令和7年度決算書が未掲載（下水道決算一覧1018748の最新は令和6年度 reiwa6nenndo.pdf）、市立病院事業会計も決算書頁に令和7年度の掲載なし（市立病院サイト経営状況頁の最新は令和6年度決算書 r06_balance_sheet.pdf）。 歳入は歳出と同じ掲載頁（会計ごと）の「歳入事項別明細書」を会計ごとに足した（一般会計27頁・国民健康保険特別会計4頁・土地区画整理事業特別会計3頁・介護保険特別会計4頁・後期高齢者医療特別会計3頁、全頁が歳入の款・項・目と節の明細。列は予算現額（当初予算額・補正予算額・継続費及び繰越事業費繰越財源充当額・計）・調定額・収入済額・不納欠損額・収入未済額・備考、単位円。備考は徴収率と還付未済額の注記）。",
       "selected_candidate_id": "132128-2025-settlement",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -646,9 +851,34 @@
             "key": "fiscal/source-selection/132128/2025/settlement-2.pdf",
             "sha256": "03d74f42ba7c84a3734e641510872d9cfec0d935ef5ccda50e340674bf73ab3f",
             "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/3209saishutu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2025/settlement-22.pdf",
+            "sha256": "9ff5d145933ac92ac53d635961966ca73d9851bd3276dc6aec771eaa9eb1e419",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/0301sainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2025/settlement-21.pdf",
+            "sha256": "8d0f813833cbf2b7102d61027b19c8657d5636426fa1e137c08b746f93a99318",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/1902sainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2025/settlement-19.pdf",
+            "sha256": "59d76439ffcdc161e113bb0facfbc0c60e74b127fd5389531bba49396697a6f5",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/2303sainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2025/settlement-20.pdf",
+            "sha256": "6c12c5241e105adcd45af95b3d2cfddb99bdde178bb37b7b99a37e403ab0c0fe",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/2708sainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2025/settlement-18.pdf",
+            "sha256": "5696198c83982107c128721c3ba8e19a3b52e5e5898201790d71de21ee92e244",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/3109sainyuu.pdf"
           }
         ],
-        "archived_at": "2026-11-08T07:27:18.867Z"
+        "archived_at": "2026-11-16T16:04:33.304Z"
       }
     },
     {
@@ -660,7 +890,7 @@
       "candidates": [
         {
           "id": "132128-2024-settlement",
-          "title": "令和6年度決算書 歳出事項別明細書（一般会計・特別会計）・下水道事業会計決算書・市立病院事業会計決算書",
+          "title": "令和6年度決算書 歳入・歳出事項別明細書（一般会計・特別会計）・下水道事業会計決算書・市立病院事業会計決算書",
           "landing_url": "https://www.city.hino.lg.jp/shisei/gyozaisei/yosan/kessan/index.html",
           "inspected_at": "2026-10-08T01:06:18.168033+00:00",
           "files": [
@@ -1045,11 +1275,101 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/029/797/01sainyuujikou6.pdf",
+              "sha256": "d40cb44f53c2a09056afe0fc4b20bc872cd842bcab44572ee67c6b07681e8df6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 27
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/029/797/02sainyuu6.pdf",
+              "sha256": "bb87e9449aed06b2f68566f9b1b059adf26ab9354c3e1f3b5314fa39f8365659",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/029/797/03sainyuu6.pdf",
+              "sha256": "96ff10fd698171861c492caf851cd127574ed0c82bf8ce0ea61d2483e3436d87",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "土地区画整理事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/029/797/08sainyuu6.pdf",
+              "sha256": "408f45ba8270360daff6ea879b614f1e9f921ce244391a197aae35c2c0270a01",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/029/797/09sainyuu6.pdf",
+              "sha256": "548c40d13d7b1a777e135bd3a907a293332cf7382f980b1f6a4aef251ae31e3a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 3
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "選定（令和6年度＝2024年度決算の全会計）。令和6年度決算書頁(1029797)掲載の各会計歳出事項別明細書は文字PDFで、款・項・目と節の明細に当初予算額・補正予算額・繰越事業費・繰越額・流用増減・予算現額・支出済額・翌年度繰越額・不用額・備考（事業名）の列、単位円。一般会計の歳出事項別明細書は款別13冊（i016議会費〜i136予備費）に分割掲載され、全冊を選定。特別会計は国民健康保険(02saisyutu6)・土地区画整理事業(03saisyutu6)・介護保険(08saisyutu6)・後期高齢者医療(09saisyutu6)の4会計。公営企業会計は下水道事業会計 reiwa6nenndo.pdf（下水道決算一覧1018748内1030027頁）と市立病院事業会計 r06_balance_sheet.pdf（市立病院サイト経営状況頁）の令和6年度決算書を選定済みで、科目・事業名（目相当）と費用/支出/決算額が同一明細で対応することを確認済み。下水道 reiwa6nenndo.pdf（29頁・文字PDF）: 決算報告書p5-6に収益的・資本的収支（款・項、当初・補正予算額と決算額・単位円、備考に仮受/仮払消費税）、附属書類の収益費用明細書p13-15（款・項・目・節と決算額、税抜・単位円、目に事業名）と資本的収支明細書p16-17（収入p16・支出p16-17、款・項・目・節と決算額、税抜・単位円）。市立病院 r06_balance_sheet.pdf（48頁・文字PDF、科目名頁と決算額・備考頁の見開き対応）: 決算報告書p6-9に収益的・資本的収支（款・項、予算額・決算額・単位円）、収益費用明細書の収入p22-23・支出p24-29（款・項・目・節と決算額、消費税抜き・単位円）、資本的収支明細p30-31（消費税込み・単位円）。なお令和6年度決算は2025年（令和7年）に公表された2024年度の決算であり、令和7年度（2025年度）決算ではない。",
+      "reason": "選定（令和6年度＝2024年度決算の全会計）。令和6年度決算書頁(1029797)掲載の各会計歳出事項別明細書は文字PDFで、款・項・目と節の明細に当初予算額・補正予算額・繰越事業費・繰越額・流用増減・予算現額・支出済額・翌年度繰越額・不用額・備考（事業名）の列、単位円。一般会計の歳出事項別明細書は款別13冊（i016議会費〜i136予備費）に分割掲載され、全冊を選定。特別会計は国民健康保険(02saisyutu6)・土地区画整理事業(03saisyutu6)・介護保険(08saisyutu6)・後期高齢者医療(09saisyutu6)の4会計。公営企業会計は下水道事業会計 reiwa6nenndo.pdf（下水道決算一覧1018748内1030027頁）と市立病院事業会計 r06_balance_sheet.pdf（市立病院サイト経営状況頁）の令和6年度決算書を選定済みで、科目・事業名（目相当）と費用/支出/決算額が同一明細で対応することを確認済み。下水道 reiwa6nenndo.pdf（29頁・文字PDF）: 決算報告書p5-6に収益的・資本的収支（款・項、当初・補正予算額と決算額・単位円、備考に仮受/仮払消費税）、附属書類の収益費用明細書p13-15（款・項・目・節と決算額、税抜・単位円、目に事業名）と資本的収支明細書p16-17（収入p16・支出p16-17、款・項・目・節と決算額、税抜・単位円）。市立病院 r06_balance_sheet.pdf（48頁・文字PDF、科目名頁と決算額・備考頁の見開き対応）: 決算報告書p6-9に収益的・資本的収支（款・項、予算額・決算額・単位円）、収益費用明細書の収入p22-23・支出p24-29（款・項・目・節と決算額、消費税抜き・単位円）、資本的収支明細p30-31（消費税込み・単位円）。なお令和6年度決算は2025年（令和7年）に公表された2024年度の決算であり、令和7年度（2025年度）決算ではない。 歳入は歳出と同じ掲載頁（会計ごと）の「歳入事項別明細書」を会計ごとに足した（一般会計27頁・国民健康保険特別会計4頁・土地区画整理事業特別会計3頁・介護保険特別会計4頁・後期高齢者医療特別会計3頁、全頁が歳入の款・項・目と節の明細。列は予算現額（当初予算額・補正予算額・継続費及び繰越事業費繰越財源充当額・計）・調定額・収入済額・不納欠損額・収入未済額・備考、単位円。備考は徴収率と還付未済額の注記）。",
       "selected_candidate_id": "132128-2024-settlement",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -1149,9 +1469,34 @@
             "key": "fiscal/source-selection/132128/2024/settlement-18.pdf",
             "sha256": "d55e1625e843f6c5be204deb02aeb5db10f77ebd150ef2db6a00a4491ced395c",
             "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/029/797/09saisyutu6.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2024/settlement-24.pdf",
+            "sha256": "d40cb44f53c2a09056afe0fc4b20bc872cd842bcab44572ee67c6b07681e8df6",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/029/797/01sainyuujikou6.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2024/settlement-23.pdf",
+            "sha256": "bb87e9449aed06b2f68566f9b1b059adf26ab9354c3e1f3b5314fa39f8365659",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/029/797/02sainyuu6.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2024/settlement-22.pdf",
+            "sha256": "96ff10fd698171861c492caf851cd127574ed0c82bf8ce0ea61d2483e3436d87",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/029/797/03sainyuu6.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2024/settlement-20.pdf",
+            "sha256": "408f45ba8270360daff6ea879b614f1e9f921ce244391a197aae35c2c0270a01",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/029/797/08sainyuu6.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2024/settlement-21.pdf",
+            "sha256": "548c40d13d7b1a777e135bd3a907a293332cf7382f980b1f6a4aef251ae31e3a",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/029/797/09sainyuu6.pdf"
           }
         ],
-        "archived_at": "2026-10-08T01:07:22.449Z"
+        "archived_at": "2026-11-16T16:04:14.946Z"
       }
     },
     {
@@ -1163,7 +1508,7 @@
       "candidates": [
         {
           "id": "132128-2025-initial",
-          "title": "令和7年度 一般会計・特別会計・企業会計 歳出事項別明細書等",
+          "title": "令和7年度 一般会計・特別会計・企業会計 歳入・歳出事項別明細書等",
           "landing_url": "https://www.city.hino.lg.jp/shisei/gyozaisei/yosan/yosan/1028423.html",
           "inspected_at": "2026-10-08T06:21:46.681750+00:00",
           "files": [
@@ -1300,11 +1645,101 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/028/423/7.sainyuujikoubetu.pdf",
+              "sha256": "4ca8e282546165ab3f2764fb8bde347499a392db6fd829991c737d7f09285d5e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 49
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/028/424/4.kokuhosainyuu.pdf",
+              "sha256": "14503f61c263cd2f85412c89dacc2cdb8d119e8376e6f39761c4798cead686f6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/028/424/4.kukakusainyuu.pdf",
+              "sha256": "e71203ea4f7065e16f76f4279091cdaadaf0aa3d4989f2bb26a74bd55b8f5181",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "土地区画整理事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 8
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/028/424/4.kaigosainyuu.pdf",
+              "sha256": "ff79b51e5ef542e6bd8712d55008d179f7760775ca1214b2545435161d45ff09",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 8
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/028/424/4.koukisainyuu.pdf",
+              "sha256": "24c87460a9b32a21d51ef8c25c192fbc3d9736857383d561d980726eb426186b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "選定（令和7年度＝2025年度当初予算の全7会計）。公式の予算掲載一覧の令和7年度 一般会計予算頁(1028423)と特別会計予算頁(1028424)の両方に分けて掲載。一般会計は8.歳出事項別明細書(190頁・文字PDF、歳出のみ、款1〜13まで)で、款・項・目と節（事業名つきの説明列）の明細、列は本年度予算額・前年度予算額・比較増減・増減率・本年度の財源内訳・節金額・説明、単位千円。特別会計は国民健康保険(10頁)・土地区画整理事業(7頁)・介護保険(13頁)・後期高齢者医療(7頁)の歳出事項別明細書 各1冊で同じ様式・単位千円、いずれも1頁目が「３ 歳出」、最終頁が予備費で歳入を含まない。企業会計は予算書及び説明書から収益的支出・資本的支出の明細頁のみを範囲指定: 市立病院事業会計(26頁)は収益的支出p9-12・資本的支出p14、下水道事業会計(28頁)は収益的支出p11-13・資本的支出p15で、いずれも款・項・目・節と「予定額」・単位千円（備考に事業名）。収入側の頁(病院p7-8/p13、下水道p10/p14)は今回未確認のためscopeに含めず、款・項だけの予算実施計画(下水道p8-9)や財務諸表・給与費明細も範囲外。市立病院・下水道の封面は「予算書(案)及び説明書」で本文は議案第30号・第31号として議会に提出された当初資料、議決後の差替え・承認反映は未確認（資料区分=当初、承認状況は推測しない）。病院サイト経営状況頁の r07_budget_document.pdf(42頁・封面に(案)なし)は同一内容の別掲載（病院事業費用10,357,866千円が一致）で、重複回避のため不採用。会計構成は掲載一覧と照合済み。（頁番号はすべてPDFの物理頁。一般・特別会計の歳出事項別明細書はA3の1物理頁に款項目側と節・説明側を収める構成で、列見出しの単位表記はいずれも千円で単位差なし。令和7年度の企業会計は物理頁=印字頁。）",
+      "reason": "選定（令和7年度＝2025年度当初予算の全7会計）。公式の予算掲載一覧の令和7年度 一般会計予算頁(1028423)と特別会計予算頁(1028424)の両方に分けて掲載。一般会計は8.歳出事項別明細書(190頁・文字PDF、歳出のみ、款1〜13まで)で、款・項・目と節（事業名つきの説明列）の明細、列は本年度予算額・前年度予算額・比較増減・増減率・本年度の財源内訳・節金額・説明、単位千円。特別会計は国民健康保険(10頁)・土地区画整理事業(7頁)・介護保険(13頁)・後期高齢者医療(7頁)の歳出事項別明細書 各1冊で同じ様式・単位千円、いずれも1頁目が「３ 歳出」、最終頁が予備費で歳入を含まない。企業会計は予算書及び説明書から収益的支出・資本的支出の明細頁のみを範囲指定: 市立病院事業会計(26頁)は収益的支出p9-12・資本的支出p14、下水道事業会計(28頁)は収益的支出p11-13・資本的支出p15で、いずれも款・項・目・節と「予定額」・単位千円（備考に事業名）。収入側の頁(病院p7-8/p13、下水道p10/p14)は今回未確認のためscopeに含めず、款・項だけの予算実施計画(下水道p8-9)や財務諸表・給与費明細も範囲外。市立病院・下水道の封面は「予算書(案)及び説明書」で本文は議案第30号・第31号として議会に提出された当初資料、議決後の差替え・承認反映は未確認（資料区分=当初、承認状況は推測しない）。病院サイト経営状況頁の r07_budget_document.pdf(42頁・封面に(案)なし)は同一内容の別掲載（病院事業費用10,357,866千円が一致）で、重複回避のため不採用。会計構成は掲載一覧と照合済み。（頁番号はすべてPDFの物理頁。一般・特別会計の歳出事項別明細書はA3の1物理頁に款項目側と節・説明側を収める構成で、列見出しの単位表記はいずれも千円で単位差なし。令和7年度の企業会計は物理頁=印字頁。） 歳入は歳出と同じ掲載頁（会計ごと）の「歳入事項別明細書」を会計ごとに足した（一般会計49頁・国民健康保険特別会計7頁・土地区画整理事業特別会計8頁・介護保険特別会計8頁・後期高齢者医療特別会計5頁、全頁が歳入の款・項・目と節の明細。列は本年度予算額・前年度予算額・比較・増減率・節の区分と金額・説明、単位千円。説明の欄は節の内訳ではなく積算の説明）。",
       "selected_candidate_id": "132128-2025-initial",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -1344,9 +1779,34 @@
             "key": "fiscal/source-selection/132128/2025/initial-6.pdf",
             "sha256": "ee7266aafa683e3833e54cb30e58d48d57e2826f4f21474a0cf2dd689a0c47c4",
             "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/028/424/r7gesuiyosansho.pdf.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2025/initial-10.pdf",
+            "sha256": "4ca8e282546165ab3f2764fb8bde347499a392db6fd829991c737d7f09285d5e",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/028/423/7.sainyuujikoubetu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2025/initial-8.pdf",
+            "sha256": "14503f61c263cd2f85412c89dacc2cdb8d119e8376e6f39761c4798cead686f6",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/028/424/4.kokuhosainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2025/initial-11.pdf",
+            "sha256": "e71203ea4f7065e16f76f4279091cdaadaf0aa3d4989f2bb26a74bd55b8f5181",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/028/424/4.kukakusainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2025/initial-12.pdf",
+            "sha256": "ff79b51e5ef542e6bd8712d55008d179f7760775ca1214b2545435161d45ff09",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/028/424/4.kaigosainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2025/initial-9.pdf",
+            "sha256": "24c87460a9b32a21d51ef8c25c192fbc3d9736857383d561d980726eb426186b",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/028/424/4.koukisainyuu.pdf"
           }
         ],
-        "archived_at": "2026-10-08T06:22:29.827Z"
+        "archived_at": "2026-11-16T16:04:24.849Z"
       }
     },
     {
@@ -1358,7 +1818,7 @@
       "candidates": [
         {
           "id": "132128-2024-initial",
-          "title": "令和6年度 一般会計・特別会計・企業会計 歳出事項別明細書等",
+          "title": "令和6年度 一般会計・特別会計・企業会計 歳入・歳出事項別明細書等",
           "landing_url": "https://www.city.hino.lg.jp/shisei/gyozaisei/yosan/yosan/1025883.html",
           "inspected_at": "2026-10-08T06:21:46.681750+00:00",
           "files": [
@@ -1495,11 +1955,101 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/025/883/7.sainyuujikoubetu.pdf",
+              "sha256": "be71991341f4fe10f5af8bd03d816c0d3cdc0deefaf7308a7bf4ee93d0f6f4d3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 48
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/025/926/4.kokuhosainyuu.pdf",
+              "sha256": "0809219e33c5f67e59dfb182f1f7712ace0addb4fdbc9139320b2e67c8f58e0e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/025/926/4.kukakusainyuu.pdf",
+              "sha256": "4194192c00f13cef30dfac685e6d17662dfe44e2e04515f7efe4033b44e5912e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "土地区画整理事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 8
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/025/926/4.kaigosainyuu.pdf",
+              "sha256": "45757b5459a71934e05c56a5d2fcfc285826616db4cbed3ba08dec45c54d81c7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 8
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/025/926/4.koukisainyuu.pdf",
+              "sha256": "12d58d1ee50899f77171e51741e2231081ca48fd51e3e1898e894192069b97a3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "選定（令和6年度＝2024年度当初予算の全7会計）。公式の予算掲載一覧の令和6年度 一般会計予算頁(1025883)と特別会計予算頁(1025926)に掲載。一般会計は8.歳出事項別明細書(196頁・文字PDF、歳出のみ、款1〜13)で、款・項・目と節（説明列に事業名）、列は本年度予算額・前年度予算額・比較増減・増減率・本年度の財源内訳・節金額・説明、単位千円。特別会計は国民健康保険(10頁)・土地区画整理事業(7頁)・介護保険(13頁)・後期高齢者医療(7頁)の歳出事項別明細書 各1冊で同じ様式・単位千円、1頁目「３ 歳出」・最終頁予備費で歳入を含まない。企業会計は予算書及び説明書の明細頁のみ範囲指定: 市立病院事業会計(47頁)は収益的支出p16-23・資本的支出p26-27、下水道事業会計(48頁)は収益的支出p18-23・資本的支出p26-27で、款・項・目・節と「予定額」・単位千円。収入頁(病院p12-15・p24-25、下水道p16-17・p24-25)、款・項だけの予算実施計画(下水道p14-15)、キャッシュ・フロー/損益/貸借対照表/注記/給与費明細は範囲外。封面は「予算書 及び説明書」で本文は議案第27号・第28号の議会提出資料、議決後の差替え・承認反映は未確認（資料区分=当初、承認状況は推測しない）。会計構成は掲載一覧と照合済み。（頁番号はすべてPDFの物理頁。一般・特別会計の歳出事項別明細書は1物理頁に印刷2頁（款項目側と節・説明側）を収めた見開きで、列見出しの単位表記はいずれも千円で単位差なし、金額側を欠かない。令和6年度の企業会計は物理頁が印字頁より病院+6・下水道+8だけずれる。）",
+      "reason": "選定（令和6年度＝2024年度当初予算の全7会計）。公式の予算掲載一覧の令和6年度 一般会計予算頁(1025883)と特別会計予算頁(1025926)に掲載。一般会計は8.歳出事項別明細書(196頁・文字PDF、歳出のみ、款1〜13)で、款・項・目と節（説明列に事業名）、列は本年度予算額・前年度予算額・比較増減・増減率・本年度の財源内訳・節金額・説明、単位千円。特別会計は国民健康保険(10頁)・土地区画整理事業(7頁)・介護保険(13頁)・後期高齢者医療(7頁)の歳出事項別明細書 各1冊で同じ様式・単位千円、1頁目「３ 歳出」・最終頁予備費で歳入を含まない。企業会計は予算書及び説明書の明細頁のみ範囲指定: 市立病院事業会計(47頁)は収益的支出p16-23・資本的支出p26-27、下水道事業会計(48頁)は収益的支出p18-23・資本的支出p26-27で、款・項・目・節と「予定額」・単位千円。収入頁(病院p12-15・p24-25、下水道p16-17・p24-25)、款・項だけの予算実施計画(下水道p14-15)、キャッシュ・フロー/損益/貸借対照表/注記/給与費明細は範囲外。封面は「予算書 及び説明書」で本文は議案第27号・第28号の議会提出資料、議決後の差替え・承認反映は未確認（資料区分=当初、承認状況は推測しない）。会計構成は掲載一覧と照合済み。（頁番号はすべてPDFの物理頁。一般・特別会計の歳出事項別明細書は1物理頁に印刷2頁（款項目側と節・説明側）を収めた見開きで、列見出しの単位表記はいずれも千円で単位差なし、金額側を欠かない。令和6年度の企業会計は物理頁が印字頁より病院+6・下水道+8だけずれる。） 歳入は歳出と同じ掲載頁（会計ごと）の「歳入事項別明細書」を会計ごとに足した（一般会計48頁・国民健康保険特別会計7頁・土地区画整理事業特別会計8頁・介護保険特別会計8頁・後期高齢者医療特別会計5頁、全頁が歳入の款・項・目と節の明細。列は本年度予算額・前年度予算額・比較・増減率・節の区分と金額・説明、単位千円。説明の欄は節の内訳ではなく積算の説明）。",
       "selected_candidate_id": "132128-2024-initial",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -1539,9 +2089,34 @@
             "key": "fiscal/source-selection/132128/2024/initial-5.pdf",
             "sha256": "a391529b604df4dba8508bf33e135c4fd4e3d0b21f18278ff38918017f12bfc9",
             "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/025/926/r6gesuiyosansho.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2024/initial-12.pdf",
+            "sha256": "be71991341f4fe10f5af8bd03d816c0d3cdc0deefaf7308a7bf4ee93d0f6f4d3",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/025/883/7.sainyuujikoubetu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2024/initial-8.pdf",
+            "sha256": "0809219e33c5f67e59dfb182f1f7712ace0addb4fdbc9139320b2e67c8f58e0e",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/025/926/4.kokuhosainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2024/initial-10.pdf",
+            "sha256": "4194192c00f13cef30dfac685e6d17662dfe44e2e04515f7efe4033b44e5912e",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/025/926/4.kukakusainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2024/initial-11.pdf",
+            "sha256": "45757b5459a71934e05c56a5d2fcfc285826616db4cbed3ba08dec45c54d81c7",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/025/926/4.kaigosainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2024/initial-9.pdf",
+            "sha256": "12d58d1ee50899f77171e51741e2231081ca48fd51e3e1898e894192069b97a3",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/025/926/4.koukisainyuu.pdf"
           }
         ],
-        "archived_at": "2026-10-08T06:22:43.643Z"
+        "archived_at": "2026-11-16T16:04:04.834Z"
       }
     },
     {
@@ -1553,7 +2128,7 @@
       "candidates": [
         {
           "id": "132128-2023-initial",
-          "title": "令和5年度 一般会計・特別会計・企業会計 歳出事項別明細書等",
+          "title": "令和5年度 一般会計・特別会計・企業会計 歳入・歳出事項別明細書等",
           "landing_url": "https://www.city.hino.lg.jp/shisei/gyozaisei/yosan/yosan/1023301.html",
           "inspected_at": "2026-10-08T06:21:46.681750+00:00",
           "files": [
@@ -1690,11 +2265,101 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/023/301/7.sainyuujikoubetu.pdf",
+              "sha256": "029f240687e2c792b35c60fe67bc1529ac42d25aa5632ffe1da9fff41fe81bc1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 47
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/023/303/4.kokuhosainyuu.pdf",
+              "sha256": "e35f5edec28df3c99ba58c10fb3bd086211ae6f52eff88e2bbb3191d3f084c83",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 7
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/023/303/4.kukakusainyuu.pdf",
+              "sha256": "06686094218af39f1fdca7e8fcd40c937a8d228a1cd5ccef85fdd6c69b213916",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "土地区画整理事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 8
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/023/303/4.kaigosainyuu.pdf",
+              "sha256": "730ea1983ab42fbed69f2fb35ebdeac687b08323e1352c52e1b97dbc187418a9",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 8
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/023/303/4.koukisainyuu.pdf",
+              "sha256": "d4d777394625e3802fe524f5efa51a57f2508fb9cb8dcec584d50815cbec6cc7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "選定（令和5年度＝2023年度当初予算の全7会計）。公式の予算掲載一覧の令和5年度 一般会計予算頁(1023301)と特別会計予算頁(1023303)に掲載。一般会計は8.歳出事項別明細書(197頁・文字PDF、歳出のみ、款1〜13)で、款・項・目と節（説明列に事業名）、列は本年度予算額・前年度予算額・比較増減・増減率・本年度の財源内訳・節金額・説明、単位千円。特別会計は国民健康保険(10頁)・土地区画整理事業(7頁)・介護保険(13頁)・後期高齢者医療(8頁)の歳出事項別明細書 各1冊で同じ様式・単位千円、1頁目「３ 歳出」・最終頁予備費で歳入を含まない。企業会計は予算書及び説明書の明細頁のみ範囲指定: 市立病院事業会計(47頁)は収益的支出p16-23・資本的支出p26-27、下水道事業会計(46頁)は収益的支出p18-23・資本的支出p26-27で、款・項・目・節と「予定額」・単位千円。収入頁(病院p12-15・p24-25、下水道p16-17・p24-25)、款・項だけの予算実施計画(下水道p14-15)、キャッシュ・フロー/損益/貸借対照表/注記/給与費明細は範囲外。封面は「予算書 及び説明書」で本文は議案第29号・第30号の議会提出資料、議決後の差替え・承認反映は未確認（資料区分=当初、承認状況は推測しない）。照合例として令和5年度決算書の当初予算額列と、一般会計 議会費423,632千円・予備費60,000千円が一致（確認した2明細のみ）。会計構成は掲載一覧と照合済み。（頁番号はすべてPDFの物理頁。一般・特別会計の歳出事項別明細書は1物理頁に印刷2頁（款項目側と節・説明側）を収めた見開きで、列見出しの単位表記はいずれも千円で単位差なし、金額側を欠かない。令和5年度の企業会計は物理頁が印字頁より病院+6・下水道+8だけずれる。）",
+      "reason": "選定（令和5年度＝2023年度当初予算の全7会計）。公式の予算掲載一覧の令和5年度 一般会計予算頁(1023301)と特別会計予算頁(1023303)に掲載。一般会計は8.歳出事項別明細書(197頁・文字PDF、歳出のみ、款1〜13)で、款・項・目と節（説明列に事業名）、列は本年度予算額・前年度予算額・比較増減・増減率・本年度の財源内訳・節金額・説明、単位千円。特別会計は国民健康保険(10頁)・土地区画整理事業(7頁)・介護保険(13頁)・後期高齢者医療(8頁)の歳出事項別明細書 各1冊で同じ様式・単位千円、1頁目「３ 歳出」・最終頁予備費で歳入を含まない。企業会計は予算書及び説明書の明細頁のみ範囲指定: 市立病院事業会計(47頁)は収益的支出p16-23・資本的支出p26-27、下水道事業会計(46頁)は収益的支出p18-23・資本的支出p26-27で、款・項・目・節と「予定額」・単位千円。収入頁(病院p12-15・p24-25、下水道p16-17・p24-25)、款・項だけの予算実施計画(下水道p14-15)、キャッシュ・フロー/損益/貸借対照表/注記/給与費明細は範囲外。封面は「予算書 及び説明書」で本文は議案第29号・第30号の議会提出資料、議決後の差替え・承認反映は未確認（資料区分=当初、承認状況は推測しない）。照合例として令和5年度決算書の当初予算額列と、一般会計 議会費423,632千円・予備費60,000千円が一致（確認した2明細のみ）。会計構成は掲載一覧と照合済み。（頁番号はすべてPDFの物理頁。一般・特別会計の歳出事項別明細書は1物理頁に印刷2頁（款項目側と節・説明側）を収めた見開きで、列見出しの単位表記はいずれも千円で単位差なし、金額側を欠かない。令和5年度の企業会計は物理頁が印字頁より病院+6・下水道+8だけずれる。） 歳入は歳出と同じ掲載頁（会計ごと）の「歳入事項別明細書」を会計ごとに足した（一般会計47頁・国民健康保険特別会計7頁・土地区画整理事業特別会計8頁・介護保険特別会計8頁・後期高齢者医療特別会計5頁、全頁が歳入の款・項・目と節の明細。列は本年度予算額・前年度予算額・比較・増減率・節の区分と金額・説明、単位千円。説明の欄は節の内訳ではなく積算の説明）。",
       "selected_candidate_id": "132128-2023-initial",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -1734,9 +2399,34 @@
             "key": "fiscal/source-selection/132128/2023/initial-3.pdf",
             "sha256": "66af38b473543e1f3aaa04bc8ec880cbaafa6f49207e3cd5b4e6013368824f11",
             "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/023/303/r5.gesui.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2023/initial-8.pdf",
+            "sha256": "029f240687e2c792b35c60fe67bc1529ac42d25aa5632ffe1da9fff41fe81bc1",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/023/301/7.sainyuujikoubetu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2023/initial-12.pdf",
+            "sha256": "e35f5edec28df3c99ba58c10fb3bd086211ae6f52eff88e2bbb3191d3f084c83",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/023/303/4.kokuhosainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2023/initial-9.pdf",
+            "sha256": "06686094218af39f1fdca7e8fcd40c937a8d228a1cd5ccef85fdd6c69b213916",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/023/303/4.kukakusainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2023/initial-10.pdf",
+            "sha256": "730ea1983ab42fbed69f2fb35ebdeac687b08323e1352c52e1b97dbc187418a9",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/023/303/4.kaigosainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2023/initial-11.pdf",
+            "sha256": "d4d777394625e3802fe524f5efa51a57f2508fb9cb8dcec584d50815cbec6cc7",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/023/303/4.koukisainyuu.pdf"
           }
         ],
-        "archived_at": "2026-10-08T06:22:59.594Z"
+        "archived_at": "2026-11-16T16:03:47.372Z"
       }
     },
     {
@@ -1748,7 +2438,7 @@
       "candidates": [
         {
           "id": "132128-2023-settlement",
-          "title": "令和5年度決算書 歳出事項別明細書（一般会計・特別会計）・下水道事業会計決算書・市立病院事業会計決算書",
+          "title": "令和5年度決算書 歳入・歳出事項別明細書（一般会計・特別会計）・下水道事業会計決算書・市立病院事業会計決算書",
           "landing_url": "https://www.city.hino.lg.jp/shisei/gyozaisei/yosan/kessan/1027523.html",
           "inspected_at": "2026-10-08T06:21:46.681750+00:00",
           "files": [
@@ -2101,11 +2791,101 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/027/523/01sainyuujikou.pdf",
+              "sha256": "549a0838e804a4c0867249899b4bf87ad9917816e1af46cdfc0369d9fb2619f5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 28
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/027/523/02sainyuu.pdf",
+              "sha256": "da3df1e78f7ca3121160cd71e0cfd5a872518cef02830a804ce41d9553632923",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/027/523/03sainyuu.pdf",
+              "sha256": "be8e9aff305804f5e99552e8b1ac1326d6fd5632c84dff066033add951305da3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "土地区画整理事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 3
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/027/523/08sainyuu.pdf",
+              "sha256": "fba98e2ac974853cc4c25e5cebaecf037cb675b87c74cfbd95c8056a995f8093",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/027/523/09sainyuu.pdf",
+              "sha256": "465945ed20cf771e46dca52a2104149926c2a978856ca9c044af9c0540eff357",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 3
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "選定（令和5年度＝2023年度決算の全7会計）。公式の決算掲載一覧の令和5年度決算書頁(1027523)に、一般会計の歳出事項別明細書が款別13冊(i01議会費3頁〜i13予備費1頁)、特別会計が国民健康保険(02saisyutu 11頁)・土地区画整理事業(03saisyutu 6頁)・介護保険(08saisyutu 11頁)・後期高齢者医療(09saisyutu 8頁)の歳出事項別明細書として掲載され、全冊を選定。列は当初予算額・補正予算額・継続費及び繰越事業費・予備費支出及び繰越額・流用増減・計(予算現額)・支出済額・不用額・翌年度繰越額・節の区分/金額・備考（事業名）、ヘッダは一般会計が「一般 (単位：円)」、特別会計が「国民/土地/介護/後期 (単位：円)」、目まで同一明細に対応。公営企業会計は同ページに無く別掲載先: 下水道事業会計 令和5年度決算書 reiwa5nenndo.pdf(46頁・文字PDF、下水道事業会計決算一覧1018748の令和5年度決算書頁1029071)から附属書類の収益費用明細書の費用p22-23と資本的収支明細書の支出p26-27を範囲指定（款・項・目・節と決算額、「（税抜）（単位：円）」）、市立病院事業会計 令和5年度決算書 r05_balance_sheet.pdf(48頁・文字PDF、病院サイト経営状況頁)から収益費用明細書の支出p24-29（(1)収益的収入及び支出（消費税抜き）(単位 円)）と資本的収支明細の支出p30-31を範囲指定（(2)資本的収入及び支出（消費税込み）(単位 円)、p30は収入と支出が同一見開きに同居、p31は金額側）。決算報告書(下水道p6-9・病院p6-9)は款・項の収支総額のみで目明細がないため範囲外、歳入事項別明細書・歳入歳出決算書・実質収支調書・財産調書・決算総括表は歳出の要件外のため範囲外。令和5年度決算は2023年度（令和5年度）の決算。（頁番号はすべてPDFの物理頁。一般・特別会計の各冊は1物理頁に印刷2頁（款項目側と節・備考側）を収めた見開きで、当初予算額から支出済額・不用額まで同じ冊子ヘッダ「(単位：円)」で統一され金額側を欠かない。令和5年度決算の企業会計は物理頁が印字頁より+2だけずれる。）",
+      "reason": "選定（令和5年度＝2023年度決算の全7会計）。公式の決算掲載一覧の令和5年度決算書頁(1027523)に、一般会計の歳出事項別明細書が款別13冊(i01議会費3頁〜i13予備費1頁)、特別会計が国民健康保険(02saisyutu 11頁)・土地区画整理事業(03saisyutu 6頁)・介護保険(08saisyutu 11頁)・後期高齢者医療(09saisyutu 8頁)の歳出事項別明細書として掲載され、全冊を選定。列は当初予算額・補正予算額・継続費及び繰越事業費・予備費支出及び繰越額・流用増減・計(予算現額)・支出済額・不用額・翌年度繰越額・節の区分/金額・備考（事業名）、ヘッダは一般会計が「一般 (単位：円)」、特別会計が「国民/土地/介護/後期 (単位：円)」、目まで同一明細に対応。公営企業会計は同ページに無く別掲載先: 下水道事業会計 令和5年度決算書 reiwa5nenndo.pdf(46頁・文字PDF、下水道事業会計決算一覧1018748の令和5年度決算書頁1029071)から附属書類の収益費用明細書の費用p22-23と資本的収支明細書の支出p26-27を範囲指定（款・項・目・節と決算額、「（税抜）（単位：円）」）、市立病院事業会計 令和5年度決算書 r05_balance_sheet.pdf(48頁・文字PDF、病院サイト経営状況頁)から収益費用明細書の支出p24-29（(1)収益的収入及び支出（消費税抜き）(単位 円)）と資本的収支明細の支出p30-31を範囲指定（(2)資本的収入及び支出（消費税込み）(単位 円)、p30は収入と支出が同一見開きに同居、p31は金額側）。決算報告書(下水道p6-9・病院p6-9)は款・項の収支総額のみで目明細がないため範囲外、歳入事項別明細書・歳入歳出決算書・実質収支調書・財産調書・決算総括表は歳出の要件外のため範囲外。令和5年度決算は2023年度（令和5年度）の決算。（頁番号はすべてPDFの物理頁。一般・特別会計の各冊は1物理頁に印刷2頁（款項目側と節・備考側）を収めた見開きで、当初予算額から支出済額・不用額まで同じ冊子ヘッダ「(単位：円)」で統一され金額側を欠かない。令和5年度決算の企業会計は物理頁が印字頁より+2だけずれる。） 歳入は歳出と同じ掲載頁（会計ごと）の「歳入事項別明細書」を会計ごとに足した（一般会計28頁・国民健康保険特別会計5頁・土地区画整理事業特別会計3頁・介護保険特別会計4頁・後期高齢者医療特別会計3頁、全頁が歳入の款・項・目と節の明細。列は予算現額（当初予算額・補正予算額・継続費及び繰越事業費繰越財源充当額・計）・調定額・収入済額・不納欠損額・収入未済額・備考、単位円。備考は徴収率と還付未済額の注記）。",
       "selected_candidate_id": "132128-2023-settlement",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -2205,9 +2985,34 @@
             "key": "fiscal/source-selection/132128/2023/settlement-2.pdf",
             "sha256": "16e5cd09080d9b060ff60b5e5e1e64608124e5c0d45c28eedd198b27cfb4f324",
             "final_url": "https://hospital.city.hino.tokyo.jp/images/introduction/financial_results/pdf/r05_balance_sheet.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2023/settlement-21.pdf",
+            "sha256": "549a0838e804a4c0867249899b4bf87ad9917816e1af46cdfc0369d9fb2619f5",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/027/523/01sainyuujikou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2023/settlement-23.pdf",
+            "sha256": "da3df1e78f7ca3121160cd71e0cfd5a872518cef02830a804ce41d9553632923",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/027/523/02sainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2023/settlement-22.pdf",
+            "sha256": "be8e9aff305804f5e99552e8b1ac1326d6fd5632c84dff066033add951305da3",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/027/523/03sainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2023/settlement-24.pdf",
+            "sha256": "fba98e2ac974853cc4c25e5cebaecf037cb675b87c74cfbd95c8056a995f8093",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/027/523/08sainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2023/settlement-20.pdf",
+            "sha256": "465945ed20cf771e46dca52a2104149926c2a978856ca9c044af9c0540eff357",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/027/523/09sainyuu.pdf"
           }
         ],
-        "archived_at": "2026-10-08T06:23:32.167Z"
+        "archived_at": "2026-11-16T16:03:55.502Z"
       }
     },
     {

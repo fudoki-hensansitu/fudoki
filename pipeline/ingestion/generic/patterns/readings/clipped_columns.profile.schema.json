@@ -113,6 +113,28 @@
     },
     "sum_body_top": {
       "type": "number"
+    },
+    "total_label": {
+      "type": "string"
+    },
+    "section_numbers": {
+      "type": "boolean"
+    },
+    "excluded_notes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind",
+        "reason"
+      ],
+      "properties": {
+        "kind": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
     }
   }
 }

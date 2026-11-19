@@ -1,0 +1,533 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "133035",
+    "fiscal_year": 2025,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7fb07d743dd9412e0b23c31b3f995737b86f254a9d3ce4878c9bbb4885c8fa03"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現額に対する収入割合": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "割合の列を取り込まない。金額に対する百分率で、金額ではない。"
+                  }
+                },
+                "収入総額に対する割合": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "割合の列を取り込まない。金額に対する百分率で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7fb07d743dd9412e0b23c31b3f995737b86f254a9d3ce4878c9bbb4885c8fa03"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現額に対する収入割合": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "割合の列を取り込まない。金額に対する百分率で、金額ではない。"
+                  }
+                },
+                "収入総額に対する割合": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "割合の列を取り込まない。金額に対する百分率で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "land-readjustment-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7fb07d743dd9412e0b23c31b3f995737b86f254a9d3ce4878c9bbb4885c8fa03"
+        }
+      ],
+      "options": {
+        "account": "福生都市計画瑞穂町箱根ケ崎駅西土地区画整理事業特別会計",
+        "table_id": "land-readjustment-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現額に対する収入割合": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "割合の列を取り込まない。金額に対する百分率で、金額ではない。"
+                  }
+                },
+                "収入総額に対する割合": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "割合の列を取り込まない。金額に対する百分率で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-readjustment-revenue"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7fb07d743dd9412e0b23c31b3f995737b86f254a9d3ce4878c9bbb4885c8fa03"
+        }
+      ],
+      "options": {
+        "account": "瑞穂町介護保険特別会計",
+        "table_id": "long-term-care-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現額に対する収入割合": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "割合の列を取り込まない。金額に対する百分率で、金額ではない。"
+                  }
+                },
+                "収入総額に対する割合": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "割合の列を取り込まない。金額に対する百分率で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7fb07d743dd9412e0b23c31b3f995737b86f254a9d3ce4878c9bbb4885c8fa03"
+        }
+      ],
+      "options": {
+        "account": "瑞穂町後期高齢者医療特別会計",
+        "table_id": "elderly-medical-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現額に対する収入割合": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "割合の列を取り込まない。金額に対する百分率で、金額ではない。"
+                  }
+                },
+                "収入総額に対する割合": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "割合の列を取り込まない。金額に対する百分率で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-revenue"
+        }
+      ]
+    },
+    {
+      "id": "property-ward-tonogaya-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7fb07d743dd9412e0b23c31b3f995737b86f254a9d3ce4878c9bbb4885c8fa03"
+        }
+      ],
+      "options": {
+        "account": "瑞穂町殿ケ谷財産区特別会計",
+        "table_id": "property-ward-tonogaya-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現額に対する収入割合": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "割合の列を取り込まない。金額に対する百分率で、金額ではない。"
+                  }
+                },
+                "収入総額に対する割合": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "割合の列を取り込まない。金額に対する百分率で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "property-ward-tonogaya-revenue"
+        }
+      ]
+    },
+    {
+      "id": "property-ward-ishihata-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7fb07d743dd9412e0b23c31b3f995737b86f254a9d3ce4878c9bbb4885c8fa03"
+        }
+      ],
+      "options": {
+        "account": "瑞穂町石畑財産区特別会計",
+        "table_id": "property-ward-ishihata-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現額に対する収入割合": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "割合の列を取り込まない。金額に対する百分率で、金額ではない。"
+                  }
+                },
+                "収入総額に対する割合": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "割合の列を取り込まない。金額に対する百分率で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "property-ward-ishihata-revenue"
+        }
+      ]
+    },
+    {
+      "id": "property-ward-hakonegasaki-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7fb07d743dd9412e0b23c31b3f995737b86f254a9d3ce4878c9bbb4885c8fa03"
+        }
+      ],
+      "options": {
+        "account": "瑞穂町箱根ケ崎財産区特別会計",
+        "table_id": "property-ward-hakonegasaki-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現額に対する収入割合": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "割合の列を取り込まない。金額に対する百分率で、金額ではない。"
+                  }
+                },
+                "収入総額に対する割合": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "割合の列を取り込まない。金額に対する百分率で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "property-ward-hakonegasaki-revenue"
+        }
+      ]
+    },
+    {
+      "id": "property-ward-nagaoka-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7fb07d743dd9412e0b23c31b3f995737b86f254a9d3ce4878c9bbb4885c8fa03"
+        }
+      ],
+      "options": {
+        "account": "瑞穂町長岡財産区特別会計",
+        "table_id": "property-ward-nagaoka-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現額に対する収入割合": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "割合の列を取り込まない。金額に対する百分率で、金額ではない。"
+                  }
+                },
+                "収入総額に対する割合": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "割合の列を取り込まない。金額に対する百分率で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "property-ward-nagaoka-revenue"
+        }
+      ]
+    }
+  ]
+}

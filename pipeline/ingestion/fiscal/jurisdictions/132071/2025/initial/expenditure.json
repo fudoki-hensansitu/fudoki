@@ -36,6 +36,751 @@
           "table_id": "akishima-text-budget-expenditure"
         }
       ]
+    },
+    {
+      "id": "kaigo-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "8abc4a29d325c196320dfc5d4bc95b46b1b6888a4a67cfae9825021eefed637a"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度予算額の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 230
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            529,
+            529
+          ],
+          [
+            541,
+            560
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kaigo-initial-ocr-1",
+          "origin_sha256": "8abc4a29d325c196320dfc5d4bc95b46b1b6888a4a67cfae9825021eefed637a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              541,
+              542,
+              543,
+              544,
+              545,
+              546,
+              547,
+              548,
+              549,
+              550
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "def9c2254f23a987e222fcb776988df31aa9308ff518819048021826f3311808",
+          "bytes": 1922472
+        },
+        {
+          "id": "kaigo-initial-ocr-2",
+          "origin_sha256": "8abc4a29d325c196320dfc5d4bc95b46b1b6888a4a67cfae9825021eefed637a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              551,
+              552,
+              553,
+              554,
+              555,
+              556,
+              557,
+              558,
+              559,
+              560
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "77d18d78ce6df5422290483f6153673e6ede442481c55130947f62d85b41751a",
+          "bytes": 1918119
+        },
+        {
+          "id": "kaigo-initial-ocr-summary",
+          "origin_sha256": "8abc4a29d325c196320dfc5d4bc95b46b1b6888a4a67cfae9825021eefed637a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              529
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "5fe5a839cd5989e6089aa7d4b5c8d7ab8aa2968ce5f61da4c4e973705051bf65",
+          "bytes": 116367
+        }
+      ]
+    },
+    {
+      "id": "kokuho-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "8abc4a29d325c196320dfc5d4bc95b46b1b6888a4a67cfae9825021eefed637a"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "kokuho-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度予算額の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 230
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "codeless_titles": true
+          }
+        },
+        "pages": [
+          [
+            481,
+            481
+          ],
+          [
+            493,
+            508
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kokuho-initial-ocr-1",
+          "origin_sha256": "8abc4a29d325c196320dfc5d4bc95b46b1b6888a4a67cfae9825021eefed637a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              493,
+              494,
+              495,
+              496,
+              497,
+              498,
+              499,
+              500,
+              501,
+              502
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "1c33ee6fccc21ea275f66deaf0829fd53d609d3f72f5e7ee424c758c4d1940e4",
+          "bytes": 1996471
+        },
+        {
+          "id": "kokuho-initial-ocr-2",
+          "origin_sha256": "8abc4a29d325c196320dfc5d4bc95b46b1b6888a4a67cfae9825021eefed637a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              503,
+              504,
+              505,
+              506,
+              507,
+              508
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a451b96f9d3dab140cd5bce07e85cab0110cf1fa84c1b66d532e376e0f5a63bc",
+          "bytes": 1094201
+        },
+        {
+          "id": "kokuho-initial-ocr-summary",
+          "origin_sha256": "8abc4a29d325c196320dfc5d4bc95b46b1b6888a4a67cfae9825021eefed637a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              481
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "793e66a008c2f29bc17bc481725799ef9066439ea5b547afe12c339d10765613",
+          "bytes": 129852
+        }
+      ]
+    },
+    {
+      "id": "kouki-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "0cb38fc69b354c4a028c05eb08e25f761edbbba950a8ecf882fd5e0e6e682968"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度予算額の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 230
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            10,
+            11
+          ],
+          [
+            18,
+            25
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kouki-initial-ocr-1",
+          "origin_sha256": "0cb38fc69b354c4a028c05eb08e25f761edbbba950a8ecf882fd5e0e6e682968",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "0095e8151caf84494d2a04cbe5bc3016eb3ad4aaff672daebea4eae1bbbe61e3",
+          "bytes": 1235863
+        },
+        {
+          "id": "kouki-initial-ocr-summary",
+          "origin_sha256": "0cb38fc69b354c4a028c05eb08e25f761edbbba950a8ecf882fd5e0e6e682968",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              10,
+              11
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "006dab44a3d504ae26dbf9f9c61dad2d6607bc00aec06ce1536849cde03fbf7d",
+          "bytes": 165873
+        }
+      ]
+    },
+    {
+      "id": "nakagami-kukaku-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "fcaadac31db15c42641768bf4859f8d6281dcfef602d25ad0de21adaea09216f"
+        }
+      ],
+      "options": {
+        "account": "中神土地区画整理事業特別会計",
+        "table_id": "nakagami-kukaku-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度予算額の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 230
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "codeless_titles": true
+          }
+        },
+        "pages": [
+          [
+            10,
+            11
+          ],
+          [
+            16,
+            23
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "nakagami-kukaku-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "nakagami-kukaku-initial-ocr-1",
+          "origin_sha256": "fcaadac31db15c42641768bf4859f8d6281dcfef602d25ad0de21adaea09216f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "caa0aee179f78b47ac4cb83946eea1fc7385b37e7c15dfd76114fb7c32a7fe49",
+          "bytes": 1110948
+        },
+        {
+          "id": "nakagami-kukaku-initial-ocr-summary",
+          "origin_sha256": "fcaadac31db15c42641768bf4859f8d6281dcfef602d25ad0de21adaea09216f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              10,
+              11
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e828c8555367a1c1382cb97cd98097fa0f426d8e08a50fd44eaccdcb493c14f6",
+          "bytes": 129673
+        }
+      ]
+    },
+    {
+      "id": "nakagami-kita-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "92ff755c6e1f447bd4c85f09d122d4962327594f4d6ee6b4df91a1fbb1005559"
+        }
+      ],
+      "options": {
+        "account": "中神駅北側地域整備事業特別会計",
+        "table_id": "nakagami-kita-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度予算額の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 230
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            10,
+            11
+          ],
+          [
+            16,
+            21
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "nakagami-kita-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "nakagami-kita-initial-ocr-1",
+          "origin_sha256": "92ff755c6e1f447bd4c85f09d122d4962327594f4d6ee6b4df91a1fbb1005559",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "b109836c3c606fe174c38c2b4bd5bab394331290ace33e185e1a2e7d1652defa",
+          "bytes": 936711
+        },
+        {
+          "id": "nakagami-kita-initial-ocr-summary",
+          "origin_sha256": "92ff755c6e1f447bd4c85f09d122d4962327594f4d6ee6b4df91a1fbb1005559",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              10,
+              11
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "acf68feaca6b47b943e098b16dc83acf1bd9ff5ecab812630f405b94e9fd83f9",
+          "bytes": 160225
+        }
+      ]
     }
   ]
 }

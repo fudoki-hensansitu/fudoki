@@ -4,7 +4,7 @@ import type { AnalyticsDataset } from './env'
 import { logError } from './log'
 
 export interface Usage {
-  kind: 'chat' | 'relay'
+  kind: 'chat'
   model: string
   inputTokens: number
   outputTokens: number
@@ -13,7 +13,7 @@ export interface Usage {
   steps: number
   durationMs: number
   /** 失敗の種類。成功は空 */
-  error: '' | 'model' | 'mcp' | 'aborted' | 'invalid'
+  error: '' | 'model' | 'api' | 'aborted' | 'invalid'
 }
 
 export function writeUsage(dataset: AnalyticsDataset | undefined, u: Usage) {

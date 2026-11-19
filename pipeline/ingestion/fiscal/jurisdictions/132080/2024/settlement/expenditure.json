@@ -104,6 +104,260 @@
           "bytes": 1880386
         }
       ]
+    },
+    {
+      "id": "kokuho-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3c5806a307ea61c2b758cda732dc5a205b007f4f8aecfe5d8fdb4194a084f6da"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "kokuho-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 230
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "plain_names": [
+                    "補充用消耗品費"
+                  ],
+                  "note_kinds": {
+                    "体育施設費・工事請負費から報償費へ": "流用"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            440,
+            477
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-settlement"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kokuho-ocr-columns-1",
+          "origin_sha256": "3c5806a307ea61c2b758cda732dc5a205b007f4f8aecfe5d8fdb4194a084f6da",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              455
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "0fba650f61ef77d31bfb9d6314bfad45001a228c514029dc057a89db22f01053",
+          "bytes": 91405
+        }
+      ]
+    },
+    {
+      "id": "yochi-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3c5806a307ea61c2b758cda732dc5a205b007f4f8aecfe5d8fdb4194a084f6da"
+        }
+      ],
+      "options": {
+        "account": "用地特別会計",
+        "table_id": "yochi-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 230
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "plain_names": [
+                    "補充用消耗品費"
+                  ],
+                  "note_kinds": {
+                    "体育施設費・工事請負費から報償費へ": "流用"
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "digit_set_codes": 4.8
+          }
+        },
+        "pages": [
+          [
+            484,
+            487
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "yochi-settlement"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3c5806a307ea61c2b758cda732dc5a205b007f4f8aecfe5d8fdb4194a084f6da"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "kaigo-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 230
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "plain_names": [
+                    "補充用消耗品費"
+                  ],
+                  "note_kinds": {
+                    "体育施設費・工事請負費から報償費へ": "流用"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            502,
+            537
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-settlement"
+        }
+      ]
+    },
+    {
+      "id": "kouki-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3c5806a307ea61c2b758cda732dc5a205b007f4f8aecfe5d8fdb4194a084f6da"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 230
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "plain_names": [
+                    "補充用消耗品費"
+                  ],
+                  "note_kinds": {
+                    "体育施設費・工事請負費から報償費へ": "流用"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            548,
+            563
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-settlement"
+        }
+      ]
     }
   ]
 }

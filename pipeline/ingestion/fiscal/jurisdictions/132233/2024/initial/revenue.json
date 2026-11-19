@@ -1,0 +1,73 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132233",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7f87cb72495bb6fa12bdf6fa56bca4870a1568979122b3ea6ed4a9d5f2aaed07"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "numbered_names": true,
+            "unnumbered_abolished_names": true
+          }
+        },
+        "parent_corrections": [
+          {
+            "id": "fire-subsidy-setsu",
+            "page": 16,
+            "code": "1",
+            "name": "消防費補助金",
+            "parent_page": 15,
+            "parent_code": "5",
+            "parent_name": "消防費国庫補助金",
+            "reason": "物理16頁の節「1 消防費補助金」は右頁で目の行より15pt高く刷られ、左頁の目4 土木費国庫補助金の行の高さから始まる。原画では目5 消防費国庫補助金（2,719,377千円）の節で、金額も一致する。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    }
+  ]
+}

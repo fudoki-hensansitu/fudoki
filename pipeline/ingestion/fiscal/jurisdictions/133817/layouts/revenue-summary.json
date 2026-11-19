@@ -1,0 +1,29 @@
+{
+  "workflow": {
+    "layout": {
+      "pattern": "revenue_section",
+      "options": {
+        "columns": {
+          "構成比(%)": {
+            "kind": "ignore"
+          },
+          "村民一人当たり(円)": {
+            "kind": "ignore"
+          },
+          "一世帯当たり(円)": {
+            "kind": "ignore"
+          }
+        }
+      }
+    },
+    "headers": {
+      "pattern": "standard"
+    },
+    "hierarchy": {
+      "subject": {
+        "pattern": "indent"
+      },
+      "breakdown": {}
+    }
+  }
+}

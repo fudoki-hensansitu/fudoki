@@ -5,6 +5,8 @@ without an amount keeps its indentation level. A bracketed amount (`(職員課) 
 the share of one department in the item above it, set flush with that item's amount: it is one level below."""
 from collections import defaultdict
 
+from ingestion.generic.patterns import document_quirk
+
 GAP = 4.0  # pt: amounts ending further apart than this end at different levels
 
 
@@ -37,6 +39,10 @@ def depth(item, initial, order, opened, anchors, prepared):
     if end is None:
         return initial
     level = next((rank + 1 for rank, (low, high) in enumerate(prepared.get(item.group.axis, ())) if low <= end <= high), initial)
+    if (stepped := document_quirk('stepped_amount_lines')) is not None and 1 <= level <= len(opened) \
+            and (above := opened[level - 1]) is not None and (above_end := _end(above)) is not None \
+            and stepped.module.deeper(item, above, end, above_end):
+        level += 1
     if _bracketed(item):
         return level + 1
     department = opened[1] if len(opened) >= 2 else None

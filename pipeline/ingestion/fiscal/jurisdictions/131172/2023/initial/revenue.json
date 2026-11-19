@@ -1,0 +1,1566 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131172",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "d67dc081624ec55a742275f629937d7782c40f409e6bb7b3c932a71c665aad08"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "paren_titles",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・調定見込額・収納率など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "金額": {
+                  "within": "節"
+                },
+                "節／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_numbers": true,
+            "spaced_digits": 1.3,
+            "codeless_column_items": true,
+            "one_row_header": true
+          }
+        },
+        "pages": [
+          [
+            7,
+            67
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "auto-p12-full-page-a0-result1-r0",
+            "page": 12,
+            "observation_id": "p12:full-page:a0:result1:r0",
+            "observed_name": "(单位：千円)",
+            "corrected_name": "(単位：千円)",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p14-full-page-a0-result0-r13",
+            "page": 14,
+            "observation_id": "p14:full-page:a0:result0:r13",
+            "observed_name": "∆13,000",
+            "corrected_name": "△13,000",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p14-full-page-a0-result0-r18",
+            "page": 14,
+            "observation_id": "p14:full-page:a0:result0:r18",
+            "observed_name": "∆13,000",
+            "corrected_name": "△13,000",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p15-full-page-a0-result0-r14",
+            "page": 15,
+            "observation_id": "p15:full-page:a0:result0:r14",
+            "observed_name": "森林環境讓与稅",
+            "corrected_name": "森林環境讓与税",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p18-full-page-a0-result0-r13",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r13",
+            "observed_name": "∆39,000",
+            "corrected_name": "△39,000",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p18-full-page-a0-result0-r19",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r19",
+            "observed_name": "∆39,000",
+            "corrected_name": "△39,000",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p19-full-page-a0-result1-r0",
+            "page": 19,
+            "observation_id": "p19:full-page:a0:result1:r0",
+            "observed_name": "(单位：千円)",
+            "corrected_name": "(単位：千円)",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p21-full-page-a0-result0-r13",
+            "page": 21,
+            "observation_id": "p21:full-page:a0:result0:r13",
+            "observed_name": "∆9,000",
+            "corrected_name": "△9,000",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p21-full-page-a0-result0-r18",
+            "page": 21,
+            "observation_id": "p21:full-page:a0:result0:r18",
+            "observed_name": "∆9,000",
+            "corrected_name": "△9,000",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p23-full-page-a0-result0-r12",
+            "page": 23,
+            "observation_id": "p23:full-page:a0:result0:r12",
+            "observed_name": "∆2,000",
+            "corrected_name": "△2,000",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p23-full-page-a0-result0-r18",
+            "page": 23,
+            "observation_id": "p23:full-page:a0:result0:r18",
+            "observed_name": "∆2,000",
+            "corrected_name": "△2,000",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p24-full-page-a0-result0-r12",
+            "page": 24,
+            "observation_id": "p24:full-page:a0:result0:r12",
+            "observed_name": "∆1,000",
+            "corrected_name": "△1,000",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p24-full-page-a0-result0-r18",
+            "page": 24,
+            "observation_id": "p24:full-page:a0:result0:r18",
+            "observed_name": "∆1,000",
+            "corrected_name": "△1,000",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p25-full-page-a0-result0-r13",
+            "page": 25,
+            "observation_id": "p25:full-page:a0:result0:r13",
+            "observed_name": "∆768",
+            "corrected_name": "△768",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p25-full-page-a0-result0-r19",
+            "page": 25,
+            "observation_id": "p25:full-page:a0:result0:r19",
+            "observed_name": "∆1,747",
+            "corrected_name": "△1,747",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p25-full-page-a0-result0-r30",
+            "page": 25,
+            "observation_id": "p25:full-page:a0:result0:r30",
+            "observed_name": "∆27,327",
+            "corrected_name": "△27,327",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p26-full-page-a0-result0-r20",
+            "page": 26,
+            "observation_id": "p26:full-page:a0:result0:r20",
+            "observed_name": "∆4,119",
+            "corrected_name": "△4,119",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p26-full-page-a0-result0-r24",
+            "page": 26,
+            "observation_id": "p26:full-page:a0:result0:r24",
+            "observed_name": "∆12,066",
+            "corrected_name": "△12,066",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p27-full-page-a0-result0-r36",
+            "page": 27,
+            "observation_id": "p27:full-page:a0:result0:r36",
+            "observed_name": "∆768",
+            "corrected_name": "△768",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p28-full-page-a0-result0-r18",
+            "page": 28,
+            "observation_id": "p28:full-page:a0:result0:r18",
+            "observed_name": "∆1,051",
+            "corrected_name": "△1,051",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p28-full-page-a0-result0-r24",
+            "page": 28,
+            "observation_id": "p28:full-page:a0:result0:r24",
+            "observed_name": "∆21,070",
+            "corrected_name": "△21,070",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p28-full-page-a0-result1-r12",
+            "page": 28,
+            "observation_id": "p28:full-page:a0:result1:r12",
+            "observed_name": "1 ネス卜赤羽使用料",
+            "corrected_name": "1 ネスト赤羽使用料",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p29-full-page-a0-result0-r23",
+            "page": 29,
+            "observation_id": "p29:full-page:a0:result0:r23",
+            "observed_name": "∆1,219",
+            "corrected_name": "△1,219",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p29-full-page-a0-result1-r0",
+            "page": 29,
+            "observation_id": "p29:full-page:a0:result1:r0",
+            "observed_name": "(单位：千円)",
+            "corrected_name": "(単位：千円)",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p30-full-page-a0-result0-r14",
+            "page": 30,
+            "observation_id": "p30:full-page:a0:result0:r14",
+            "observed_name": "∆1,096",
+            "corrected_name": "△1,096",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p30-full-page-a0-result0-r36",
+            "page": 30,
+            "observation_id": "p30:full-page:a0:result0:r36",
+            "observed_name": "∆ 1,167",
+            "corrected_name": "△ 1,167",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p30-full-page-a0-result0-r40",
+            "page": 30,
+            "observation_id": "p30:full-page:a0:result0:r40",
+            "observed_name": "証明閱覧手数料",
+            "corrected_name": "証明閲覧手数料",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p30-full-page-a0-result1-r0",
+            "page": 30,
+            "observation_id": "p30:full-page:a0:result1:r0",
+            "observed_name": "(单位：千円)",
+            "corrected_name": "(単位：千円)",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p30-full-page-a0-result1-r45",
+            "page": 30,
+            "observation_id": "p30:full-page:a0:result1:r45",
+            "observed_name": "3 証明閱覧手数料",
+            "corrected_name": "3 証明閲覧手数料",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p32-full-page-a0-result0-r29",
+            "page": 32,
+            "observation_id": "p32:full-page:a0:result0:r29",
+            "observed_name": "省工ネ基準適合性判定等",
+            "corrected_name": "省エネ基準適合性判定等",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p32-full-page-a0-result1-r0",
+            "page": 32,
+            "observation_id": "p32:full-page:a0:result1:r0",
+            "observed_name": "(单位：千円)",
+            "corrected_name": "(単位：千円)",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p32-full-page-a0-result1-r39",
+            "page": 32,
+            "observation_id": "p32:full-page:a0:result1:r39",
+            "observed_name": "12 省工ネ基準適合性判定等申請手数料",
+            "corrected_name": "12 省エネ基準適合性判定等申請手数料",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p34-full-page-a0-result1-r0",
+            "page": 34,
+            "observation_id": "p34:full-page:a0:result1:r0",
+            "observed_name": "(单位：千円)",
+            "corrected_name": "(単位：千円)",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p35-full-page-a0-result0-r16",
+            "page": 35,
+            "observation_id": "p35:full-page:a0:result0:r16",
+            "observed_name": "社会保障·税番号制度",
+            "corrected_name": "社会保障·税番号制度シ",
+            "reason": "原典の画像では「…制度シ」と行末まで印字され、次の行の「ステム…」に続く。Paddle は行末の「シ」を読まなかった。"
+          },
+          {
+            "id": "auto-p35-full-page-a0-result0-r22",
+            "page": 35,
+            "observation_id": "p35:full-page:a0:result0:r22",
+            "observed_name": "∆139,916",
+            "corrected_name": "△139,916",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p35-full-page-a0-result1-r0",
+            "page": 35,
+            "observation_id": "p35:full-page:a0:result1:r0",
+            "observed_name": "(单位：千円)",
+            "corrected_name": "(単位：千円)",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p36-full-page-a0-result0-r9",
+            "page": 36,
+            "observation_id": "p36:full-page:a0:result0:r9",
+            "observed_name": "社会保障·税番号制度",
+            "corrected_name": "社会保障·税番号制度シ",
+            "reason": "原典の画像では「…制度シ」と行末まで印字され、次の行の「ステム…」に続く。Paddle は行末の「シ」を読まなかった。"
+          },
+          {
+            "id": "auto-p38-full-page-a0-result0-r29",
+            "page": 38,
+            "observation_id": "p38:full-page:a0:result0:r29",
+            "observed_name": "∆37,385",
+            "corrected_name": "△37,385",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p39-full-page-a0-result0-r12",
+            "page": 39,
+            "observation_id": "p39:full-page:a0:result0:r12",
+            "observed_name": "∆2,510",
+            "corrected_name": "△2,510",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p39-full-page-a0-result0-r25",
+            "page": 39,
+            "observation_id": "p39:full-page:a0:result0:r25",
+            "observed_name": "∆39",
+            "corrected_name": "△39",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p40-full-page-a0-result1-r40",
+            "page": 40,
+            "observation_id": "p40:full-page:a0:result1:r40",
+            "observed_name": "12サ一ビス利用計画等給付費（1／4）",
+            "corrected_name": "12サービス利用計画等給付費（1／4）",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p41-full-page-a0-result0-r28",
+            "page": 41,
+            "observation_id": "p41:full-page:a0:result0:r28",
+            "observed_name": "∆16,996",
+            "corrected_name": "△16,996",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p41-full-page-a0-result0-r35",
+            "page": 41,
+            "observation_id": "p41:full-page:a0:result0:r35",
+            "observed_name": "∆69",
+            "corrected_name": "△69",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p41-full-page-a0-result1-r0",
+            "page": 41,
+            "observation_id": "p41:full-page:a0:result1:r0",
+            "observed_name": "(单位：千円)",
+            "corrected_name": "(単位：千円)",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p43-full-page-a0-result0-r38",
+            "page": 43,
+            "observation_id": "p43:full-page:a0:result0:r38",
+            "observed_name": "児童発達支援センタ一地",
+            "corrected_name": "児童発達支援センター地",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p43-full-page-a0-result1-r0",
+            "page": 43,
+            "observation_id": "p43:full-page:a0:result1:r0",
+            "observed_name": "(单位：千円)",
+            "corrected_name": "(単位：千円)",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p44-full-page-a0-result1-r13",
+            "page": 44,
+            "observation_id": "p44:full-page:a0:result1:r13",
+            "observed_name": "26 児童発達支援センタ一地域支援体制確保事業費",
+            "corrected_name": "26 児童発達支援センター地域支援体制確保事業費",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p45-full-page-a0-result0-r26",
+            "page": 45,
+            "observation_id": "p45:full-page:a0:result0:r26",
+            "observed_name": "∆27,212",
+            "corrected_name": "△27,212",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p45-full-page-a0-result1-r16",
+            "page": 45,
+            "observation_id": "p45:full-page:a0:result1:r16",
+            "observed_name": "4とうきようママパパ応援事業補助金",
+            "corrected_name": "4とうきょうママパパ応援事業補助金",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ）と読んだ。"
+          },
+          {
+            "id": "auto-p46-full-page-a0-result1-r0",
+            "page": 46,
+            "observation_id": "p46:full-page:a0:result1:r0",
+            "observed_name": "(单位：千円)",
+            "corrected_name": "(単位：千円)",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p47-full-page-a0-result0-r16",
+            "page": 47,
+            "observation_id": "p47:full-page:a0:result0:r16",
+            "observed_name": "カ一活用事業費",
+            "corrected_name": "カー活用事業費",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p47-full-page-a0-result1-r9",
+            "page": 47,
+            "observation_id": "p47:full-page:a0:result1:r9",
+            "observed_name": "13 ブ口ック塀等安全対策促進事業費（14）",
+            "corrected_name": "13 ブロック塀等安全対策促進事業費（14）",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p47-full-page-a0-result1-r24",
+            "page": 47,
+            "observation_id": "p47:full-page:a0:result1:r24",
+            "observed_name": "2スクールソーシヤルワーカー活用事業費（1ノ2）",
+            "corrected_name": "2スクールソーシャルワーカー活用事業費（1ノ2）",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ）と読んだ。"
+          },
+          {
+            "id": "auto-p47-full-page-a0-result1-r53",
+            "page": 47,
+            "observation_id": "p47:full-page:a0:result1:r53",
+            "observed_name": "12 教育支援センタ一機能強化補助事業補助金",
+            "corrected_name": "12 教育支援センター機能強化補助事業補助金",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p49-full-page-a0-result0-r14",
+            "page": 49,
+            "observation_id": "p49:full-page:a0:result0:r14",
+            "observed_name": "∆120,016",
+            "corrected_name": "△120,016",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p49-full-page-a0-result0-r34",
+            "page": 49,
+            "observation_id": "p49:full-page:a0:result0:r34",
+            "observed_name": "Δ23",
+            "corrected_name": "△23",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p49-full-page-a0-result1-r0",
+            "page": 49,
+            "observation_id": "p49:full-page:a0:result1:r0",
+            "observed_name": "(单位：千円)",
+            "corrected_name": "(単位：千円)",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p50-full-page-a0-result0-r11",
+            "page": 50,
+            "observation_id": "p50:full-page:a0:result0:r11",
+            "observed_name": "∆67,629",
+            "corrected_name": "△67,629",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p50-full-page-a0-result0-r16",
+            "page": 50,
+            "observation_id": "p50:full-page:a0:result0:r16",
+            "observed_name": "∆182,243",
+            "corrected_name": "△182,243",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p52-full-page-a0-result0-r12",
+            "page": 52,
+            "observation_id": "p52:full-page:a0:result0:r12",
+            "observed_name": "∆300",
+            "corrected_name": "△300",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p52-full-page-a0-result0-r22",
+            "page": 52,
+            "observation_id": "p52:full-page:a0:result0:r22",
+            "observed_name": "∆300",
+            "corrected_name": "△300",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p52-full-page-a0-result1-r7",
+            "page": 52,
+            "observation_id": "p52:full-page:a0:result1:r7",
+            "observed_name": "1 不用品壳払代金",
+            "corrected_name": "1 不用品売払代金",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ）と読んだ。"
+          },
+          {
+            "id": "auto-p52-full-page-a0-result1-r10",
+            "page": 52,
+            "observation_id": "p52:full-page:a0:result1:r10",
+            "observed_name": "1 土地壳払代金(科目存置)",
+            "corrected_name": "1 土地売払代金(科目存置)",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ）と読んだ。"
+          },
+          {
+            "id": "auto-p53-full-page-a0-result0-r13",
+            "page": 53,
+            "observation_id": "p53:full-page:a0:result0:r13",
+            "observed_name": "北区応援サポータ一寄附",
+            "corrected_name": "北区応援サポーター寄附",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p53-full-page-a0-result1-r7",
+            "page": 53,
+            "observation_id": "p53:full-page:a0:result1:r7",
+            "observed_name": "1 北区応援サポ一タ一寄附金(科目存置)",
+            "corrected_name": "1 北区応援サポーター寄附金(科目存置)",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p55-full-page-a0-result1-r0",
+            "page": 55,
+            "observation_id": "p55:full-page:a0:result1:r0",
+            "observed_name": "(单位：千円)",
+            "corrected_name": "(単位：千円)",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p56-full-page-a0-result0-r13",
+            "page": 56,
+            "observation_id": "p56:full-page:a0:result0:r13",
+            "observed_name": "北区応援サポ一タ一基金",
+            "corrected_name": "北区応援サポーター基金",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p56-full-page-a0-result1-r6",
+            "page": 56,
+            "observation_id": "p56:full-page:a0:result1:r6",
+            "observed_name": "北区応援サポ一タ一基金繰入金を計上(政策経営部)",
+            "corrected_name": "北区応援サポーター基金繰入金を計上(政策経営部)",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p56-full-page-a0-result1-r7",
+            "page": 56,
+            "observation_id": "p56:full-page:a0:result1:r7",
+            "observed_name": "1 北区応援サポ一タ一基金繰入金",
+            "corrected_name": "1 北区応援サポーター基金繰入金",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p57-full-page-a0-result0-r0",
+            "page": 57,
+            "observation_id": "p57:full-page:a0:result0:r0",
+            "observed_name": "(款) 1 9 繰 越",
+            "corrected_name": "(款) 1 9 繰 越金",
+            "reason": "原典の画像では款の題は字の間を空けて「寄付金」「繰越金」と印字されている。Paddle は最後の「金」を読まなかった。"
+          },
+          {
+            "id": "auto-p58-full-page-a0-result1-r0",
+            "page": 58,
+            "observation_id": "p58:full-page:a0:result1:r0",
+            "observed_name": "(单位：千円)",
+            "corrected_name": "(単位：千円)",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p59-full-page-a0-result0-r12",
+            "page": 59,
+            "observation_id": "p59:full-page:a0:result0:r12",
+            "observed_name": "Δ17",
+            "corrected_name": "△17",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p59-full-page-a0-result0-r14",
+            "page": 59,
+            "observation_id": "p59:full-page:a0:result0:r14",
+            "observed_name": "歲入歳出外現金利子",
+            "corrected_name": "歳入歳出外現金利子",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p59-full-page-a0-result0-r18",
+            "page": 59,
+            "observation_id": "p59:full-page:a0:result0:r18",
+            "observed_name": "Δ17",
+            "corrected_name": "△17",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p60-full-page-a0-result0-r20",
+            "page": 60,
+            "observation_id": "p60:full-page:a0:result0:r20",
+            "observed_name": "∆1,918",
+            "corrected_name": "△1,918",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p60-full-page-a0-result0-r32",
+            "page": 60,
+            "observation_id": "p60:full-page:a0:result0:r32",
+            "observed_name": "∆5",
+            "corrected_name": "△5",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p60-full-page-a0-result0-r39",
+            "page": 60,
+            "observation_id": "p60:full-page:a0:result0:r39",
+            "observed_name": "Δ232",
+            "corrected_name": "△232",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p60-full-page-a0-result0-r46",
+            "page": 60,
+            "observation_id": "p60:full-page:a0:result0:r46",
+            "observed_name": "Δ438",
+            "corrected_name": "△438",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p60-full-page-a0-result0-r54",
+            "page": 60,
+            "observation_id": "p60:full-page:a0:result0:r54",
+            "observed_name": "∆2,579",
+            "corrected_name": "△2,579",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p61-full-page-a0-result0-r16",
+            "page": 61,
+            "observation_id": "p61:full-page:a0:result0:r16",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原典の画像では「入」と印字されている（雑入・収入・受入）。Paddle は「入」を「人」と読んだ。"
+          },
+          {
+            "id": "auto-p61-full-page-a0-result0-r25",
+            "page": 61,
+            "observation_id": "p61:full-page:a0:result0:r25",
+            "observed_name": "∆150",
+            "corrected_name": "△150",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p61-full-page-a0-result0-r36",
+            "page": 61,
+            "observation_id": "p61:full-page:a0:result0:r36",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原典の画像では「入」と印字されている（雑入・収入・受入）。Paddle は「入」を「人」と読んだ。"
+          },
+          {
+            "id": "auto-p63-full-page-a0-result0-r47",
+            "page": 63,
+            "observation_id": "p63:full-page:a0:result0:r47",
+            "observed_name": "Δ14",
+            "corrected_name": "△14",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p63-full-page-a0-result1-r0",
+            "page": 63,
+            "observation_id": "p63:full-page:a0:result1:r0",
+            "observed_name": "(单位：千円)",
+            "corrected_name": "(単位：千円)",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p64-full-page-a0-result0-r25",
+            "page": 64,
+            "observation_id": "p64:full-page:a0:result0:r25",
+            "observed_name": "贿収入",
+            "corrected_name": "賄収入",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p64-full-page-a0-result1-r0",
+            "page": 64,
+            "observation_id": "p64:full-page:a0:result1:r0",
+            "observed_name": "(单位：千円)",
+            "corrected_name": "(単位：千円)",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p65-full-page-a0-result0-r33",
+            "page": 65,
+            "observation_id": "p65:full-page:a0:result0:r33",
+            "observed_name": "広告モニタ一設置料収入",
+            "corrected_name": "広告モニター設置料収入",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p65-full-page-a0-result0-r34",
+            "page": 65,
+            "observation_id": "p65:full-page:a0:result0:r34",
+            "observed_name": "広告モ二タ一電気料金負",
+            "corrected_name": "広告モニター電気料金負",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p65-full-page-a0-result1-r63",
+            "page": 65,
+            "observation_id": "p65:full-page:a0:result1:r63",
+            "observed_name": "39 広告モ二タ一設置料収入",
+            "corrected_name": "39 広告モニター設置料収入",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p65-full-page-a0-result1-r66",
+            "page": 65,
+            "observation_id": "p65:full-page:a0:result1:r66",
+            "observed_name": "40広告モ二タ一電気料金負担金",
+            "corrected_name": "40広告モニター電気料金負担金",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p66-full-page-a0-result0-r25",
+            "page": 66,
+            "observation_id": "p66:full-page:a0:result0:r25",
+            "observed_name": "ク卜関連事業助成金",
+            "corrected_name": "クト関連事業助成金",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p66-full-page-a0-result1-r0",
+            "page": 66,
+            "observation_id": "p66:full-page:a0:result1:r0",
+            "observed_name": "(单位：千円)",
+            "corrected_name": "(単位：千円)",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p67-full-page-a0-result0-r22",
+            "page": 67,
+            "observation_id": "p67:full-page:a0:result0:r22",
+            "observed_name": "∆113,000",
+            "corrected_name": "△113,000",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-ocr-1",
+          "origin_sha256": "d67dc081624ec55a742275f629937d7782c40f409e6bb7b3c932a71c665aad08",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              5,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "2d3da2174383ab2abc0e188bc852808832bd7eef966d52ce3b6f357aafb26116",
+          "bytes": 1689887
+        },
+        {
+          "id": "general-revenue-ocr-2",
+          "origin_sha256": "d67dc081624ec55a742275f629937d7782c40f409e6bb7b3c932a71c665aad08",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "819fc299e8abf81101b5b4433c1b2c9991ccb41cd632cd71b4be93404ed25822",
+          "bytes": 1132594
+        },
+        {
+          "id": "general-revenue-ocr-3",
+          "origin_sha256": "d67dc081624ec55a742275f629937d7782c40f409e6bb7b3c932a71c665aad08",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "fd2cf5f149100cfb0649a616ad46e705b0726e254f677abf399adf5e1a71fa30",
+          "bytes": 3019934
+        },
+        {
+          "id": "general-revenue-ocr-4",
+          "origin_sha256": "d67dc081624ec55a742275f629937d7782c40f409e6bb7b3c932a71c665aad08",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "84e6fc73a5ce1dca827b758b8e498cc94717025aca6df35f1f7afdc3a10a6fda",
+          "bytes": 3318901
+        },
+        {
+          "id": "general-revenue-ocr-5",
+          "origin_sha256": "d67dc081624ec55a742275f629937d7782c40f409e6bb7b3c932a71c665aad08",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "d5166b3ccccfcfcb3d3f456f22eefc156748e5c7b03b543ce628ba714a6c0f9f",
+          "bytes": 2330118
+        },
+        {
+          "id": "general-revenue-ocr-6",
+          "origin_sha256": "d67dc081624ec55a742275f629937d7782c40f409e6bb7b3c932a71c665aad08",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63,
+              64,
+              65
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "fa227e522acea7bac3b7093c07c344f88f7f30a14a4372b6854bbf4a1806e80a",
+          "bytes": 2134024
+        },
+        {
+          "id": "general-revenue-ocr-7",
+          "origin_sha256": "d67dc081624ec55a742275f629937d7782c40f409e6bb7b3c932a71c665aad08",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              66,
+              67
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c0456e4261d8e440b26acad7b1b9299b38557e83bcae75881191c4a4022a1d66",
+          "bytes": 404779
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "d67dc081624ec55a742275f629937d7782c40f409e6bb7b3c932a71c665aad08"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "nhi-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "paren_titles",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・調定見込額・収納率など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "金額": {
+                  "within": "節"
+                },
+                "節／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_numbers": true,
+            "spaced_digits": 1.3,
+            "codeless_column_items": true,
+            "one_row_header": true
+          }
+        },
+        "pages": [
+          [
+            186,
+            197
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "auto-p186-full-page-a0-result1-r0",
+            "page": 186,
+            "observation_id": "p186:full-page:a0:result1:r0",
+            "observed_name": "(单位：千円)",
+            "corrected_name": "(単位：千円)",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p187-full-page-a0-result1-r0",
+            "page": 187,
+            "observation_id": "p187:full-page:a0:result1:r0",
+            "observed_name": "(单位：千円)",
+            "corrected_name": "(単位：千円)",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p193-full-page-a0-result0-r1",
+            "page": 193,
+            "observation_id": "p193:full-page:a0:result0:r1",
+            "observed_name": "6繰越",
+            "corrected_name": "6繰越金",
+            "reason": "原典の画像では款の題は字の間を空けて「寄付金」「繰越金」と印字されている。Paddle は最後の「金」を読まなかった。"
+          },
+          {
+            "id": "auto-p196-full-page-a0-result0-r34",
+            "page": 196,
+            "observation_id": "p196:full-page:a0:result0:r34",
+            "observed_name": "∆4,777",
+            "corrected_name": "△4,777",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p196-full-page-a0-result0-r49",
+            "page": 196,
+            "observation_id": "p196:full-page:a0:result0:r49",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原典の画像では「入」と印字されている（雑入・収入・受入）。Paddle は「入」を「人」と読んだ。"
+          },
+          {
+            "id": "auto-p196-full-page-a0-result0-r52",
+            "page": 196,
+            "observation_id": "p196:full-page:a0:result0:r52",
+            "observed_name": "∆100",
+            "corrected_name": "△100",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p197-full-page-a0-result1-r0",
+            "page": 197,
+            "observation_id": "p197:full-page:a0:result1:r0",
+            "observed_name": "(单位：千円)",
+            "corrected_name": "(単位：千円)",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-revenue-ocr-1",
+          "origin_sha256": "d67dc081624ec55a742275f629937d7782c40f409e6bb7b3c932a71c665aad08",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              184,
+              186,
+              187,
+              188,
+              189,
+              190,
+              191,
+              192,
+              193,
+              194
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "de9e878800f8d057b85d33dee8b728ca946dc9bcdfedac7142b2ebab648001b6",
+          "bytes": 1309798
+        },
+        {
+          "id": "nhi-revenue-ocr-2",
+          "origin_sha256": "d67dc081624ec55a742275f629937d7782c40f409e6bb7b3c932a71c665aad08",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              195,
+              196,
+              197
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "4a7b067c858b04b129c211fc7fd9e361bb434cf719757f3253b8f2a53119325e",
+          "bytes": 479902
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-initial"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "d67dc081624ec55a742275f629937d7782c40f409e6bb7b3c932a71c665aad08"
+        }
+      ],
+      "options": {
+        "account": "介護保険会計",
+        "table_id": "kaigo-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "paren_titles",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・調定見込額・収納率など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "金額": {
+                  "within": "節"
+                },
+                "節／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_numbers": true,
+            "spaced_digits": 1.3,
+            "codeless_column_items": true,
+            "one_row_header": true
+          }
+        },
+        "pages": [
+          [
+            230,
+            242
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "auto-p230-full-page-a0-result1-r0",
+            "page": 230,
+            "observation_id": "p230:full-page:a0:result1:r0",
+            "observed_name": "(单位：千円)",
+            "corrected_name": "(単位：千円)",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p233-full-page-a0-result0-r19",
+            "page": 233,
+            "observation_id": "p233:full-page:a0:result0:r19",
+            "observed_name": "∆15,869",
+            "corrected_name": "△15,869",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p233-full-page-a0-result0-r25",
+            "page": 233,
+            "observation_id": "p233:full-page:a0:result0:r25",
+            "observed_name": "∆5,701",
+            "corrected_name": "△5,701",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p233-full-page-a0-result0-r31",
+            "page": 233,
+            "observation_id": "p233:full-page:a0:result0:r31",
+            "observed_name": "∆11,316",
+            "corrected_name": "△11,316",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p233-full-page-a0-result0-r38",
+            "page": 233,
+            "observation_id": "p233:full-page:a0:result0:r38",
+            "observed_name": "∆15,888",
+            "corrected_name": "△15,888",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p233-full-page-a0-result0-r51",
+            "page": 233,
+            "observation_id": "p233:full-page:a0:result0:r51",
+            "observed_name": "∆9,432",
+            "corrected_name": "△9,432",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p234-full-page-a0-result0-r18",
+            "page": 234,
+            "observation_id": "p234:full-page:a0:result0:r18",
+            "observed_name": "∆17,139",
+            "corrected_name": "△17,139",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p236-full-page-a0-result0-r13",
+            "page": 236,
+            "observation_id": "p236:full-page:a0:result0:r13",
+            "observed_name": "Δ7,934現年度分",
+            "corrected_name": "△7,934現年度分",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p236-full-page-a0-result0-r18",
+            "page": 236,
+            "observation_id": "p236:full-page:a0:result0:r18",
+            "observed_name": "∆2,851",
+            "corrected_name": "△2,851",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p236-full-page-a0-result0-r24",
+            "page": 236,
+            "observation_id": "p236:full-page:a0:result0:r24",
+            "observed_name": "∆10,785",
+            "corrected_name": "△10,785",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p238-full-page-a0-result0-r24",
+            "page": 238,
+            "observation_id": "p238:full-page:a0:result0:r24",
+            "observed_name": "∆7,934",
+            "corrected_name": "△7,934",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p238-full-page-a0-result0-r30",
+            "page": 238,
+            "observation_id": "p238:full-page:a0:result0:r30",
+            "observed_name": "∆2,851",
+            "corrected_name": "△2,851",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p238-full-page-a0-result0-r36",
+            "page": 238,
+            "observation_id": "p238:full-page:a0:result0:r36",
+            "observed_name": "∆11,629",
+            "corrected_name": "△11,629",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p240-full-page-a0-result0-r1",
+            "page": 240,
+            "observation_id": "p240:full-page:a0:result0:r1",
+            "observed_name": "8繰越",
+            "corrected_name": "8繰越金",
+            "reason": "原典の画像では款の題は字の間を空けて「寄付金」「繰越金」と印字されている。Paddle は最後の「金」を読まなかった。"
+          },
+          {
+            "id": "auto-p242-full-page-a0-result0-r36",
+            "page": 242,
+            "observation_id": "p242:full-page:a0:result0:r36",
+            "observed_name": "∆336",
+            "corrected_name": "△336",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "auto-p242-full-page-a0-result0-r46",
+            "page": 242,
+            "observation_id": "p242:full-page:a0:result0:r46",
+            "observed_name": "∆325",
+            "corrected_name": "△325",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-revenue-ocr-1",
+          "origin_sha256": "d67dc081624ec55a742275f629937d7782c40f409e6bb7b3c932a71c665aad08",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              228,
+              230,
+              231,
+              232,
+              233,
+              234,
+              235,
+              236,
+              237,
+              238
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "eb3214900bdafca861a1f464d79c478863b5a2ab582a6122e79d67274306e36f",
+          "bytes": 1407218
+        },
+        {
+          "id": "kaigo-revenue-ocr-2",
+          "origin_sha256": "d67dc081624ec55a742275f629937d7782c40f409e6bb7b3c932a71c665aad08",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              239,
+              240,
+              241,
+              242
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "de554896d67c5ca3925b82fd6f788c2bea3ab1258ab9c3b960d69984b2c94a68",
+          "bytes": 397919
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-initial"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "d67dc081624ec55a742275f629937d7782c40f409e6bb7b3c932a71c665aad08"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "kouki-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "paren_titles",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・調定見込額・収納率など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "金額": {
+                  "within": "節"
+                },
+                "節／区分": {
+                  "axis_header": "節"
+                }
+              },
+              "header": {
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_numbers": true,
+            "spaced_digits": 1.3,
+            "codeless_column_items": true,
+            "one_row_header": true
+          }
+        },
+        "pages": [
+          [
+            273,
+            281
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "auto-p275-full-page-a0-result1-r0",
+            "page": 275,
+            "observation_id": "p275:full-page:a0:result1:r0",
+            "observed_name": "(单位：千円)",
+            "corrected_name": "(単位：千円)",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p276-full-page-a0-result0-r1",
+            "page": 276,
+            "observation_id": "p276:full-page:a0:result0:r1",
+            "observed_name": "4繰越",
+            "corrected_name": "4繰越金",
+            "reason": "原典の画像では款の題は字の間を空けて「寄付金」「繰越金」と印字されている。Paddle は最後の「金」を読まなかった。"
+          },
+          {
+            "id": "auto-p281-full-page-a0-result0-r18",
+            "page": 281,
+            "observation_id": "p281:full-page:a0:result0:r18",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原典の画像では「入」と印字されている（雑入・収入・受入）。Paddle は「入」を「人」と読んだ。"
+          },
+          {
+            "id": "auto-p281-full-page-a0-result0-r24",
+            "page": 281,
+            "observation_id": "p281:full-page:a0:result0:r24",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原典の画像では「入」と印字されている（雑入・収入・受入）。Paddle は「入」を「人」と読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-revenue-ocr-1",
+          "origin_sha256": "d67dc081624ec55a742275f629937d7782c40f409e6bb7b3c932a71c665aad08",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              271,
+              273,
+              274,
+              275,
+              276,
+              277,
+              278,
+              279,
+              280,
+              281
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "4f86f40e0757839f2d32d94da6baff5ed3ea2f17179158a13758394395d3edfc",
+          "bytes": 970903
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-initial"
+        }
+      ]
+    }
+  ]
+}

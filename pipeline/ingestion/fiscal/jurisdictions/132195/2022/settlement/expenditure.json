@@ -1,0 +1,541 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132195",
+    "fiscal_year": 2022,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ef2f7dbe1c2643b5768c24da5fd5446c1260e7b7412cdbd6bcffa659df737be5"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "note_kinds": {
+                    "事故繰越": "事故繰越"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "komae-p73-i",
+            "page": 73,
+            "observation_id": "p73:full-page:a0:result0:r39",
+            "observed_name": "サービス費",
+            "corrected_name": "いサービス費",
+            "reason": "原典の画像で「障がいサービス費」と印字されている（1行目の末尾が「障がい」、2行目が「サービス費」）。Paddle は1行目の「い」を落とした。名称が続く2行目に「い」を戻す（2024年度と同じ）。"
+          },
+          {
+            "id": "komae-p92-ryo-22",
+            "page": 92,
+            "observation_id": "p92:full-page:a0:result0:r22",
+            "observed_name": "りよう",
+            "corrected_name": "りょう",
+            "reason": "原典の画像で「道路橋りょう費」と印字されている。Paddle は小さい「ょ」を「よ」と読んだ（2024年度と同じ）。"
+          },
+          {
+            "id": "komae-p92-ryo-28",
+            "page": 92,
+            "observation_id": "p92:full-page:a0:result0:r28",
+            "observed_name": "りよう",
+            "corrected_name": "りょう",
+            "reason": "原典の画像で「道路橋りょう総務費」と印字されている。Paddle は小さい「ょ」を「よ」と読んだ（2024年度と同じ）。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-ocr-1",
+          "origin_sha256": "ef2f7dbe1c2643b5768c24da5fd5446c1260e7b7412cdbd6bcffa659df737be5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "49cbcda630b4b13e68f9a11b6c294ba8a1ccc2e6c9915f45cdbf2b03b1bdbf6c",
+          "bytes": 2990009
+        },
+        {
+          "id": "general-ocr-2",
+          "origin_sha256": "ef2f7dbe1c2643b5768c24da5fd5446c1260e7b7412cdbd6bcffa659df737be5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70,
+              71,
+              72
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "a7400af2c46beb799368f54126d15cce2b1b94ad87148099df4b96a4d3340826",
+          "bytes": 2907516
+        },
+        {
+          "id": "general-ocr-3",
+          "origin_sha256": "ef2f7dbe1c2643b5768c24da5fd5446c1260e7b7412cdbd6bcffa659df737be5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              73,
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80,
+              81,
+              82
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "b5365ccc24b95a2cfa45bfd393dc5fc293f97d84df305d99c7a98c4cd62732dd",
+          "bytes": 3133218
+        },
+        {
+          "id": "general-ocr-4",
+          "origin_sha256": "ef2f7dbe1c2643b5768c24da5fd5446c1260e7b7412cdbd6bcffa659df737be5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              83,
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90,
+              91,
+              92
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "c3885fdbfdf70eda9920aa2685dce00f0c716c595a5e5c247cd69194ca9f5938",
+          "bytes": 2984163
+        },
+        {
+          "id": "general-ocr-5",
+          "origin_sha256": "ef2f7dbe1c2643b5768c24da5fd5446c1260e7b7412cdbd6bcffa659df737be5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              93,
+              94,
+              95,
+              96,
+              97,
+              98,
+              99,
+              100,
+              101,
+              102
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "61cb501a78b8a1fe195fa144b560a01f5d6a3859da6ebd1e5e94cf0d6b521405",
+          "bytes": 3059423
+        },
+        {
+          "id": "general-ocr-6",
+          "origin_sha256": "ef2f7dbe1c2643b5768c24da5fd5446c1260e7b7412cdbd6bcffa659df737be5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              103,
+              104,
+              105,
+              106,
+              107,
+              108,
+              109,
+              110,
+              111,
+              112
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "a242e37396a2c61c7df0ddbbd54730f0891f4e32969199b79e38b501f9b8305d",
+          "bytes": 3079896
+        },
+        {
+          "id": "general-ocr-7",
+          "origin_sha256": "ef2f7dbe1c2643b5768c24da5fd5446c1260e7b7412cdbd6bcffa659df737be5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              113,
+              114,
+              115,
+              116,
+              117,
+              118,
+              119,
+              120
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "9d41d548833edbf9e2bcf72bfc260cff89b4ca0a42369014bc7ed107cea61aec",
+          "bytes": 1857872
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ef2f7dbe1c2643b5768c24da5fd5446c1260e7b7412cdbd6bcffa659df737be5"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "nhi-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p130-ichijikin",
+            "page": 130,
+            "code": "1",
+            "observed_name": "出産育児時金",
+            "corrected_name": "出産育児一時金",
+            "reason": "原画の頁130は「出産育児一時金」（2行目は「一　時　金」と均等割付）。OCR が横1本の「一」を観測しなかった（2024年度と同じ）。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-ocr-1",
+          "origin_sha256": "ef2f7dbe1c2643b5768c24da5fd5446c1260e7b7412cdbd6bcffa659df737be5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              126,
+              127,
+              128,
+              129,
+              130,
+              131,
+              132,
+              133,
+              134,
+              135
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "e3d377cf9363653c5941d3418afe43be5f4e4b33385abe962c02faec2c43cf1c",
+          "bytes": 2811312
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ef2f7dbe1c2643b5768c24da5fd5446c1260e7b7412cdbd6bcffa659df737be5"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-ocr-1",
+          "origin_sha256": "ef2f7dbe1c2643b5768c24da5fd5446c1260e7b7412cdbd6bcffa659df737be5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              141,
+              142,
+              143,
+              144,
+              145
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "53709e234726a3d5bd9e52c77c4440bddab5b6bda0e7d014f5af943aae6368be",
+          "bytes": 1127442
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ef2f7dbe1c2643b5768c24da5fd5446c1260e7b7412cdbd6bcffa659df737be5"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p158-shohi",
+            "page": 158,
+            "code": "2",
+            "observed_name": "介護予防サービス等費諸",
+            "corrected_name": "介護予防サービス等諸費",
+            "reason": "原画の頁158は「介護予防サービス等諸費」（3行目は「諸　　費」と均等割付）。右端の「費」の枠が「諸」より上に取られ、行の中の順が入れ替わった（2024年度と同じ）。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-ocr-1",
+          "origin_sha256": "ef2f7dbe1c2643b5768c24da5fd5446c1260e7b7412cdbd6bcffa659df737be5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              157,
+              158,
+              159,
+              160,
+              161,
+              162,
+              163,
+              164
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "d932e1e5b5e0cb2481f517ca45dc45c7616e792d75d5dddd4fcb01be779f404c",
+          "bytes": 2211975
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "parking",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ef2f7dbe1c2643b5768c24da5fd5446c1260e7b7412cdbd6bcffa659df737be5"
+        }
+      ],
+      "options": {
+        "account": "駐車場事業特別会計",
+        "table_id": "parking-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "parking-ocr-1",
+          "origin_sha256": "ef2f7dbe1c2643b5768c24da5fd5446c1260e7b7412cdbd6bcffa659df737be5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              168,
+              169
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "3d55d98c3e8b66b83969cc736e119d856def454c34ac4203472f789d92e1606f",
+          "bytes": 331165
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "parking-expenditure-detail"
+        }
+      ]
+    }
+  ]
+}

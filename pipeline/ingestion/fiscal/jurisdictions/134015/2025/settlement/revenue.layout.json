@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "source_inconsistencies": [
+    {
+      "table_id": "general-revenue",
+      "page": 50,
+      "axis": "節",
+      "parent": {
+        "code": "3",
+        "name": "納付金"
+      },
+      "printed": 218090,
+      "children_sum": 264730,
+      "difference": 46640,
+      "basis": "項「納付金」の収入未済額の印字値 218,090 円に対し、節「給食費納付金」の収入未済額は 264,730 円と印字される。節の値は備考の「※還付未済額 46,640 円」を含み、項は含まない（項の値は調定額 − 収入済額と一致する）。印字値は書き換えない。"
+    }
+  ]
+}

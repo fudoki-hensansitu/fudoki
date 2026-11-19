@@ -911,6 +911,548 @@
           "table_id": "general-initial-3"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "127e734715dee08d174959f05cfc9bc15937f3bdf99fc50e29e0b684d6923a5c"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-initial",
+        "pages": [
+          [
+            10,
+            11
+          ],
+          [
+            22,
+            43
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度予算額の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／国庫支出金都支出金地方債その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position"
+              },
+              "説明": {
+                "pattern": "position"
+              }
+            }
+          },
+          "quirks": {
+            "department_heading_slack": true,
+            "spread_columns": true,
+            "title_depths": true,
+            "titles_on_one_line": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-initial-ocr-1",
+          "origin_sha256": "127e734715dee08d174959f05cfc9bc15937f3bdf99fc50e29e0b684d6923a5c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              10,
+              11,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "8594708136d023fecd36d2df1d7a885aa2cb7cdecb00ca8d000bb04984517b1c",
+          "bytes": 1729470
+        },
+        {
+          "id": "national-health-insurance-initial-ocr-2",
+          "origin_sha256": "127e734715dee08d174959f05cfc9bc15937f3bdf99fc50e29e0b684d6923a5c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "16282c59ef75c281547d930c71cabc82a6fcfe0ccc599f2b9f2022ad78e2d8e7",
+          "bytes": 1797877
+        },
+        {
+          "id": "national-health-insurance-initial-ocr-3",
+          "origin_sha256": "127e734715dee08d174959f05cfc9bc15937f3bdf99fc50e29e0b684d6923a5c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              40,
+              41,
+              42,
+              43
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "fdbda332ff1fcce8fd7f3f9e30abe2ae2f8415bdda3518742769d1ede62d24e3",
+          "bytes": 415799
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "fbb4bb59fc9aa7d4edc9ffa2ab76216bb0b5704c5dc504c6c5955dec9992b69d"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "pages": [
+          [
+            8,
+            9
+          ],
+          [
+            14,
+            21
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度予算額の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／国庫支出金都支出金地方債その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position"
+              },
+              "説明": {
+                "pattern": "position"
+              }
+            }
+          },
+          "quirks": {
+            "department_heading_slack": true,
+            "spread_columns": true,
+            "title_depths": true,
+            "titles_on_one_line": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-initial-ocr-1",
+          "origin_sha256": "fbb4bb59fc9aa7d4edc9ffa2ab76216bb0b5704c5dc504c6c5955dec9992b69d",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              8,
+              9,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "bf7f685c59ffb362e71a95bf8b46a893097cbdea14cdf341fc5e42f362a052a6",
+          "bytes": 1536989
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "3010be8f42eb6dc58f89ab180e021438385a0e63536f1dcc40a5e521ed289d15"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-initial",
+        "pages": [
+          [
+            10,
+            11
+          ],
+          [
+            20,
+            41
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度予算額の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／国庫支出金都支出金地方債その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position"
+              },
+              "説明": {
+                "pattern": "position"
+              }
+            }
+          },
+          "quirks": {
+            "department_heading_slack": true,
+            "spread_columns": true,
+            "title_depths": true,
+            "titles_on_one_line": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-initial-ocr-1",
+          "origin_sha256": "3010be8f42eb6dc58f89ab180e021438385a0e63536f1dcc40a5e521ed289d15",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              10,
+              11,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "bab941ebcdffa4d95b722b0bc549eb717d168f214c65c8b5885e9cff62956692",
+          "bytes": 1651143
+        },
+        {
+          "id": "long-term-care-initial-ocr-2",
+          "origin_sha256": "3010be8f42eb6dc58f89ab180e021438385a0e63536f1dcc40a5e521ed289d15",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "188b00bb2fca25c4f3320627e1972288a0a965f93a8e7f1d23d8cdf29e5674d9",
+          "bytes": 2039963
+        },
+        {
+          "id": "long-term-care-initial-ocr-3",
+          "origin_sha256": "3010be8f42eb6dc58f89ab180e021438385a0e63536f1dcc40a5e521ed289d15",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              38,
+              39,
+              40,
+              41
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "8c68ae4f4d6ce35211810937079efa72f22f77cbf74fd7b264652e209eeb7c3b",
+          "bytes": 424700
+        }
+      ]
     }
   ]
 }

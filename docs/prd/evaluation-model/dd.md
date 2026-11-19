@@ -82,7 +82,7 @@
 
 機械でつながらないものは、上書き用の seed（`evaluation_sheet_link.csv`）で直す。
 
-- 鍵は (`jurisdiction_code`, `fiscal_year`, `origin_id`, `page`, `position`)。`project_id` は前の年度を取り込むと変わる（ADR 0046）ので、鍵にも値にも使わない。
+- 鍵は (`jurisdiction_code`, `fiscal_year`, `origin_id`, `page`, `position`)。`project_id` は取り込みを直すと変わりうる（ADR 0046・0052）ので、鍵にも値にも使わない。
 - 値は内訳の `detail_id`（複数なら行を分ける）と `method`。
 
 名前の近さで当てる方式（施策のつなぎの Dice 係数と Jev）は、この PR では使わない。一致で当たらないものの量を測ってから決める。

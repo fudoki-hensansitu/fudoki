@@ -137,6 +137,312 @@
           "table_id": "sewer-expenditure-detail"
         }
       ]
+    },
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5f66f8df12e13d234d7bcc20cd0792e38b6c74b7dbf78e7ef2e0ce3ea1f6f330"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "令和5年度／決算額": {
+                  "heading": "前年度決算額"
+                },
+                "令和6年度／構成比": {
+                  "kind": "ignore"
+                },
+                "令和5年度／構成比": {
+                  "kind": "ignore"
+                },
+                "対前年度比較／増減率": {
+                  "kind": "ignore"
+                },
+                "区分": {
+                  "heading": "款"
+                },
+                "対前年度比較／増減額": {
+                  "heading": "比較"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "kokuho",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5f66f8df12e13d234d7bcc20cd0792e38b6c74b7dbf78e7ef2e0ce3ea1f6f330"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "kokuho-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "令和5年度／決算額": {
+                  "heading": "前年度決算額"
+                },
+                "令和6年度／構成比": {
+                  "kind": "ignore"
+                },
+                "令和5年度／構成比": {
+                  "kind": "ignore"
+                },
+                "対前年度比較／増減率": {
+                  "kind": "ignore"
+                },
+                "区分": {
+                  "heading": "款"
+                },
+                "対前年度比較／増減額": {
+                  "heading": "比較"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p28-kan2",
+            "page": 28,
+            "code": "2",
+            "observed_name": "保険給付費国民健康保険",
+            "corrected_name": "保険給付費",
+            "reason": "原画の物理28頁 款2 は「保険給付費」。款3 の名称「国民健康保険事業費納付金」が2行に折り返して印字され、1行目の「国民健康保険」が款2 の名称に結ばれた。"
+          },
+          {
+            "id": "p28-kan3",
+            "page": 28,
+            "code": "3",
+            "observed_name": "事業費納付金",
+            "corrected_name": "国民健康保険事業費納付金",
+            "reason": "原画の物理28頁 款3 は「国民健康保険事業費納付金」（2行に折り返し）。1行目の「国民健康保険」が款2 の名称に結ばれ、2行目だけが残った。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5f66f8df12e13d234d7bcc20cd0792e38b6c74b7dbf78e7ef2e0ce3ea1f6f330"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "令和5年度／決算額": {
+                  "heading": "前年度決算額"
+                },
+                "令和6年度／構成比": {
+                  "kind": "ignore"
+                },
+                "令和5年度／構成比": {
+                  "kind": "ignore"
+                },
+                "対前年度比較／増減率": {
+                  "kind": "ignore"
+                },
+                "区分": {
+                  "heading": "款"
+                },
+                "対前年度比較／増減額": {
+                  "heading": "比較"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p31-kan2",
+            "page": 31,
+            "code": "2",
+            "observed_name": "保険給付費財政安定化基金",
+            "corrected_name": "保険給付費",
+            "reason": "原画の物理31頁 款2 は「保険給付費」。款3 の名称「財政安定化基金拠出金」が2行に折り返して印字され、1行目の「財政安定化基金」が款2 の名称に結ばれた。"
+          },
+          {
+            "id": "p31-kan3",
+            "page": 31,
+            "code": "3",
+            "observed_name": "拠出金",
+            "corrected_name": "財政安定化基金拠出金",
+            "reason": "原画の物理31頁 款3 は「財政安定化基金拠出金」（2行に折り返し）。1行目の「財政安定化基金」が款2 の名称に結ばれ、2行目だけが残った。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "toshikaku",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5f66f8df12e13d234d7bcc20cd0792e38b6c74b7dbf78e7ef2e0ce3ea1f6f330"
+        }
+      ],
+      "options": {
+        "account": "都市核地区土地区画整理事業特別会計",
+        "table_id": "toshikaku-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "令和5年度／決算額": {
+                  "heading": "前年度決算額"
+                },
+                "令和6年度／構成比": {
+                  "kind": "ignore"
+                },
+                "令和5年度／構成比": {
+                  "kind": "ignore"
+                },
+                "対前年度比較／増減率": {
+                  "kind": "ignore"
+                },
+                "区分": {
+                  "heading": "款"
+                },
+                "対前年度比較／増減額": {
+                  "heading": "比較"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "toshikaku-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5f66f8df12e13d234d7bcc20cd0792e38b6c74b7dbf78e7ef2e0ce3ea1f6f330"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "令和5年度／決算額": {
+                  "heading": "前年度決算額"
+                },
+                "令和6年度／構成比": {
+                  "kind": "ignore"
+                },
+                "令和5年度／構成比": {
+                  "kind": "ignore"
+                },
+                "対前年度比較／増減率": {
+                  "kind": "ignore"
+                },
+                "区分": {
+                  "heading": "款"
+                },
+                "対前年度比較／増減額": {
+                  "heading": "比較"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-expenditure"
+        }
+      ]
     }
   ]
 }

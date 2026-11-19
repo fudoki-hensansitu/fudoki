@@ -308,6 +308,16 @@
                       "end": 669
                     }
                   ]
+                },
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 12,
+                      "end": 77
+                    }
+                  ]
                 }
               ]
             }

@@ -188,8 +188,15 @@ def check(built, document_kind: str, account: str | None = None, partial: bool =
             subtotals[parent['node_key']] = subtotals.get(parent['node_key'], 0) + value
             node, parent = parent, subject.get(parent['parent_node_key'])
         tops.add(node['node_key'])
+    # A 計 that equals the amount a 款・項・目 row prints itself closes that row's section (稲城 132250・羽村 132276's
+    # 特別会計予算書 print a 計 under each 款's or 項's 説明), not the account.
+    own = {number(a['amount_text']) for a in built.amounts if a['node_key'] in subject
+           and amount_phase(dictionary_header(a['header_path'], document_kind), document_kind, '科目', '款') == phase}
     if len(units) <= 1 and len(tops) > 1:
-        printed = [n for n in printed if '合計' in (n.get('label') or '') or number(n['text']) not in subtotals.values()]
+        printed = [n for n in printed if '合計' in (n.get('label') or '')
+                   or number(n['text']) not in {*subtotals.values(), *own}]
+        # A 計 of nothing (the 計 of a 廃項 under a 款 that still has others, 板橋区 R8 東武東上線の歳入) totals no 款.
+        printed = [n for n in printed if '合計' in (n.get('label') or '') or number(n['text']) != 0 or not raw_sum]
     if printed:
         # The grand total: a row named 合計 (歳出合計) if any, else the largest printed total
         # (other 計 rows are subtotals).

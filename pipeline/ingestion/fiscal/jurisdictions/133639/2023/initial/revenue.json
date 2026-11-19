@@ -1,0 +1,36 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "133639",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b3f530ac364c84581a4bd2dd8cd405c6bc15a0407b490604a042536b311f0c3a"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "reading": {
+            "pattern": "paired_summary",
+            "profile": "fiscal/jurisdictions/133639/layouts/revenue_initial_2023.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    }
+  ]
+}

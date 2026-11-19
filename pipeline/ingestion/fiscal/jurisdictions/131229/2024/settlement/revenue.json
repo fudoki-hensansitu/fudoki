@@ -1,0 +1,323 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131229",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d2b8b24884196ff8408d89dc84b77f8e1d682d8abdcc50af72499f5d25d8a45b"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は議決の番号や還付未済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現／計": {
+                  "heading": "予算現額計"
+                }
+              },
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d2b8b24884196ff8408d89dc84b77f8e1d682d8abdcc50af72499f5d25d8a45b"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は議決の番号や還付未済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現／計": {
+                  "heading": "予算現額計"
+                }
+              },
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d2b8b24884196ff8408d89dc84b77f8e1d682d8abdcc50af72499f5d25d8a45b"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業特別会計",
+        "table_id": "elderly-medical-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は議決の番号や還付未済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現／計": {
+                  "heading": "予算現額計"
+                }
+              },
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-revenue"
+        }
+      ]
+    },
+    {
+      "id": "care-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d2b8b24884196ff8408d89dc84b77f8e1d682d8abdcc50af72499f5d25d8a45b"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "care-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は議決の番号や還付未済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現／計": {
+                  "heading": "予算現額計"
+                }
+              },
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-revenue"
+        }
+      ]
+    },
+    {
+      "id": "land-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d2b8b24884196ff8408d89dc84b77f8e1d682d8abdcc50af72499f5d25d8a45b"
+        }
+      ],
+      "options": {
+        "account": "用地特別会計",
+        "table_id": "land-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は議決の番号や還付未済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現／計": {
+                  "heading": "予算現額計"
+                }
+              },
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-revenue"
+        }
+      ]
+    },
+    {
+      "id": "parking-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d2b8b24884196ff8408d89dc84b77f8e1d682d8abdcc50af72499f5d25d8a45b"
+        }
+      ],
+      "options": {
+        "account": "駐車場事業特別会計",
+        "table_id": "parking-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は議決の番号や還付未済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現／計": {
+                  "heading": "予算現額計"
+                }
+              },
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "parking-revenue"
+        }
+      ]
+    }
+  ]
+}

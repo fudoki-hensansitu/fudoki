@@ -515,6 +515,16 @@
               "scope": [
                 {
                   "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 23,
+                      "end": 52
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -731,6 +741,16 @@
               "scope": [
                 {
                   "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 17,
+                      "end": 41
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -786,6 +806,16 @@
               "format": "pdf",
               "pdf_type": "scan",
               "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 14,
+                      "end": 47
+                    }
+                  ]
+                },
                 {
                   "account": "一般会計",
                   "direction": "expenditure",
@@ -900,6 +930,16 @@
               "format": "pdf",
               "pdf_type": "scan",
               "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 23,
+                      "end": 52
+                    }
+                  ]
+                },
                 {
                   "account": "一般会計",
                   "direction": "expenditure",

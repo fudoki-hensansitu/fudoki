@@ -1,0 +1,184 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "133035",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "cd62b48eb5d8384202845f95438e345de8a87494bbe72987515dce66d265a875"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-revenue-ocr-1",
+          "origin_sha256": "cd62b48eb5d8384202845f95438e345de8a87494bbe72987515dce66d265a875",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "89a450a21718dfc21dd08d5faa2fa6b273d08ab0e72a0b28c03ac7b968bf8a66",
+          "bytes": 1976963
+        },
+        {
+          "id": "general-initial-revenue-ocr-2",
+          "origin_sha256": "cd62b48eb5d8384202845f95438e345de8a87494bbe72987515dce66d265a875",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e1673a97094bc1519017a6897615c3b41bf96783d76460f7b09e52cd45216760",
+          "bytes": 2416314
+        },
+        {
+          "id": "general-initial-revenue-ocr-3",
+          "origin_sha256": "cd62b48eb5d8384202845f95438e345de8a87494bbe72987515dce66d265a875",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "825f464f0c925799f26a8e9fa19da89fab7dacbc900fb72d5b8fa7e0ce36e798",
+          "bytes": 2400419
+        },
+        {
+          "id": "general-initial-revenue-ocr-4",
+          "origin_sha256": "cd62b48eb5d8384202845f95438e345de8a87494bbe72987515dce66d265a875",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              44,
+              45,
+              46,
+              47
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a4713d03825f8c6c973fd76299132da0c7fa143a476263a661db102effffb476",
+          "bytes": 711806
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額",
+                  "kind": "amount"
+                },
+                "前年度": {
+                  "heading": "前年度予算額",
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "目(事業)": {
+                  "heading": "目"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "titles_on_one_line": true,
+            "rule_ink": true,
+            "glued_titles": true,
+            "broken_column_rules": true,
+            "header_characters": true
+          }
+        },
+        "pages": [
+          [
+            14,
+            47
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    }
+  ]
+}

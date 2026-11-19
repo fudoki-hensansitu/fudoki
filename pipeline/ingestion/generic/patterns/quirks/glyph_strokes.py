@@ -7,7 +7,7 @@ from ingestion.generic.observe import Page
 SCOPE = 'document'
 OPTIONS = {'const': True}
 
-LONGEST = 5.  # pt: the strokes are 3–4pt; the shortest rule of a table spans a cell
+LONGEST = 5.5  # pt: the strokes are 3–4pt (檜原村 R6 国保事業勘定: 5.04pt through `賦` of `賦課徴収費`); the shortest rule of a table spans a cell
 SLACK = 1.  # pt: a stroke may reach just past the word's box
 
 

@@ -1,0 +1,2680 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132080",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 230
+              },
+              "header": {
+                "staircase": "款項目名"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "setsu_ends"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "plain_names": [
+                    "補充用消耗品費"
+                  ],
+                  "note_kinds": {
+                    "体育施設費・工事請負費から報償費へ": "流用"
+                  },
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "dotted_column_rules": true,
+            "rule_ink": true,
+            "scaled_spread_pages": true,
+            "unread_marks": true,
+            "bracketed_repeats": true
+          }
+        },
+        "pages": [
+          [
+            77,
+            424
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "p422-fuyou",
+            "pages": [
+              422
+            ],
+            "box": [
+              270.0,
+              58.0,
+              336.0,
+              112.0
+            ],
+            "text": "不用額",
+            "reason": "頁422の見出し「不用額」。頁を縦に分けて読んだ継ぎ目にかかり、OCR が読み落とした。描画した頁で確かめた。"
+          },
+          {
+            "id": "p96-keizoku-teiji",
+            "pages": [
+              96
+            ],
+            "box": [
+              116.0,
+              74,
+              156.0,
+              107
+            ],
+            "text": "継続費逓次繰越",
+            "reason": "翌年度繰越額の下の升「継続費逓次繰越」。3行に分けた小さな字を OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p116-keizoku-teiji",
+            "pages": [
+              116
+            ],
+            "box": [
+              118.8,
+              74,
+              158.8,
+              107
+            ],
+            "text": "継続費逓次繰越",
+            "reason": "翌年度繰越額の下の升「継続費逓次繰越」。3行に分けた小さな字を OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p134-keizoku-teiji",
+            "pages": [
+              134
+            ],
+            "box": [
+              121.5,
+              74,
+              161.5,
+              107
+            ],
+            "text": "継続費逓次繰越",
+            "reason": "翌年度繰越額の下の升「継続費逓次繰越」。3行に分けた小さな字を OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p138-keizoku-teiji",
+            "pages": [
+              138
+            ],
+            "box": [
+              119.6,
+              74,
+              159.6,
+              107
+            ],
+            "text": "継続費逓次繰越",
+            "reason": "翌年度繰越額の下の升「継続費逓次繰越」。3行に分けた小さな字を OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p146-keizoku-teiji",
+            "pages": [
+              146
+            ],
+            "box": [
+              118.1,
+              74,
+              158.1,
+              107
+            ],
+            "text": "継続費逓次繰越",
+            "reason": "翌年度繰越額の下の升「継続費逓次繰越」。3行に分けた小さな字を OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p148-keizoku-teiji",
+            "pages": [
+              148
+            ],
+            "box": [
+              121.5,
+              74,
+              161.5,
+              107
+            ],
+            "text": "継続費逓次繰越",
+            "reason": "翌年度繰越額の下の升「継続費逓次繰越」。3行に分けた小さな字を OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p170-keizoku-teiji",
+            "pages": [
+              170
+            ],
+            "box": [
+              119.8,
+              74,
+              159.8,
+              107
+            ],
+            "text": "継続費逓次繰越",
+            "reason": "翌年度繰越額の下の升「継続費逓次繰越」。3行に分けた小さな字を OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p172-kurikoshi-meikyo",
+            "pages": [
+              172
+            ],
+            "box": [
+              163.2,
+              74,
+              215.2,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p186-kurikoshi-meikyo",
+            "pages": [
+              186
+            ],
+            "box": [
+              163.0,
+              74,
+              215.0,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p240-kurikoshi-meikyo",
+            "pages": [
+              240
+            ],
+            "box": [
+              167.3,
+              74,
+              219.3,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p246-keizoku-teiji",
+            "pages": [
+              246
+            ],
+            "box": [
+              117.9,
+              74,
+              157.9,
+              107
+            ],
+            "text": "継続費逓次繰越",
+            "reason": "翌年度繰越額の下の升「継続費逓次繰越」。3行に分けた小さな字を OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p270-keizoku-teiji",
+            "pages": [
+              270
+            ],
+            "box": [
+              117.9,
+              74,
+              157.9,
+              107
+            ],
+            "text": "継続費逓次繰越",
+            "reason": "翌年度繰越額の下の升「継続費逓次繰越」。3行に分けた小さな字を OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p276-kurikoshi-meikyo",
+            "pages": [
+              276
+            ],
+            "box": [
+              167.1,
+              74,
+              219.1,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p286-keizoku-teiji",
+            "pages": [
+              286
+            ],
+            "box": [
+              119.3,
+              74,
+              159.3,
+              107
+            ],
+            "text": "継続費逓次繰越",
+            "reason": "翌年度繰越額の下の升「継続費逓次繰越」。3行に分けた小さな字を OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p302-kurikoshi-meikyo",
+            "pages": [
+              302
+            ],
+            "box": [
+              167.3,
+              74,
+              219.3,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p306-kurikoshi-meikyo",
+            "pages": [
+              306
+            ],
+            "box": [
+              169.7,
+              74,
+              221.7,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p316-kurikoshi-meikyo",
+            "pages": [
+              316
+            ],
+            "box": [
+              170.2,
+              74,
+              222.2,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p318-kurikoshi-meikyo",
+            "pages": [
+              318
+            ],
+            "box": [
+              169.7,
+              74,
+              221.7,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p322-kurikoshi-meikyo",
+            "pages": [
+              322
+            ],
+            "box": [
+              170.7,
+              74,
+              222.7,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p324-kurikoshi-meikyo",
+            "pages": [
+              324
+            ],
+            "box": [
+              171.6,
+              74,
+              223.6,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p326-kurikoshi-meikyo",
+            "pages": [
+              326
+            ],
+            "box": [
+              169.5,
+              74,
+              221.5,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p330-kurikoshi-meikyo",
+            "pages": [
+              330
+            ],
+            "box": [
+              171.6,
+              74,
+              223.6,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p332-kurikoshi-meikyo",
+            "pages": [
+              332
+            ],
+            "box": [
+              172.1,
+              74,
+              224.1,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p340-kurikoshi-meikyo",
+            "pages": [
+              340
+            ],
+            "box": [
+              169.9,
+              74,
+              221.9,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p346-kurikoshi-meikyo",
+            "pages": [
+              346
+            ],
+            "box": [
+              169.2,
+              74,
+              221.2,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p358-kurikoshi-meikyo",
+            "pages": [
+              358
+            ],
+            "box": [
+              168.3,
+              74,
+              220.3,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p362-kurikoshi-meikyo",
+            "pages": [
+              362
+            ],
+            "box": [
+              166.4,
+              74,
+              218.4,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p364-kurikoshi-meikyo",
+            "pages": [
+              364
+            ],
+            "box": [
+              167.3,
+              74,
+              219.3,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p368-kurikoshi-meikyo",
+            "pages": [
+              368
+            ],
+            "box": [
+              170.9,
+              74,
+              222.9,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p370-kurikoshi-meikyo",
+            "pages": [
+              370
+            ],
+            "box": [
+              168.3,
+              74,
+              220.3,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p374-kurikoshi-meikyo",
+            "pages": [
+              374
+            ],
+            "box": [
+              170.2,
+              74,
+              222.2,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p378-kurikoshi-meikyo",
+            "pages": [
+              378
+            ],
+            "box": [
+              169.0,
+              74,
+              221.0,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p380-kurikoshi-meikyo",
+            "pages": [
+              380
+            ],
+            "box": [
+              168.3,
+              74,
+              220.3,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p382-kurikoshi-meikyo",
+            "pages": [
+              382
+            ],
+            "box": [
+              168.8,
+              74,
+              220.8,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p384-kurikoshi-meikyo",
+            "pages": [
+              384
+            ],
+            "box": [
+              170.2,
+              74,
+              222.2,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p386-kurikoshi-meikyo",
+            "pages": [
+              386
+            ],
+            "box": [
+              168.3,
+              74,
+              220.3,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p390-kurikoshi-meikyo",
+            "pages": [
+              390
+            ],
+            "box": [
+              167.3,
+              74,
+              219.3,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p398-kurikoshi-meikyo",
+            "pages": [
+              398
+            ],
+            "box": [
+              171.1,
+              74,
+              223.1,
+              107
+            ],
+            "text": "繰越明許費",
+            "reason": "翌年度繰越額の下の升「繰越明許費」。字の間が広く OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p402-keizoku-teiji",
+            "pages": [
+              402
+            ],
+            "box": [
+              123.4,
+              74,
+              163.4,
+              107
+            ],
+            "text": "継続費逓次繰越",
+            "reason": "翌年度繰越額の下の升「継続費逓次繰越」。3行に分けた小さな字を OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          },
+          {
+            "id": "p418-keizoku-teiji",
+            "pages": [
+              418
+            ],
+            "box": [
+              122.2,
+              74,
+              162.2,
+              107
+            ],
+            "text": "継続費逓次繰越",
+            "reason": "翌年度繰越額の下の升「継続費逓次繰越」。3行に分けた小さな字を OCR が読み切らない（升は「翌年度繰越額」の読みの左端から決めた）。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "p201-joined",
+            "page": 201,
+            "observation_id": "p201:full-page:a0:result0:r55",
+            "observed": "260,053,000-51,719,00012,396,317,000",
+            "reason": "頁201の補正予算額・予備費支出及び流用増減・計の3つの金額を OCR が1行に続けて読み、流用増減の末尾の 0 が計の頭について欄の罫線で切れない。3つは p201-amounts で読み直す。"
+          },
+          {
+            "id": "p207-joined",
+            "page": 207,
+            "observation_id": "p207:full-page:a0:result0:r45",
+            "observed": "28,462, 000-18, 408, 000",
+            "reason": "頁207の目「20 児童館費」の継続費及び繰越事業費繰越額と予備費支出及び流用増減を OCR が1行に続けて読み、欄の罫線で切れない。2つは p207-kurikoshi・p207-ryuyo で読み直す。"
+          },
+          {
+            "id": "p315-ink-code",
+            "page": 315,
+            "observation_id": "p315:ink-1:a1:result0:r0",
+            "observed": "6:土地1进",
+            "reason": "墨の読み直しが目「6 土地区画整理事業費」の行を「6:土地1进」と読み、名前の「区画整」を番号 1 と別の字にした。番号と名前の1行目は p315-code で読む。"
+          },
+          {
+            "id": "p301-ink-code",
+            "page": 301,
+            "observation_id": "p301:ink-1:a1:result0:r0",
+            "observed": "5元非木よ",
+            "reason": "墨の読み直しが目「5 道路橋りよう総務費」の1行目を「5元非木よ」と読んだ。番号と名前の1行目は p301-code で読む。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p201-hosei",
+            "page": 201,
+            "boxes": [
+              [
+                262.0,
+                625.3,
+                294.5,
+                635.2
+              ]
+            ],
+            "amount": "260,053,000",
+            "reason": "p201-joined で使わない行のうち補正予算額。原画で 260,053,000。"
+          },
+          {
+            "id": "p201-ryuyo",
+            "page": 201,
+            "boxes": [
+              [
+                295.5,
+                625.3,
+                357.8,
+                635.2
+              ]
+            ],
+            "amount": "△51,719,000",
+            "reason": "p201-joined で使わない行のうち予備費支出及び流用増減。原画で -51,719,000（宣言の書式で △ と書く）。"
+          },
+          {
+            "id": "p201-kei",
+            "page": 201,
+            "boxes": [
+              [
+                359.8,
+                625.3,
+                420.8,
+                635.2
+              ]
+            ],
+            "amount": "12,396,317,000",
+            "reason": "p201-joined で使わない行のうち計。原画で 12,396,317,000。"
+          },
+          {
+            "id": "p207-kurikoshi",
+            "page": 207,
+            "boxes": [
+              [
+                260.0,
+                730.2,
+                309.5,
+                740.0
+              ]
+            ],
+            "amount": "28,462,000",
+            "reason": "p207-joined で使わない行のうち継続費及び繰越事業費繰越額。原画で 28,462,000。"
+          },
+          {
+            "id": "p207-ryuyo",
+            "page": 207,
+            "boxes": [
+              [
+                312.0,
+                730.2,
+                361.5,
+                740.0
+              ]
+            ],
+            "amount": "△18,408,000",
+            "reason": "p207-joined で使わない行のうち予備費支出及び流用増減。原画で -18,408,000（宣言の書式で △ と書く）。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p81-ippan-kanri",
+            "page": 81,
+            "observation_id": "p81:ink-2:a2:result0:r0",
+            "observed_name": "5一般行理費",
+            "corrected_name": "5一般管理費",
+            "reason": "原画の頁81は目「5 一般管理費」。墨の読み直しが「管」を「行」と読んだ。"
+          },
+          {
+            "id": "p151-shakai-fukushi-somu",
+            "page": 151,
+            "observation_id": "p151:ink-2:a2:result0:r0",
+            "observed_name": "5福祉総",
+            "corrected_name": "5社会福祉総",
+            "reason": "原画の頁151は目「5 社会福祉総務費」（2行に折り返す）。墨の読み直しが「社会」を読み落とした。"
+          },
+          {
+            "id": "p139-community-shisetsu",
+            "page": 139,
+            "observation_id": "p139:full-page:a0:result0:r43",
+            "observed_name": "イ施設費",
+            "corrected_name": "ィ施設費",
+            "reason": "原画の頁139は目「15 コミュニティ施設費」（「コミュニテ」で折り返す）。OCR が小さい「ィ」を「イ」と読んだ。"
+          },
+          {
+            "id": "p141-community-suishin",
+            "page": 141,
+            "observation_id": "p141:full-page:a0:result0:r33",
+            "observed_name": "イ推進費",
+            "corrected_name": "ィ推進費",
+            "reason": "原画の頁141は目「18 コミュニティ推進費」（「コミュニテ」で折り返す）。OCR が小さい「ィ」を「イ」と読んだ。"
+          },
+          {
+            "id": "p113-zeimu-somu",
+            "page": 113,
+            "observation_id": "p113:full-page:a0:result0:r33",
+            "observed_name": "5稅務総務費",
+            "corrected_name": "5税務総務費",
+            "reason": "原画の頁113は目「5 税務総務費」。OCR が「税」を異体字「稅」と読んだ。"
+          },
+          {
+            "id": "p245-hoken-eisei-somu",
+            "page": 245,
+            "observation_id": "p245:ink-2:a2:result0:r0",
+            "observed_name": "5保个衛生総",
+            "corrected_name": "5保健衛生総",
+            "reason": "原画の頁245は目「5 保健衛生総務費」。墨の読み直しが「健」を「个」と読んだ。"
+          },
+          {
+            "id": "p279-nogyo-iinkai-1",
+            "page": 279,
+            "observation_id": "p279:ink-2:a2:result0:r0",
+            "observed_name": "5）会",
+            "corrected_name": "5農会",
+            "reason": "原画の頁279は目「5 農業委員会費」。墨の読み直しが1行目「農業委員会」を「）会」と読んだ。"
+          },
+          {
+            "id": "p279-nogyo-iinkai-2",
+            "page": 279,
+            "observation_id": "p279:ink-2:a2:result0:r0",
+            "observed_name": "5農会",
+            "corrected_name": "5農業委員会",
+            "reason": "原画の頁279は目「5 農業委員会費」。墨の読み直しが1行目「農業委員会」を「）会」と読んだ。"
+          },
+          {
+            "id": "p285-shoko-somu",
+            "page": 285,
+            "observation_id": "p285:ink-2:a2:result0:r0",
+            "observed_name": "5商工総務",
+            "corrected_name": "5商工総務費",
+            "reason": "原画の頁285は目「5 商工総務費」。墨の読み直しが末尾の「費」を落とした。"
+          },
+          {
+            "id": "p325-jutaku-kanri-1",
+            "page": 325,
+            "observation_id": "p325:ink-0:a0:result0:r0",
+            "observed_name": "5住宅理费",
+            "corrected_name": "5住宅理費",
+            "reason": "原画の頁325は目「5 住宅管理費」。墨の読み直しが「管」を落とし、「費」を簡体字で読んだ。"
+          },
+          {
+            "id": "p325-jutaku-kanri-2",
+            "page": 325,
+            "observation_id": "p325:ink-0:a0:result0:r0",
+            "observed_name": "5住宅理費",
+            "corrected_name": "5住宅管理費",
+            "reason": "原画の頁325は目「5 住宅管理費」。墨の読み直しが「管」を落とし、「費」を簡体字で読んだ。"
+          },
+          {
+            "id": "p339-kyoiku-iinkai-1",
+            "page": 339,
+            "observation_id": "p339:ink-1:a1:result0:r0",
+            "observed_name": "5南委会",
+            "corrected_name": "5教委会",
+            "reason": "原画の頁339は目「5 教育委員会費」。墨の読み直しが1行目「教育委員会」を「南委会」と読んだ。"
+          },
+          {
+            "id": "p339-kyoiku-iinkai-2",
+            "page": 339,
+            "observation_id": "p339:ink-1:a1:result0:r0",
+            "observed_name": "5教委会",
+            "corrected_name": "5教育委員会",
+            "reason": "原画の頁339は目「5 教育委員会費」。墨の読み直しが1行目「教育委員会」を「南委会」と読んだ。"
+          },
+          {
+            "id": "p423-yobihi",
+            "page": 423,
+            "observation_id": "p423:ink-2:a2:result0:r0",
+            "observed_name": "5予備",
+            "corrected_name": "5予備費",
+            "reason": "原画の頁423は目「5 予備費」。墨の読み直しが末尾の「費」を落とした。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "p315-code",
+            "page": 315,
+            "box": [
+              78.2,
+              427.1,
+              83.0,
+              436.4
+            ],
+            "code": "6",
+            "reason": "墨の読み直しを捨てると読みの無くなる、目「6 土地区画整理事業費」の番号 6 と名前の1行目「土地区画整」。描いた頁で目の欄に印字されている。",
+            "name": "土地区画整",
+            "name_box": [
+              84.9,
+              426.4,
+              127.6,
+              436.5
+            ]
+          },
+          {
+            "id": "p301-code",
+            "page": 301,
+            "box": [
+              70.5,
+              170.1,
+              75.5,
+              180.2
+            ],
+            "code": "5",
+            "name": "道路橋りよ",
+            "name_box": [
+              77.3,
+              169.4,
+              120.4,
+              180.2
+            ],
+            "reason": "墨の読み直しを捨てると読みの無くなる、目「5 道路橋りよう総務費」の番号 5 と名前の1行目「道路橋りよ」。描いた頁で目の欄に印字されている。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-detail"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-settlement-ocr-1",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              77,
+              78,
+              79,
+              80,
+              81,
+              82,
+              83,
+              84,
+              85,
+              86
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "fb07c3dcd8b02a2f6639d3bda7bd91dddc925d9d8d505862096e44799fea6794",
+          "bytes": 2893593
+        },
+        {
+          "id": "general-settlement-ocr-2",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              87,
+              88,
+              89,
+              90,
+              91,
+              92,
+              93,
+              94,
+              95,
+              96
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "c856a4a696b005bb683cdbdde797630b86465e488468d08832b0352c418d0076",
+          "bytes": 2080474
+        },
+        {
+          "id": "general-settlement-ocr-3",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              97,
+              98,
+              99,
+              100,
+              101,
+              102,
+              103,
+              104,
+              105,
+              106
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "5db9888b62a4fc91780a2cad76ceca0fef5c10d58acb75e48e286d522a1b51ab",
+          "bytes": 2938408
+        },
+        {
+          "id": "general-settlement-ocr-4",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              107,
+              108,
+              109,
+              110,
+              111,
+              112,
+              113,
+              114,
+              115,
+              116
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "cf8ab2f95e644c787447b973d319102906f94a87c252084bfcea4899653b9447",
+          "bytes": 2915959
+        },
+        {
+          "id": "general-settlement-ocr-5",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              117,
+              118,
+              119,
+              120,
+              121,
+              122,
+              123,
+              124,
+              125,
+              126
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "2cea808a258a43df52ef235a299ef7b6505547e1f1f3dd8cd39a0d879580764e",
+          "bytes": 2489227
+        },
+        {
+          "id": "general-settlement-ocr-6",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              127,
+              128,
+              129,
+              130,
+              131,
+              132,
+              133,
+              134,
+              135,
+              136
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "9e8630475ee479fb064bec3fb267e4f57cf016832490b5ea4ffe36a7f05f4ec4",
+          "bytes": 2766997
+        },
+        {
+          "id": "general-settlement-ocr-7",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              137,
+              138,
+              139,
+              140,
+              141,
+              142,
+              143,
+              144,
+              145,
+              146
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "772b510502a9b6c1986fae0663ae4deb76dc2b2f3fb598c4631a40d32931c032",
+          "bytes": 3111213
+        },
+        {
+          "id": "general-settlement-ocr-8",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              147,
+              148,
+              149,
+              150,
+              151,
+              152,
+              153,
+              154,
+              155,
+              156
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "a8cee86ad5b365ee0dc0dd3fc95996a460a6f748d2b04744302c1d4c05105a67",
+          "bytes": 2911824
+        },
+        {
+          "id": "general-settlement-ocr-9",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              157,
+              158,
+              159,
+              160,
+              161,
+              162,
+              163,
+              164,
+              165,
+              166
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "831c7dec5044af66638b4b102913bfbf256e3c56a3dcc04514c0e743adadd97b",
+          "bytes": 2668332
+        },
+        {
+          "id": "general-settlement-ocr-10",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              167,
+              168,
+              169,
+              170,
+              171,
+              172,
+              173,
+              174,
+              175,
+              176
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "ba2c60fac6078aebdb23814774093741e39676dede7aedeb4d1516d00bfdc24d",
+          "bytes": 2857065
+        },
+        {
+          "id": "general-settlement-ocr-11",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              177,
+              178,
+              179,
+              180,
+              181,
+              182,
+              183,
+              184,
+              185,
+              186
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "a79ff9ac968fbfe7ff3e58a8e5ce2643ca8102243fd117a946cb61b95aee0e1c",
+          "bytes": 2298513
+        },
+        {
+          "id": "general-settlement-ocr-12",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              187,
+              188,
+              189,
+              190,
+              191,
+              192,
+              193,
+              194,
+              195,
+              196
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "1d2b6080e101844bdb89c86fb0559df0635a9fef29fb6d5b388d6199fb448d17",
+          "bytes": 2884462
+        },
+        {
+          "id": "general-settlement-ocr-13",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              197,
+              198,
+              199,
+              200,
+              201,
+              202,
+              203,
+              204,
+              205,
+              206
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "78de57f38420af5b5881ee29808254f4ed917b495be3cc855e82ed9f89cfd85b",
+          "bytes": 2637887
+        },
+        {
+          "id": "general-settlement-ocr-14",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              207,
+              208,
+              209,
+              210,
+              211,
+              212,
+              213,
+              214,
+              215,
+              216
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "a1f39200c7a943c826be8e42e85c9e28672a783ff543ad3540e339212d9a2ddd",
+          "bytes": 2879390
+        },
+        {
+          "id": "general-settlement-ocr-15",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              217,
+              218,
+              219,
+              220,
+              221,
+              222,
+              223,
+              224,
+              225,
+              226
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "87c4f88ef91cd0ab432fd58021fb71234ee21d1a994c7af259db153d287ffd61",
+          "bytes": 2729351
+        },
+        {
+          "id": "general-settlement-ocr-16",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              227,
+              228,
+              229,
+              230,
+              231,
+              232,
+              233,
+              234,
+              235,
+              236
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "720e22c08a857736f8989e2b6a8305633c12d7b144a9db71c99819005c451013",
+          "bytes": 2531918
+        },
+        {
+          "id": "general-settlement-ocr-17",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              237,
+              238,
+              239,
+              240,
+              241,
+              242,
+              243,
+              244,
+              245,
+              246
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "5433edcc6c5684b72847fa2f5f33929626ea7d4ed5e76056a2872bdbf84d3900",
+          "bytes": 2584327
+        },
+        {
+          "id": "general-settlement-ocr-18",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              247,
+              248,
+              249,
+              250,
+              251,
+              252,
+              253,
+              254,
+              255,
+              256
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "b23ddd69de320c5eade8d0e76ea9523f282a9cc205abb5fc13357e785c0a4e46",
+          "bytes": 2299598
+        },
+        {
+          "id": "general-settlement-ocr-19",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              257,
+              258,
+              259,
+              260,
+              261,
+              262,
+              263,
+              264,
+              265,
+              266
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "83b6694d30123bcfa6175349be2664d8b0f948c482508b35f5c3210fb0a099c5",
+          "bytes": 2636653
+        },
+        {
+          "id": "general-settlement-ocr-20",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              267,
+              268,
+              269,
+              270,
+              271,
+              272,
+              273,
+              274,
+              275,
+              276
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "18437244bda19e5ec6004d599a22e251c24841f04d8da4cd4b77a693dee9a39b",
+          "bytes": 2263627
+        },
+        {
+          "id": "general-settlement-ocr-21",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              277,
+              278,
+              279,
+              280,
+              281,
+              282,
+              283,
+              284,
+              285,
+              286
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "932c19ffcecccba822425e513e17d312cce4d0d87be8e023ede6a8970e3fddce",
+          "bytes": 2745499
+        },
+        {
+          "id": "general-settlement-ocr-22",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              287,
+              288,
+              289,
+              290,
+              291,
+              292,
+              293,
+              294,
+              295,
+              296
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "680f030272006484223ab870296e5a6ac61f8c5018e4422da593911fa93e87eb",
+          "bytes": 2767106
+        },
+        {
+          "id": "general-settlement-ocr-23",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              297,
+              298,
+              299,
+              300,
+              301,
+              302,
+              303,
+              304,
+              305,
+              306
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "7b0e9bbcfae3ba6c4832c2beb5bddb170038ab22459715f571561dd8cc985dd1",
+          "bytes": 2580748
+        },
+        {
+          "id": "general-settlement-ocr-24",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              307,
+              308,
+              309,
+              310,
+              311,
+              312,
+              313,
+              314,
+              315,
+              316
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "70f821a97e42203b302f03be21b0b0197772adc0bd5b487d12f28d0ca757d16e",
+          "bytes": 2562452
+        },
+        {
+          "id": "general-settlement-ocr-25",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              317,
+              318,
+              319,
+              320,
+              321,
+              322,
+              323,
+              324,
+              325,
+              326
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "f1e01dbaa47ab2d8ab44bf42fe2e054c1509998b0e601a699ff7f43e2a0ca80e",
+          "bytes": 2982919
+        },
+        {
+          "id": "general-settlement-ocr-26",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              327,
+              328,
+              329,
+              330,
+              331,
+              332,
+              333,
+              334,
+              335,
+              336
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "a9d5540a6f153c00c40c78a354d6d5ff0aa8e189efbcd3e7bff82659040cf946",
+          "bytes": 3006007
+        },
+        {
+          "id": "general-settlement-ocr-27",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              337,
+              338,
+              339,
+              340,
+              341,
+              342,
+              343,
+              344,
+              345,
+              346
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "47ef0cc2d22abaf67265b6e45acdce9e5e4e84a11a0776076179271c22491591",
+          "bytes": 2582301
+        },
+        {
+          "id": "general-settlement-ocr-28",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              347,
+              348,
+              349,
+              350,
+              351,
+              352,
+              353,
+              354,
+              355,
+              356
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "0f7e3e8117dc3c8431ecb3670d196f809973f8a750b527ebdf2c927710bf6dd8",
+          "bytes": 2056620
+        },
+        {
+          "id": "general-settlement-ocr-29",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              357,
+              358,
+              359,
+              360,
+              361,
+              362,
+              363,
+              364,
+              365,
+              366
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "dd9daaff08615fdb2d8ea92c594cdd48e8b7bab4966baea6eae8c1ff3a3c1dd4",
+          "bytes": 2921912
+        },
+        {
+          "id": "general-settlement-ocr-30",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              367,
+              368,
+              369,
+              370,
+              371,
+              372,
+              373,
+              374,
+              375,
+              376
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "91f981a005fb5df36c7fb71ca4347b59ff8039161925a6c5ef00083a3e7a0613",
+          "bytes": 2888148
+        },
+        {
+          "id": "general-settlement-ocr-31",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              377,
+              378,
+              379,
+              380,
+              381,
+              382,
+              383,
+              384,
+              385,
+              386
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "2de836888dc6add9a2efb36abc44fa7f32192917b8a9ed3cdef93d134876452b",
+          "bytes": 2790203
+        },
+        {
+          "id": "general-settlement-ocr-32",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              387,
+              388,
+              389,
+              390,
+              391,
+              392,
+              393,
+              394,
+              395,
+              396
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "bdbb3dcb2903c7eb375819fef04ce57043d909878ef15a623a377b5da660fd4b",
+          "bytes": 2491108
+        },
+        {
+          "id": "general-settlement-ocr-33",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              397,
+              398,
+              399,
+              400,
+              401,
+              402,
+              403,
+              404,
+              405,
+              406
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "13b217c3ee1e8ceeb6638e2284bf2af3eab48330bf21e24d82e21be834252157",
+          "bytes": 2735876
+        },
+        {
+          "id": "general-settlement-ocr-34",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              407,
+              408,
+              409,
+              410,
+              411,
+              412,
+              413,
+              414,
+              415,
+              416
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "6abcc955932c12e60290ccbf83e7a3e170777631ea24da8042714d2a223da235",
+          "bytes": 1959593
+        },
+        {
+          "id": "general-settlement-ocr-35",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              417,
+              418,
+              419,
+              420,
+              421,
+              422,
+              423,
+              424
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "d4f500e0ccc00e47ae8c4e43cabc38c638d36248894dd42897f20a9ec3745621",
+          "bytes": 1255281
+        }
+      ]
+    },
+    {
+      "id": "nhi-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "nhi-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 230
+              },
+              "header": {
+                "staircase": "款項目名"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "setsu_ends"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "plain_names": [
+                    "補充用消耗品費"
+                  ],
+                  "note_kinds": {
+                    "体育施設費・工事請負費から報償費へ": "流用"
+                  },
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "dotted_column_rules": true,
+            "rule_ink": true,
+            "scaled_spread_pages": true,
+            "unread_marks": true,
+            "bracketed_repeats": true
+          }
+        },
+        "pages": [
+          [
+            439,
+            476
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "p451-shussan-ikuji-1",
+            "page": 451,
+            "observation_id": "p451:ink-1:a1:result0:r0",
+            "observed_name": "5d児一",
+            "corrected_name": "5育児一",
+            "reason": "原画の頁451は目「5 出産育児一時金」。墨の読み直しが1行目「出産育児一」を「d児一」と読んだ。"
+          },
+          {
+            "id": "p451-shussan-ikuji-2",
+            "page": 451,
+            "observation_id": "p451:ink-1:a1:result0:r0",
+            "observed_name": "5育児一",
+            "corrected_name": "5出産育児一",
+            "reason": "原画の頁451は目「5 出産育児一時金」。墨の読み直しが1行目「出産育児一」を「d児一」と読んだ。"
+          },
+          {
+            "id": "p459-ippan-iryo",
+            "page": 459,
+            "observation_id": "p459:ink-2:a2:result0:r0",
+            "observed_name": "5一保険",
+            "corrected_name": "5一般被保険",
+            "reason": "原画の頁459は目「5 一般被保険者医療給付費分」。墨の読み直しが「般被」を落とした。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "p441-ink-codes",
+            "page": 441,
+            "observation_id": "p441:ink-1:a1:result0:r0",
+            "observed": "5 510 营协会",
+            "reason": "墨の読み直しが頁441の1行目（款5・項5を繰り返し、目「10 運営協議会費」を始める行）を「5 510 营协会」と読み、項と目の番号をつなげ、名前を読み違えた。番号と名前の1行目は p441-kan・p441-kou・p441-moku で読む。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "p441-kan",
+            "page": 441,
+            "box": [
+              50.5,
+              135.5,
+              55.0,
+              144.5
+            ],
+            "code": "5",
+            "reason": "頁441の1行目に繰り返した総務費の款の番号 5。描いた頁で款の欄に印字されている。"
+          },
+          {
+            "id": "p441-kou",
+            "page": 441,
+            "box": [
+              61.5,
+              135.5,
+              66.0,
+              144.5
+            ],
+            "code": "5",
+            "reason": "頁441の1行目に繰り返した総務管理費の項の番号 5。描いた頁で項の欄に印字されている。"
+          },
+          {
+            "id": "p441-moku",
+            "page": 441,
+            "box": [
+              69.5,
+              135.5,
+              77.0,
+              144.5
+            ],
+            "code": "10",
+            "name": "運営協議会",
+            "name_box": [
+              78.0,
+              134.6,
+              121.2,
+              145.2
+            ],
+            "reason": "頁441の目「10 運営協議会費」の番号 10 と名前の1行目「運営協議会」。描いた頁で目の欄に印字されている。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "nhi-expenditure"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "nhi-settlement-ocr-1",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              439,
+              440,
+              441,
+              442,
+              443,
+              444,
+              445,
+              446,
+              447,
+              448
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "257f5ecdae4dfa36bc40ddc7d28ea9e465f54be9b7c55ba410d6f7992df08121",
+          "bytes": 2300777
+        },
+        {
+          "id": "nhi-settlement-ocr-2",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              449,
+              450,
+              451,
+              452,
+              453,
+              454,
+              455,
+              456,
+              457,
+              458
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "007ed8bfb094af139fa4b2b715da95a33638925cb6e0d7951e756cb8775c1610",
+          "bytes": 950239
+        },
+        {
+          "id": "nhi-settlement-ocr-3",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              459,
+              460,
+              461,
+              462,
+              463,
+              464,
+              465,
+              466,
+              467,
+              468
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "fa61270c31be085e2e8d3e2cf9084b1e8679f4b5a21dbcf09acf3118833ad2b4",
+          "bytes": 1508124
+        },
+        {
+          "id": "nhi-settlement-ocr-4",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              469,
+              470,
+              471,
+              472,
+              473,
+              474,
+              475,
+              476
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "c6beaf59c4cb2f0e5c440dc61a6e57a4be3238e09853596d547f50761162022b",
+          "bytes": 767892
+        }
+      ]
+    },
+    {
+      "id": "land-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401"
+        }
+      ],
+      "options": {
+        "account": "用地特別会計",
+        "table_id": "land-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 230
+              },
+              "header": {
+                "staircase": "款項目名"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "setsu_ends"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "plain_names": [
+                    "補充用消耗品費"
+                  ],
+                  "note_kinds": {
+                    "体育施設費・工事請負費から報償費へ": "流用"
+                  },
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "dotted_column_rules": true,
+            "rule_ink": true,
+            "scaled_spread_pages": true,
+            "unread_marks": true,
+            "bracketed_repeats": true
+          }
+        },
+        "pages": [
+          [
+            483,
+            488
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "p483-yochi-baishu",
+            "page": 483,
+            "observation_id": "p483:ink-3:a3:result0:r0",
+            "observed_name": "5用地）収費",
+            "corrected_name": "5用地買収費",
+            "reason": "原画の頁483は目「5 用地買収費」。墨の読み直しが「買」を「）」と読んだ。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-expenditure"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "land-settlement-ocr-1",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              483,
+              484,
+              485,
+              486,
+              487,
+              488
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "4a5ba70252d0c2c9bdc1751728da06a8c56f43d1c80c82b2a696f6720d29f53f",
+          "bytes": 737335
+        }
+      ]
+    },
+    {
+      "id": "kaigo-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "kaigo-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 230
+              },
+              "header": {
+                "staircase": "款項目名"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "setsu_ends"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "plain_names": [
+                    "補充用消耗品費"
+                  ],
+                  "note_kinds": {
+                    "体育施設費・工事請負費から報償費へ": "流用"
+                  },
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "dotted_column_rules": true,
+            "rule_ink": true,
+            "scaled_spread_pages": true,
+            "unread_marks": true,
+            "bracketed_repeats": true
+          }
+        },
+        "pages": [
+          [
+            503,
+            538
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p511-code-x",
+            "page": 511,
+            "observation_id": "p511:full-page:a0:result0:r48",
+            "observed": "X",
+            "reason": "頁511の節「8 旅費」の番号 8 を、点線に接するため OCR が細い「X」と読んだ。番号は p511-code で読む。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "p511-code",
+            "page": 511,
+            "box": [
+              425.0,
+              252.0,
+              430.5,
+              261.5
+            ],
+            "code": "8",
+            "reason": "OCR が「X」と読んだ節「8 旅費」の番号 8。描いた頁で節の番号の欄（点線の左）に印字されている。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p519-kogaku-kaigo-1",
+            "page": 519,
+            "observation_id": "p519:ink-1:a1:result0:r0",
+            "observed_name": "5高都介",
+            "corrected_name": "5高額介",
+            "reason": "原画の頁519は目「5 高額介護サービス等費」。墨の読み直しが1行目「高額介護サ」を「高都介」と読んだ。"
+          },
+          {
+            "id": "p519-kogaku-kaigo-2",
+            "page": 519,
+            "observation_id": "p519:ink-1:a1:result0:r0",
+            "observed_name": "5高額介",
+            "corrected_name": "5高額介護サ",
+            "reason": "原画の頁519は目「5 高額介護サービス等費」。墨の読み直しが1行目「高額介護サ」を「高都介」と読んだ。"
+          },
+          {
+            "id": "p521-kogaku-gassan",
+            "page": 521,
+            "observation_id": "p521:full-page:a0:result0:r33",
+            "observed_name": "算介護サ一",
+            "corrected_name": "算介護サー",
+            "reason": "原画の頁521は項「23 高額医療合算介護サービス等費」。OCR が長音「ー」を漢数字「一」と読んだ。"
+          },
+          {
+            "id": "p531-kaigo-kikin-1",
+            "page": 531,
+            "observation_id": "p531:ink-2:a2:result0:r0",
+            "observed_name": "5介保系",
+            "corrected_name": "5介保険",
+            "reason": "原画の頁531は目「5 介護保険給付費等準備基金積立金」。墨の読み直しが1行目「介護保険給」を「介保系」と読んだ。"
+          },
+          {
+            "id": "p531-kaigo-kikin-2",
+            "page": 531,
+            "observation_id": "p531:ink-2:a2:result0:r0",
+            "observed_name": "5介保険",
+            "corrected_name": "5介護保険給",
+            "reason": "原画の頁531は目「5 介護保険給付費等準備基金積立金」。墨の読み直しが1行目「介護保険給」を「介保系」と読んだ。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-expenditure"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kaigo-settlement-ocr-1",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              503,
+              504,
+              505,
+              506,
+              507,
+              508,
+              509,
+              510,
+              511,
+              512
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "e6930e1156b78ca7574c601957571b05792b8400295181c35da605d8ee90999a",
+          "bytes": 1747384
+        },
+        {
+          "id": "kaigo-settlement-ocr-2",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              513,
+              514,
+              515,
+              516,
+              517,
+              518,
+              519,
+              520,
+              521,
+              522
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "e7b2e658dfafe36bca2050cddf4bd1b83a8ca2238440bcd3fc050010caa34ebf",
+          "bytes": 1216595
+        },
+        {
+          "id": "kaigo-settlement-ocr-3",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              523,
+              524,
+              525,
+              526,
+              527,
+              528,
+              529,
+              530,
+              531,
+              532
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "b6000a9e5ad107c6e612c5f173b973dd986e5682208c3ba1f0449d4ed4b3b525",
+          "bytes": 1521053
+        },
+        {
+          "id": "kaigo-settlement-ocr-4",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              533,
+              534,
+              535,
+              536,
+              537,
+              538
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "cd0314c80eb0a4129d94430a9db7475b02d158d62daa085c920d9d227218c6d3",
+          "bytes": 679169
+        }
+      ]
+    },
+    {
+      "id": "kouki-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 230
+              },
+              "header": {
+                "staircase": "款項目名"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "setsu_ends"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "plain_names": [
+                    "補充用消耗品費"
+                  ],
+                  "note_kinds": {
+                    "体育施設費・工事請負費から報償費へ": "流用"
+                  },
+                  "indent_chars": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "dotted_column_rules": true,
+            "rule_ink": true,
+            "scaled_spread_pages": true,
+            "unread_marks": true,
+            "bracketed_repeats": true
+          }
+        },
+        "pages": [
+          [
+            549,
+            564
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p551-joined-codes",
+            "page": 551,
+            "observation_id": "p551:full-page:a0:result0:r26",
+            "observed": "510",
+            "reason": "OCR が款の番号 5 と項の番号 10 を、間の点線をまたいで1語 510 に読んだ。描いた頁では 5（総務費の款を繰り返したもの）と 10（徴収費の項）が点線の左右に分かれて印字されている。この読みは使わず、番号を印字の位置で読む（p551-kan-code・p551-kou-code）。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "p551-kan-code",
+            "page": 551,
+            "box": [
+              51.0,
+              135.5,
+              54.8,
+              145.0
+            ],
+            "code": "5",
+            "reason": "OCR が1語に読んだ 510 の左の 5。描いた頁で款の欄（点線の左）に印字された総務費の款の番号。"
+          },
+          {
+            "id": "p551-kou-code",
+            "page": 551,
+            "box": [
+              58.5,
+              135.5,
+              66.5,
+              145.0
+            ],
+            "code": "10",
+            "reason": "OCR が1語に読んだ 510 の右の 10。描いた頁で項の欄（点線の右）に印字された徴収費の項の番号。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p555-kouiki-noufukin",
+            "page": 555,
+            "observation_id": "p555:full-page:a0:result0:r28",
+            "observed_name": "内5,637,769,000",
+            "corrected_name": "5,637,769,000",
+            "reason": "原画の頁555は款「10 広域連合納付金」の当初予算額 5,637,769,000。OCR が名前の欄と金額の欄の間の罫を「内」と読み、金額の頭につけた。"
+          },
+          {
+            "id": "p563-yobihi",
+            "page": 563,
+            "observation_id": "p563:ink-2:a2:result0:r0",
+            "observed_name": "5予備",
+            "corrected_name": "5予備費",
+            "reason": "原画の頁563は目「5 予備費」。墨の読み直しが末尾の「費」を落とした。"
+          },
+          {
+            "id": "p549-ippan-kanri",
+            "page": 549,
+            "observation_id": "p549:ink-4:a4:result0:r0",
+            "observed_name": "5一般行理费",
+            "corrected_name": "5一般管理費",
+            "reason": "原画の頁549は目「5 一般管理費」。墨の読み直しが「管」を「行」と読んだ。"
+          },
+          {
+            "id": "p557-kenko-shinsa-1",
+            "page": 557,
+            "observation_id": "p557:ink-1:a1:result0:r0",
+            "observed_name": "5健康诊记",
+            "corrected_name": "5健康診査",
+            "reason": "原画の頁557は目「5 健康診査費」。墨の読み直しが「診査」を簡体字の「诊记」と読み、「費」を落とした。"
+          },
+          {
+            "id": "p557-kenko-shinsa-2",
+            "page": 557,
+            "observation_id": "p557:ink-1:a1:result0:r0",
+            "observed_name": "5健康診査",
+            "corrected_name": "5健康診査費",
+            "reason": "原画の頁557は目「5 健康診査費」。墨の読み直しが「診査」を簡体字の「诊记」と読み、「費」を落とした。"
+          },
+          {
+            "id": "p559-shokan-1",
+            "page": 559,
+            "observation_id": "p559:ink-2:a2:result0:r0",
+            "observed_name": "5个及び",
+            "corrected_name": "5償及び",
+            "reason": "原画の頁559は目「5 償還金及び還付金」。墨の読み直しが1行目「償還金及び」を「个及び」と読んだ。"
+          },
+          {
+            "id": "p559-shokan-2",
+            "page": 559,
+            "observation_id": "p559:ink-2:a2:result0:r0",
+            "observed_name": "5償及び",
+            "corrected_name": "5償還金及び",
+            "reason": "原画の頁559は目「5 償還金及び還付金」。墨の読み直しが1行目「償還金及び」を「个及び」と読んだ。"
+          },
+          {
+            "id": "p561-ippan-kurikoshi",
+            "page": 561,
+            "observation_id": "p561:ink-0:a0:result0:r0",
+            "observed_name": "5一会计汁繰",
+            "corrected_name": "5一般会計繰",
+            "reason": "原画の頁561は目「5 一般会計繰出金」。墨の読み直しが1行目「一般会計繰」を「一会计汁繰」と読んだ。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-expenditure"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kouki-settlement-ocr-1",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              549,
+              550,
+              551,
+              552,
+              553,
+              554,
+              555,
+              556,
+              557,
+              558
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "ca08122c5164f54a130ecb4ee44921611a02bc622bbd3ab0308708983aae2a90",
+          "bytes": 1785700
+        },
+        {
+          "id": "kouki-settlement-ocr-2",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              559,
+              560,
+              561,
+              562,
+              563,
+              564
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "2ca835acdbc6a0ed2031b68765ef4959697b8e606691999db16ad008f5acbd93",
+          "bytes": 561317
+        }
+      ]
+    }
+  ]
+}

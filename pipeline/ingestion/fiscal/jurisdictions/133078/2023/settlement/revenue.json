@@ -1,0 +1,397 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "133078",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b929228299b8c0eeb8027b3422fbdc8b77327e43dfc1b32316d1ccab4c713328"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "pages": [
+          [
+            24,
+            49
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "code_gap_wraps": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "nhi-business",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b929228299b8c0eeb8027b3422fbdc8b77327e43dfc1b32316d1ccab4c713328"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計事業勘定",
+        "table_id": "nhi-business-revenue",
+        "pages": [
+          [
+            164,
+            167
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "code_gap_wraps": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "nhi-business-revenue"
+        }
+      ]
+    },
+    {
+      "id": "nhi-clinic",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b929228299b8c0eeb8027b3422fbdc8b77327e43dfc1b32316d1ccab4c713328"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計診療施設勘定",
+        "table_id": "nhi-clinic-revenue",
+        "pages": [
+          [
+            192,
+            197
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "code_gap_wraps": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "nhi-clinic-revenue"
+        }
+      ]
+    },
+    {
+      "id": "forest",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b929228299b8c0eeb8027b3422fbdc8b77327e43dfc1b32316d1ccab4c713328"
+        }
+      ],
+      "options": {
+        "account": "東京都都民の森管理運営事業特別会計",
+        "table_id": "forest-revenue",
+        "pages": [
+          [
+            220,
+            221
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "code_gap_wraps": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "forest-revenue"
+        }
+      ]
+    },
+    {
+      "id": "care",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b929228299b8c0eeb8027b3422fbdc8b77327e43dfc1b32316d1ccab4c713328"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "care-revenue",
+        "pages": [
+          [
+            240,
+            247
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "code_gap_wraps": true,
+            "stray_subject_starts": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-revenue"
+        }
+      ]
+    },
+    {
+      "id": "care-service",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b929228299b8c0eeb8027b3422fbdc8b77327e43dfc1b32316d1ccab4c713328"
+        }
+      ],
+      "options": {
+        "account": "介護サービス事業特別会計",
+        "table_id": "care-service-revenue",
+        "pages": [
+          [
+            266,
+            267
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "code_gap_wraps": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-service-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b929228299b8c0eeb8027b3422fbdc8b77327e43dfc1b32316d1ccab4c713328"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-revenue",
+        "pages": [
+          [
+            294,
+            297
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "code_gap_wraps": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-revenue"
+        }
+      ]
+    }
+  ]
+}

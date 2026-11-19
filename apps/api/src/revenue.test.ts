@@ -61,9 +61,86 @@ describe('歳入（get_revenue）', () => {
     expect(revenues[1]!.kan[0]!.category).toBeNull()
   })
 
+  test('辞書にある款の名前でも、特別会計と都道府県の款は区分が null（get_revenue・search_revenue_subjects とも）', async () => {
+    root('r-2026-special', 2026, 'initial', '特別会計', 40, [['1', '特別区税', 40]])
+    insert('revenue', { revenue_id: 'r-pref', jurisdiction_code: '130001', fiscal_year: 2026, document_kind: 'initial', amendment_number: null, account_name: '一般会計', account_kind: '一般会計', total_yen: 10 })
+    insert('revenue_subject', { subject_id: 'r-pref-1', node_key: 'r-pref-1', parent_subject_id: null, revenue_id: 'r-pref', level: '款', code: '1', name: '特別区税', amount_yen: 10, origin_id: 'o-initial' })
+    const special = (await call({ jurisdiction_code: '131091', fiscal_year: 2026 })).revenues.find((r) => r.revenue_id === 'r-2026-special')!
+    expect(special.kan[0]!.category).toBeNull()
+    expect((await call({ jurisdiction_code: '130001' })).revenues[0]!.kan[0]!.category).toBeNull()
+    const res = (await callWebOp({ DB: db } as never, 'search_revenue_subjects', { document_kind: 'initial', fiscal_year: { min: 2026, max: 2026 }, where: { level: { eq: ['款'] }, kan_name: { eq: ['特別区税'] } }, page_size: 100 })) as { value: { subjects: any[] } }
+    expect(res.value.subjects.map((s) => [s.revenue_id, s.category]).sort()).toEqual([
+      ['r-2026-initial', 'まちの税'],
+      ['r-2026-special', null],
+      ['r-pref', null],
+    ])
+  })
+
   test('年度・資料区分・会計の種類で絞る。収録の無い自治体は空', async () => {
     const { revenues } = await call({ jurisdiction_code: '131091', document_kind: 'settlement', account_kind: '一般会計' })
     expect(revenues.map((r) => r.revenue_id)).toEqual(['r-2025-settlement'])
     expect((await call({ jurisdiction_code: '132039' })).revenues).toEqual([])
+  })
+})
+
+// 歳入の科目・内訳の検索と行の取得（search_revenue_subjects・search_revenue_details・get_revenue_line）。歳出の科目・内訳と同じ形
+describe('歳入の科目・内訳（search_revenue_subjects・search_revenue_details・get_revenue_line）', () => {
+  const op = async (name: string, input: Record<string, unknown>) => (await callWebOp({ DB: db } as never, name, input)) as { ok: boolean; value?: any; status?: number }
+  const KAN = 'a'.repeat(64)
+  const KOU = 'b'.repeat(64)
+  const MOKU = 'c'.repeat(64)
+  beforeEach(() => {
+    insert('revenue_subject', { subject_id: KAN, node_key: KAN, parent_subject_id: null, revenue_id: 'r-2025-settlement', level: '款', code: '2', name: '特別区交付金', amount_yen: 30, origin_id: 'o-settlement' })
+    insert('revenue_subject', { subject_id: KOU, node_key: KOU, parent_subject_id: KAN, revenue_id: 'r-2025-settlement', level: '項', code: '1', name: '特別区財政調整交付金', amount_yen: 30, origin_id: 'o-settlement' })
+    insert('revenue_subject', { subject_id: MOKU, node_key: MOKU, parent_subject_id: KOU, revenue_id: 'r-2025-settlement', level: '目', code: '1', name: '普通交付金', amount_yen: 30, origin_id: 'o-settlement' })
+    insert('revenue_location', { line_id: MOKU, origin_id: 'o-settlement', source_page: 40 })
+  })
+
+  test('項・目を、根の値・所属する款・項・目・区分・子の有無つきで返す', async () => {
+    const res = await op('search_revenue_subjects', { document_kind: 'settlement', fiscal_year: { min: 2025, max: 2025 }, where: { kan_name: { eq: ['特別区交付金'] } }, order_by: [{ column: 'code' }] })
+    expect(res.ok).toBe(true)
+    const rows = res.value.subjects.map((s: any) => [s.level, s.name, s.kan_name, s.kou_name, s.moku_name, s.category, s.is_leaf, s.amount_phase, s.jurisdiction_code])
+    expect(rows).toEqual([
+      ['項', '特別区財政調整交付金', '特別区交付金', '特別区財政調整交付金', null, '国・都道府県から配られるお金', false, 'executed', '131091'],
+      ['目', '普通交付金', '特別区交付金', '特別区財政調整交付金', '普通交付金', '国・都道府県から配られるお金', true, 'executed', '131091'],
+      ['款', '特別区交付金', '特別区交付金', null, null, '国・都道府県から配られるお金', false, 'executed', '131091'],
+    ])
+    expect(res.value.origins.map((o: any) => o.origin_id)).toEqual(['o-settlement'])
+  })
+
+  test('is_leaf の行の和が総額', async () => {
+    const res = await op('search_revenue_subjects', { document_kind: 'settlement', fiscal_year: { min: 2025, max: 2025 }, where: { is_leaf: { eq: true } }, page_size: 100 })
+    expect(res.value.subjects.reduce((s: number, r: any) => s + r.amount_yen, 0)).toBe(70 + 30)
+  })
+
+  test('収録の無い自治体・年度は空', async () => {
+    const res = await op('search_revenue_subjects', { document_kind: 'initial', fiscal_year: { min: 2020, max: 2020 } })
+    expect(res.ok).toBe(true)
+    expect(res.value.subjects).toEqual([])
+  })
+
+  test('目の下の節を、根の値・所属する款・項・目つきで返す。depth = 1 の和が目の額', async () => {
+    insert('revenue_detail', { detail_id: 'd1', node_key: 'd1', parent_detail_id: null, subject_id: MOKU, revenue_id: 'r-2025-settlement', source_heading: '節', node_kind: '節', depth: 1, code: '1', name: '普通交付金', amount_yen: 20, origin_id: 'o-settlement' })
+    insert('revenue_detail', { detail_id: 'd2', node_key: 'd2', parent_detail_id: null, subject_id: MOKU, revenue_id: 'r-2025-settlement', source_heading: '節', node_kind: '節', depth: 1, code: '2', name: '特別交付金', amount_yen: 10, origin_id: 'o-settlement' })
+    insert('revenue_detail', { detail_id: 'd3', node_key: 'd3', parent_detail_id: 'd1', subject_id: MOKU, revenue_id: 'r-2025-settlement', source_heading: '節', node_kind: '内訳2', depth: 2, code: null, name: '現年度分', amount_yen: 20, origin_id: 'o-settlement' })
+    const res = await op('search_revenue_details', { document_kind: 'settlement', fiscal_year: { min: 2025, max: 2025 }, where: { subject_id: { eq: [MOKU] }, depth: { eq: [1] } }, order_by: [{ column: 'amount_yen', desc: true }] })
+    expect(res.ok).toBe(true)
+    expect(res.value.details.map((d: any) => [d.name, d.amount_yen, d.kan_name, d.kou_name, d.moku_name, d.is_leaf, d.amount_phase, d.jurisdiction_code])).toEqual([
+      ['普通交付金', 20, '特別区交付金', '特別区財政調整交付金', '普通交付金', false, 'executed', '131091'],
+      ['特別交付金', 10, '特別区交付金', '特別区財政調整交付金', '普通交付金', true, 'executed', '131091'],
+    ])
+    expect(res.value.details.reduce((s: number, d: any) => s + d.amount_yen, 0)).toBe(30)
+    expect(res.value.origins.map((o: any) => o.origin_id)).toEqual(['o-settlement'])
+  })
+
+  test('行と子の科目・印字の位置・出典を返し、無い行は 404', async () => {
+    const res = await op('get_revenue_line', { line_id: KOU })
+    expect(res.ok).toBe(true)
+    expect([res.value.line.name, res.value.line.level]).toEqual(['特別区財政調整交付金', '項'])
+    expect(res.value.child_subjects.map((s: any) => s.name)).toEqual(['普通交付金'])
+    expect(res.value.locations.map((l: any) => [l.line_id, l.source_page])).toEqual([[MOKU, 40]])
+    expect(res.value.origins.map((o: any) => o.origin_id)).toEqual(['o-settlement'])
+    const missing = await op('get_revenue_line', { line_id: 'd'.repeat(64) })
+    expect(missing.ok).toBe(false)
   })
 })

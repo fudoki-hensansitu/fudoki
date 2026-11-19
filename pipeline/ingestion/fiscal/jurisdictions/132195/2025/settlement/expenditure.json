@@ -79,7 +79,17 @@
             "split_at_rules",
             "stacked_rows"
           ]
-        }
+        },
+        "name_corrections": [
+          {
+            "id": "p152-disaster-medical-coordinator",
+            "page": 152,
+            "code": null,
+            "observed_name": "災害医療コーディネーター関係費ィネーター運営委",
+            "corrected_name": "災害医療コーディネーター関係費",
+            "reason": "物理152頁の事業名「災害医療コーディネーター関係費」は字間を空けて4行に印字し、4行目の「費」が文字層で右の欄の説明「（災害医療・薬事）コーディネーター運営委員会」の続きと1語（費ｨﾈｰﾀｰ運営委）になる。原典の描画で確かめ、事業名に右の欄の字を入れない。"
+          }
+        ]
       },
       "expected_tables": [
         {

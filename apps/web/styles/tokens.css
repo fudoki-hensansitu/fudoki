@@ -16,6 +16,8 @@
 --radius:8px;--radius-sm:4px;--radius-card:16px;--radius-sheet:24px;
 --gut:max(24px,env(safe-area-inset-left),env(safe-area-inset-right),calc((100% - 1200px) / 2));
 --hair:color-mix(in srgb,var(--foreground) 10%,transparent);
+--shade-1:color-mix(in oklab,var(--primary) 10%,var(--background));--shade-2:color-mix(in oklab,var(--primary) 30%,var(--background));--shade-3:color-mix(in oklab,var(--primary) 52%,var(--background));--shade-4:color-mix(in oklab,var(--primary) 85%,var(--background));--shade-5:var(--primary);
+--shade-none:repeating-linear-gradient(135deg,var(--card) 0 4px,var(--muted) 4px 6px);
 --shadow-sheet:0 20px 25px -5px color-mix(in srgb,var(--night) 12%,transparent),0 8px 10px -6px color-mix(in srgb,var(--night) 10%,transparent);
 --shadow-pill:0 1px 2px color-mix(in srgb,var(--night) 4%,transparent),0 6px 20px color-mix(in srgb,var(--night) 6%,transparent);
 --ease:cubic-bezier(.4,0,.2,1);--ease-sweep:cubic-bezier(.87,0,.13,1);

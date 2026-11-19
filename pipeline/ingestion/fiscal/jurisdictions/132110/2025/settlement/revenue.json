@@ -1,0 +1,351 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132110",
+    "fiscal_year": 2025,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5545cb8c0ede37a668cf935fd1780cf06df3286b0cdf5d075223032bac19cd13"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／金額": {
+                  "kind": "amount"
+                },
+                "予算現額／当初予算額A": {
+                  "heading": "当初予算額"
+                },
+                "予算現額／補正予算額B": {
+                  "heading": "補正予算額"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は還付未済額などの件数・金額の注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現額／計D=A+B+C": {
+                  "heading": "計"
+                },
+                "調定額E": {
+                  "heading": "調定額"
+                },
+                "収入済額F": {
+                  "heading": "収入済額"
+                },
+                "不納欠損額G": {
+                  "heading": "不納欠損額"
+                },
+                "収入未済額H=E-F-G+還付未済額": {
+                  "heading": "収入未済額"
+                },
+                "予算現額／継続費及び繰越事業費繰越財源充当額C": {
+                  "heading": "継続費及び繰越事業費繰越財源充当額"
+                },
+                "予算現額／継続費及び繰越／事業費繰越財源充当額C": {
+                  "heading": "継続費及び繰越事業費繰越財源充当額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_code_at_top": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-settlement-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "0b7548547993cd12dd44547ae37662e6d213236d980920068ed4df9aa50fce68"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／金額": {
+                  "kind": "amount"
+                },
+                "予算現額／当初予算額A": {
+                  "heading": "当初予算額"
+                },
+                "予算現額／補正予算額B": {
+                  "heading": "補正予算額"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は還付未済額などの件数・金額の注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現額／計D=A+B+C": {
+                  "heading": "計"
+                },
+                "調定額E": {
+                  "heading": "調定額"
+                },
+                "収入済額F": {
+                  "heading": "収入済額"
+                },
+                "不納欠損額G": {
+                  "heading": "不納欠損額"
+                },
+                "収入未済額H=E-F-G+還付未済額": {
+                  "heading": "収入未済額"
+                },
+                "予算現額／継続費及び繰越事業費繰越財源充当額C": {
+                  "heading": "継続費及び繰越事業費繰越財源充当額"
+                },
+                "予算現額／継続費及び繰越／事業費繰越財源充当額C": {
+                  "heading": "継続費及び繰越事業費繰越財源充当額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_code_at_top": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "16197d5787cf56212c049b0637d09a15f59c3a828914c03ff827e564b772eaac"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／金額": {
+                  "kind": "amount"
+                },
+                "予算現額／当初予算額A": {
+                  "heading": "当初予算額"
+                },
+                "予算現額／補正予算額B": {
+                  "heading": "補正予算額"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は還付未済額などの件数・金額の注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現額／計D=A+B+C": {
+                  "heading": "計"
+                },
+                "調定額E": {
+                  "heading": "調定額"
+                },
+                "収入済額F": {
+                  "heading": "収入済額"
+                },
+                "不納欠損額G": {
+                  "heading": "不納欠損額"
+                },
+                "収入未済額H=E-F-G+還付未済額": {
+                  "heading": "収入未済額"
+                },
+                "予算現額／継続費及び繰越事業費繰越財源充当額C": {
+                  "heading": "継続費及び繰越事業費繰越財源充当額"
+                },
+                "予算現額／継続費及び繰越／事業費繰越財源充当額C": {
+                  "heading": "継続費及び繰越事業費繰越財源充当額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_code_at_top": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-revenue"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-insurance-settlement-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "efcbfac1e1bc735dda24b99ef8a57a4be3a89873a4ab2aee0260ac8fd1329d68"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "long-term-care-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／金額": {
+                  "kind": "amount"
+                },
+                "予算現額／当初予算額A": {
+                  "heading": "当初予算額"
+                },
+                "予算現額／補正予算額B": {
+                  "heading": "補正予算額"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は還付未済額などの件数・金額の注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算現額／計D=A+B+C": {
+                  "heading": "計"
+                },
+                "調定額E": {
+                  "heading": "調定額"
+                },
+                "収入済額F": {
+                  "heading": "収入済額"
+                },
+                "不納欠損額G": {
+                  "heading": "不納欠損額"
+                },
+                "収入未済額H=E-F-G+還付未済額": {
+                  "heading": "収入未済額"
+                },
+                "予算現額／継続費及び繰越事業費繰越財源充当額C": {
+                  "heading": "継続費及び繰越事業費繰越財源充当額"
+                },
+                "予算現額／継続費及び繰越／事業費繰越財源充当額C": {
+                  "heading": "継続費及び繰越事業費繰越財源充当額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_code_at_top": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-insurance-revenue"
+        }
+      ]
+    }
+  ]
+}

@@ -29,8 +29,8 @@ def kind_of(heading: str) -> str | None:
     """The block a header line opens: 款・項・目, 節 (with the 財源内訳) or 説明."""
     if '款項目' in heading or heading.startswith('本年度前年度'):
         return 'subject'
-    if heading.startswith('財源内訳'):
-        return 'setsu'
+    if heading.startswith('財源内訳') or heading.startswith('節金額'):
+        return 'setsu'  # the 歳入 prints the 節 with the 説明 in one block (`節 | 金額 | 説明`), no 財源内訳
     if heading == '説明':
         return 'explanation'
     return None

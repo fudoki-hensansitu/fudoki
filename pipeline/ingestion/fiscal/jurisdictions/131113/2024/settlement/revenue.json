@@ -1,0 +1,219 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131113",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "be3694253cf57ac102d9a0c96d9e985c9154ea6843ef81ee52abb2a6783ec557"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の内訳・担当の課の注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "収入率(%)": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position"
+              }
+            }
+          },
+          "repairs": [
+            "overprint"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "be3694253cf57ac102d9a0c96d9e985c9154ea6843ef81ee52abb2a6783ec557"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の内訳・担当の課の注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "収入率(%)": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position"
+              }
+            }
+          },
+          "repairs": [
+            "overprint"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "late-elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "be3694253cf57ac102d9a0c96d9e985c9154ea6843ef81ee52abb2a6783ec557"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "late-elderly-medical-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の内訳・担当の課の注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "収入率(%)": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position"
+              }
+            }
+          },
+          "repairs": [
+            "overprint"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "late-elderly-medical-revenue"
+        }
+      ]
+    },
+    {
+      "id": "care-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "be3694253cf57ac102d9a0c96d9e985c9154ea6843ef81ee52abb2a6783ec557"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "care-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の内訳・担当の課の注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "収入率(%)": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position"
+              }
+            }
+          },
+          "repairs": [
+            "overprint"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-insurance-revenue"
+        }
+      ]
+    }
+  ]
+}

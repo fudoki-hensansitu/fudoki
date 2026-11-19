@@ -22,6 +22,42 @@
     "account": {
       "type": "string",
       "description": "会計名（既定: 一般会計）。備考から会計標を除くために使う"
+    },
+    "name_corrections": {
+      "type": "array",
+      "description": "OCR で読む頁（字を線で描いた頁）の名称の誤読を、原画で確かめて直す（generic_scan と同じ形）",
+      "items": {
+        "type": "object",
+        "required": [
+          "id",
+          "page",
+          "observation_id",
+          "observed_name",
+          "corrected_name",
+          "reason"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer"
+          },
+          "observation_id": {
+            "type": "string"
+          },
+          "observed_name": {
+            "type": "string"
+          },
+          "corrected_name": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        }
+      }
     }
   }
 }

@@ -1,0 +1,207 @@
+{
+  "schema_version": 2,
+  "target": {
+    "document_kind": "settlement",
+    "fiscal_year": 2025,
+    "jurisdiction": "132039"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ],
+      "id": "general-revenue",
+      "inputs": [
+        {
+          "sha256": "a6b7c29029f9d90e5bfd71368e618b448d4fc9b797e826cba00e3e346aceee66"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "names_in_own_column": true
+          }
+        }
+      }
+    },
+    {
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "expected_tables": [
+        {
+          "table_id": "kaigo-revenue"
+        }
+      ],
+      "id": "kaigo-revenue",
+      "inputs": [
+        {
+          "sha256": "06b8e1e138ac56f1691549c5cc25f14d2d426ca858d8aba81be26d2aab9b48d2"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "kaigo-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "names_in_own_column": true
+          }
+        }
+      }
+    },
+    {
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "expected_tables": [
+        {
+          "table_id": "kokuho-revenue"
+        }
+      ],
+      "id": "kokuho-revenue",
+      "inputs": [
+        {
+          "sha256": "4f68c260a5cfc5435c50654b5790ae769c59debfff4cdbc5e809c7efa7ab1313"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "kokuho-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "names_in_own_column": true
+          }
+        }
+      }
+    },
+    {
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue"
+        }
+      ],
+      "id": "kouki-revenue",
+      "inputs": [
+        {
+          "sha256": "baa3c04edfe5d8fbe7d8edc778f448194e8595ab3cb18d41feba732b2955c541"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "kouki-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "names_in_own_column": true
+          }
+        }
+      }
+    }
+  ]
+}

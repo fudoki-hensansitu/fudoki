@@ -42,6 +42,7 @@
 {"fp":"98c71d1991210c78bddbd6f5ddc54cc1","p":0.05,"t":"care-initial"}
 {"fp":"9d45294a0ea71d79e240977f05c52562","p":0.05,"t":"care-initial"}
 {"fp":"a0df298ecabd0d501956f1c39d703522","p":0.05,"t":"care-initial"}
+{"fp":"a681257007e80f1e4ce7dbfb046d3207","p":0.07,"t":"care-initial"}
 {"fp":"a76a426a8945aeadf6d4ca7642dc43db","p":0.04,"t":"care-initial"}
 {"fp":"a77316e62a9f59ab2c2c6e15a89258f1","p":0.05,"t":"care-initial"}
 {"fp":"aa0764d89ab07ad8350ca0de092d05eb","p":0.06,"t":"care-initial"}
@@ -213,7 +214,6 @@
 {"fp":"283fb51e49ad7a1644265ef94537879c","p":0.05,"t":"general-initial"}
 {"fp":"28c1e39c28c6130402eb5a47e8d5c434","p":0.05,"t":"general-initial"}
 {"fp":"28d8f6d4ff345054fc85847cd610f170","p":0.04,"t":"general-initial"}
-{"fp":"29134051925933dd44a678eb7d71e9a4","p":0.18,"t":"general-initial"}
 {"fp":"29202e2d43c764bea1d73e62f8c1cbbd","p":0.05,"t":"general-initial"}
 {"fp":"298a8c7d7fa44ed5b165e4750c381ce9","p":0.04,"t":"general-initial"}
 {"fp":"2a20d8cad0fbc6b64bd7bbbb835cba67","p":0.05,"t":"general-initial"}
@@ -335,6 +335,7 @@
 {"fp":"47db69270f72cb9ef0e054a2d548cf1a","p":0.04,"t":"general-initial"}
 {"fp":"48e340fd82b264484f7226941a65ee97","p":0.05,"t":"general-initial"}
 {"fp":"49350771c235d28048f8c6b68d8c10b4","p":0.04,"t":"general-initial"}
+{"fp":"494d7c3f0e27b39d6d297e1a880ff292","p":0.04,"t":"general-initial"}
 {"fp":"49a11495c3b7acf405a5b3468e5726db","p":0.06,"t":"general-initial"}
 {"fp":"4a284c5f091776cfb5a3b800ed914bbe","p":0.05,"t":"general-initial"}
 {"fp":"4ab04f894074462eacbcdfabb4e89d66","p":0.04,"t":"general-initial"}
@@ -598,6 +599,7 @@
 {"fp":"96d37f1a0d0227b82e76ba315a6fdfe0","p":0.04,"t":"general-initial"}
 {"fp":"97fbf043d2d7bbe63cb5ee0e3f3fe6fb","p":0.04,"t":"general-initial"}
 {"fp":"98a6bb7df881d1f471a1e1a306283176","p":0.04,"t":"general-initial"}
+{"fp":"98dbac2ae975dbf6a19bcd3e14e45ce7","p":0.05,"t":"general-initial"}
 {"fp":"9971ebc8ad1ee38d7f39a0b8987e564f","p":0.04,"t":"general-initial"}
 {"fp":"99e37c3a17079fa21509aa879d82cb01","p":0.04,"t":"general-initial"}
 {"fp":"9a48dbae43fb4728f73e2e71d59426ba","p":0.05,"t":"general-initial"}
@@ -897,6 +899,7 @@
 {"fp":"f38e5efc934ced522cf3b24568459941","p":0.04,"t":"general-initial"}
 {"fp":"f3ab3d3a5cb3fadddf99ccbb2b845014","p":0.05,"t":"general-initial"}
 {"fp":"f3bb5cc293d6b346b6a9456e2ff0930c","p":0.04,"t":"general-initial"}
+{"fp":"f41b31548974903cf342fe517cd42209","p":0.04,"t":"general-initial"}
 {"fp":"f48c48d5dbd2448c315672d619e2023b","p":0.04,"t":"general-initial"}
 {"fp":"f4d8a86abe1ca801c4566ea9838131c3","p":0.04,"t":"general-initial"}
 {"fp":"f5a0d331c6adcc99f2668f8623e03bd0","p":0.04,"t":"general-initial"}
@@ -959,9 +962,11 @@
 {"fp":"5c73238b828283f6c749fffd25987646","p":0.05,"t":"national-health-initial"}
 {"fp":"698e2fc200da0cd50d6776925dabc36c","p":0.04,"t":"national-health-initial"}
 {"fp":"69f187fe82eb4ff9ca9490172451abf6","p":0.05,"t":"national-health-initial"}
+{"fp":"728a466da3439a2771ca29f6fa7cbca3","p":0.04,"t":"national-health-initial"}
 {"fp":"743d229a097b943deb5786650ea185a1","p":0.04,"t":"national-health-initial"}
 {"fp":"7e7d303d7e571a25fec13b7344352c0d","p":0.05,"t":"national-health-initial"}
 {"fp":"8232ca78f660be4f5cebeb2520c83f40","p":0.05,"t":"national-health-initial"}
+{"fp":"8ee499776ba628aa706aea03e59c6e5c","p":0.04,"t":"national-health-initial"}
 {"fp":"9029fb8ed6b633edc18fc209db6c3d3c","p":0.18,"t":"national-health-initial"}
 {"fp":"a4a8fed6cd1673b39f885ced7e8d570f","p":0.23,"t":"national-health-initial"}
 {"fp":"c8dee61713eb27dbedd3fd1297845f09","p":0.05,"t":"national-health-initial"}

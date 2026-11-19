@@ -1,10 +1,10 @@
 {"criteria": {"false": "取り込むべきでない数字。例: 款・項・目・節・事業の番号、頁番号、年月日・年度・議決の号数（令和8年第6号）、住所の番地、人数・件数・回数・面積などの数量、率（％）、本文や注記の中の数字、「第10節へ同項同目第8節から流用 12,846」のような流用・充用の注記の金額。", "true": "表の項目（科目・事業）の金額として取り込むべき値。例: 予算額、補正額、決算額、支出済額、不用額、事業費、国・県支出金など、表の金額の欄に印字された円の金額（0 や 1,234,000 のような値も含む）。"}, "instructions": "日本の自治体の決算書（歳出）のある頁から、数字を1つ取り出した。文脈は `items.{id}` にある（同じ行の語を左から並べた文、列の見出し、上下の行）。取り出した数字 `items.{id}.対象の数字`（同じ行では【】で示す）は、表の項目の金額として取り込むべき値か。", "kind": "digit-recheck", "model": "jev-1.13.0", "threshold": 0.7, "version": 1}
+{"fp":"f394b1bcd22b16f97f028f5c94e2a707","p":0.41,"t":"elderly-medical-expenditure"}
 {"fp":"e44d477d1416d4aec9957537eb0ecf79","p":0.05,"t":"general-01"}
 {"fp":"0a612f6e038499b2d04828b5c27ffaf2","p":0.23,"t":"general-02"}
 {"fp":"1669a8b28847f552440cc71af09a7737","p":0.12,"t":"general-02"}
 {"fp":"180a26a712f0d72f7b8935ad64e29dc5","p":0.33,"t":"general-02"}
 {"fp":"1e61f1f3d5a7ed1904e6db27d28f2b8d","p":0.08,"t":"general-02"}
-{"fp":"229fd6e8a3bcdd89c49af7a564d19f90","p":0.26,"t":"general-02"}
 {"fp":"22f0474a4af16e0f1c9100e97bf3cf71","p":0.28,"t":"general-02"}
 {"fp":"25cd35093bd2264eb02909a4a939273d","p":0.14,"t":"general-02"}
 {"fp":"2c81150ae6dbabed81bc56022cf406fe","p":0.37,"t":"general-02"}
@@ -18,7 +18,6 @@
 {"fp":"4bfd77c36344e2e4c013b3977266124a","p":0.09,"t":"general-02"}
 {"fp":"4df8a5be28bdc791734b890862f04491","p":0.06,"t":"general-02"}
 {"fp":"4fa4e0fdec8b873e3a32a334391d67b8","p":0.43,"t":"general-02"}
-{"fp":"52c357b3f839285c6cf7b5babba393bc","p":0.32,"t":"general-02"}
 {"fp":"5482ff4fcdb795060e7851bdf5342b84","p":0.06,"t":"general-02"}
 {"fp":"54c2fdeea46454add5ea094a50dfe5ac","p":0.17,"t":"general-02"}
 {"fp":"576b370bd1a4d6b057178ca74a017dc8","p":0.22,"t":"general-02"}
@@ -43,17 +42,14 @@
 {"fp":"9e13f8da2359e9fbbe708df19f2072fb","p":0.09,"t":"general-02"}
 {"fp":"9fab6caffe885dadd03b37642c03b9ab","p":0.27,"t":"general-02"}
 {"fp":"a5247cef4583d377a144a96e8e359f8e","p":0.11,"t":"general-02"}
-{"fp":"ac1e2d1c34a9725bd4d34c31ef69ff14","p":0.11,"t":"general-02"}
 {"fp":"b1c0c0b33a9f34fda5d141836744b375","p":0.07,"t":"general-02"}
 {"fp":"bc37b1aaa30349cb070fa444d4b98152","p":0.25,"t":"general-02"}
 {"fp":"bd8026be829383c62406ebb549ebda6d","p":0.25,"t":"general-02"}
-{"fp":"c100eff3ff298e6cab97c9f33b54a60d","p":0.2,"t":"general-02"}
 {"fp":"caff8ee321f7ae63dc67f090e336f1e5","p":0.06,"t":"general-02"}
 {"fp":"cb012db7737ee39bfeba94bb687b11d9","p":0.06,"t":"general-02"}
 {"fp":"cb58b291595607d942629bb134867f86","p":0.1,"t":"general-02"}
 {"fp":"d6c55ae5d2dfef97fe558632e5af0e35","p":0.06,"t":"general-02"}
 {"fp":"d94c70c281f4f81f17ccc2df5b040211","p":0.13,"t":"general-02"}
-{"fp":"d96e9494b42818d92c7093ec6d5dcaf4","p":0.16,"t":"general-02"}
 {"fp":"dee62c51021d533a731b89dea99675fe","p":0.06,"t":"general-02"}
 {"fp":"e4c253b0c06a5d58f4baf6e63184df6f","p":0.06,"t":"general-02"}
 {"fp":"e933d9620aec26697439fc3ca9e7986e","p":0.41,"t":"general-02"}
@@ -83,7 +79,6 @@
 {"fp":"1b9446d3b03629c36380822f3aad67d1","p":0.08,"t":"general-03"}
 {"fp":"1cf1738fbec69d5c01b3aa40d95dded5","p":0.27,"t":"general-03"}
 {"fp":"1d7991b4fd6dd3c70bea44a0ae90c8e8","p":0.09,"t":"general-03"}
-{"fp":"1f92998f823839f0f40ddbf3ef34cb9b","p":0.23,"t":"general-03"}
 {"fp":"22163f36fc312b84996960bbd909347e","p":0.19,"t":"general-03"}
 {"fp":"2356db48224e2c27d8c3ae2e36bbf3bf","p":0.07,"t":"general-03"}
 {"fp":"2564ff158d49aab1697fbf451d335753","p":0.49,"t":"general-03"}
@@ -117,7 +112,6 @@
 {"fp":"4d779b452735f19941336a53de4b9db1","p":0.06,"t":"general-03"}
 {"fp":"4edd601c5baa447c5e88775508decb7d","p":0.06,"t":"general-03"}
 {"fp":"5346022134305da4d9c8f00ce8fd8f33","p":0.14,"t":"general-03"}
-{"fp":"58e5f794f15876a3bb81e586e2a82092","p":0.14,"t":"general-03"}
 {"fp":"59d123205072b7f56c51300a5f7e0ea0","p":0.14,"t":"general-03"}
 {"fp":"59ff24f4a94722b750d498514711e847","p":0.19,"t":"general-03"}
 {"fp":"5ada6c6372389ba0a00fe387b936830f","p":0.08,"t":"general-03"}
@@ -167,7 +161,6 @@
 {"fp":"959696fd305f9b5efec3466f419e7dc9","p":0.04,"t":"general-03"}
 {"fp":"985cb8960ff3d1f24cc664a70bfa86a6","p":0.05,"t":"general-03"}
 {"fp":"9aba6dea492709853df155f654c4c32d","p":0.07,"t":"general-03"}
-{"fp":"9b8955c243bb0293edf82444f47f79b6","p":0.21,"t":"general-03"}
 {"fp":"9dce356ad5bef686e6ca2cd8a35b1342","p":0.28,"t":"general-03"}
 {"fp":"9e6e3a68050b0616c1360e7119b97b1e","p":0.08,"t":"general-03"}
 {"fp":"9ee46232f0cee6a57e11b38f9df17fea","p":0.14,"t":"general-03"}
@@ -231,7 +224,6 @@
 {"fp":"f9271d80ff0bff520be848168eab0f28","p":0.13,"t":"general-03"}
 {"fp":"f9a561cd181a3cff7a201e31bbd433a7","p":0.09,"t":"general-03"}
 {"fp":"f9e84a6019f09d08cd02af23117d03f1","p":0.11,"t":"general-03"}
-{"fp":"fab37d4e628a0d615d64b4fbbdca2715","p":0.29,"t":"general-03"}
 {"fp":"fbd590e6f849975437879d63a1a2f56d","p":0.28,"t":"general-03"}
 {"fp":"fe7a52a32119c8ca67a6251351ac2c97","p":0.09,"t":"general-03"}
 {"fp":"ff9ae89dfc5140a8fc7576c10402779c","p":0.33,"t":"general-03"}
@@ -261,7 +253,6 @@
 {"fp":"534ac4ea126f7e4b84791ae843d234be","p":0.32,"t":"general-04"}
 {"fp":"549330f54deb5d2f84a26740e215af21","p":0.09,"t":"general-04"}
 {"fp":"54a86182c05a153610ad20b6bca9ac41","p":0.38,"t":"general-04"}
-{"fp":"5c64767a03e6e4e08fe289ea2257536f","p":0.13,"t":"general-04"}
 {"fp":"61c72a1bec39108628267a6a39bd0688","p":0.19,"t":"general-04"}
 {"fp":"65ab32602df224a911cb9f9f8fa005a4","p":0.07,"t":"general-04"}
 {"fp":"66641e45c6276427f959b480ca6e1f9e","p":0.22,"t":"general-04"}
@@ -292,9 +283,7 @@
 {"fp":"bc85ec337d32025585035ebf99d22807","p":0.12,"t":"general-04"}
 {"fp":"beefe569fd649ca40381a63ee789bdaa","p":0.17,"t":"general-04"}
 {"fp":"c57263a972904c5010c05602b73b3cbf","p":0.09,"t":"general-04"}
-{"fp":"c6c4ea8b4bfcd4ec099c8f1e757b65c5","p":0.19,"t":"general-04"}
 {"fp":"cc3bf4e6adc39fe2f5d83f4564000792","p":0.22,"t":"general-04"}
-{"fp":"d0237798a735e538f7c04b9cbbceae88","p":0.21,"t":"general-04"}
 {"fp":"d30cb2bbce7bcc0343b281f4383615aa","p":0.22,"t":"general-04"}
 {"fp":"d4313a097715dcd0a95aa7dbf10bec23","p":0.13,"t":"general-04"}
 {"fp":"d842cfb4c259d2133914bb0c562fba02","p":0.22,"t":"general-04"}
@@ -349,7 +338,6 @@
 {"fp":"273af6f2b7b4e11aa76c18f6d4ae2ef9","p":0.2,"t":"general-10"}
 {"fp":"28be1fe67c4561e141cc2696503a8991","p":0.16,"t":"general-10"}
 {"fp":"298031c0c1dcb0dfcd3ab74e504551f0","p":0.08,"t":"general-10"}
-{"fp":"29c3ff974d8554b78808ce79c11b0374","p":0.18,"t":"general-10"}
 {"fp":"2d2a55cb6d22258d3de5df0cda954f36","p":0.1,"t":"general-10"}
 {"fp":"33f3170cf5e5570fe2909c791e2b5088","p":0.25,"t":"general-10"}
 {"fp":"35d826fa913a8702840f3133bab00572","p":0.18,"t":"general-10"}
@@ -359,7 +347,6 @@
 {"fp":"3ccbd4c8f7f5be9713a10b6f5d82f8e5","p":0.06,"t":"general-10"}
 {"fp":"4034a6c5fea8680b3c2c79c2f476b947","p":0.1,"t":"general-10"}
 {"fp":"43302934213e3d4ef6006b79a51a6ab1","p":0.2,"t":"general-10"}
-{"fp":"44b861d845f6462e1365d68b18735990","p":0.18,"t":"general-10"}
 {"fp":"463a49a46429b72dbbe20442328972ca","p":0.19,"t":"general-10"}
 {"fp":"496d159d3ee4aed21f94fcb473b1651a","p":0.09,"t":"general-10"}
 {"fp":"4ca04bae27645d93f2716ea1c984f13b","p":0.26,"t":"general-10"}
@@ -380,8 +367,6 @@
 {"fp":"6b64e056d809dd6d44bf89b689decf68","p":0.15,"t":"general-10"}
 {"fp":"6e8fc5890c2361c924f83c9527226eee","p":0.19,"t":"general-10"}
 {"fp":"74f3fa10292f52dae2b736ff79df0f4d","p":0.12,"t":"general-10"}
-{"fp":"74fe4f541427a76262c070174485d62c","p":0.23,"t":"general-10"}
-{"fp":"75613ebe7240f9571959513c5d713bd4","p":0.19,"t":"general-10"}
 {"fp":"79f34b7c2100ed47172f7d4388d5847c","p":0.1,"t":"general-10"}
 {"fp":"7e0fe28c5421ae7dc68926b1aac2db83","p":0.28,"t":"general-10"}
 {"fp":"7f188037eca10c20c5c7484c973e6f60","p":0.41,"t":"general-10"}
@@ -417,7 +402,6 @@
 {"fp":"d8d1dbe39d159b3203a6068ae1675823","p":0.09,"t":"general-10"}
 {"fp":"dd961e6a1ea3f3c0acd310ee257fda19","p":0.08,"t":"general-10"}
 {"fp":"de60fbda23ed857acf4958fee18647e6","p":0.12,"t":"general-10"}
-{"fp":"e047e041b9df66adbef242298991cdca","p":0.1,"t":"general-10"}
 {"fp":"e2216d26a7fe487e1467722e70857cf7","p":0.08,"t":"general-10"}
 {"fp":"e577a39e9f7be7a81f213c09d1b66142","p":0.24,"t":"general-10"}
 {"fp":"e8e6615488850e84ac83723e30ab6afb","p":0.13,"t":"general-10"}
@@ -428,3 +412,19 @@
 {"fp":"f52e31ab90de421a3cd15578001963aa","p":0.19,"t":"general-10"}
 {"fp":"f89acbe372ab73ad5c42b1b1f5866d10","p":0.32,"t":"general-10"}
 {"fp":"fa6112dcc63610b91f377c9de6dfebb4","p":0.28,"t":"general-10"}
+{"fp":"0db82059102099fae4fa722d5ceee7db","p":0.05,"t":"long-term-care-expenditure"}
+{"fp":"4c1fbf2ea89bd8312849520144a8d18f","p":0.07,"t":"long-term-care-expenditure"}
+{"fp":"5333c6566bc9f4113726893f8ff6771a","p":0.07,"t":"long-term-care-expenditure"}
+{"fp":"762336fc02b8565bed67ab9931d7092a","p":0.42,"t":"long-term-care-expenditure"}
+{"fp":"774f3371fcf10a0210b86746a817174f","p":0.06,"t":"long-term-care-expenditure"}
+{"fp":"7be809485754d340d97c6a1dbc880052","p":0.37,"t":"long-term-care-expenditure"}
+{"fp":"a19784ad9e7729fa7bb2daeac52386a8","p":0.13,"t":"long-term-care-expenditure"}
+{"fp":"cec80ba5c2df3df3842482752b220d27","p":0.06,"t":"long-term-care-expenditure"}
+{"fp":"dbef64b488cbb3d34d8c075c7f1e8873","p":0.06,"t":"long-term-care-expenditure"}
+{"fp":"07998cb7d719ac54f94dd7ca72107d40","p":0.08,"t":"national-health-insurance-expenditure"}
+{"fp":"39f80a79d41216794754fd44493ae1ca","p":0.06,"t":"national-health-insurance-expenditure"}
+{"fp":"433e142ba155d9bde85157a51d485424","p":0.07,"t":"national-health-insurance-expenditure"}
+{"fp":"64649a9f10979d8c1eaa5d124d6b769d","p":0.11,"t":"national-health-insurance-expenditure"}
+{"fp":"813eb05a6a60e6f033f2229e1fefc05d","p":0.09,"t":"national-health-insurance-expenditure"}
+{"fp":"86e513bca97a76bfdeb28e93a70ab447","p":0.11,"t":"national-health-insurance-expenditure"}
+{"fp":"ccb162ad78471268e2982487cb839bba","p":0.11,"t":"national-health-insurance-expenditure"}

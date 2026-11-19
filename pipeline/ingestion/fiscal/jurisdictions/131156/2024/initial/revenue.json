@@ -1,0 +1,299 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131156",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "fe2d374f3f31f7a9f5b2186a323cee4df30cc5cc24debfec8c88e363fe3f91da"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "比較増(△)減": {
+                  "heading": "比較"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収入歩合・補助率など）と担当の課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "説明／説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収入歩合・補助率など）と担当の課で、節の内訳ではない。歳入は款・項・目・節で取り込む。 1頁に2つの表が載る頁は見出しを2段に読むので、その見出しにも同じ除外を書く。"
+                  }
+                },
+                "節／区分／区分": {
+                  "axis_header": "節"
+                },
+                "節／金額／節／金額": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "title_amount": [
+                  "本年度予算額",
+                  "前年度予算額",
+                  "比較"
+                ]
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "unruled_frame_top": true,
+            "narrow_number_gaps": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "fe2d374f3f31f7a9f5b2186a323cee4df30cc5cc24debfec8c88e363fe3f91da"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "比較増(△)減": {
+                  "heading": "比較"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収入歩合・補助率など）と担当の課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "説明／説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収入歩合・補助率など）と担当の課で、節の内訳ではない。歳入は款・項・目・節で取り込む。 1頁に2つの表が載る頁は見出しを2段に読むので、その見出しにも同じ除外を書く。"
+                  }
+                },
+                "節／区分／区分": {
+                  "axis_header": "節"
+                },
+                "節／金額／節／金額": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "title_amount": [
+                  "本年度予算額",
+                  "前年度予算額",
+                  "比較"
+                ]
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "unruled_frame_top": true,
+            "narrow_number_gaps": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "fe2d374f3f31f7a9f5b2186a323cee4df30cc5cc24debfec8c88e363fe3f91da"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "比較増(△)減": {
+                  "heading": "比較"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収入歩合・補助率など）と担当の課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "説明／説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収入歩合・補助率など）と担当の課で、節の内訳ではない。歳入は款・項・目・節で取り込む。 1頁に2つの表が載る頁は見出しを2段に読むので、その見出しにも同じ除外を書く。"
+                  }
+                },
+                "節／区分／区分": {
+                  "axis_header": "節"
+                },
+                "節／金額／節／金額": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "title_amount": [
+                  "本年度予算額",
+                  "前年度予算額",
+                  "比較"
+                ]
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "unruled_frame_top": true,
+            "narrow_number_gaps": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "fe2d374f3f31f7a9f5b2186a323cee4df30cc5cc24debfec8c88e363fe3f91da"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "比較増(△)減": {
+                  "heading": "比較"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収入歩合・補助率など）と担当の課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "説明／説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収入歩合・補助率など）と担当の課で、節の内訳ではない。歳入は款・項・目・節で取り込む。 1頁に2つの表が載る頁は見出しを2段に読むので、その見出しにも同じ除外を書く。"
+                  }
+                },
+                "節／区分／区分": {
+                  "axis_header": "節"
+                },
+                "節／金額／節／金額": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "title_amount": [
+                  "本年度予算額",
+                  "前年度予算額",
+                  "比較"
+                ]
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "unruled_frame_top": true,
+            "narrow_number_gaps": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    }
+  ]
+}

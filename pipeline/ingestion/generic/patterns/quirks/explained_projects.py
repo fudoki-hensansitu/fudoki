@@ -125,6 +125,31 @@ def _code(text: str) -> str:
     return text.translate(KANA_SHAPES).lower()  # an item `c` OCR reads as `C`
 
 
+def _unstacked(words: list[Word], middle: float, right: float) -> list[Word]:
+    """The words with the item codes OCR read down the code column as one word (`ケコサ`, `ウ工オ`) split into one
+    word a line: codes that follow each other in their order, as many as the amounts beside the word, each put on
+    the line of its amount. A mark OCR adds below the last code (`タチツ一`, `ウエオカキク、`) is not a code."""
+    column = [w for w in words if middle <= (w.x0 + w.x1) / 2 < right]
+    result = []
+    for w in words:
+        text = normalize(w.text).rstrip('、。一ー').translate(KANA_SHAPES)
+        if not (len(text) > 1 and w in column and w.x1 < middle + (right - middle) * .3 and all(c in KANA for c in text)
+                and all(KANA.index(b) - KANA.index(a) == 1 for a, b in zip(text, text[1:]))):
+            result.append(w)
+            continue
+        # the amounts whose middles the word spans (its box can stop short of the first and last line's middle)
+        # the mark below the codes stretches the box down a line: the codes span their share of it
+        bottom = w.y0 + (w.y1 - w.y0) * len(text) / len(normalize(w.text))
+        beside = next((found for slack in (0.0, SAME_LINE) if len(found := sorted(
+            (a for a in column if a.x0 > w.x1 and _value(a.text) is not None and w.y0 - slack <= (a.y0 + a.y1) / 2 <= bottom + slack),
+            key=lambda a: a.y0)) == len(text)), None)
+        if beside is None:
+            result.append(w)
+            continue
+        result += [Word(c, w.x0, a.y0, w.x1, a.y1) for c, a in zip(text, beside)]
+    return result
+
+
 def _value(text: str) -> int | None:
     text = normalize(text).replace('円', '')
     if not AMOUNT.match(text + '円'):
@@ -366,7 +391,7 @@ def arrange(pages: list[Page], setting: dict, continued: list[dict] | None = Non
                 result.append(page)
             continue
         inner, left, middle, right, header_bottom = edges
-        body = [w for w in page.words if w.y0 > header_bottom + 2]
+        body = _unstacked([w for w in page.words if w.y0 > header_bottom + 2], middle, right)
         keep = [w for w in page.words if w.y0 <= header_bottom + 2]
         title = _heading(page, setting['title']) if setting.get('title') else None
         if title is not None:  # a title over the name and budget columns (`予 算 説 明`) heads no amount
@@ -432,8 +457,9 @@ def arrange(pages: list[Page], setting: dict, continued: list[dict] | None = Non
                 if budget and settled_value is not None:
                     last_budget = (page.number, min(w.y0 for w in label), _value(''.join(w.text for w in budget)) or 0, settled_value)
                 continue
-            # An item's イ OCR reads as 1 (a row's code copy is never on a line without its name).
-            item_code = 'イ' if codes and _code(codes[0].text) == '1' else _code(codes[0].text) if codes else ''
+            # An item's イ OCR reads as 1, and (イ) as (1) (a row's code copy is never on a line without its name).
+            item_code = _code(codes[0].text) if codes else ''
+            item_code = {'1': 'イ', '(1)': '(イ)'}.get(item_code, item_code)
             if codes and amounts and last_named is not None and ITEM.match(item_code):
                 code = item_code
                 if code != _code(codes[0].text):

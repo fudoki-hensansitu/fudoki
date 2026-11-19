@@ -1,0 +1,1754 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131237",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-detail",
+        "pages": [
+          [
+            78,
+            165
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考は収入の内容・相手先・件数などの説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true,
+                "agree_on_bottom": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        },
+        "amount_readings": [
+          {
+            "id": "p112-c2-93",
+            "page": 112,
+            "boxes": [
+              [
+                266.3,
+                93.0,
+                311.4,
+                107.0
+              ]
+            ],
+            "amount": "4,634,269,000",
+            "reason": "原典の画像では、物理112頁のこの行の継続費及び繰越事業費繰越財源充当額は 4,634,269,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 4,634,269,000 と宣言する。"
+          },
+          {
+            "id": "p114-c1-630",
+            "page": 114,
+            "boxes": [
+              [
+                201.1,
+                630.3,
+                262.5,
+                639.7
+              ]
+            ],
+            "amount": "1,891,379,000",
+            "reason": "原典の画像では、物理114頁のこの行の補正予算額は 1,891,379,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 1,891,379,000 と宣言する。"
+          },
+          {
+            "id": "p114-c2-628",
+            "page": 114,
+            "boxes": [
+              [
+                262.5,
+                628.5,
+                328.2,
+                642.5
+              ]
+            ],
+            "amount": "4,617,619,000",
+            "reason": "原典の画像では、物理114頁のこの行の継続費及び繰越事業費繰越財源充当額は 4,617,619,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 4,617,619,000 と宣言する。"
+          },
+          {
+            "id": "p116-c2-200",
+            "page": 116,
+            "boxes": [
+              [
+                271.0,
+                200.0,
+                327.5,
+                214.0
+              ]
+            ],
+            "amount": "694,007,000",
+            "reason": "原典の画像では、物理116頁のこの行の継続費及び繰越事業費繰越財源充当額は 694,007,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 694,007,000 と宣言する。"
+          },
+          {
+            "id": "p118-c2-212",
+            "page": 118,
+            "boxes": [
+              [
+                271.5,
+                211.5,
+                326.6,
+                226.0
+              ]
+            ],
+            "amount": "381,196,000",
+            "reason": "原典の画像では、物理118頁のこの行の継続費及び繰越事業費繰越財源充当額は 381,196,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 381,196,000 と宣言する。"
+          },
+          {
+            "id": "p120-c2-128",
+            "page": 120,
+            "boxes": [
+              [
+                264.6,
+                128.5,
+                327.5,
+                142.5
+              ]
+            ],
+            "amount": "2,694,041,000",
+            "reason": "原典の画像では、物理120頁のこの行の継続費及び繰越事業費繰越財源充当額は 2,694,041,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 2,694,041,000 と宣言する。"
+          },
+          {
+            "id": "p120-c2-498",
+            "page": 120,
+            "boxes": [
+              [
+                271.0,
+                497.5,
+                327.5,
+                511.5
+              ]
+            ],
+            "amount": "843,600,000",
+            "reason": "原典の画像では、物理120頁のこの行の継続費及び繰越事業費繰越財源充当額は 843,600,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 843,600,000 と宣言する。"
+          },
+          {
+            "id": "p124-c2-93",
+            "page": 124,
+            "boxes": [
+              [
+                268.5,
+                93.0,
+                311.4,
+                107.0
+              ]
+            ],
+            "amount": "1,091,045,000",
+            "reason": "原典の画像では、物理124頁のこの行の継続費及び繰越事業費繰越財源充当額は 1,091,045,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 1,091,045,000 と宣言する。"
+          },
+          {
+            "id": "p126-c1-236",
+            "page": 126,
+            "boxes": [
+              [
+                196.3,
+                236.0,
+                262.5,
+                250.0
+              ]
+            ],
+            "amount": "12,510,120,000",
+            "reason": "原典の画像では、物理126頁のこの行の補正予算額は 12,510,120,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 12,510,120,000 と宣言する。"
+          },
+          {
+            "id": "p126-c2-236",
+            "page": 126,
+            "boxes": [
+              [
+                262.5,
+                236.0,
+                327.5,
+                250.0
+              ]
+            ],
+            "amount": "1,091,045,000",
+            "reason": "原典の画像では、物理126頁のこの行の継続費及び繰越事業費繰越財源充当額は 1,091,045,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 1,091,045,000 と宣言する。"
+          },
+          {
+            "id": "p134-c2-605",
+            "page": 134,
+            "boxes": [
+              [
+                271.5,
+                604.9,
+                327.5,
+                619.0
+              ]
+            ],
+            "amount": "752,459,000",
+            "reason": "原典の画像では、物理134頁のこの行の継続費及び繰越事業費繰越財源充当額は 752,459,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 752,459,000 と宣言する。"
+          },
+          {
+            "id": "p156-c1-93",
+            "page": 156,
+            "boxes": [
+              [
+                196.5,
+                93.0,
+                262.5,
+                107.0
+              ]
+            ],
+            "amount": "9,347,656,000",
+            "reason": "原典の画像では、物理156頁のこの行の補正予算額は 9,347,656,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 9,347,656,000 と宣言する。"
+          },
+          {
+            "id": "p156-c1-128",
+            "page": 156,
+            "boxes": [
+              [
+                196.5,
+                128.5,
+                262.5,
+                142.5
+              ]
+            ],
+            "amount": "9,347,656,000",
+            "reason": "原典の画像では、物理156頁のこの行の補正予算額は 9,347,656,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 9,347,656,000 と宣言する。"
+          },
+          {
+            "id": "p156-c1-164",
+            "page": 156,
+            "boxes": [
+              [
+                196.5,
+                164.5,
+                262.5,
+                178.5
+              ]
+            ],
+            "amount": "9,347,656,000",
+            "reason": "原典の画像では、物理156頁のこの行の補正予算額は 9,347,656,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 9,347,656,000 と宣言する。"
+          },
+          {
+            "id": "p156-c2-93",
+            "page": 156,
+            "boxes": [
+              [
+                262.5,
+                93.0,
+                327.5,
+                107.0
+              ]
+            ],
+            "amount": "14,386,054,000",
+            "reason": "原典の画像では、物理156頁のこの行の継続費及び繰越事業費繰越財源充当額は 14,386,054,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 14,386,054,000 と宣言する。"
+          },
+          {
+            "id": "p156-c2-128",
+            "page": 156,
+            "boxes": [
+              [
+                262.5,
+                128.5,
+                328.5,
+                142.5
+              ]
+            ],
+            "amount": "14,386,054,000",
+            "reason": "原典の画像では、物理156頁のこの行の継続費及び繰越事業費繰越財源充当額は 14,386,054,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 14,386,054,000 と宣言する。"
+          },
+          {
+            "id": "p156-c2-164",
+            "page": 156,
+            "boxes": [
+              [
+                262.5,
+                164.5,
+                328.5,
+                178.5
+              ]
+            ],
+            "amount": "14,386,054,000",
+            "reason": "原典の画像では、物理156頁のこの行の継続費及び繰越事業費繰越財源充当額は 14,386,054,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 14,386,054,000 と宣言する。"
+          },
+          {
+            "id": "p156-c3-128",
+            "page": 156,
+            "boxes": [
+              [
+                328.5,
+                128.2,
+                397.1,
+                142.2
+              ]
+            ],
+            "amount": "26,370,581,000",
+            "reason": "原典の画像では、物理156頁のこの行の計は 26,370,581,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 26,370,581,000 と宣言する。"
+          },
+          {
+            "id": "p156-c3-164",
+            "page": 156,
+            "boxes": [
+              [
+                328.5,
+                164.2,
+                397.1,
+                178.2
+              ]
+            ],
+            "amount": "26,370,581,000",
+            "reason": "原典の画像では、物理156頁のこの行の計は 26,370,581,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 26,370,581,000 と宣言する。"
+          },
+          {
+            "id": "p164-c1-736",
+            "page": 164,
+            "boxes": [
+              [
+                193.5,
+                736.0,
+                262.5,
+                750.0
+              ]
+            ],
+            "amount": "38,801,487,000",
+            "reason": "原典の画像では、物理164頁のこの行の補正予算額は 38,801,487,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 38,801,487,000 と宣言する。"
+          },
+          {
+            "id": "p164-c2-736",
+            "page": 164,
+            "boxes": [
+              [
+                262.5,
+                736.0,
+                328.5,
+                750.0
+              ]
+            ],
+            "amount": "20,120,032,000",
+            "reason": "原典の画像では、物理164頁のこの行の継続費及び繰越事業費繰越財源充当額は 20,120,032,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 20,120,032,000 と宣言する。"
+          },
+          {
+            "id": "p164-c3-736",
+            "page": 164,
+            "boxes": [
+              [
+                328.5,
+                735.8,
+                397.6,
+                749.8
+              ]
+            ],
+            "amount": "350,195,155,000",
+            "reason": "原典の画像では、物理164頁のこの行の計は 350,195,155,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 350,195,155,000 と宣言する。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "p114-c2-628-digit-1-r0",
+            "page": 114,
+            "observation_id": "p114:digit-1:r0",
+            "observed": "6",
+            "reason": "原典の画像では、物理114頁のこの行の継続費及び繰越事業費繰越財源充当額は 4,617,619,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 4,617,619,000 と宣言する。"
+          },
+          {
+            "id": "p114-c2-628-digit-2-r0",
+            "page": 114,
+            "observation_id": "p114:digit-2:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理114頁のこの行の継続費及び繰越事業費繰越財源充当額は 4,617,619,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 4,617,619,000 と宣言する。"
+          },
+          {
+            "id": "p114-c2-628-digit-3-r0",
+            "page": 114,
+            "observation_id": "p114:digit-3:r0",
+            "observed": "7",
+            "reason": "原典の画像では、物理114頁のこの行の継続費及び繰越事業費繰越財源充当額は 4,617,619,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 4,617,619,000 と宣言する。"
+          },
+          {
+            "id": "p114-c2-628-digit-4-r0",
+            "page": 114,
+            "observation_id": "p114:digit-4:r0",
+            "observed": "6",
+            "reason": "原典の画像では、物理114頁のこの行の継続費及び繰越事業費繰越財源充当額は 4,617,619,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 4,617,619,000 と宣言する。"
+          },
+          {
+            "id": "p114-c2-628-digit-5-r0",
+            "page": 114,
+            "observation_id": "p114:digit-5:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理114頁のこの行の継続費及び繰越事業費繰越財源充当額は 4,617,619,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 4,617,619,000 と宣言する。"
+          },
+          {
+            "id": "p118-c2-212-digit-0-r0",
+            "page": 118,
+            "observation_id": "p118:digit-0:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理118頁のこの行の継続費及び繰越事業費繰越財源充当額は 381,196,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 381,196,000 と宣言する。"
+          },
+          {
+            "id": "p118-c2-212-digit-1-r0",
+            "page": 118,
+            "observation_id": "p118:digit-1:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理118頁のこの行の継続費及び繰越事業費繰越財源充当額は 381,196,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 381,196,000 と宣言する。"
+          },
+          {
+            "id": "p120-c2-128-digit-1-r0",
+            "page": 120,
+            "observation_id": "p120:digit-1:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理120頁のこの行の継続費及び繰越事業費繰越財源充当額は 2,694,041,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 2,694,041,000 と宣言する。"
+          },
+          {
+            "id": "p124-c2-93-digit-0-r0",
+            "page": 124,
+            "observation_id": "p124:digit-0:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理124頁のこの行の継続費及び繰越事業費繰越財源充当額は 1,091,045,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 1,091,045,000 と宣言する。"
+          },
+          {
+            "id": "p124-c2-93-digit-1-r0",
+            "page": 124,
+            "observation_id": "p124:digit-1:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理124頁のこの行の継続費及び繰越事業費繰越財源充当額は 1,091,045,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 1,091,045,000 と宣言する。"
+          },
+          {
+            "id": "p126-c1-236-digit-0-r0",
+            "page": 126,
+            "observation_id": "p126:digit-0:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理126頁のこの行の補正予算額は 12,510,120,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 12,510,120,000 と宣言する。"
+          },
+          {
+            "id": "p126-c1-236-digit-2-r0",
+            "page": 126,
+            "observation_id": "p126:digit-2:r0",
+            "observed": "5",
+            "reason": "原典の画像では、物理126頁のこの行の補正予算額は 12,510,120,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 12,510,120,000 と宣言する。"
+          },
+          {
+            "id": "p126-c1-236-digit-3-r0",
+            "page": 126,
+            "observation_id": "p126:digit-3:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理126頁のこの行の補正予算額は 12,510,120,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 12,510,120,000 と宣言する。"
+          },
+          {
+            "id": "p126-c1-236-digit-5-r0",
+            "page": 126,
+            "observation_id": "p126:digit-5:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理126頁のこの行の補正予算額は 12,510,120,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 12,510,120,000 と宣言する。"
+          },
+          {
+            "id": "p126-c2-236-digit-6-r0",
+            "page": 126,
+            "observation_id": "p126:digit-6:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理126頁のこの行の継続費及び繰越事業費繰越財源充当額は 1,091,045,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 1,091,045,000 と宣言する。"
+          },
+          {
+            "id": "p126-c2-236-digit-7-r0",
+            "page": 126,
+            "observation_id": "p126:digit-7:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理126頁のこの行の継続費及び繰越事業費繰越財源充当額は 1,091,045,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 1,091,045,000 と宣言する。"
+          },
+          {
+            "id": "p156-c1-93-digit-1-r0",
+            "page": 156,
+            "observation_id": "p156:digit-1:r0",
+            "observed": "7",
+            "reason": "原典の画像では、物理156頁のこの行の補正予算額は 9,347,656,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 9,347,656,000 と宣言する。"
+          },
+          {
+            "id": "p156-c1-128-digit-3-r0",
+            "page": 156,
+            "observation_id": "p156:digit-3:r0",
+            "observed": "7",
+            "reason": "原典の画像では、物理156頁のこの行の補正予算額は 9,347,656,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 9,347,656,000 と宣言する。"
+          },
+          {
+            "id": "p156-c1-164-digit-6-r0",
+            "page": 156,
+            "observation_id": "p156:digit-6:r0",
+            "observed": "7",
+            "reason": "原典の画像では、物理156頁のこの行の補正予算額は 9,347,656,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 9,347,656,000 と宣言する。"
+          },
+          {
+            "id": "p156-c3-128-digit-4-r0",
+            "page": 156,
+            "observation_id": "p156:digit-4:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理156頁のこの行の計は 26,370,581,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 26,370,581,000 と宣言する。"
+          },
+          {
+            "id": "p156-c3-164-digit-7-r0",
+            "page": 156,
+            "observation_id": "p156:digit-7:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理156頁のこの行の計は 26,370,581,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 26,370,581,000 と宣言する。"
+          },
+          {
+            "id": "p164-c1-736-digit-0-r0",
+            "page": 164,
+            "observation_id": "p164:digit-0:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理164頁のこの行の補正予算額は 38,801,487,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 38,801,487,000 と宣言する。"
+          },
+          {
+            "id": "p164-c2-736-digit-1-r0",
+            "page": 164,
+            "observation_id": "p164:digit-1:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理164頁のこの行の継続費及び繰越事業費繰越財源充当額は 20,120,032,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 20,120,032,000 と宣言する。"
+          },
+          {
+            "id": "p164-c3-736-digit-2-r0",
+            "page": 164,
+            "observation_id": "p164:digit-2:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理164頁のこの行の計は 350,195,155,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 350,195,155,000 と宣言する。"
+          },
+          {
+            "id": "p164-c3-736-digit-3-r0",
+            "page": 164,
+            "observation_id": "p164:digit-3:r0",
+            "observed": "1",
+            "reason": "原典の画像では、物理164頁のこの行の計は 350,195,155,000 と印字されている。OCR はこの欄を行として読めなかった。原画で読み、欄の中の枠で 350,195,155,000 と宣言する。"
+          },
+          {
+            "id": "p79-reread-r21",
+            "page": 79,
+            "observation_id": "p79:full-page:a0:result1:r21",
+            "observed": "3,219",
+            "reason": "原典の画像では、物理79頁のこの欄は 256,708,219 の1つの金額。OCR は帯の重なりで同じ欄を2度読み、末尾の「3,219」を別の読みとして残したので、その読みを落とす。"
+          },
+          {
+            "id": "p159-reread-r5",
+            "page": 159,
+            "observation_id": "p159:full-page:a0:result1:r5",
+            "observed": "3,938",
+            "reason": "原典の画像では、物理159頁のこの欄は 3,827,168,938 の1つの金額。OCR は帯の重なりで同じ欄を2度読み、末尾の「3,938」を別の読みとして残したので、その読みを落とす。"
+          },
+          {
+            "id": "p165-reread-r21",
+            "page": 165,
+            "observation_id": "p165:full-page:a0:result1:r21",
+            "observed": "3,438",
+            "reason": "原典の画像では、物理165頁のこの欄は 3,034,728,438 の1つの金額。OCR は帯の重なりで同じ欄を2度読み、末尾の「3,438」を別の読みとして残したので、その読みを落とす。"
+          },
+          {
+            "id": "p79-notemark-r1",
+            "page": 79,
+            "observation_id": "p79:full-page:a0:result0:r1",
+            "observed": "注1.",
+            "reason": "原典の画像では、物理79頁の表題の枠に「注1.」と注の番号を印字し、その右に調定額の滞納繰越分と△印の注を書いている。金額ではないので、その読みを落とす。"
+          },
+          {
+            "id": "p79-notemark-r4",
+            "page": 79,
+            "observation_id": "p79:full-page:a0:result0:r4",
+            "observed": "注2.",
+            "reason": "原典の画像では、物理79頁の表題の枠に「注2.」と注の番号を印字し、その右に調定額の滞納繰越分と△印の注を書いている。金額ではないので、その読みを落とす。"
+          },
+          {
+            "id": "p128-name-full-page-a0-result0-r15",
+            "page": 128,
+            "observation_id": "p128:full-page:a0:result0:r15",
+            "observed": "務助",
+            "reason": "原典の画像では目の名前は2行で「5総務費」「補助金」と印字されている。Paddle は2行を縦に組んで読んだので、名前は「総箱」の読みにまとめ、この読みは落とす。"
+          },
+          {
+            "id": "p128-name-full-page-a0-result0-r16",
+            "page": 128,
+            "observation_id": "p128:full-page:a0:result0:r16",
+            "observed": "費金",
+            "reason": "原典の画像では目の名前は2行で「5総務費」「補助金」と印字されている。Paddle は2行を縦に組んで読んだので、名前は「総箱」の読みにまとめ、この読みは落とす。"
+          },
+          {
+            "id": "p128-name-full-page-a0-result0-r23",
+            "page": 128,
+            "observation_id": "p128:full-page:a0:result0:r23",
+            "observed": "境助",
+            "reason": "原典の画像では目の名前は2行で「7環境費」「補助金」と印字されている。Paddle は2行を縦に組んで読んだので、名前は「谭确」の読みにまとめ、この読みは落とす。"
+          },
+          {
+            "id": "p128-name-full-page-a0-result0-r24",
+            "page": 128,
+            "observation_id": "p128:full-page:a0:result0:r24",
+            "observed": "費金",
+            "reason": "原典の画像では目の名前は2行で「7環境費」「補助金」と印字されている。Paddle は2行を縦に組んで読んだので、名前は「谭确」の読みにまとめ、この読みは落とす。"
+          },
+          {
+            "id": "p100-name-full-page-a0-result1-r32",
+            "page": 100,
+            "observation_id": "p100:full-page:a0:result1:r32",
+            "observed": "料",
+            "reason": "原典の画像では名前は2行で「1環境施設」「使用料」と印字されている。Paddle は2行目以降を別の読み（1字ずつ・行の高さのずれ）にしたので、名前を1行目の読みにまとめ、残りの読みは落とす。"
+          },
+          {
+            "id": "p100-name-full-page-a0-result1-r34",
+            "page": 100,
+            "observation_id": "p100:full-page:a0:result1:r34",
+            "observed": "使",
+            "reason": "原典の画像では名前は2行で「1環境施設」「使用料」と印字されている。Paddle は2行目以降を別の読み（1字ずつ・行の高さのずれ）にしたので、名前を1行目の読みにまとめ、残りの読みは落とす。"
+          },
+          {
+            "id": "p100-name-full-page-a0-result1-r35",
+            "page": 100,
+            "observation_id": "p100:full-page:a0:result1:r35",
+            "observed": "用",
+            "reason": "原典の画像では名前は2行で「1環境施設」「使用料」と印字されている。Paddle は2行目以降を別の読み（1字ずつ・行の高さのずれ）にしたので、名前を1行目の読みにまとめ、残りの読みは落とす。"
+          },
+          {
+            "id": "p100-name-ink-5-a5-result0-r0",
+            "page": 100,
+            "observation_id": "p100:ink-5:a5:result0:r0",
+            "observed": "境",
+            "reason": "原典の画像では名前は2行で「1環境施設」「使用料」と印字されている。Paddle は2行目以降を別の読み（1字ずつ・行の高さのずれ）にしたので、名前を1行目の読みにまとめ、残りの読みは落とす。"
+          },
+          {
+            "id": "p100-name-ink-5-a5-result0-r1",
+            "page": 100,
+            "observation_id": "p100:ink-5:a5:result0:r1",
+            "observed": "施",
+            "reason": "原典の画像では名前は2行で「1環境施設」「使用料」と印字されている。Paddle は2行目以降を別の読み（1字ずつ・行の高さのずれ）にしたので、名前を1行目の読みにまとめ、残りの読みは落とす。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "auto-p78-full-page-a0-result1-r1",
+            "page": 78,
+            "observation_id": "p78:full-page:a0:result1:r1",
+            "observed_name": "歲",
+            "corrected_name": "歳",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p79-full-page-a0-result0-r0",
+            "page": 79,
+            "observation_id": "p79:full-page:a0:result0:r0",
+            "observed_name": "計歳入歲出決算事項別明細書",
+            "corrected_name": "計歳入歳出決算事項別明細書",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p80-full-page-a0-result0-r0",
+            "page": 80,
+            "observation_id": "p80:full-page:a0:result0:r0",
+            "observed_name": "2地方讓与税",
+            "corrected_name": "2地方譲与税",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p80-full-page-a0-result0-r33",
+            "page": 80,
+            "observation_id": "p80:full-page:a0:result0:r33",
+            "observed_name": "3森林環境讓与稅",
+            "corrected_name": "3森林環境譲与税",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p80-full-page-a0-result1-r30",
+            "page": 80,
+            "observation_id": "p80:full-page:a0:result1:r30",
+            "observed_name": "讓",
+            "corrected_name": "譲",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p80-full-page-a0-result1-r37",
+            "page": 80,
+            "observation_id": "p80:full-page:a0:result1:r37",
+            "observed_name": "1森林環境讓与稅",
+            "corrected_name": "1森林環境譲与税",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p104-full-page-a0-result1-r64",
+            "page": 104,
+            "observation_id": "p104:full-page:a0:result1:r64",
+            "observed_name": "コミュニテイ",
+            "corrected_name": "コミュニティ",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p106-full-page-a0-result1-r22",
+            "page": 106,
+            "observation_id": "p106:full-page:a0:result1:r22",
+            "observed_name": "コミュニテイ",
+            "corrected_name": "コミュニティ",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p130-full-page-a0-result1-r57",
+            "page": 130,
+            "observation_id": "p130:full-page:a0:result1:r57",
+            "observed_name": "4地域產業活力創出",
+            "corrected_name": "4地域産業活力創出",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p140-full-page-a0-result1-r25",
+            "page": 140,
+            "observation_id": "p140:full-page:a0:result1:r25",
+            "observed_name": "6とうきようママ",
+            "corrected_name": "6とうきょうママ",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p142-full-page-a0-result1-r34",
+            "page": 142,
+            "observation_id": "p142:full-page:a0:result1:r34",
+            "observed_name": "5スクールソーシヤル",
+            "corrected_name": "5スクールソーシャル",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p142-full-page-a0-result1-r35",
+            "page": 142,
+            "observation_id": "p142:full-page:a0:result1:r35",
+            "observed_name": "ワーカ一活用事業費",
+            "corrected_name": "ワーカー活用事業費",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p144-full-page-a0-result1-r44",
+            "page": 144,
+            "observation_id": "p144:full-page:a0:result1:r44",
+            "observed_name": "25地產地消型再工ネ",
+            "corrected_name": "25地産地消型再エネ",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。 原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p148-full-page-a0-result0-r0",
+            "page": 148,
+            "observation_id": "p148:full-page:a0:result0:r0",
+            "observed_name": "15財產収入",
+            "corrected_name": "15財産収入",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p148-full-page-a0-result0-r17",
+            "page": 148,
+            "observation_id": "p148:full-page:a0:result0:r17",
+            "observed_name": "1財產運用収入",
+            "corrected_name": "1財産運用収入",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p148-full-page-a0-result0-r20",
+            "page": 148,
+            "observation_id": "p148:full-page:a0:result0:r20",
+            "observed_name": "1財產貸付収入",
+            "corrected_name": "1財産貸付収入",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p148-full-page-a0-result0-r27",
+            "page": 148,
+            "observation_id": "p148:full-page:a0:result0:r27",
+            "observed_name": "2財産壳払収入",
+            "corrected_name": "2財産売払収入",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p158-full-page-a0-result1-r29",
+            "page": 158,
+            "observation_id": "p158:full-page:a0:result1:r29",
+            "observed_name": "1歲計現金等利子",
+            "corrected_name": "1歳計現金等利子",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p158-full-page-a0-result1-r57",
+            "page": 158,
+            "observation_id": "p158:full-page:a0:result1:r57",
+            "observed_name": "1地場產業振興資金",
+            "corrected_name": "1地場産業振興資金",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p160-full-page-a0-result1-r20",
+            "page": 160,
+            "observation_id": "p160:full-page:a0:result1:r20",
+            "observed_name": "1療養出產資金",
+            "corrected_name": "1療養出産資金",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p162-full-page-a0-result1-r39",
+            "page": 162,
+            "observation_id": "p162:full-page:a0:result1:r39",
+            "observed_name": "2出產応援事業",
+            "corrected_name": "2出産応援事業",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p164-full-page-a0-result0-r37",
+            "page": 164,
+            "observation_id": "p164:full-page:a0:result0:r37",
+            "observed_name": "歲入合計",
+            "corrected_name": "歳入合計",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "man-p112-full-page-a0-result1-r35-1",
+            "page": 112,
+            "observation_id": "p112:full-page:a0:result1:r35",
+            "observed_name": "负",
+            "corrected_name": "負",
+            "reason": "原典の画像では「国庫負担金」と印字されている。Paddle は「負」を中国語の字形「负」で読み、字の間に無い「报」を足した。"
+          },
+          {
+            "id": "man-p112-full-page-a0-result1-r35-2",
+            "page": 112,
+            "observation_id": "p112:full-page:a0:result1:r35",
+            "observed_name": "負报担",
+            "corrected_name": "負担",
+            "reason": "原典の画像では「国庫負担金」と印字されている。Paddle は「負」を中国語の字形「负」で読み、字の間に無い「报」を足した。"
+          },
+          {
+            "id": "man-p124-ink-6-a6-result0-r0-1",
+            "page": 124,
+            "observation_id": "p124:ink-6:a6:result0:r0",
+            "observed_name": "担",
+            "corrected_name": "担金",
+            "reason": "原典の画像では節の名前の2行目は「都負担金」と印字されている。Paddle は行末の「金」を読まなかった。"
+          },
+          {
+            "id": "man-p128-full-page-a0-result0-r14-1",
+            "page": 128,
+            "observation_id": "p128:full-page:a0:result0:r14",
+            "observed_name": "箱",
+            "corrected_name": "務",
+            "reason": "原典の画像では目の名前は2行で「5総務費」「補助金」と印字されている。Paddle は2行を縦に組んで「総箱」「務助」「費金」と読んだ（「補」を「箱」）。名前をこの読みにまとめ、残りの2つの読みは落とす。"
+          },
+          {
+            "id": "man-p128-full-page-a0-result0-r14-2",
+            "page": 128,
+            "observation_id": "p128:full-page:a0:result0:r14",
+            "observed_name": "総務",
+            "corrected_name": "総務費補助金",
+            "reason": "原典の画像では目の名前は2行で「5総務費」「補助金」と印字されている。Paddle は2行を縦に組んで「総箱」「務助」「費金」と読んだ（「補」を「箱」）。名前をこの読みにまとめ、残りの2つの読みは落とす。"
+          },
+          {
+            "id": "man-p128-full-page-a0-result0-r22-1",
+            "page": 128,
+            "observation_id": "p128:full-page:a0:result0:r22",
+            "observed_name": "谭确",
+            "corrected_name": "環境",
+            "reason": "原典の画像では目の名前は2行で「7環境費」「補助金」と印字されている。Paddle は2行を縦に組んで「谭确」「境助」「費金」と読んだ。名前をこの読みにまとめ、残りの2つの読みは落とす。"
+          },
+          {
+            "id": "man-p128-full-page-a0-result0-r22-2",
+            "page": 128,
+            "observation_id": "p128:full-page:a0:result0:r22",
+            "observed_name": "環境",
+            "corrected_name": "環境費補助金",
+            "reason": "原典の画像では目の名前は2行で「7環境費」「補助金」と印字されている。Paddle は2行を縦に組んで「谭确」「境助」「費金」と読んだ。名前をこの読みにまとめ、残りの2つの読みは落とす。"
+          },
+          {
+            "id": "man-p132-full-page-a0-result1-r69-1",
+            "page": 132,
+            "observation_id": "p132:full-page:a0:result1:r69",
+            "observed_name": "福社",
+            "corrected_name": "福祉",
+            "reason": "原典の画像では「福祉」と印字されている。Paddle は「祉」を「社」と読んだ。"
+          },
+          {
+            "id": "man-p100-full-page-a0-result1-r31-1",
+            "page": 100,
+            "observation_id": "p100:full-page:a0:result1:r31",
+            "observed_name": "環",
+            "corrected_name": "環境施設使用料",
+            "reason": "原典の画像では名前は2行で「1環境施設」「使用料」と印字されている。Paddle は2行目以降を別の読み（1字ずつ・行の高さのずれ）にしたので、名前を1行目の読みにまとめ、残りの読みは落とす。"
+          },
+          {
+            "id": "man-p106-full-page-a0-result0-r20-1",
+            "page": 106,
+            "observation_id": "p106:full-page:a0:result0:r20",
+            "observed_name": "月料",
+            "corrected_name": "用料",
+            "reason": "原典の画像では「子ども家庭使用料」と印字されている。Paddle は「用」を「月」と読んだ。"
+          },
+          {
+            "id": "man-p140-full-page-a0-result1-r53-1",
+            "page": 140,
+            "observation_id": "p140:full-page:a0:result1:r53",
+            "observed_name": "繁急",
+            "corrected_name": "緊急",
+            "reason": "原典の画像では「緊急」と印字されている。Paddle は「緊」を「繁」と読んだ。"
+          },
+          {
+            "id": "man-p142-full-page-a0-result1-r59-1",
+            "page": 142,
+            "observation_id": "p142:full-page:a0:result1:r59",
+            "observed_name": "推售",
+            "corrected_name": "推進",
+            "reason": "原典の画像では「授業改善推進拠点校」と印字されている。Paddle は「進」を「售」と読んだ。"
+          },
+          {
+            "id": "man-p144-full-page-a0-result1-r61-1",
+            "page": 144,
+            "observation_id": "p144:full-page:a0:result1:r61",
+            "observed_name": "登錄",
+            "corrected_name": "登録",
+            "reason": "原典の画像では「名簿登録事務費」と印字されている。Paddle は「録」を旧字体の「錄」と読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-ocr-1",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              78,
+              79,
+              80,
+              81,
+              82,
+              83,
+              84,
+              85,
+              86,
+              87
+            ]
+          },
+          "sha256": "b647a404839ec7ad3c3095f8ef4bd7271ff427184e2ef8dd29d7c0e28061bf2f",
+          "bytes": 1453230
+        },
+        {
+          "id": "general-revenue-ocr-2",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              88,
+              89,
+              90,
+              91,
+              92,
+              93,
+              94,
+              95,
+              96,
+              97
+            ]
+          },
+          "sha256": "1f5c0716a1a965cfee3b0ac7a432d2ba8cc23a1628495438ca49d5d0148db1f0",
+          "bytes": 920283
+        },
+        {
+          "id": "general-revenue-ocr-3",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              98,
+              99,
+              100,
+              101,
+              102,
+              103,
+              104,
+              105,
+              106,
+              107
+            ]
+          },
+          "sha256": "fa8348b0361197f37aa216d7b86547eb73ffd37798b322cb408deeff6148b3ed",
+          "bytes": 2524112
+        },
+        {
+          "id": "general-revenue-ocr-4",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              108,
+              109,
+              110,
+              111,
+              112,
+              113,
+              114,
+              115,
+              116,
+              117
+            ]
+          },
+          "sha256": "893eeaf6f000863fa75e250fc73278cac8b6c2a6271054f29c6b2f12189ae4cd",
+          "bytes": 2467813
+        },
+        {
+          "id": "general-revenue-ocr-5",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              118,
+              119,
+              120,
+              121,
+              122,
+              123,
+              124,
+              125,
+              126,
+              127
+            ]
+          },
+          "sha256": "4fa7e75d6c206483bc4da3df649d753aa4bd20126a3320b8b267bc6ab65b685f",
+          "bytes": 2603132
+        },
+        {
+          "id": "general-revenue-ocr-6",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              128,
+              129,
+              130,
+              131,
+              132,
+              133,
+              134,
+              135,
+              136,
+              137
+            ]
+          },
+          "sha256": "cc11e16b7dad5dff5ab0f3eb50b060b331b575b44534df5e69f35d65b168b407",
+          "bytes": 2527101
+        },
+        {
+          "id": "general-revenue-ocr-7",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              138,
+              139,
+              140,
+              141,
+              142,
+              143,
+              144,
+              145,
+              146,
+              147
+            ]
+          },
+          "sha256": "8a5aba0522049b50017fe199ac92056bc7a75f1b076883f759dec54ea2775f1a",
+          "bytes": 2316204
+        },
+        {
+          "id": "general-revenue-ocr-8",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              148,
+              149,
+              150,
+              151,
+              152,
+              153,
+              154,
+              155,
+              156,
+              157
+            ]
+          },
+          "sha256": "25ade733e21858e325578ce876515f00577fff61e89dfd9a9ad9b35d3d3dccd7",
+          "bytes": 1753340
+        },
+        {
+          "id": "general-revenue-ocr-9",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              158,
+              159,
+              160,
+              161,
+              162,
+              163,
+              164,
+              165
+            ]
+          },
+          "sha256": "55ed6c909eebf05ca3777e0818d461445b056e191b7ac5ed3bb325de2100de92",
+          "bytes": 2237580
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "nhi-revenue-detail",
+        "pages": [
+          [
+            300,
+            315
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考は収入の内容・相手先・件数などの説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true,
+                "agree_on_bottom": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p301-notemark-r1",
+            "page": 301,
+            "observation_id": "p301:full-page:a0:result0:r1",
+            "observed": "注1.",
+            "reason": "原典の画像では、物理301頁の表題の枠に「注1.」と注の番号を印字し、その右に調定額の滞納繰越分と△印の注を書いている。金額ではないので、その読みを落とす。"
+          },
+          {
+            "id": "p301-notemark-r3",
+            "page": 301,
+            "observation_id": "p301:full-page:a0:result0:r3",
+            "observed": "注2.",
+            "reason": "原典の画像では、物理301頁の表題の枠に「注2.」と注の番号を印字し、その右に調定額の滞納繰越分と△印の注を書いている。金額ではないので、その読みを落とす。"
+          },
+          {
+            "id": "p300-name-ink-6-a6-result0-r0",
+            "page": 300,
+            "observation_id": "p300:ink-6:a6:result0:r0",
+            "observed": "支",
+            "reason": "原典の画像では節の名前は3行で「2後期高齢者」「支援金分」「現年分」と印字されている。名前は1行目の読みにまとめたので、2行目・3行目を1字ずつ読んだこの読みは落とす。"
+          },
+          {
+            "id": "p300-name-ink-7-a7-result0-r0",
+            "page": 300,
+            "observation_id": "p300:ink-7:a7:result0:r0",
+            "observed": "援",
+            "reason": "原典の画像では節の名前は3行で「2後期高齢者」「支援金分」「現年分」と印字されている。名前は1行目の読みにまとめたので、2行目・3行目を1字ずつ読んだこの読みは落とす。"
+          },
+          {
+            "id": "p300-name-ink-8-a8-result0-r0",
+            "page": 300,
+            "observation_id": "p300:ink-8:a8:result0:r0",
+            "observed": "金",
+            "reason": "原典の画像では節の名前は3行で「2後期高齢者」「支援金分」「現年分」と印字されている。名前は1行目の読みにまとめたので、2行目・3行目を1字ずつ読んだこの読みは落とす。"
+          },
+          {
+            "id": "p300-name-ink-9-a9-result0-r0",
+            "page": 300,
+            "observation_id": "p300:ink-9:a9:result0:r0",
+            "observed": "分",
+            "reason": "原典の画像では節の名前は3行で「2後期高齢者」「支援金分」「現年分」と印字されている。名前は1行目の読みにまとめたので、2行目・3行目を1字ずつ読んだこの読みは落とす。"
+          },
+          {
+            "id": "p300-name-ink-10-a10-result0-r0",
+            "page": 300,
+            "observation_id": "p300:ink-10:a10:result0:r0",
+            "observed": "現",
+            "reason": "原典の画像では節の名前は3行で「2後期高齢者」「支援金分」「現年分」と印字されている。名前は1行目の読みにまとめたので、2行目・3行目を1字ずつ読んだこの読みは落とす。"
+          },
+          {
+            "id": "p300-name-ink-11-a11-result0-r0",
+            "page": 300,
+            "observation_id": "p300:ink-11:a11:result0:r0",
+            "observed": "年",
+            "reason": "原典の画像では節の名前は3行で「2後期高齢者」「支援金分」「現年分」と印字されている。名前は1行目の読みにまとめたので、2行目・3行目を1字ずつ読んだこの読みは落とす。"
+          },
+          {
+            "id": "p300-name-full-page-a0-result1-r26",
+            "page": 300,
+            "observation_id": "p300:full-page:a0:result1:r26",
+            "observed": "分",
+            "reason": "原典の画像では節の名前は3行で「2後期高齢者」「支援金分」「現年分」と印字されている。名前は1行目の読みにまとめたので、3行目の「分」の読みは落とす。"
+          }
+        ],
+        "header_readings": [
+          {
+            "id": "nhi-header-arrears-first",
+            "pages": [
+              301
+            ],
+            "box": [
+              238.0,
+              118.0,
+              304.0,
+              140.0
+            ],
+            "text": "収入未済額",
+            "reason": "OCR は帯の重なりで右頁の見出しの升「収入未済額」を2度読み、末尾の「斉額」（「済額」の読み違い）を同じ升に足して「収入未済額斉額」の欄にしていた。原典の画像で升の印字が「収入未済額」であることを確認した。"
+          },
+          {
+            "id": "nhi-header-arrears",
+            "pages": [
+              303,
+              305,
+              307,
+              309,
+              311,
+              313,
+              315
+            ],
+            "box": [
+              238.0,
+              48.0,
+              304.0,
+              69.0
+            ],
+            "text": "収入未済額",
+            "reason": "OCR は帯の重なりで右頁の見出しの升「収入未済額」を2度読み、末尾の「斉額」（「済額」の読み違い）を同じ升に足して「収入未済額斉額」の欄にしていた。原典の画像で升の印字が「収入未済額」であることを確認した。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "auto-p300-full-page-a0-result1-r1",
+            "page": 300,
+            "observation_id": "p300:full-page:a0:result1:r1",
+            "observed_name": "歲",
+            "corrected_name": "歳",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p304-full-page-a0-result1-r32",
+            "page": 304,
+            "observation_id": "p304:full-page:a0:result1:r32",
+            "observed_name": "1 出產育児一時金臨時",
+            "corrected_name": "1 出産育児一時金臨時",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p308-full-page-a0-result1-r39",
+            "page": 308,
+            "observation_id": "p308:full-page:a0:result1:r39",
+            "observed_name": "7產前產後保険料",
+            "corrected_name": "7産前産後保険料",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "man-p300-full-page-a0-result1-r24-1",
+            "page": 300,
+            "observation_id": "p300:full-page:a0:result1:r24",
+            "observed_name": "齡",
+            "corrected_name": "齢",
+            "reason": "原典の画像では節の名前は3行で「2後期高齢者」「支援金分」「現年分」と印字されている。Paddle は「齢」を「齡」と読み、2行目と3行目を1字ずつ読み、3行目の「分」を2行目の高さに読んで別の節に分けた。名前をこの読みにまとめ、2行目・3行目の読みは落とす。"
+          },
+          {
+            "id": "man-p300-full-page-a0-result1-r24-2",
+            "page": 300,
+            "observation_id": "p300:full-page:a0:result1:r24",
+            "observed_name": "高齢者",
+            "corrected_name": "高齢者支援金分現年分",
+            "reason": "原典の画像では節の名前は3行で「2後期高齢者」「支援金分」「現年分」と印字されている。Paddle は「齢」を「齡」と読み、2行目と3行目を1字ずつ読み、3行目の「分」を2行目の高さに読んで別の節に分けた。名前をこの読みにまとめ、2行目・3行目の読みは落とす。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-revenue-ocr-1",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              300,
+              301,
+              302,
+              303,
+              304,
+              305,
+              306,
+              307,
+              308,
+              309
+            ]
+          },
+          "sha256": "0bc4068f25c62827c85883cb5fe9e3a2e02d97155bbd944fa9ec7dd489d70fd4",
+          "bytes": 1532649
+        },
+        {
+          "id": "nhi-revenue-ocr-2",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              310,
+              311,
+              312,
+              313,
+              314,
+              315
+            ]
+          },
+          "sha256": "32435f600f6aa517e67d25f8df723f8d6ef039c7e2181771a946ef756f819373",
+          "bytes": 967962
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "kaigo-revenue-detail",
+        "pages": [
+          [
+            342,
+            359
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考は収入の内容・相手先・件数などの説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true,
+                "agree_on_bottom": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p343-notemark-r1",
+            "page": 343,
+            "observation_id": "p343:full-page:a0:result0:r1",
+            "observed": "注1.",
+            "reason": "原典の画像では、物理343頁の表題の枠に「注1.」と注の番号を印字し、その右に調定額の滞納繰越分と△印の注を書いている。金額ではないので、その読みを落とす。"
+          },
+          {
+            "id": "p343-notemark-r3",
+            "page": 343,
+            "observation_id": "p343:full-page:a0:result0:r3",
+            "observed": "注2.",
+            "reason": "原典の画像では、物理343頁の表題の枠に「注2.」と注の番号を印字し、その右に調定額の滞納繰越分と△印の注を書いている。金額ではないので、その読みを落とす。"
+          }
+        ],
+        "header_readings": [
+          {
+            "id": "kaigo-header-arrears-first",
+            "pages": [
+              343
+            ],
+            "box": [
+              238.0,
+              118.0,
+              304.0,
+              140.0
+            ],
+            "text": "収入未済額",
+            "reason": "OCR は帯の重なりで右頁の見出しの升「収入未済額」を2度読み、末尾の「斉額」（「済額」の読み違い）を同じ升に足して「収入未済額斉額」の欄にしていた。原典の画像で升の印字が「収入未済額」であることを確認した。"
+          },
+          {
+            "id": "kaigo-header-arrears",
+            "pages": [
+              345,
+              347,
+              349,
+              351,
+              353,
+              355,
+              357,
+              359
+            ],
+            "box": [
+              238.0,
+              48.0,
+              304.0,
+              69.0
+            ],
+            "text": "収入未済額",
+            "reason": "OCR は帯の重なりで右頁の見出しの升「収入未済額」を2度読み、末尾の「斉額」（「済額」の読み違い）を同じ升に足して「収入未済額斉額」の欄にしていた。原典の画像で升の印字が「収入未済額」であることを確認した。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "auto-p342-full-page-a0-result1-r2",
+            "page": 342,
+            "observation_id": "p342:full-page:a0:result1:r2",
+            "observed_name": "歲",
+            "corrected_name": "歳",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p352-full-page-a0-result0-r17",
+            "page": 352,
+            "observation_id": "p352:full-page:a0:result0:r17",
+            "observed_name": "1財產運用収入",
+            "corrected_name": "1財産運用収入",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-revenue-ocr-1",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              342,
+              343,
+              344,
+              345,
+              346,
+              347,
+              348,
+              349,
+              350,
+              351
+            ]
+          },
+          "sha256": "3dee9762aea9f4efb2cf639ecd1e10ec9131d39dfcacaf315d1c1b1ef51b1467",
+          "bytes": 1542624
+        },
+        {
+          "id": "kaigo-revenue-ocr-2",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              352,
+              353,
+              354,
+              355,
+              356,
+              357,
+              358,
+              359
+            ]
+          },
+          "sha256": "4fecb6afa6e5189181ce93b81b4dcabdd4b94ce2b4c18509fbcc07b4da584902",
+          "bytes": 1042923
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-revenue-detail",
+        "pages": [
+          [
+            380,
+            391
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考は収入の内容・相手先・件数などの説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "ignore_frame_title": true,
+                "agree_on_bottom": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p381-notemark-r1",
+            "page": 381,
+            "observation_id": "p381:full-page:a0:result0:r1",
+            "observed": "注1.",
+            "reason": "原典の画像では、物理381頁の表題の枠に「注1.」と注の番号を印字し、その右に調定額の滞納繰越分と△印の注を書いている。金額ではないので、その読みを落とす。"
+          },
+          {
+            "id": "p381-notemark-r3",
+            "page": 381,
+            "observation_id": "p381:full-page:a0:result0:r3",
+            "observed": "注2.",
+            "reason": "原典の画像では、物理381頁の表題の枠に「注2.」と注の番号を印字し、その右に調定額の滞納繰越分と△印の注を書いている。金額ではないので、その読みを落とす。"
+          }
+        ],
+        "header_readings": [
+          {
+            "id": "kouki-header-arrears-first",
+            "pages": [
+              381
+            ],
+            "box": [
+              238.0,
+              118.0,
+              304.0,
+              140.0
+            ],
+            "text": "収入未済額",
+            "reason": "OCR は帯の重なりで右頁の見出しの升「収入未済額」を2度読み、末尾の「斉額」（「済額」の読み違い）を同じ升に足して「収入未済額斉額」の欄にしていた。原典の画像で升の印字が「収入未済額」であることを確認した。"
+          },
+          {
+            "id": "kouki-header-arrears",
+            "pages": [
+              383,
+              385,
+              387,
+              389,
+              391
+            ],
+            "box": [
+              238.0,
+              48.0,
+              304.0,
+              69.0
+            ],
+            "text": "収入未済額",
+            "reason": "OCR は帯の重なりで右頁の見出しの升「収入未済額」を2度読み、末尾の「斉額」（「済額」の読み違い）を同じ升に足して「収入未済額斉額」の欄にしていた。原典の画像で升の印字が「収入未済額」であることを確認した。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "auto-p380-full-page-a0-result1-r2",
+            "page": 380,
+            "observation_id": "p380:full-page:a0:result1:r2",
+            "observed_name": "歲",
+            "corrected_name": "歳",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p390-full-page-a0-result0-r14",
+            "page": 390,
+            "observation_id": "p390:full-page:a0:result0:r14",
+            "observed_name": "歲入合計",
+            "corrected_name": "歳入合計",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-revenue-ocr-1",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              380,
+              381,
+              382,
+              383,
+              384,
+              385,
+              386,
+              387,
+              388,
+              389
+            ]
+          },
+          "sha256": "2ba58b1c2514a4a0bf3964fa1b9863a5bd2f5ca131076cc648f1ed5c8cc8ff4a",
+          "bytes": 1457189
+        },
+        {
+          "id": "kouki-revenue-ocr-2",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              390,
+              391
+            ]
+          },
+          "sha256": "011bc1d386d3555e4bc576ac4e1e78cfb259ba4cd1c55b52edb6d3b60cdcbb48",
+          "bytes": 150335
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue-detail"
+        }
+      ]
+    }
+  ]
+}

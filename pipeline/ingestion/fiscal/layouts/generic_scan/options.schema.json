@@ -16,18 +16,44 @@
       "description": "The original is one volume of an account printed in several originals: its 款 are some of the account's, so the sum and digit checks of the unit are reported, not enforced."
     },
     "continued_rows": {
-      "type": "array",
-      "description": "The original starts inside a 事務事業 the volume before it opened (an account printed in volumes cut anywhere, with the quirk `explained_projects`): the 事務事業 rows still open at the end of the volume before, outermost first, as that volume prints them (a total row, then its department row with `department`, then a 細事業 `(1)`). Empty when the volume starts at a 事務事業 of a 目 the volume before opened. The 款・項・目 come from the running header of the first page (ingestion/generic/patterns/quirks/explained_projects.py `continue_rows`).",
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["code", "name"],
-        "properties": {
-          "code": {"type": "string", "pattern": "^(?:[0-9]+|\\([0-9]+\\))$"},
-          "name": {"type": "string", "minLength": 1},
-          "department": {"type": "string", "minLength": 1}
+      "oneOf": [
+        {
+          "type": "array",
+          "description": "The original starts inside a 事務事業 the volume before it opened (an account printed in volumes cut anywhere, with the quirk `explained_projects`): the 事務事業 rows still open at the end of the volume before, outermost first, as that volume prints them (a total row, then its department row with `department`, then a 細事業 `(1)`). Empty when the volume starts at a 事務事業 of a 目 the volume before opened. The 款・項・目 come from the running header of the first page (ingestion/generic/patterns/quirks/explained_projects.py `continue_rows`).",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["code", "name"],
+            "properties": {
+              "code": {"type": "string", "pattern": "^(?:[0-9]+|\\([0-9]+\\))$"},
+              "name": {"type": "string", "minLength": 1},
+              "department": {"type": "string", "minLength": 1}
+            }
+          }
+        },
+        {
+          "type": "object",
+          "description": "Without the quirk `explained_projects`: the original starts inside a 目 the volume before opened (多摩市 R2 決算). The 款・項・目 and 事業 rows as in generic_text (ingestion/generic/convert.py `continue_volume`); the 項・目 the first page prints under the ones it does not print go under them. Only the 款・項 when the original starts at a 目 of a 項 the volume before opened (港区 R7 歳入: the 目 goes under the 項, with no `rows`).",
+          "additionalProperties": false,
+          "required": ["subjects", "rows"],
+          "properties": {
+            "subjects": {
+              "type": "array", "minItems": 2, "maxItems": 3,
+              "items": {
+                "type": "object", "additionalProperties": false, "required": ["code"],
+                "properties": {"code": {"type": "string", "pattern": "^[0-9]+$"}, "name": {"type": "string", "minLength": 1}}
+              }
+            },
+            "rows": {
+              "type": "array",
+              "items": {
+                "type": "object", "additionalProperties": false, "required": ["code", "name"],
+                "properties": {"code": {"type": "string", "pattern": "^[0-9]+$"}, "name": {"type": "string", "minLength": 1}, "children": {"type": "integer", "minimum": 1}}
+              }
+            }
+          }
         }
-      }
+      ]
     },
     "explained_names": {
       "type": "array",
@@ -436,6 +462,21 @@
         ]
       }
     },
+    "rule_pieces": {
+      "description": "OCR が読み残した墨のうち、原画で確かめると罫の切れ端だけのもの（quirk `rule_ink` が罫と見なす大きさを超えて、罫から罫まで広がった墨の範囲）。頁と読み残しの箱をそのまま宣言して除く。箱が読み残しに無ければ止める。",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "page", "box", "reason"],
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "page": {"type": "integer", "minimum": 1},
+          "box": {"type": "array", "items": {"type": "number"}, "minItems": 4, "maxItems": 4},
+          "reason": {"type": "string", "minLength": 10}
+        }
+      }
+    },
     "header_readings": {
       "description": "OCR が読み違えた・読めなかった見出しの升の印字（字間の空いた「予　算　現　額」を「額」だけ読む等）。原画で確かめた升の位置（PDF の pt）と印字を、同じ組版の頁の一覧で宣言する。升に中心がある語を宣言の印字に置き換える。範囲外の頁や、金額の読みを含む升なら止める。",
       "type": "array",
@@ -482,7 +523,7 @@
       }
     },
     "amount_readings": {
-      "description": "OCR が読み落とした金額の印字（細い字体の単独の0等）。原画で確かめた位置（PDF の pt）と印字を宣言して補う。同じ頁の同じ印字は箱を並べる。箱に数字の読みがあれば止める。",
+      "description": "OCR が読み落とした金額の印字（細い字体の単独の0等）。原画で確かめた位置（PDF の pt）と印字を宣言して補う。金額が無いことを示す幅の広いダッシュは `－` と宣言する。同じ頁の同じ印字は箱を並べる。箱に数字の読みがあれば止める。",
       "type": "array",
       "items": {
         "type": "object",
@@ -510,7 +551,7 @@
           },
           "amount": {
             "type": "string",
-            "pattern": "^△?(0|[1-9][0-9]{0,2}(,[0-9]{3})*)$"
+            "pattern": "^(△?(0|[1-9][0-9]{0,2}(,[0-9]{3})*)|－)$"
           },
           "reason": {
             "type": "string",
@@ -526,6 +567,7 @@
         ]
       }
     },
+    "parent_corrections": {"description": "原典の印字で番号の無い行（前年度にだけあった科目を括弧で囲んで刷った行など）が、読みでは別の親の下に入るときに、原画で確かめた親へ付け直す。頁・番号・名称で子と親を1つずつ結び付ける（見つからなければ止める）。", "type": "array", "items": {"type": "object", "additionalProperties": false, "properties": {"id": {"type": "string", "minLength": 1}, "page": {"type": "integer", "minimum": 1}, "code": {"type": ["string", "null"]}, "name": {"type": "string", "minLength": 1}, "parent_page": {"type": "integer", "minimum": 1}, "parent_code": {"type": ["string", "null"]}, "parent_name": {"type": "string", "minLength": 1}, "reason": {"type": "string", "minLength": 10}, "axis": {"type": "string", "minLength": 1, "description": "子の軸（科目・節など）。同じ頁に同じ番号・名称の行が軸を変えて2つあるときに子を絞る。"}}, "required": ["id", "page", "code", "name", "parent_page", "parent_code", "parent_name", "reason"]}},
     "name_readings": {
       "description": "OCR が読み落とした名前の印字（額だけを読んだ説明の行の名前等）。原画で確かめた位置（PDF の pt）と名前を宣言して補う。箱に読みがあれば止める。",
       "type": "array",

@@ -1,0 +1,111 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132144",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-revenue",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "c9b100e9cf36070e1512f02b2800314ab3be99ac190c91ca65d8acd4335ec894"
+        }
+      ],
+      "options": {
+        "table_id": "general-revenue",
+        "account": "一般会計",
+        "workflow": {
+          "reading": {
+            "pattern": "compared_years",
+            "profile": "fiscal/jurisdictions/132144/layouts/compared_years/revenue.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kokuho-revenue",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "c9b100e9cf36070e1512f02b2800314ab3be99ac190c91ca65d8acd4335ec894"
+        }
+      ],
+      "options": {
+        "table_id": "kokuho-revenue",
+        "account": "国民健康保険特別会計",
+        "workflow": {
+          "reading": {
+            "pattern": "compared_years",
+            "profile": "fiscal/jurisdictions/132144/layouts/compared_years/revenue.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-revenue",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "c9b100e9cf36070e1512f02b2800314ab3be99ac190c91ca65d8acd4335ec894"
+        }
+      ],
+      "options": {
+        "table_id": "kaigo-revenue",
+        "account": "介護保険特別会計",
+        "workflow": {
+          "reading": {
+            "pattern": "compared_years",
+            "profile": "fiscal/jurisdictions/132144/layouts/compared_years/revenue.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kouki-revenue",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "c9b100e9cf36070e1512f02b2800314ab3be99ac190c91ca65d8acd4335ec894"
+        }
+      ],
+      "options": {
+        "table_id": "kouki-revenue",
+        "account": "後期高齢者医療特別会計",
+        "workflow": {
+          "reading": {
+            "pattern": "compared_years",
+            "profile": "fiscal/jurisdictions/132144/layouts/compared_years/revenue.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue"
+        }
+      ]
+    }
+  ]
+}

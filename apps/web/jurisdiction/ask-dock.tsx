@@ -9,6 +9,7 @@ import { QUOTE_PREFIX } from '../chat/history'
 import { Hint } from '@/components/hint'
 import { reiwa } from './types'
 import { myTownContext } from '../home/towns'
+import { onPageScroll, pageScrollY, scrollPageTo, setSidePanel } from '../nav/page-scroll'
 /** AI に聞く入力欄。最初は開いておき、読み進めるか Escape で右下のボタンに畳む。押すか「/」、頁の文を選んで文脈が入ったときに開く。
  * 送ると頁を移らずに会話を開く。広い画面では右の side panel（頁は読み続けられる）、スマホでは下からの drawer。閉じても会話は残り、右下のボタンで戻れる */
 const DOCK_CLOSE_AFTER = 80
@@ -61,10 +62,9 @@ const BACK_TO_TOP_AFTER = 800
 function BackToTop({ hidden }: { hidden: boolean }) {
   const [shown, setShown] = React.useState(false)
   React.useEffect(() => {
-    const onScroll = () => setShown(window.scrollY > BACK_TO_TOP_AFTER)
+    const onScroll = () => setShown(pageScrollY() > BACK_TO_TOP_AFTER)
     onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+    return onPageScroll(onScroll)
   }, [])
   const off = hidden || !shown
   return (
@@ -72,7 +72,7 @@ function BackToTop({ hidden }: { hidden: boolean }) {
       <button
         type="button"
         aria-label="上に戻る"
-        onClick={() => window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })}
+        onClick={() => scrollPageTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })}
         tabIndex={off ? -1 : 0}
         aria-hidden={off}
         className={`fixed bottom-[max(16px,env(safe-area-inset-bottom))] left-4 z-20 grid size-11 place-items-center rounded-full border bg-background text-muted-foreground shadow-md transition-[opacity,transform] duration-200 hover:border-primary hover:text-foreground max-md:bottom-[calc(16px+var(--bottom-nav))] md:left-[calc(var(--nav-w)+16px)] motion-reduce:transition-none ${off ? 'pointer-events-none translate-y-4 opacity-0' : ''}`}
@@ -206,8 +206,6 @@ export function AskDock({ name, code, sitekey, year, section, detail, page, ask 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') cancelReveal.current()
       if (e.key === 'Escape' && (drawer || open)) {
-        // 表とグラフの全体表示（popover）は、その Escape で先に閉じる
-        if (document.querySelector(':popover-open')) return
         close()
         return
       }
@@ -249,26 +247,23 @@ export function AskDock({ name, code, sitekey, year, section, detail, page, ask 
     })
   }
 
-  // スマホの drawer を開いている間は、下の頁を動かさない。広い画面の side panel では頁を左へ寄せ、読み続けられるようにする
+  // スマホの drawer を開いている間は、下の頁を動かさない。広い画面の side panel では本文と会話を横に並べ、それぞれでスクロールする
   React.useEffect(() => {
     if (!drawer) return
     const body = document.body.style
-    const saved = { overflow: body.overflow, marginRight: body.marginRight }
+    const saved = body.overflow
     const apply = () => {
       const wide = matchMedia(WIDE_QUERY).matches
-      body.overflow = wide ? saved.overflow : 'hidden'
-      body.marginRight = wide ? `${SIDE_WIDTH}px` : saved.marginRight
-      // 固定の小さなヘッダーも panel の左で終える
-      document.documentElement.style.setProperty('--side-panel', wide ? `${SIDE_WIDTH}px` : '0px')
+      body.overflow = wide ? saved : 'hidden'
+      setSidePanel(wide ? SIDE_WIDTH : 0)
     }
     apply()
     const media = matchMedia(WIDE_QUERY)
     media.addEventListener('change', apply)
     return () => {
       media.removeEventListener('change', apply)
-      body.overflow = saved.overflow
-      body.marginRight = saved.marginRight
-      document.documentElement.style.removeProperty('--side-panel')
+      body.overflow = saved
+      setSidePanel(0)
     }
   }, [drawer])
 
@@ -305,7 +300,7 @@ export function AskDock({ name, code, sitekey, year, section, detail, page, ask 
   const restart = () => {
     setChat(undefined)
     setDrawer(false)
-    anchor.current = window.scrollY
+    anchor.current = pageScrollY()
     setOpen(true)
     requestAnimationFrame(() => dock.current?.querySelector<HTMLElement>('textarea, input')?.focus())
   }
@@ -320,7 +315,7 @@ export function AskDock({ name, code, sitekey, year, section, detail, page, ask 
     >
       <span aria-hidden="true" className="mb-2 h-1.5 w-10 rounded-full bg-border md:hidden" />
       <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-2" onPointerDown={(e) => e.stopPropagation()}>
-        <span className="flex items-center gap-1.5 text-sm text-muted-foreground"><RobotIcon className="size-4 text-primary" aria-hidden="true" />{name}について</span>
+        <span className="flex items-center gap-2 text-sm text-muted-foreground"><RobotIcon className="size-4 text-primary" aria-hidden="true" />{name}について</span>
         <div className="flex items-center gap-1 text-muted-foreground">
           <Hint label="会話を別の頁で開く"><Link href={`/s/${chat.id}`} aria-label="会話を別の頁で開く" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><ArrowSquareOutIcon className="size-4" /></Link></Hint>
           <Hint label="新しい会話"><button type="button" onClick={restart} aria-label="新しい会話" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><NotePencilIcon className="size-4" /></button></Hint>
@@ -331,7 +326,7 @@ export function AskDock({ name, code, sitekey, year, section, detail, page, ask 
   ) : null
 
   const chip = quote ? (
-    <div className="mb-2 flex min-w-0 max-w-full items-center gap-2 self-start rounded-full border bg-background py-1 pl-3 pr-1 text-[12.5px] text-muted-foreground shadow-sm">
+    <div className="mb-2 flex min-w-0 max-w-full items-center gap-2 self-start rounded-full border bg-background py-1 pl-3 pr-1 text-xs text-muted-foreground shadow-sm">
       <QuotesIcon className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
       <span className="min-w-0 truncate"><span className="sr-only">選んだ文: </span>{quote}</span>
       <button type="button" onClick={() => setQuote('')} aria-label="選んだ文を外す" className="shrink-0 rounded-full p-1 hover:bg-secondary hover:text-foreground"><XIcon className="size-3" /></button>
@@ -357,7 +352,7 @@ export function AskDock({ name, code, sitekey, year, section, detail, page, ask 
         type="button"
         onClick={show}
         aria-keyshortcuts="/"
-        className={`fixed bottom-[max(16px,env(safe-area-inset-bottom))] max-md:bottom-[calc(16px+var(--bottom-nav))] right-4 z-20 inline-flex items-center gap-2 rounded-full border bg-background px-4 py-2.5 text-sm shadow-md transition-[opacity,transform] duration-200 hover:border-primary motion-reduce:transition-none ${docked || drawer ? 'pointer-events-none translate-y-4 opacity-0' : ''}`}
+        className={`fixed bottom-[max(16px,env(safe-area-inset-bottom))] max-md:bottom-[calc(16px+var(--bottom-nav))] right-4 z-20 inline-flex items-center gap-2 rounded-full border bg-background px-4 py-3 text-sm shadow-md transition-[opacity,transform] duration-200 hover:border-primary motion-reduce:transition-none ${docked || drawer ? 'pointer-events-none translate-y-4 opacity-0' : ''}`}
         tabIndex={docked || drawer ? -1 : 0}
         aria-hidden={docked || drawer}
       >

@@ -20,18 +20,18 @@
   "devDependencies": {
     "@cloudflare/config": "catalog:",
     "@cloudflare/vite-plugin": "catalog:",
-    "@e2e-dev/web": "0.15.4",
+    "@e2e-dev/web": "0.15.5",
     "@modelcontextprotocol/client": "2.4.0",
     "@modelcontextprotocol/ext-apps": "2.0.4",
-    "@modelcontextprotocol/inspector": "2.13.0",
-    "@tailwindcss/postcss": "4.3.4",
+    "@modelcontextprotocol/inspector": "2.14.0",
+    "@tailwindcss/postcss": "4.3.5",
     "@types/bun": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "e2e": "0.22.0",
+    "e2e": "0.23.0",
     "miniflare": "4.20260730.0",
     "pdfjs-dist": "6.5.438",
-    "playwright": "1.64.1",
+    "playwright": "1.65.0",
     "postcss": "8.5.32",
     "react": "catalog:",
     "react-dom": "catalog:",
@@ -45,7 +45,7 @@
     "@hono/zod-openapi": "1.6.3",
     "@modelcontextprotocol/server": "2.4.0",
     "@phosphor-icons/react": "2.1.10",
-    "hono": "4.13.16",
+    "hono": "4.13.17",
     "zod": "catalog:"
   }
 }

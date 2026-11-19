@@ -1,0 +1,95 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "092011",
+    "fiscal_year": 2021,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "a0c80ed5ae2ce99169a6be9199c080b3d783dc3dade524d2b0b4338a686d1ef3"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "区分": {
+                  "heading": "款"
+                },
+                "令和3年度／決算額": {
+                  "heading": "決算額"
+                },
+                "令和2年度／決算額": {
+                  "heading": "前年度決算額"
+                },
+                "令和3年度／構成比": {
+                  "kind": "ignore"
+                },
+                "令和2年度／構成比": {
+                  "kind": "ignore"
+                },
+                "増減／増減額": {
+                  "heading": "比較"
+                },
+                "増減／増減率": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {}
+          },
+          "quirks": {
+            "code_run_into_name": true,
+            "glued_subject_codes": true,
+            "rounded_items": true
+          }
+        },
+        "pages": [
+          [
+            4,
+            4
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-settlement-ocr-1",
+          "origin_sha256": "a0c80ed5ae2ce99169a6be9199c080b3d783dc3dade524d2b0b4338a686d1ef3",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              4
+            ]
+          },
+          "sha256": "0f4ad3056ca6c0e8f74d4deb24c519b41c6ebd70df20502e162965d460ff627b",
+          "bytes": 268485
+        }
+      ]
+    }
+  ]
+}

@@ -2,7 +2,7 @@
 
 > 私のお金はどこへ行った？ 自治体が何にいくら使い、どう振り返ったかを、事業の単位まで出典と並べて見せるサイト。同じデータを MCP と REST で配っています。
 
-自治体の頁は https://fudoki.dev/<都道府県>/<自治体>（例: https://fudoki.dev/tokyo/shinagawa）。年度の頁は /tokyo/shinagawa/2024、タブの頁は /projects（事業）・/budget（予算）・/settlement（決算）を年度の後ろに付けます。頁の一覧は sitemap にあります。
+自治体の頁は https://fudoki.dev/<都道府県>/<自治体>（例: https://fudoki.dev/tokyo/shinagawa）。この頁（まとめ）は最新の年度を出します。タブの頁は年度と /projects（事業）・/budget（予算）・/settlement（決算）を付けます（例: /tokyo/shinagawa/2024/budget）。頁の一覧は sitemap にあります。
 
 ## Docs
 

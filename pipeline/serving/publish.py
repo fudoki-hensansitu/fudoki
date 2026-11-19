@@ -8,17 +8,19 @@
     ... --snapshot <file> [--verify-all]   # 前回の同期の写しと比べて D1 を全行は読まない（serving/sync_d1.py）
 
 既定は `--since`（省略時は origin/main と HEAD の分岐点）から HEAD までの差分で範囲を決める。
-- 取り込みの宣言・出典の選定・1列目が自治体コードの seed の行だけが変わった → その自治体だけ
+- 取り込みの宣言・出典の選定・自治体の列（1列目の jurisdiction_code か applies_to）を持つ seed の行だけが変わった → その自治体だけ
   （build と sync に同じ `--jurisdiction` を渡す。他の自治体の行は消さない）
 - それ以外の marts の入力（dbt のモデル・共通の辞書・build と配信のコードなど）が変わった → 全件
 - 取り込みのコードのうち build が import しないもの（変換器・保存の検査・refresh）と変換器の宣言 → 見ない。
   build は R2 に保存済みの表を読むので、変換器を変えても marts は変わらない。表が変わるときは管理 JSON の記録が変わる
+- 宣言の schema（`pipeline/ingestion/**/*.schema.json`）と pipeline の TS（出典の選定・検査の道具）→ 見ない
 - marts の入力が変わっていない（web・docs だけ、文書・テストだけなど） → 何もしない
 自治体に絞れると分かるもの以外は全件に倒す（同期は D1 との差分しか書かないので、広く流しても書き込みは増えない）。
 自治体で絞った build は生成 macro `fiscal_*_relations.sql` を書き換えるので、終わったら元に戻す。
 """
 import argparse
 import ast
+import csv
 import json
 import re
 import subprocess
@@ -42,6 +44,8 @@ IGNORED = (
     re.compile(r'\.test\.ts$'),
     re.compile(r'\.digit-recheck\.jsonl$'),
     re.compile(r'^pipeline/dbt/macros/fiscal_(csv|pdf)_relations\.sql$'),
+    # build と同期は Python と dbt だけで動く。pipeline の TS は出典の選定・検査・seed を生成する道具（生成した seed は CSV の変更として現れる）
+    re.compile(r'^pipeline/.+\.ts$'),
 )
 # build と同期の入口。ingestion/project は様式を名前で import する（importlib）ので丸ごと入口にする
 BUILD_ENTRIES = ('dbt/scripts/prepare.py', 'dbt/scripts/fiscal_inputs.py', 'serving/publish.py', 'serving/sync_d1.py',
@@ -60,15 +64,18 @@ CONVERTER_DATA = (
     re.compile(r'^pipeline/ingestion/fiscal/layouts/'),
     re.compile(r'^pipeline/ingestion/fiscal/jurisdictions/\d{6}/layouts/'),
     re.compile(r'^pipeline/ingestion/generic/patterns/'),
+    # 宣言の schema は宣言を通すか止めるかだけで、表の中身を変えない。全自治体の宣言が新しい schema を通るかは
+    # verify-pipeline の ingestion:check（manifest.read が layout・workflow も検査する）が確かめる
+    re.compile(r'^pipeline/ingestion/.+\.schema\.json$'),
 )
 # 自治体の取り込みの宣言（管理 JSON）と出典の選定。保存し直した表は管理 JSON の変更として現れる
 JURISDICTION_PATHS = (
     re.compile(r'^pipeline/ingestion/fiscal/jurisdictions/(\d{6})/\d{4}/.+\.json$'),
     re.compile(r'^pipeline/source_selection/(\d{6})\.json$'),
 )
-# 1列目が自治体コードの seed。変わった行の自治体だけを流す
+# 自治体の列を持つ seed。変わった行の自治体だけを流す（seed_codes）
 SEEDS = re.compile(r'^pipeline/dbt/seeds/.+\.csv$')
-CODE = re.compile(r'\d{6}')
+CODE = re.compile(r'[0-9]{6}')
 
 
 def module_file(name: str) -> Path | None:
@@ -120,22 +127,38 @@ def git(*args: str) -> str:
 
 
 def seed_codes(header: str, diff: list[str]) -> set[str] | None:
-    """seed の差分（`git diff --unified=0` の行）の自治体コード。1列目が自治体コードでない seed は None（全件）。"""
-    if header.split(',', 1)[0] != 'jurisdiction_code':
+    """seed の差分（`git diff --unified=0` の行）の自治体コード。自治体の列が無い seed は None（全件）。
+
+    自治体の列は1列目の `jurisdiction_code`、または `applies_to`（cofog_rules の自治体限定の規則。`|` で複数）。
+    変わった行の自治体の列が空（全自治体に効く規則）か、列の数がヘッダと違う行が1つでもあれば None（全件）。
+    """
+    columns = next(csv.reader([header]), [])
+    if columns[:1] == ['jurisdiction_code']:
+        index = 0
+    elif 'applies_to' in columns:
+        index = columns.index('applies_to')
+    else:
         return None
     codes = set()
     for line in diff:
         if line[:1] in '+-' and not line.startswith(('+++', '---')):
-            code = line[1:].split(',', 1)[0]
-            if not CODE.fullmatch(code):
+            row = next(csv.reader([line[1:]]), [])
+            if len(row) != len(columns):  # 複数行のセルの続きなど、1行で読めない行
                 return None
-            codes.add(code)
+            values = row[index].split('|')
+            if not all(CODE.fullmatch(code) for code in values):
+                return None
+            codes.update(values)
     return codes
 
 
 def classify(paths: list[str], seed: Callable[[str], set[str] | None], build: set[str]) -> dict:
-    """変わった path から範囲を決める。自治体に絞れると分かるもの以外の入力は全件に倒す。build は build_modules()。"""
+    """変わった path から範囲を決める。自治体に絞れると分かるもの以外の入力は全件に倒す。build は build_modules()。
+
+    全件のときも、自治体に絞れた変更の自治体を jurisdictions に持つ（sync-d1 の push はそれだけを流す）。
+    """
     jurisdictions: set[str] = set()
+    full = None
     for path in paths:
         if not any(p.match(path) for p in INPUTS) or any(p.search(path) for p in IGNORED):
             continue
@@ -148,8 +171,11 @@ def classify(paths: list[str], seed: Callable[[str], set[str] | None], build: se
             continue
         codes = seed(path) if SEEDS.match(path) else None
         if codes is None:
-            return {'mode': 'full', 'jurisdictions': [], 'reason': path}
+            full = full or path
+            continue
         jurisdictions |= codes
+    if full:
+        return {'mode': 'full', 'jurisdictions': sorted(jurisdictions), 'reason': full}
     if not jurisdictions:
         return {'mode': 'none', 'jurisdictions': []}
     return {'mode': 'jurisdictions', 'jurisdictions': sorted(jurisdictions)}
@@ -204,7 +230,7 @@ def main() -> None:
     print(json.dumps(found, ensure_ascii=False), flush=True)
     if found['mode'] == 'none':
         return
-    scoped = [a for code in found['jurisdictions'] for a in ('--jurisdiction', code)]
+    scoped = [a for code in found['jurisdictions'] for a in ('--jurisdiction', code)] if found['mode'] == 'jurisdictions' else []
     dirty = bool(git('status', '--porcelain', '--', *RELATIONS).strip())
     try:
         run('uv', 'run', 'python', 'dbt/scripts/prepare.py', '--build', '--remote', *scoped)

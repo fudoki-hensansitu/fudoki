@@ -72,6 +72,7 @@ class Band:
     kind: str | None = None  # 'amount' | 'label' | None (empty)
     spans: list[tuple[float, float, str]] = field(default_factory=list)  # header cells over the band
     offset: float = 0.0  # how far a spread's right page was moved to the right
+    lift: float = 0.0  # what moves a spread's right page's rows onto the left page's (quirk `far_shifted_spread_pages`)
     top: float | None = None  # top of the ruled frame (the header cells sit between it and `body_top`)
     left_rules: list[tuple[float, float]] = field(default_factory=list)  # (top, bottom) of each rule drawn on its left edge
     unit_mark: str | None = None  # a header cell that only names the unit (`円`), kept apart from the heading
@@ -136,7 +137,15 @@ class Logical:
             match = TITLE.match(normalize(text(line)))
             if match:
                 found.append((match.group(1) or match.group(2), match.group(3), line))
+            elif (bare := _document_quirk('unnumbered_titles')) is not None \
+                    and (name := bare.module.kan_title(normalize(text(line)))) is not None:
+                found.append((None, name, line))  # the quirk `unnumbered_titles`: `第　款 財産収入`, a 款 the year drops
         return found
+
+
+def _document_quirk(name: str):
+    from ingestion.generic.patterns import document_quirk  # (patterns import this module)
+    return document_quirk(name)
 
 
 def _crosses(rule: Rule, y: float) -> bool:
@@ -188,7 +197,9 @@ def repeated_header(page: Page, frame, header_bottom: float, body: list[tuple[in
         skip.update(i for i, _ in words)
         if number:
             above = [(i, w) for i, w in body if inside(w, *rows[number - 1])]
-            if above and TITLE.match(normalize(reading([w for _, w in above]))):
+            if above and (TITLE.match(normalize(reading([w for _, w in above])))
+                          or (document_quirk('uncoded_titles') is not None
+                              and not any(re.search(r'[0-9０-９]', w.text) for _, w in above))):
                 skip.update(i for i, _ in above)
     return skip
 
@@ -254,7 +265,9 @@ def _frames(page: Page, spread: dict | None = None,
     for r in page.rules:
         if r.vertical:
             drawn[round(r.x0, 1)] += r.y1 - r.y0
-    xs = {x for x, length in drawn.items() if length > 40}
+    # 40pt drawn as 39.96 (小平市 R7 決算 p46: a table of one row under the header, the 節 column's edge from the
+    # 節 heading's rule to the foot) is 40pt: the length is measured in floats.
+    xs = {x for x, length in drawn.items() if length > 39.9}
     if spread is not None:
         # Only the declared spread's gutter: never split a column at an
         # interior row endpoint. The nearest repeated edge on each side bounds it.
@@ -308,6 +321,8 @@ def _frames(page: Page, spread: dict | None = None,
             continue
         bottom = max([h.y0 for h in spanning] + [r.y1 for r in edges_drawn])
         top = min([h.y0 for h in spanning] + [r.y0 for r in edges_drawn])
+        if (unruled := document_quirk('unruled_frame_top')) is not None:
+            top = unruled.module.top(page, frame, top)
         if (skewed := document_quirk('skewed_frames')) is not None:
             bottom = skewed.module.bottom(page, frame, middle, horizontals, bottom)
             top = skewed.module.top(page, frame, middle, horizontals, top)
@@ -361,10 +376,14 @@ def _header_bottom(page: Page, frame, one_row: bool = False, title: bool = False
     # A rule from the frame's left edge across most of it (a free-text column at the right end may draw none).
     full = sorted(h.y0 for h in horizontals
                   if h.x0 <= x0 + reach and h.x1 >= x1 - reach and top - 1 <= h.y0 <= bottom + 1)
-    if len(full) < 2:  # most of the frame's width (a free-text column at the right end may draw no row rules)
+    # Only the frame's own top and foot are no header rule: a frame whose top rule alone reaches past the rows' left
+    # end (目黒区の決算書の歳入: the title box of an account's first page, 3pt wider than the table under it) is read
+    # by the rules that touch either end.
+    inside = lambda ys: len(ys) >= 2 and any(top + 1 < y < bottom - 1 for y in ys)
+    if not inside(full):  # most of the frame's width (a free-text column at the right end may draw no row rules)
         full = sorted(h.y0 for h in horizontals
                       if h.x0 <= x0 + reach and h.x1 - x0 >= .6 * (x1 - x0) and top - 1 <= h.y0 <= bottom + 1)
-    if len(full) < 2:  # two ruled halves of one frame (see `_frames`): the rules that touch either end
+    if not inside(full):  # two ruled halves of one frame (see `_frames`): the rules that touch either end
         full = sorted({h.y0 for h in horizontals if (h.x0 <= x0 + 3 or h.x1 >= x1 - 3) and top - 1 <= h.y0 <= bottom + 1})
     above = top + 1
     if title and (opening := [y for y in full if top + 1 < y]) and not any(
@@ -488,6 +507,9 @@ def page_bands(page: Page, spread: dict | None = None,
             used.add(index)
             cells[left, right, upper, lower].append(word)
         header_cells = sorted(((key, normalize(reading(ws))) for key, ws in cells.items()), key=lambda c: c[0][2])
+        if document_quirk('unruled_stacked_headings') is not None:  # (cells at one rule stack as printed, top first)
+            tops = {key: min(w.y0 for w in ws) for key, ws in cells.items()}
+            header_cells = sorted(header_cells, key=lambda c: (c[0][2], tops[c[0]]))
         if staircase:
             levels = (header or {})['staircase']
             header_cells = level_cells(header_cells, edges, levels if isinstance(levels, str) else '款項目')
@@ -720,7 +742,7 @@ def _subject(band: Band) -> bool:
     return bool(band.header) and (band.header[-1] in SUBJECT_LEVELS or '科目' in band.header[0])
 
 
-def same_rows(left: Page, right: Page) -> bool:
+def same_rows(left: Page, right: Page, far_shift: float | None = None) -> bool:
     """Whether two pages print the same rows, i.e. are the halves of one spread."""
     rows = lambda page: sorted({round(r.y0, 1) for r in page.rules if not r.vertical and r.x1 - r.x0 > 50})
     a, b = rows(left), rows(right)
@@ -729,11 +751,19 @@ def same_rows(left: Page, right: Page) -> bool:
     shorter, longer = (a, b) if len(a) <= len(b) else (b, a)
     if (scaled := document_quirk('scaled_spread_pages')) is not None and scaled.module.matches(shorter, longer) / len(shorter) >= SPREAD_ROW_MATCH:
         return True
+    if (framed := document_quirk('framed_spread_pages')) is not None and framed.module.matches(a, b):
+        return True
     if (drifting := document_quirk('drifting_spread_rows')) is not None:
         return drifting.module.matches(shorter, longer) / len(shorter) >= SPREAD_ROW_MATCH
-    shifts = {round(y - x, 1) for x in shorter for y in longer if abs(y - x) <= SPREAD_MAX_SHIFT} or {0.0}
-    found = max(sum(1 for x in shorter if any(abs(x + shift - y) <= 1.0 for y in longer)) for shift in shifts)
+    found, _ = _row_shift(shorter, longer, SPREAD_MAX_SHIFT if far_shift is None else far_shift)
     return found / len(shorter) >= SPREAD_ROW_MATCH
+
+
+def _row_shift(shorter: list[float], longer: list[float], reach: float) -> tuple[int, float]:
+    """The rules of `shorter` found on `longer` within 1pt after the vertical shift (up to `reach`) that lines up
+    the most, and that shift."""
+    shifts = {round(y - x, 1) for x in shorter for y in longer if abs(y - x) <= reach} or {0.0}
+    return max((sum(1 for x in shorter if any(abs(x + shift - y) <= 1.0 for y in longer)), shift) for shift in sorted(shifts))
 
 
 @lru_cache(maxsize=1)
@@ -754,6 +784,12 @@ def kind_heading(label: str, heading: str = '') -> str | None:
         if found:
             longest = max(found, key=len)  # `予備費支出` and `予備費支出及び流用増減`: the longer heading holds the other
             return longest if all(h in longest for h in found) else None
+    # A kind word cut short with `等` (`継続費等繰越財源充当額`, 132063 決算): the one heading that begins and ends as it does,
+    # its end named in the band's own heading (`…継続費繰越事業額繰越財源充当額`).
+    head, mark, tail = key.partition('等')
+    if mark and len(head) >= 2 and len(tail) >= 2 and tail in own:
+        found = [h for h in kind_headings() if h.replace('及び', '').startswith(head) and h.endswith(tail)]
+        return found[0] if len(found) == 1 else None
     return None
 
 
@@ -826,6 +862,8 @@ def classify(per_page: list[tuple[Page, list[Band], list[Word]]], columns: dict 
             band.kind = setting.get('kind', band.kind)
             if setting.get('heading'):  # the column's meaning, declared where the print only says `金額`
                 band.header = band.header[:-1] + (setting['heading'],)
+            if setting.get('within'):  # the heading over this column printed on the other page of the spread only
+                band.header = (setting['within'],) + band.header
             if setting.get('inline'):
                 band.inline, band.inline_free = True, True
             if band.kind == 'ignore':  # a column that is no part of the table (a policy number printed beside it)
@@ -865,6 +903,8 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
     classify(per_page, columns, ocr_pages)
     result: list[Logical] = []
     observed = {page.number: page for page, _, _ in per_page}
+    far = document_quirk('far_shifted_spread_pages')
+    far_reach = far.module.MAX_SHIFT if far is not None else None
     for page, bands, outside in per_page:
         unit = None
         for line in lines([Glyph(w.text, w.x0, w.y0, w.x1, w.y1, page.number, 0) for w in outside]):
@@ -885,8 +925,15 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
         continues = first.kind == 'amount' or (not any(_subject(b) for b in bands) and bool(result)
                                                and any(_subject(b) for b in result[-1].bands))
         if (continues and result and len(result[-1].pages) == 1
-                and previous_page is not None and same_rows(previous_page, page)):
+                and previous_page is not None and same_rows(previous_page, page, far_reach)):
             previous = result[-1]
+            if far_reach is not None:
+                # The quirk `far_shifted_spread_pages`: how far the right page's rows lie off the left page's, for
+                # `tree.owner` to find an amount's row on the left page (the words keep their printed place).
+                rows = lambda p: sorted({round(r.y0, 1) for r in p.rules if not r.vertical and r.x1 - r.x0 > 50})
+                _, lift = _row_shift(rows(page), rows(previous_page), far_reach)
+                for band in bands:
+                    band.lift = lift
             offset = max(b.x1 for b in previous.bands) + 10 - leftmost.x0
             for band in bands:
                 band.x0 += offset; band.x1 += offset; band.offset = offset

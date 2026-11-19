@@ -1,0 +1,192 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132225",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "35fe26121d61624d3de7cf294b0dbd749a1a33f58e4e3f82d92b96bfc6d7aec8"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-ocr-1",
+          "origin_sha256": "35fe26121d61624d3de7cf294b0dbd749a1a33f58e4e3f82d92b96bfc6d7aec8",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              2,
+              3,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "0e83c5df45588810405133f5220a670a7ab5b93d8ed62451237ab4f7e9a02f47",
+          "bytes": 1426298
+        },
+        {
+          "id": "general-revenue-ocr-2",
+          "origin_sha256": "35fe26121d61624d3de7cf294b0dbd749a1a33f58e4e3f82d92b96bfc6d7aec8",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "db556760e3078020d57a00f78f0bf98db78f59af56d821a4b7219323ee776d07",
+          "bytes": 1895651
+        },
+        {
+          "id": "general-revenue-ocr-3",
+          "origin_sha256": "35fe26121d61624d3de7cf294b0dbd749a1a33f58e4e3f82d92b96bfc6d7aec8",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "23978d6c10eb2c136baeb007264f2042feaba1dfabecf779d78a0d5454565b59",
+          "bytes": 1965123
+        },
+        {
+          "id": "general-revenue-ocr-4",
+          "origin_sha256": "35fe26121d61624d3de7cf294b0dbd749a1a33f58e4e3f82d92b96bfc6d7aec8",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "2841b3b5aaf647c0138a4393d306426f7a751ec1506c44a7d89709bfbc261f8d",
+          "bytes": 1498009
+        },
+        {
+          "id": "general-revenue-ocr-5",
+          "origin_sha256": "35fe26121d61624d3de7cf294b0dbd749a1a33f58e4e3f82d92b96bfc6d7aec8",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              44,
+              45,
+              46,
+              47
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "1824d1d0e854db50fee0fee5fde3f3e873e4eaf6fc5108ff0bbbc3e22f9493ff",
+          "bytes": 446488
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position"
+              }
+            }
+          },
+          "quirks": {
+            "department_heading_slack": true,
+            "spread_columns": true,
+            "title_depths": true,
+            "titles_on_one_line": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    }
+  ]
+}

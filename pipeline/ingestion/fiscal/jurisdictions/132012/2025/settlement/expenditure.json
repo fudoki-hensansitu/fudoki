@@ -117,6 +117,154 @@
           "table_id": "kouki-detail"
         }
       ]
+    },
+    {
+      "id": "kokuho-settlement-detail",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4fce3f1c0fa18d24c537870bbf1abf37a9e954fc7efddb83254a5c6addf0ad02"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "scope_label": "物理466-467・473-487頁",
+        "fund_columns": [
+          "保険税",
+          "国庫支出金",
+          "都支出金",
+          "一般会計繰入金",
+          "その他"
+        ],
+        "detail_table_id": "kokuho-detail",
+        "emit": [
+          "detail"
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "narrative_results",
+            "profile": "fiscal/jurisdictions/132012/layouts/text_settlement_report/reading.json"
+          },
+          "components": [
+            "narrative_subjects",
+            "narrative_projects"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-detail"
+        }
+      ]
+    },
+    {
+      "id": "boshi-settlement-detail",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4fce3f1c0fa18d24c537870bbf1abf37a9e954fc7efddb83254a5c6addf0ad02"
+        }
+      ],
+      "options": {
+        "account": "母子・父子福祉資金特別会計",
+        "scope_label": "物理528-529・531-533頁",
+        "fund_columns": [
+          "市債",
+          "一般会計繰入金",
+          "その他"
+        ],
+        "detail_table_id": "boshi-detail",
+        "emit": [
+          "detail"
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "narrative_results",
+            "profile": "fiscal/jurisdictions/132012/layouts/text_settlement_report/reading.json"
+          },
+          "components": [
+            "narrative_subjects",
+            "narrative_projects"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "boshi-detail"
+        }
+      ]
+    },
+    {
+      "id": "tochi-settlement-detail",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4fce3f1c0fa18d24c537870bbf1abf37a9e954fc7efddb83254a5c6addf0ad02"
+        }
+      ],
+      "options": {
+        "account": "土地取得事業特別会計",
+        "scope_label": "物理534-535・537頁",
+        "fund_columns": [
+          "市債",
+          "一般会計繰入金",
+          "その他"
+        ],
+        "detail_table_id": "tochi-detail",
+        "emit": [
+          "detail"
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "narrative_results",
+            "profile": "fiscal/jurisdictions/132012/layouts/text_settlement_report/reading.json"
+          },
+          "components": [
+            "narrative_subjects",
+            "narrative_projects"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "tochi-detail"
+        }
+      ]
+    },
+    {
+      "id": "parking-settlement-detail",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4fce3f1c0fa18d24c537870bbf1abf37a9e954fc7efddb83254a5c6addf0ad02"
+        }
+      ],
+      "options": {
+        "account": "駐車場事業特別会計",
+        "scope_label": "物理538-539・541-542頁",
+        "fund_columns": [
+          "その他"
+        ],
+        "detail_table_id": "parking-detail",
+        "emit": [
+          "detail"
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "narrative_results",
+            "profile": "fiscal/jurisdictions/132012/layouts/text_settlement_report/reading.json"
+          },
+          "components": [
+            "narrative_subjects",
+            "narrative_projects"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "parking-detail"
+        }
+      ]
     }
   ]
 }

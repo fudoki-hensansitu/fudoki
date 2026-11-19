@@ -19,7 +19,7 @@ export function YearPicker({ years, current, onChange, hrefOf }: { years: number
   const recent = years.slice(0, RECENT_YEARS)
   const older = years.slice(RECENT_YEARS)
   const olderPicked = older.includes(current)
-  const pill = (on: boolean) => `inline-flex h-8 items-center rounded-full px-2.5 text-[13px] ${on ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`
+  const pill = (on: boolean) => `inline-flex h-8 items-center rounded-full px-3 text-sm ${on ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`
   const label = (y: number) => (
     <>
       {yearName(y)}
@@ -43,7 +43,7 @@ export function YearPicker({ years, current, onChange, hrefOf }: { years: number
       ))}
       {older.length > 0 ? (
         <DropdownMenu>
-          <DropdownMenuTrigger className={`inline-flex items-center gap-0.5 ${pill(olderPicked)}`}>
+          <DropdownMenuTrigger className={`inline-flex items-center gap-1 ${pill(olderPicked)}`}>
             {olderPicked ? reiwa(current) : 'それより前'}
             <CaretDownIcon className="size-3.5" aria-hidden="true" />
           </DropdownMenuTrigger>
