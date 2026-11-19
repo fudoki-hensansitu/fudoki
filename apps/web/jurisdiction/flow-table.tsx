@@ -153,7 +153,8 @@ function Section({ title, drills, total, query, onQuery, onSetsu }: { title: str
       // 出典の頁を新しいタブで開く。行を押すと開け閉めするので、リンクを押したときは行に伝えない
       cell: (c) => c.row.original.src ? (
         <a href={c.row.original.src} target="_blank" rel="noopener noreferrer" onClick={(e) => e.stopPropagation()} aria-label={`${c.row.original.name}の出典を開く`} className="-my-1 inline-flex items-center gap-1 rounded-md px-1 py-1 text-xs whitespace-nowrap text-muted-foreground no-underline hover:text-foreground focus-visible:outline-2 focus-visible:outline-ring">
-          出典<ArrowSquareOutIcon aria-hidden="true" className="size-3.5" />
+          {/* 狭い画面は名前の幅を空けるため、印だけにする */}
+          <span className="hidden sm:inline">出典</span><ArrowSquareOutIcon aria-hidden="true" className="size-4 sm:size-3.5" />
         </a>
       ) : null,
       meta: { className: 'w-0 pr-0 text-right' },
