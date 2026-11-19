@@ -6,6 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { Title } from '@/components/ui/title'
 import { cn } from '@/lib/utils'
 import { FieldIcon } from '../../home/parts'
+import { Chip } from '../chip'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../domains'
 import { feedOf } from '.'
 import type { Question, QuestionFeed } from './types'
@@ -14,11 +15,14 @@ import type { Question, QuestionFeed } from './types'
 const FRAMES = [...DOMAIN_FRAMES, OTHER_FRAME]
 const FIELD_NAME = new Map(FRAMES.map((f) => [f.id, f.name]))
 
+/** 分野のバッジ。事業の頁の分野と同じ形 */
 function Category({ field }: { field?: string }) {
   return (
-    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-      <FieldIcon id={field ?? OTHER_FRAME.id} className="size-4" />
-      {FIELD_NAME.get(field ?? OTHER_FRAME.id)}
+    <span className="flex">
+      <Chip>
+        <FieldIcon id={field ?? OTHER_FRAME.id} />
+        {FIELD_NAME.get(field ?? OTHER_FRAME.id)}
+      </Chip>
     </span>
   )
 }

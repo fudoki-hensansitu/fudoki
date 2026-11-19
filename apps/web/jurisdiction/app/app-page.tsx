@@ -64,6 +64,7 @@ import { AskDock, type AskHandle, type PresetAnswer } from '../ask-dock'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type Moku, type MokuBreakdowns, type PageData, type PageFlow, type YearTotal, TAB_SLUGS, FINANCE_SLUG, hasDocument, type PageTab } from '../types'
 import { hasQuestions } from '../questions'
 import { QuestionFeedView } from '../questions/feed'
+import { Chip } from '../chip'
 import type { Question, QuestionFeed } from '../questions/types'
 import { Title, titleVariants } from '@/components/ui/title'
 import { withExtras, yearView, type AccountTotal, type Proj, type Snapshot, type YearExtras, type YearView } from './data'
@@ -145,9 +146,6 @@ function Mark({ kind, label, className = 'size-6' }: { kind: string; label?: str
       <I className={className} />
     </span>
   )
-}
-function Chip({ children }: { children: React.ReactNode }) {
-  return <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border bg-background px-2 py-1 text-xs text-muted-foreground [&_svg]:size-3">{children}</span>
 }
 function SectionHead({ title, sub, children }: { title: string; sub?: string; children?: React.ReactNode }) {
   return (
@@ -856,10 +854,11 @@ function ProjectPageBody({ id }: { id: string }) {
   const graded = Object.keys(p.grades ?? {}).length > 0
   return (
     <>
-      <ProjectTitle p={p} mark={p.ended != null ? 'stop' : p.started === year ? 'new' : null} />
+      {/* 分野のバッジは名前の上に置く（「気になる」の札と同じ並び） */}
       <div className="flex flex-wrap gap-2">
         <Chip><FieldIcon id={frame.id} />{frame.name}</Chip>
       </div>
+      <ProjectTitle p={p} mark={p.ended != null ? 'stop' : p.started === year ? 'new' : null} />
       <DetailSection icon={CalendarBlankIcon} title="年度ごと">
         {/* 評価シートのある年度は、その年度の行に評価（A〜D）を並べる。評価が一つも無ければ列を出さない */}
         <div className={cn('grid max-w-xl text-base', graded ? 'grid-cols-[auto_1fr_1fr_auto]' : 'grid-cols-[auto_1fr_1fr]')}>
