@@ -9,3 +9,6 @@
 .about-rise{animation:about-rise 600ms cubic-bezier(.2,.8,.2,1) both}
 @keyframes about-rise{from{opacity:0;transform:translateY(16px)}}
 @media (prefers-reduced-motion:reduce){.about-rise{animation:none}}
+/* 暗い帯（比べの表）の罫と、比べる側の薄い文字。token に透明度を後から付けないので CSS で混ぜる */
+.about-night-line{border-color:color-mix(in srgb,var(--night-foreground) 18%,transparent)}
+.about-night-dim{color:color-mix(in srgb,var(--night-foreground) 70%,transparent)}
