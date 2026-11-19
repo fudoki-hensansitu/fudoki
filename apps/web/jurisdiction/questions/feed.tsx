@@ -41,10 +41,10 @@ function QuestionCard({ q, onOpen }: { q: Question; onOpen: (q: Question) => voi
         <span className="sr-only">{q.q}</span>
       </button>
       <Category field={q.field} />
-      <Title size="h3" className="transition-colors group-has-[button:hover]/q:text-primary">{q.q}</Title>
+      <Title size="h2" as="h3" className="transition-colors group-has-[button:hover]/q:text-primary">{q.q}</Title>
       {q.big ? (
         <p className="flex flex-col gap-1">
-          <Title size="h2" as="span" className="tabular-nums text-primary">{q.big.value}</Title>
+          <Title size="h3" as="span" className="tabular-nums text-primary">{q.big.value}</Title>
           <span className="text-sm text-muted-foreground">{q.big.note}</span>
         </p>
       ) : null}
@@ -74,7 +74,12 @@ export function QuestionFeedView({ feed, onOpen }: { feed: QuestionFeed | undefi
   const items = feedOf(feed, field)
   const chip = (on: boolean) => cn('inline-flex h-9 shrink-0 items-center gap-1 rounded-full border px-4 text-sm transition-colors', on ? 'border-primary bg-primary text-primary-foreground' : 'border-input bg-background hover:bg-card')
   return (
-    <section aria-label="気になる問い" className="mx-auto flex max-w-[640px] flex-col gap-4">
+    <section aria-labelledby="q-feed-title" className="mx-auto flex max-w-[640px] flex-col gap-4">
+      {/* 何が並んでいるかを先に言う（数字の大きい札がいきなり並ぶと驚く） */}
+      <div className="flex flex-col gap-2">
+        <Title size="h3" as="h2" id="q-feed-title">気になること</Title>
+        <p className="text-base leading-relaxed text-muted-foreground">住民が気になりそうな問いに、予算書・決算書の数字で答えています。押すと、その答えから AI に続けて聞けます。</p>
+      </div>
       <div role="group" aria-label="分野" className="sticky top-0 z-20 -mx-4 flex gap-2 overflow-x-auto bg-background px-4 py-2 [scrollbar-width:none]">
         <button type="button" aria-pressed={!field} onClick={() => pick(null)} className={chip(!field)}>すべて</button>
         {fields.map((f) => (
