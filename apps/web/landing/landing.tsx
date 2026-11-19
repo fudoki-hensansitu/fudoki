@@ -23,7 +23,7 @@ const pct = (v: number, w: number) => `${((v / w) * 100).toFixed(2)}%`
 const markStyle = { left: pct(mx0 - 3 - cx0, cx1 - cx0), top: pct(my0 - 3 - cy0, cy1 - cy0), width: pct(mx1 - mx0 + 6, cx1 - cx0), height: pct(my1 - my0 + 6, cy1 - cy0) }
 
 const primaryButton = 'inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-base font-medium text-primary-foreground transition-opacity duration-150 hover:opacity-90'
-const fillButton = 'inline-flex items-center gap-2 rounded-full bg-brand-fill px-6 py-3 text-base font-medium text-brand-fill-foreground transition-colors duration-150 hover:bg-brand-fill-hover'
+const fillButton = 'inline-flex items-center gap-2 rounded-full bg-brand-fill px-6 py-3 text-base font-medium text-brand-fill-foreground transition-colors duration-150 hover:bg-brand-fill-hover motion-reduce:transition-none'
 const textLink = 'inline-flex items-center gap-1 text-base font-medium text-primary underline-offset-4 hover:underline'
 
 /** 実際の画面の画像。テーマに合わせてライト・ダークの片方を出す（about.css）。隠れた方は読み上げられないので、どちらにも同じ alt を付ける */
@@ -37,7 +37,7 @@ function Shot({ name, width, height, alt, className, imgClassName, eager }: { na
   )
 }
 
-/** 操作の録画。見えている間だけ流し、動きを減らす設定では流さない（押せば流れる）。再生の操作盤は出さない */
+/** 操作の録画。見えている間だけ流し、動きを減らす設定では流さない（押せば流れる）。再生の操作盤は出さず、押す操作は button に持たせる（video に button の役は付けられない） */
 function Clip({ src, poster, width, height, label, className }: { src: string; poster: string; width: number; height: number; label: string; className?: string }) {
   const ref = React.useRef<HTMLVideoElement>(null)
   const toggle = () => {
@@ -52,27 +52,9 @@ function Clip({ src, poster, width, height, label, className }: { src: string; p
     return () => io.disconnect()
   }, [])
   return (
-    <video
-      ref={ref}
-      className={cn('block h-auto w-full cursor-pointer', className)}
-      src={src}
-      poster={poster}
-      width={width}
-      height={height}
-      muted
-      loop
-      playsInline
-      preload="none"
-      tabIndex={0}
-      aria-label={`${label}。押すと再生・停止`}
-      onClick={toggle}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault()
-          toggle()
-        }
-      }}
-    />
+    <button type="button" className={cn('block w-full cursor-pointer', className)} aria-label={`${label}。押すと再生・停止`} onClick={toggle}>
+      <video ref={ref} className="block h-auto w-full" src={src} poster={poster} width={width} height={height} muted loop playsInline preload="none" aria-hidden="true" />
+    </button>
   )
 }
 
@@ -83,7 +65,7 @@ const TONE = { paper: 'bg-paper', sakura: 'bg-sakura', kincha: 'bg-kincha', ai: 
 function PhoneStage({ tone, children }: { tone: keyof typeof TONE; children: React.ReactNode }) {
   return (
     <div className={cn('relative aspect-square overflow-hidden rounded-3xl sm:aspect-[5/6]', TONE[tone])}>
-      <div className="absolute inset-x-0 top-10 bottom-0 mx-auto w-3/5 overflow-hidden rounded-t-3xl border-x-4 border-t-4 border-background bg-background shadow-(--shadow-sheet) sm:top-12">
+      <div className="absolute inset-x-0 top-10 bottom-0 mx-auto w-3/5 overflow-hidden rounded-t-3xl border-x-8 border-t-8 border-background bg-background shadow-(--shadow-sheet) sm:top-12">
         {children}
       </div>
     </div>
@@ -170,13 +152,13 @@ export function Landing() {
         </div>
         {/* 中央はお金の流れの図（2026-11-18 yuito。「どこへ行った？」に答える）。左右は分野と事業の画面で、幅の広い画面だけに出す */}
         <div className="relative -mt-28 grid items-end gap-4 px-4 sm:-mt-52 sm:px-8 md:grid-cols-4">
-          <div className="hidden translate-y-10 overflow-hidden rounded-3xl border bg-background md:block">
+          <div className="hidden translate-y-10 overflow-hidden rounded-3xl border bg-background p-5 md:block">
             <Shot name="step-fields" width={780} height={880} alt="" />
           </div>
           <div className="about-rise overflow-hidden rounded-3xl border bg-background p-4 shadow-(--shadow-sheet) sm:p-6 md:col-span-2">
             <Shot eager name="sankey" width={2080} height={954} alt="品川区 R8年度予算のお金の流れの図。特別区税 28%・特別区交付金 22% などの入るお金が一般会計を通り、福祉・子育て 51%・教育 13% などへ分かれる" />
           </div>
-          <div className="hidden translate-y-10 overflow-hidden rounded-3xl border bg-background md:block">
+          <div className="hidden translate-y-10 overflow-hidden rounded-3xl border bg-background p-5 md:block">
             <Shot name="step-project" width={780} height={880} alt="" />
           </div>
         </div>
@@ -198,7 +180,7 @@ export function Landing() {
                 <p className="mt-2 text-base leading-relaxed text-muted-foreground">{s.body}</p>
               </div>
               <div className="mt-auto px-6">
-                <Shot name={s.shot} width={780} height={880} alt={s.alt} className="overflow-hidden rounded-t-2xl border-x border-t bg-background" />
+                <Shot name={s.shot} width={780} height={880} alt={s.alt} className="overflow-hidden rounded-t-2xl border-x border-t bg-background px-5 pt-5" />
               </div>
             </li>
           ))}
@@ -357,7 +339,7 @@ export function Landing() {
           うちのまちの使い道を見てみよう
         </Title>
         <Link className={cn(fillButton, 'mt-8')} href={HOME_PATH}>
-          うちのまちの使い道を見る
+          まちを選ぶ
           <ArrowRightIcon className="size-4" aria-hidden="true" />
         </Link>
         <p className="mt-4 text-sm">登録なし・無料</p>

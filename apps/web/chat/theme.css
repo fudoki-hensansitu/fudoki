@@ -53,6 +53,9 @@
   --color-sakura: var(--sakura);
   --color-kincha: var(--kincha);
   --color-ai: var(--ai);
+  /* 出典の頁を写す面（PDF の白） */
+  --color-page: var(--page);
+  --color-page-foreground: var(--page-foreground);
   --color-brand-fill: var(--brand-fill);
   --color-brand-fill-hover: var(--brand-fill-hover);
   --color-brand-fill-foreground: var(--brand-fill-foreground);
