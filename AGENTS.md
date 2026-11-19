@@ -245,4 +245,4 @@ unit テストは、金額の正しさ・公開 API の安全性（認証・入�
 - マーケティングの計画・marketingskills が読む product-marketing、repo をまたいで使うアカウント（X・メールなど）→ home repo（`fudoki-hensansitu/home`、private）
 - 歳出・歳入のドメインモデルとクラス図 → `docs/prd/fiscal-records/fiscal-domain-model.md`
 - 外部から取り込んだ skill → `.agents/skills/shadcn/`（`shadcn/ui` から skillctrl で取得。取得元と hash は `skills-lock.json`・`.agents/skillctrl/lock.json`）。他の `.agents/skills/` は repo で書いたもの。Claude Code へは `.claude/skills/` の相対 symlink で渡す
-- PR レビュー → Pullfrog。設定の正本は `.github/pullfrog.config.sh`（変えるときはこの script を直して実行する）。追加コミットも自動で再レビューし（`review.re-review=true`）、`@pullfrog` で手動依頼もできる
+- PR レビュー → Pullfrog。設定の正本は `.github/pullfrog.config.sh`（変えるときはこの script を直して実行する）。初回レビューは自動、追加コミットの再レビューは無効（`review.re-review=false`）。追加レビューは必要時に `@pullfrog` で依頼する
