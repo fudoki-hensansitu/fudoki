@@ -1,5 +1,5 @@
 // 「気になる」のタブ。問いの札を1列に流し、押すとその問いと作り置きの答えから AI との会話が始まる。
-// 札は答えの冒頭だけを出し、下を薄くして続きがあると見せる（全文は会話で読む）。分野のチップで分野ごとのフィードに切り替える（?field=）
+// 札は答えの冒頭だけを出し、下を薄くして続きがあると見せる（全文は会話で読む）。分野のチップで分野ごとのフィードに切り替える（?field=）。チップはスクロールしても上に残す
 import * as React from 'react'
 import { Markdown } from '../../chat/markdown'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -75,7 +75,7 @@ export function QuestionFeedView({ feed, onOpen }: { feed: QuestionFeed | undefi
   const chip = (on: boolean) => cn('inline-flex h-9 shrink-0 items-center gap-1 rounded-full border px-4 text-sm transition-colors', on ? 'border-primary bg-primary text-primary-foreground' : 'border-input bg-background hover:bg-card')
   return (
     <section aria-label="気になる問い" className="mx-auto flex max-w-[640px] flex-col gap-4">
-      <div role="group" aria-label="分野" className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]">
+      <div role="group" aria-label="分野" className="sticky top-0 z-20 -mx-4 flex gap-2 overflow-x-auto bg-background px-4 py-2 [scrollbar-width:none]">
         <button type="button" aria-pressed={!field} onClick={() => pick(null)} className={chip(!field)}>すべて</button>
         {fields.map((f) => (
           <button key={f.id} type="button" aria-pressed={field === f.id} onClick={() => pick(f.id)} className={chip(field === f.id)}>

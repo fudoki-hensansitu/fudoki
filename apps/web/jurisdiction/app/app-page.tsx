@@ -171,14 +171,15 @@ function TabYear() {
     </div>
   )
 }
-/** 財政以外のタブの頭。その言葉の意味の一文と、年度の切り替え。見出しはタブ名のくり返しになるので画面に出さず、読み上げと検索のためだけに残す */
+/** 財政以外の頁の頭。頁の名前と年度の切り替え、その言葉の意味の一文 */
 function TabHead({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    // 狭い画面は一文を横の切り替えに押されて細く折れるので、切り替えを上に置いて一文を全幅にする
-    <div className="mb-5 flex items-center justify-between gap-3 max-md:flex-col-reverse max-md:items-start">
-      <Title size="h2" className="sr-only">{title}</Title>
+    <div className="mb-5 flex flex-col gap-3">
+      <div className="flex items-center justify-between gap-3">
+        <Title size="h1" as="h1">{title}</Title>
+        <TabYear />
+      </div>
       <p className="min-w-0 text-base leading-[1.7] text-muted-foreground">{children}</p>
-      <TabYear />
     </div>
   )
 }
@@ -518,7 +519,7 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
       <TabHead title={label === '決算' ? '決算' : '予算'}>
         {phase === 'settlement'
           ? '決算は、1年間に実際に入ったお金と使ったお金を、年度が終わった後にまとめたものです。議会の認定を受けて確定します。'
-          : '予算は、1年間に何にいくら使うかを、年度が始まる前に決めた計画です。議会の議決を経て決まります。このタブでは、年度の初めに決めた当初予算を扱います。'}
+          : '予算は、1年間に何にいくら使うかを、年度が始まる前に決めた計画です。議会の議決を経て決まります。ここでは、年度の初めに決めた当初予算を扱います。'}
       </TabHead>
       {/* 入る→使う（一般会計の歳入と歳出の総額と流れ）。その年度・資料の歳入を収録しているときだけ */}
       {total && revenueDoc ? <IncomeFlow doc={revenueDoc} revenue={current?.revenue} phase={phase} expTotal={total.yen} fields={v.fields} pop={d.pop} openField={openFieldDetail} /> : null}
@@ -627,6 +628,7 @@ function Overview() {
   const { v, page } = useApp()
   return (
     <div className="flex flex-col gap-8">
+      <Title size="h1" as="h1">財政</Title>
       {/* ホームのまちの札と同じく、濃い緑の地に総額と1人あたりを載せる。事業の件数は出さない */}
       <section className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7">
         <p className="text-sm opacity-80">{reiwa(v.year)}の{v.word}（一般会計）</p>
