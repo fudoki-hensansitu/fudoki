@@ -15,7 +15,7 @@ const GROUPS: { id: string; name: string; codes: number[] }[] = [
   { id: 'welfare', name: '扶助費', codes: [19] },
   { id: 'construction', name: '工事', codes: [14] },
   { id: 'goods', name: '物・サービスの購入', codes: [7, 8, 9, 10, 11, 13, 15, 16, 17] },
-  { id: 'transfer', name: 'ほかの会計への繰出し', codes: [27] },
+  { id: 'transfer', name: 'ほかの会計へ', codes: [27] },
   { id: 'debt', name: '借金の返済', codes: [22] },
   { id: 'other', name: '積立・貸付など', codes: [20, 21, 23, 24, 25, 26, 28] },
 ]
