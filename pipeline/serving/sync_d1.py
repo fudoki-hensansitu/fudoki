@@ -627,7 +627,10 @@ def begin(d1: D1, snapshot: Snapshot | None) -> None:
 
 
 def finish(d1: D1, snapshot: Snapshot | None, synced: Sequence[str], scoped: bool) -> None:
-    """成功した同期の印を D1 に置く。写しはこの後に同じ印で書く（書けなければ印が合わず、次の同期は D1 を読む）。"""
+    """成功した同期の印を D1 に置く。写しはこの後に同じ印で書く（書けなければ印が合わず、次の同期は D1 を読む）。
+    最後に表の統計（sqlite_stat1）を作り直す。SQLite は自分からは統計を作らず、無いと索引を当て推量で選ぶ
+    （事業の年度を年度の索引で全自治体分読み、1回で約40万行を読んで D1 が詰まった。2026-11-19）。表を作り直した同期では統計も消えている。"""
+    d1.batch([{'sql': 'PRAGMA optimize'}])
     if snapshot and snapshot.complete_after(synced, scoped):
         snapshot.new_token = uuid.uuid4().hex
         d1.batch([{'sql': f'insert or replace into "{SYNC_STATE}" ("key", "value") '
