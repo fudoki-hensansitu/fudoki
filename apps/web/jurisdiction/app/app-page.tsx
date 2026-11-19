@@ -1182,7 +1182,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
               // 戻る・頁の名前・年度の切り替えを1行に置き、スクロールしても帯ごと残す（財政は年度を持たない）
               <>
                 <Link href={data.path} aria-label={`${data.name}へ戻る`} className="-ml-2 grid size-9 shrink-0 place-items-center rounded-full text-muted-foreground"><ArrowLeftIcon className="size-5" aria-hidden="true" /></Link>
-                <Title size="h3" as="h1" className="min-w-0 flex-1 truncate">{TABS.find((t) => t.key === tab)?.label}</Title>
+                <Title size="h1" as="h1" className="min-w-0 flex-1 truncate">{TABS.find((t) => t.key === tab)?.label}</Title>
                 {v && tab !== 'overview' ? (
                   <div className="shrink-0">
                     <div className="md:hidden"><YearMenu years={years} current={v.year} onChange={setYear} /></div>

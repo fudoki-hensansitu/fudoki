@@ -81,7 +81,7 @@ export function QuestionFeedView({ feed, onOpen }: { feed: QuestionFeed | undefi
     <section aria-labelledby="q-feed-title" className="mx-auto flex max-w-[640px] flex-col gap-4">
       {/* 何が並んでいるかを先に言う（数字の大きい札がいきなり並ぶと驚く） */}
       <div className="flex flex-col gap-2">
-        <Title size="h3" as="h2" id="q-feed-title">気になること</Title>
+        <Title size="h1" as="h2" id="q-feed-title">気になること</Title>
         <p className="text-base leading-relaxed text-muted-foreground">住民が気になりそうな問いに、予算書・決算書の数字で答えています。押すと、その答えから AI に続けて聞けます。</p>
       </div>
       <div role="group" aria-label="分野" className="sticky top-0 z-20 -mx-4 flex gap-2 overflow-x-auto bg-background px-4 py-2 [scrollbar-width:none]">
