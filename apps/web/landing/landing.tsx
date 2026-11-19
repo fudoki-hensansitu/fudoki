@@ -27,8 +27,8 @@ const fillButton = 'inline-flex items-center gap-2 rounded-full bg-brand-fill px
 const textLink = 'inline-flex items-center gap-1 text-base font-medium text-primary underline-offset-4 hover:underline'
 
 /** 実際の画面の画像。テーマに合わせてライト・ダークの片方を出す（about.css）。隠れた方は読み上げられないので、どちらにも同じ alt を付ける */
-function Shot({ name, width, height, alt, className, imgClassName, eager }: { name: string; width: number; height: number; alt: string; className?: string; imgClassName?: string; eager?: boolean }) {
-  const img = cn('h-auto w-full', imgClassName)
+function Shot({ name, width, height, alt, className, eager }: { name: string; width: number; height: number; alt: string; className?: string; eager?: boolean }) {
+  const img = 'h-auto w-full'
   return (
     <span className={cn('block', className)}>
       <img className={cn('shot-light block', img)} src={`/about/${name}-light.webp`} width={width} height={height} alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async" />
