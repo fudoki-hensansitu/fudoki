@@ -339,8 +339,10 @@ export function AskDock({ name, code, sitekey, year, section, detail, page, ask 
   }), [preset])
   const connect = async () => {
     if (!connectRef.current) throw new Error('会話を始められませんでした')
+    // 待つ間に別の問いを開いたら、その会話には付けない
+    const key = chat?.key
     const made = await connectRef.current()
-    setChat((c) => (c ? { ...c, id: made.id, live: true } : c))
+    setChat((c) => (c && c.key === key ? { ...c, id: made.id, live: true } : c))
     return made
   }
 

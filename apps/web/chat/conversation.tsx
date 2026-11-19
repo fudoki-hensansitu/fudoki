@@ -116,6 +116,8 @@ export function Conversation({
             if (!connectRef.current) throw new Error('会話を始められませんでした')
             const made = await connectRef.current()
             live.current = { id: made.id, token: made.session.token, expiresAt: made.session.expiresAt }
+            // 別の頁で開くリンクが出るので、最初の答えを待たずに会話を保存しておく
+            save(messages)
           }
           return {
             headers: { Authorization: `Bearer ${live.current.token}` },
