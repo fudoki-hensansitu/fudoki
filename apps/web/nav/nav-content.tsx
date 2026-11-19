@@ -1,10 +1,12 @@
-// サイドバーの中身。項目は まちを探す（頭の検索欄）・アシスタント・まち比べ の3つだけ。住んでいるまちはホームなので置かない（ホームへはロゴから）
+// サイドバーの中身。項目は まちを探す（頭の検索欄）・選んだまち（ホームで住んでいるまちを選んだ人だけ）・アシスタント・まち比べ。
+// サイドバーは PC だけに出る（スマホは下の帯）ので、選んだまちもスマホには出さない
 import * as React from 'react'
-import { ArrowsLeftRightIcon, MagnifyingGlassIcon, RobotIcon } from '@phosphor-icons/react'
+import { ArrowsLeftRightIcon, MagnifyingGlassIcon, MapPinIcon, RobotIcon } from '@phosphor-icons/react'
 import { useRouter } from '@void/react'
 import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
 import { Item } from './site-nav'
 import { TownPalette } from './town-palette'
+import { useMyTown } from '../home/towns'
 
 /** まちを探す。欄を押すか ⌘K で、画面の中央に候補のパレット（TownPalette）を開く。選んだまちの頁へ移る */
 function TownSearch() {
@@ -40,6 +42,21 @@ function TownSearch() {
   )
 }
 
+/** 自治体の紋章。読めない自治体は地図のピンにする */
+function TownIcon({ code }: { code: string }) {
+  const [failed, setFailed] = React.useState(false)
+  React.useEffect(() => setFailed(false), [code])
+  return failed ? <MapPinIcon /> : <img src={`/jurisdictions/${code}/emblem.svg`} alt="" className="size-5 shrink-0 object-contain" onError={() => setFailed(true)} />
+}
+
+/** ホームで選んだ住んでいるまち。選んでいなければ出さない。そのまちの頁（年度の頁も）にいる間は選択中にする */
+function MyTownItem({ path }: { path: string }) {
+  const { town } = useMyTown()
+  if (!town) return null
+  const active = path === town.path || path.startsWith(`${town.path}/`)
+  return <Item href={town.path} label={town.name} icon={<TownIcon code={town.code} />} active={active} />
+}
+
 const isAssistant = (path: string) => path === '/assistant' || path.startsWith('/s/')
 
 export function NavContent() {
@@ -48,6 +65,7 @@ export function NavContent() {
     <SidebarGroup className="pt-1">
       <SidebarMenu>
         <TownSearch />
+        <MyTownItem path={path} />
         <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={isAssistant(path)} />
         <Item href="/compare" label="まち比べ" icon={<ArrowsLeftRightIcon />} active={path === '/compare' || path.startsWith('/compare/')} />
       </SidebarMenu>
