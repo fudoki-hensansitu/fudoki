@@ -12,10 +12,10 @@ import { assetPath, EMBLEMS, emblemOf, prefectureCodeOf } from '../../jurisdicti
 import { VISIONS } from '../../jurisdiction/visions'
 import type { Env } from '../../server/env'
 import type { CatalogEntry } from '../../server/jurisdiction'
-import { ACCOUNT, loadCatalog, loadCatalogEntry, loadFlowParts, loadRevenueFlow, loadRevenueSetsuByMoku, loadSetsuByMoku, loadSettlementSummary, pageBase } from '../../server/jurisdiction'
+import { ACCOUNT, loadCatalog, loadCatalogEntry, loadFlowParts, loadMokuBreakdowns, loadRevenueFlow, loadRevenueSetsuByMoku, loadSettlementSummary, pageBase } from '../../server/jurisdiction'
 import { appYears, loadYearExtras, loadYearSnapshot } from '../../server/app-data'
 import type { Snapshot, YearExtras } from '../../jurisdiction/app/data'
-import type { Setsu } from '../../jurisdiction/types'
+import type { MokuBreakdowns } from '../../jurisdiction/types'
 import { siteKey } from '../../server/site-key'
 import { loadLocalFinance } from '../../server/local-finance'
 import { loadRevenue } from '../../server/revenue'
@@ -43,7 +43,7 @@ export type JurisdictionProps = JurisdictionView & {
   /** 最初の画面に要らない残り（評価シート・お金のかかる事業・新しく始めた事業）。defer で HTML の後ろに流す */
   extras?: Promise<YearExtras>
   /** 流れの目ごとの節。defer で HTML の後ろに流す */
-  setsu?: Promise<Record<string, Setsu[]>>
+  setsu?: Promise<MokuBreakdowns>
 }
 
 /** 年度の段（/tokyo/nakano/2024）。4桁の数字だけ */
@@ -225,10 +225,10 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
   const setsu = entry && flow && phase
     ? defer(async () => {
         const [expenditure, revenue] = await Promise.all([
-          loadSetsuByMoku(env, entry.code, year, mokuIds, phase, account),
+          loadMokuBreakdowns(env, entry.code, year, mokuIds, phase, account),
           revenueMokuIds.length ? loadRevenueSetsuByMoku(env, entry.code, year, revenueMokuIds, phase).catch(() => new Map()) : new Map(),
         ])
-        return Object.fromEntries([...expenditure, ...revenue])
+        return { setsu: Object.fromEntries([...expenditure.setsu, ...revenue]), projects: Object.fromEntries(expenditure.projects) }
       })
     : undefined
   return { ...props, ...(headline ? { data: { ...props.data, headline } } : {}), ...(snapshot ? { snapshot } : {}), ...(flow ? { flow } : {}), ...(extras ? { extras } : {}), ...(setsu ? { setsu } : {}) }

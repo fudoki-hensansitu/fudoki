@@ -60,7 +60,7 @@ import { DOMAIN_FRAMES, OTHER_FRAME, frameOf } from '../domains'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock } from '../ask-dock'
-import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type Moku, type PageData, type PageFlow, type Setsu, type YearTotal, TAB_SLUGS, hasDocument, type PageTab } from '../types'
+import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type Moku, type MokuBreakdowns, type PageData, type PageFlow, type YearTotal, TAB_SLUGS, hasDocument, type PageTab } from '../types'
 import { Title, titleVariants } from '@/components/ui/title'
 import { withExtras, yearView, type AccountTotal, type Proj, type Snapshot, type YearExtras, type YearView } from './data'
 import { fieldSubjects, listKey, listPage, projectLatest, type ListPage, type ListQuery, type ProjectFull } from './api'
@@ -91,7 +91,7 @@ const perHead = (y: number, pop: number) => {
 const r = (y: number) => `R${y - 2018}`
 
 // ---------- 選んだもの（詳細） ----------
-type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; res: Resources; /** 事業の頁へ移る */ openProject: (id: string) => void; go: Go; openField: (id: string) => void; /** 予算・決算のタブの頁で loader が読んだ流れ */ flow?: PageFlow; /** 予算・決算のタブの頁なのに流れを読めなかった（API に繋がらなかった） */ flowFailed: boolean; /** 流れの会計を変える（?account= の頁へ移る） */ pickAccount: (account: string) => void; /** loader が defer で渡す流れの節 */ setsu?: Promise<Record<string, Setsu[]>>; /** loader が defer で渡す残り（評価シート・お金のかかる事業）。useFullView が use() で待つ */ extras?: Promise<YearExtras>; prevFieldSubjects?: Record<string, string[]>; /** 年度を移る（タブの見出しの年度の切り替え） */ setYear: (y: number) => void; /** 年度の頁の URL（今のタブのまま） */ yearHref: (y: number) => string }
+type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; res: Resources; /** 事業の頁へ移る */ openProject: (id: string) => void; go: Go; openField: (id: string) => void; /** 予算・決算のタブの頁で loader が読んだ流れ */ flow?: PageFlow; /** 予算・決算のタブの頁なのに流れを読めなかった（API に繋がらなかった） */ flowFailed: boolean; /** 流れの会計を変える（?account= の頁へ移る） */ pickAccount: (account: string) => void; /** loader が defer で渡す流れの節 */ setsu?: Promise<MokuBreakdowns>; /** loader が defer で渡す残り（評価シート・お金のかかる事業）。useFullView が use() で待つ */ extras?: Promise<YearExtras>; prevFieldSubjects?: Record<string, string[]>; /** 年度を移る（タブの見出しの年度の切り替え） */ setYear: (y: number) => void; /** 年度の頁の URL（今のタブのまま） */ yearHref: (y: number) => string }
 /** 文脈に添える、開いている事業の評価シートの数の上限（文脈の長さの上限に収める） */
 const DETAIL_SOURCES = 3
 /** 開いている事業を、アシスタントに渡す文脈の行にする。金額は at（無ければ事業が持つ年度と資料）のもの */
@@ -438,8 +438,8 @@ function AccountCards({ accounts, account, setAccount }: { accounts: AccountTota
 
 /** 予算・決算。事業は下から積み上げる見方、こちらは大きい項目から下りていく見方。当初予算と決算の両方がある年度はタブを分ける */
 /** 流れの目（歳入の目も）に節を足す */
-const withSetsu = (flow: PageFlow, byMoku: Record<string, Setsu[]>): PageFlow => {
-  const moku = (m: Moku): Moku => ({ ...m, setsu: byMoku[m.id] ?? m.setsu })
+const withSetsu = (flow: PageFlow, byMoku: MokuBreakdowns): PageFlow => {
+  const moku = (m: Moku): Moku => ({ ...m, setsu: byMoku.setsu[m.id] ?? m.setsu, ...(byMoku.projects[m.id] ? { projects: byMoku.projects[m.id] } : {}) })
   const drills = (ds: Drill[]) => ds.map((k) => ({ ...k, kou: k.kou.map((o) => ({ ...o, moku: o.moku.map(moku) })) }))
   return { ...flow, drills: drills(flow.drills), loose: flow.loose.map(moku), ...(flow.revenue ? { revenue: drills(flow.revenue) } : {}) }
 }
@@ -464,7 +464,7 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
   const shown = flow && flow.year === v.year && flow.phase === phase && flow.account === account ? flow : undefined
   // 目ごとの節は最初の画面に出さないので、描いた後に読んで流れに足す（読み終えるまで節の無い流れを出す）
   const setsuKey = shown ? `setsu:${d.code}:${shown.year}:${shown.phase}:${shown.account}` : ''
-  const [setsu, setSetsu] = React.useState<{ key: string; byMoku: Record<string, Setsu[]> | typeof FAILED }>()
+  const [setsu, setSetsu] = React.useState<{ key: string; byMoku: MokuBreakdowns | typeof FAILED }>()
   React.useEffect(() => {
     if (!shown) return
     let live = true
@@ -927,7 +927,7 @@ const projectOfPath = () => {
 /** 事業の頁の URL の段 */
 const projectSegment = (id: string) => `projects/${encodeURIComponent(id)}`
 
-export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, setsu, sitekey, initialProject, initialProjectFull, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; /** loader が defer で渡す残り（評価シート・お金のかかる事業・新しく始めた事業） */ extras?: Promise<YearExtras>; /** loader が defer で渡す流れの節 */ setsu?: Promise<Record<string, Setsu[]>>; sitekey: string; /** 事業の頁（/2026/projects/<project_id>）で開いた事業 */ initialProject?: string; /** 事業の頁で loader が読んだ事業の中身（サーバーでも事業の頁を描く） */ initialProjectFull?: ProjectFull; initialTab?: TabKey }) {
+export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, setsu, sitekey, initialProject, initialProjectFull, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; /** loader が defer で渡す残り（評価シート・お金のかかる事業・新しく始めた事業） */ extras?: Promise<YearExtras>; /** loader が defer で渡す流れの節 */ setsu?: Promise<MokuBreakdowns>; sitekey: string; /** 事業の頁（/2026/projects/<project_id>）で開いた事業 */ initialProject?: string; /** 事業の頁で loader が読んだ事業の中身（サーバーでも事業の頁を描く） */ initialProjectFull?: ProjectFull; initialTab?: TabKey }) {
   // 最初の画面に要らない分（評価シート・お金のかかる事業・新しく始めた事業）は loader が defer で流し、使う部分が Full（Suspense と use()）で待つ
   const d = base
   const vision = data.vision?.text

@@ -28,6 +28,8 @@ import { cn } from '@/lib/utils'
 import { formatShare, formatYen, type Drill } from './types'
 
 const LEVELS = ['款', '項', '目', '節'] as const
+/** 行の頭の印。目の下には節と、節と並んで印字された事業が並ぶ（同じ目の額の別の切り口） */
+const labelOf = (n: Node) => (n.project ? '事業' : LEVELS[n.depth])
 
 interface Node {
   id: string
@@ -35,6 +37,8 @@ interface Node {
   yen: number
   missing?: true
   depth: number
+  /** 目の下の事業の行（節と同じ段に、節の後ろに並べる） */
+  project?: true
   /** 名前が印字された出典の URL（PDF は頁つき） */
   src?: string
   /** 歳出の節の節マスタの ID。あれば行を押すと節の詳細を開く */
@@ -49,7 +53,10 @@ const toNodes = (drills: Drill[]): Node[] =>
       id: k.id, name: k.name, yen: k.yen, missing: k.amountMissing, depth: 1, src: k.src,
       subRows: k.moku.length ? k.moku.map((m) => ({
         id: m.id, name: m.name, yen: m.yen, missing: m.amountMissing, depth: 2, src: m.src,
-        subRows: m.setsu.length ? m.setsu.map((s, i) => ({ id: `${m.id}:setsu:${i}`, name: s.name, yen: s.yen, missing: s.amountMissing, depth: 3, src: s.src, setsuId: s.setsuId })) : undefined,
+        subRows: m.setsu.length || m.projects?.length ? [
+          ...m.setsu.map((s, i) => ({ id: `${m.id}:setsu:${i}`, name: s.name, yen: s.yen, missing: s.amountMissing, depth: 3, src: s.src, setsuId: s.setsuId })),
+          ...(m.projects ?? []).map((s, i) => ({ id: `${m.id}:project:${i}`, name: s.name, yen: s.yen, missing: s.amountMissing, depth: 3, project: true as const, src: s.src })),
+        ] : undefined,
       })) : undefined,
     })) : undefined,
   }))
@@ -71,8 +78,10 @@ function Section({ title, drills, total, query, onQuery, onSetsu }: { title: str
   const data = React.useMemo(() => toNodes(drills), [drills])
   // 出典の分かる行が1つでもあれば、割合の右に出典の列を出す
   const hasSrc = React.useMemo(() => drills.some((d) => d.kan.src || d.kou.some((k) => k.src || k.moku.some((m) => m.src))), [drills])
-  const depth = Math.max(0, ...drills.map((d) => (d.kou.some((k) => k.moku.some((m) => m.setsu.length > 0)) ? 3 : d.kou.some((k) => k.moku.length > 0) ? 2 : d.kou.length > 0 ? 1 : 0)))
-  const levels = LEVELS.slice(0, depth + 1).join('・')
+  const depth = Math.max(0, ...drills.map((d) => (d.kou.some((k) => k.moku.some((m) => m.setsu.length > 0 || !!m.projects?.length)) ? 3 : d.kou.some((k) => k.moku.length > 0) ? 2 : d.kou.length > 0 ? 1 : 0)))
+  // 目の下に事業の行もあれば、段の名前に足す（款・項・目・節・事業）
+  const hasProjects = drills.some((d) => d.kou.some((k) => k.moku.some((m) => m.projects?.length)))
+  const levels = [...LEVELS.slice(0, depth + 1), ...(hasProjects ? ['事業'] : [])].join('・')
   // 開いた行は、探していないときと探しているときで分けて持つ。探し始めると当てはまる行の親をすべて開き、探し終えると前に開いていた行に戻す
   const [expanded, setExpanded] = React.useState<ExpandedState>({})
   const [found, setFound] = React.useState<ExpandedState>(true)
@@ -95,7 +104,8 @@ function Section({ title, drills, total, query, onQuery, onSetsu }: { title: str
   const [sorting, setSorting] = React.useState<SortingState>([])
   const columns = React.useMemo(() => column.columns([
     column.accessor('name', {
-      header: () => levels.replaceAll('・', ' → '),
+      // 事業は節と同じ段（節の下ではない）なので、矢印でなく「・」でつなぐ
+      header: () => LEVELS.slice(0, depth + 1).join(' → ') + (hasProjects ? '・事業' : ''),
       filterFn: 'includesString',
       cell: (c) => {
         const row = c.row
@@ -110,7 +120,7 @@ function Section({ title, drills, total, query, onQuery, onSetsu }: { title: str
               <span className="w-7 shrink-0" aria-hidden="true" />
             ) : null}
             <span className="min-w-0 leading-snug [overflow-wrap:anywhere]">
-              <span className="mr-2 text-muted-foreground">{LEVELS[row.original.depth]}</span>
+              <span className="mr-2 text-muted-foreground">{labelOf(row.original)}</span>
               {row.original.name}
             </span>
           </div>
@@ -148,7 +158,7 @@ function Section({ title, drills, total, query, onQuery, onSetsu }: { title: str
       ) : null,
       meta: { className: 'w-0 pr-0 text-right' },
     })] : []),
-  ]), [title, levels, depth, total, hasSrc])
+  ]), [title, levels, depth, total, hasSrc, hasProjects])
   const table = useTable({
     features,
     columns,

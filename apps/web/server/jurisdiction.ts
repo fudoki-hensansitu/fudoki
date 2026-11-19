@@ -144,7 +144,13 @@ const pickBreakdown = (byBreakdown: Record<string, ApiDetail[]>) => byBreakdown[
 
 /** 目の直下の内訳（節、無ければ事業）。目の id ごとに大きい順 */
 export async function loadSetsuByMoku(env: Env, code: string, year: number, mokuIds: string[], kind: DocumentKind = 'settlement', account: string = ACCOUNT): Promise<Map<string, Setsu[]>> {
+  return (await loadMokuBreakdowns(env, code, year, mokuIds, kind, account)).setsu
+}
+
+/** 目の直下の内訳。setsu は節（無ければ事業）、projects は節と並んで印字された事業（節が無く setsu に事業を入れた目では空）。目の id ごとに大きい順 */
+export async function loadMokuBreakdowns(env: Env, code: string, year: number, mokuIds: string[], kind: DocumentKind = 'settlement', account: string = ACCOUNT): Promise<{ setsu: Map<string, Setsu[]>; projects: Map<string, Setsu[]> }> {
   const setsuByMoku = new Map<string, Setsu[]>()
+  const projectsByMoku = new Map<string, Setsu[]>()
   // 年度・資料・自治体・会計・分け方・深さの条件と合わせても API の bind 上限（90）に収まる件数。区切った分は並べて読む
   const chunks = Array.from({ length: Math.ceil(mokuIds.length / 50) }, (_, i) => mokuIds.slice(i * 50, (i + 1) * 50))
   const origins: OriginUrls = new Map()
@@ -156,9 +162,14 @@ export async function loadSetsuByMoku(env: Env, code: string, year: number, moku
       ;(byBreakdown[n.breakdown] ??= []).push(n)
       groups.set(n.subject_id, byBreakdown)
     }
-    for (const [moku, byBreakdown] of groups) setsuByMoku.set(moku, [...pickBreakdown(byBreakdown)].sort(byAmount).map((n) => ({ name: n.name, ...amount(n), ...(n.expenditure_setsu_id ? { setsuId: n.expenditure_setsu_id } : {}), ...srcOf(n, origins) })))
+    const toSetsu = (n: ApiDetail): Setsu => ({ name: n.name, ...amount(n), ...(n.expenditure_setsu_id ? { setsuId: n.expenditure_setsu_id } : {}), ...srcOf(n, origins) })
+    for (const [moku, byBreakdown] of groups) {
+      const picked = pickBreakdown(byBreakdown)
+      setsuByMoku.set(moku, [...picked].sort(byAmount).map(toSetsu))
+      if (picked !== byBreakdown['事業'] && byBreakdown['事業']?.length) projectsByMoku.set(moku, [...byBreakdown['事業']].sort(byAmount).map(toSetsu))
+    }
   }
-  return setsuByMoku
+  return { setsu: setsuByMoku, projects: projectsByMoku }
 }
 
 /** すべての款を同じ深さで表示する。節は目の直下の内訳を取り、分け方の違う数字を混ぜない。 */

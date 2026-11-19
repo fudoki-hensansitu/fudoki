@@ -26,10 +26,18 @@ export interface Setsu {
 
 export interface Moku extends Line {
   setsu: Setsu[]
+  /** 節と並んで印字された事業（同じ目の額の別の切り口なので節と足さない）。節が無い目では setsu に事業が入り、ここは空 */
+  projects?: Setsu[]
   /** 自治体の科目の款・項の名前。分野で分けた図でも、目から事業を引くのに使う */
   path?: [string | null, string | null]
   /** 目に付いた COFOG のコード（09.1 など）。分野の流れに組み直すのに使う */
   cofog?: string | null
+}
+
+/** loader が defer で渡す目の内訳（目の id ごと）。setsu は歳入の目の節も含む */
+export interface MokuBreakdowns {
+  setsu: Record<string, Setsu[]>
+  projects: Record<string, Setsu[]>
 }
 
 export interface Kou extends Line {
