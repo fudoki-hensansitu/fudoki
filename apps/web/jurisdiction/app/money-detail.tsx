@@ -118,6 +118,11 @@ export function MoneyDetail({ open, onClose, wide, moku, fields, groups, onProje
   // 押した節は、その会計の同じ節の和を見出しにし、入る区分を説明に出す
   const item = key?.kind === 'setsuItem' && body?.kind === 'setsuItem' ? { name: setsuLabelOf(key.id) ?? '節', yen: body.rows.reduce((a, r) => a + r.yen, 0), group: groups.find((g) => g.id === setsuGroupOf(key.id))?.name } : undefined
   const head = field ?? group ?? item
+  const desc = key?.kind === 'field'
+    ? frame?.examples ? `${frame.examples}など。` : undefined
+    : item
+      ? item.group ? `「何に使う？」の${item.group}に入る節です。` : undefined
+      : key?.id === UNKNOWN_SETSU ? '予算書・決算書の内訳が節で分かれていない科目の分です。' : undefined
 
   return (
     <Drawer open={!!open} onOpenChange={(o) => { if (!o) onClose() }} swipeDirection={wide ? 'right' : 'down'}>
@@ -126,15 +131,8 @@ export function MoneyDetail({ open, onClose, wide, moku, fields, groups, onProje
           <div className="min-w-0">
             <DrawerTitle className="text-base font-semibold">{head?.name}</DrawerTitle>
             {head ? <Amt yen={head.yen} className="mt-1 block text-base font-medium text-primary" /> : null}
-            <DrawerDescription className="mt-2 text-sm text-muted-foreground">
-              {key?.kind === 'field'
-                ? frame?.examples ? `${frame.examples}など。この分野に入る科目（目）を、額の多い順に並べています。` : 'この分野に入る科目（目）を、額の多い順に並べています。'
-                : item
-                  ? `${item.group ? `「何に使う？」の${item.group}に入る節です。` : ''}この節にお金を出している科目（目）を、額の多い順に並べています。`
-                  : key?.id === UNKNOWN_SETSU
-                    ? '予算書・決算書の内訳が節で分かれていない科目の分です。'
-                    : 'この区分に入る節と、この区分にお金を多く出している科目（目）です。'}
-            </DrawerDescription>
+            {/* 見て分かること（何を並べているか）は書かず、見ても分からないことだけを添える */}
+            {desc ? <DrawerDescription className="mt-2 text-sm text-muted-foreground">{desc}</DrawerDescription> : null}
           </div>
           <Button variant="ghost" size="icon" aria-label="閉じる" onClick={onClose} className="-mt-1 -mr-2 shrink-0 rounded-full">
             <XIcon aria-hidden="true" />
