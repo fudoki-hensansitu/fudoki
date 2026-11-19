@@ -6,6 +6,71 @@ import { MAX_CONTEXT } from './history'
 import { saveSession, type StoredSession } from './store'
 import { mountTurnstile } from './turnstile'
 
+type Turnstile = Awaited<ReturnType<typeof mountTurnstile>>
+/** Turnstile を置き終えるのを待つ上限 */
+const MOUNT_WAIT_MS = 10_000
+
+/** Turnstile を置き、それを通して server に会話（id・token）を作る。widget は確かめの操作が要るときだけ見せる */
+function useSessionMaker(sitekey: string, onError: (message: string) => void) {
+  const widget = React.useRef<HTMLDivElement>(null)
+  const turnstile = React.useRef<Turnstile>(undefined)
+  // 置き終える前に会話を作ろうとしたら、置き終えるのを待つ（作り置きの答えの会話は、開いてすぐ聞くことがある）
+  const [mounted] = React.useState(() => {
+    let resolve!: (t: Turnstile) => void
+    const promise = new Promise<Turnstile>((r) => (resolve = r))
+    return { promise, resolve }
+  })
+  const [challenge, setChallenge] = React.useState(false)
+  const onErrorRef = React.useRef(onError)
+  onErrorRef.current = onError
+  React.useEffect(() => {
+    if (!sitekey || !widget.current) return
+    let removed = false
+    mountTurnstile(widget.current, sitekey, setChallenge)
+      .then((t) => {
+        if (removed) return t.remove()
+        turnstile.current = t
+        mounted.resolve(t)
+      })
+      .catch((e: Error) => onErrorRef.current(e.message))
+    return () => {
+      removed = true
+      turnstile.current?.remove()
+    }
+  }, [sitekey])
+  const create = React.useCallback(async () => {
+    const t = turnstile.current ?? (await Promise.race([mounted.promise, new Promise<undefined>((r) => setTimeout(r, MOUNT_WAIT_MS))]))
+    if (!t) throw new Error('確認の準備ができていません。少し待ってから送ってください')
+    const turnstileToken = await t.token()
+    const res = await fetch('/api/sessions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ turnstileToken }) })
+    const body = (await res.json()) as { id?: string; token?: string; expiresAt?: number; error?: { message: string } }
+    if (!res.ok || !body.id || !body.token) throw new Error(body.error?.message ?? '会話を始められませんでした')
+    return { id: body.id, token: body.token, expiresAt: body.expiresAt ?? 0 }
+  }, [mounted])
+  const warm = () => turnstile.current?.warm()
+  return { widget, challenge, create, warm }
+}
+
+/** 質問を送らずに会話だけを作る。作り置きの答えから始めた会話（自治体の頁の「気になる」）を、続けて聞くときに server の会話にする。
+ * 会話の drawer の中に置き、確かめの操作が要るときはそこに widget を出す */
+export function SessionVerifier({ sitekey, connectRef }: { sitekey: string; connectRef: React.RefObject<(() => Promise<{ id: string; session: StoredSession }>) | undefined> }) {
+  const [error, setError] = React.useState<string>()
+  const { widget, challenge, create } = useSessionMaker(sitekey, setError)
+  React.useEffect(() => {
+    connectRef.current = async () => {
+      const made = await create()
+      return { id: made.id, session: { token: made.token, expiresAt: made.expiresAt, entry: location.pathname } }
+    }
+    return () => void (connectRef.current = undefined)
+  }, [connectRef, create])
+  return (
+    <>
+      <div ref={widget} className={challenge ? 'mb-3 flex justify-center' : 'hidden'} />
+      {error ? <p role="alert" className="mb-3 text-sm text-destructive">{error}</p> : null}
+    </>
+  )
+}
+
 export function StartForm({
   sitekey,
   placeholder,
@@ -35,22 +100,9 @@ export function StartForm({
   after?: (start: (text: string) => Promise<boolean>, pending: boolean) => React.ReactNode
 }) {
   const router = useRouter()
-  const widget = React.useRef<HTMLDivElement>(null)
-  const turnstile = React.useRef<Awaited<ReturnType<typeof mountTurnstile>>>(undefined)
   const [pending, setPending] = React.useState(false)
-  const [challenge, setChallenge] = React.useState(false)
   const [error, setError] = React.useState<string>()
-  React.useEffect(() => {
-    if (!sitekey || !widget.current) return
-    let removed = false
-    mountTurnstile(widget.current, sitekey, setChallenge)
-      .then((t) => (removed ? t.remove() : (turnstile.current = t)))
-      .catch((e: Error) => setError(e.message))
-    return () => {
-      removed = true
-      turnstile.current?.remove()
-    }
-  }, [sitekey])
+  const { widget, challenge, create, warm } = useSessionMaker(sitekey, setError)
 
   const start = async (text: string) => {
     setPending(true)
@@ -58,13 +110,9 @@ export function StartForm({
     // 会話の本体は lazy に読むので、Turnstile と POST を待つ間に取り始めておく（移った先・drawer の lazy はこれを使う）
     void import('./conversation').catch(() => {})
     try {
-      if (!turnstile.current) throw new Error('確認の準備ができていません。少し待ってから送ってください')
-      const turnstileToken = await turnstile.current.token()
-      const res = await fetch('/api/sessions', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ turnstileToken }) })
-      const body = (await res.json()) as { id?: string; token?: string; expiresAt?: number; error?: { message: string } }
-      if (!res.ok || !body.id || !body.token) throw new Error(body.error?.message ?? '会話を始められませんでした')
+      const body = await create()
       const pendingContext = context?.()?.slice(0, MAX_CONTEXT)
-      const session: StoredSession = { token: body.token, expiresAt: body.expiresAt ?? 0, pending: prefix ? `${prefix}${text}` : text, entry: location.pathname, ...(pendingContext ? { pendingContext } : {}) }
+      const session: StoredSession = { token: body.token, expiresAt: body.expiresAt, pending: prefix ? `${prefix}${text}` : text, entry: location.pathname, ...(pendingContext ? { pendingContext } : {}) }
       // 移った先は sessionStorage から token と質問を読むので、書けなければ移らない
       if (!saveSession(body.id, session))
         throw new Error('このブラウザでは会話を保存できないため始められません（プライベートブラウズや保存の制限を確かめてください）')
@@ -97,7 +145,7 @@ export function StartForm({
         </div>
       ) : null}
       {before}
-      <Composer onSubmit={start} pending={pending} placeholder={placeholder} onFocus={() => turnstile.current?.warm()} />
+      <Composer onSubmit={start} pending={pending} placeholder={placeholder} onFocus={warm} />
       <div ref={widget} className={challenge ? 'mt-3 flex justify-center' : 'hidden'} />
       {error ? <p role="alert" className="mt-3 text-sm text-destructive">{error}</p> : null}
       {after?.(start, pending)}

@@ -16,12 +16,27 @@ import { forServer, MAX_CONTEXT, splitContext } from './history'
 import { Markdown } from './markdown'
 import { saveSession, type StoredSession } from './store'
 
+/** 送る前に会話（server の id・token）を用意する transport。用意を待つ間も送信の中断（止める）に従う */
+class LazyChatTransport extends DefaultChatTransport<ChatMessage> {
+  constructor(
+    options: ConstructorParameters<typeof DefaultChatTransport<ChatMessage>>[0],
+    private readonly ready: (signal?: AbortSignal) => Promise<void>,
+  ) {
+    super(options)
+  }
+  override async sendMessages(options: Parameters<DefaultChatTransport<ChatMessage>['sendMessages']>[0]) {
+    await this.ready(options.abortSignal)
+    return super.sendMessages(options)
+  }
+}
+
 /** 頁の端からこの距離以内なら、その側のフェードは出さない */
 const FADE_EDGE_PX = 4
 /** 一番下からこの距離以内なら、読み終えて追っていると見なす */
 const NEAR_BOTTOM_PX = 120
 
-type Metadata = { context?: string }
+/** follow・source は作り置きの答え（自治体の頁の「気になる」）にだけ付く。follow は答えのあとに出す続きの問い */
+type Metadata = { context?: string; follow?: string[]; source?: string }
 type ChatMessage = UIMessage<Metadata>
 
 const TOOL_LABELS: Record<string, string> = {
@@ -77,6 +92,9 @@ export function Conversation({
   context,
   beforeComposer,
   onSend,
+  startAtTop = false,
+  connect,
+  preset,
 }: {
   id: string
   stored: StoredSession
@@ -91,37 +109,103 @@ export function Conversation({
   beforeComposer?: React.ReactNode
   /** 続けて聞いたとき（選んだ文を外すなど） */
   onSend?: () => void
+  /** 開いたときに一番下へ送らず、最初の問いと答えの頭から見せる（作り置きの答えから始めた会話） */
+  startAtTop?: boolean
+  /** stored に token が無い会話（作り置きの答えから始めた会話）で、続けて聞くときに会話を作る。Turnstile は押したときでなく、聞くときに通す */
+  connect?: () => Promise<{ id: string; session: StoredSession }>
+  /** 続きの問いに作り置きの答えがあれば返す。あれば AI に聞かずにその答えを足す */
+  preset?: (question: string) => { answer: string; follow: string[]; source: string } | undefined
 }) {
   // 頁の文脈は質問ごとに読み、その発言の metadata に持たせる（server が選んだ文は質問の直前の利用者の発言に、見ている画面は最後の質問のものだけを system prompt に入れる）
   const contextRef = React.useRef(context)
   contextRef.current = context
+  // server の会話（id・token）。作り置きの答えから始めた会話は、続けて聞くまで作らない
+  const live = React.useRef(stored.token ? { id, token: stored.token, expiresAt: stored.expiresAt } : undefined)
+  const connectRef = React.useRef(connect)
+  connectRef.current = connect
+  // 続けて聞くときに会話を作る。Turnstile が操作を求めて待つ間も、止めるを押せば待たずに送信を終える（会話は裏で作り終えたら使う）
+  const connecting = React.useRef<Promise<void> | undefined>(undefined)
+  const fresh = React.useRef(false)
+  const ensureLive = (signal?: AbortSignal) => {
+    if (live.current) return Promise.resolve()
+    if (!connectRef.current) return Promise.reject(new Error('会話を始められませんでした'))
+    connecting.current ??= connectRef.current().then(
+      (made) => {
+        live.current = { id: made.id, token: made.session.token, expiresAt: made.session.expiresAt }
+        fresh.current = true
+      },
+      (e) => {
+        connecting.current = undefined
+        throw e
+      },
+    )
+    if (!signal) return connecting.current
+    return Promise.race([
+      connecting.current,
+      new Promise<never>((_, reject) => {
+        if (signal.aborted) reject(new DOMException('Aborted', 'AbortError'))
+        signal.addEventListener('abort', () => reject(new DOMException('Aborted', 'AbortError')), { once: true })
+      }),
+    ])
+  }
+  const ensureRef = React.useRef(ensureLive)
+  ensureRef.current = ensureLive
   const transport = React.useMemo(
     () =>
-      new DefaultChatTransport<ChatMessage>({
-        api: '/api/chat',
-        headers: { Authorization: `Bearer ${stored.token}` },
-        prepareSendMessagesRequest: ({ messages }) => ({
-          body: { id, messages: forServer(messages), ...(stored.entry ? { entry: stored.entry } : {}) },
-        }),
-      }),
-    [id, stored.token],
+      new LazyChatTransport(
+        {
+          api: '/api/chat',
+          prepareSendMessagesRequest: ({ messages }) => {
+            if (!live.current) throw new Error('会話を始められませんでした')
+            // 別の頁で開くリンクが出るので、会話を作ったら最初の答えを待たずに保存しておく
+            if (fresh.current) {
+              fresh.current = false
+              save(messages)
+            }
+            return {
+              headers: { Authorization: `Bearer ${live.current.token}` },
+              body: { id: live.current.id, messages: forServer(messages), ...(stored.entry ? { entry: stored.entry } : {}) },
+            }
+          },
+        },
+        (signal) => ensureRef.current(signal),
+      ),
+    [stored.entry],
   )
-  const { messages, sendMessage, status, stop, error } = useChat<ChatMessage>({
+  const save = (messages: ChatMessage[]) =>
+    !live.current || saveSession(live.current.id, { token: live.current.token, expiresAt: live.current.expiresAt, messages, ...(stored.entry ? { entry: stored.entry } : {}) })
+  const { messages, sendMessage, setMessages, status, stop, error } = useChat<ChatMessage>({
     id,
     messages: (stored.messages ?? []) as ChatMessage[],
     transport,
-    onFinish: ({ messages }) => {
-      return saveSession(id, { token: stored.token, expiresAt: stored.expiresAt, messages, ...(stored.entry ? { entry: stored.entry } : {}) })
-    },
+    onFinish: ({ messages }) => save(messages),
   })
   const busy = status === 'submitted' || status === 'streaming'
   const onSendRef = React.useRef(onSend)
   onSendRef.current = onSend
+  const presetRef = React.useRef(preset)
+  presetRef.current = preset
   const send = React.useCallback((text: string, pageContext = contextRef.current?.()) => {
+    // 作り置きの答えのある問いは、AI に聞かずに答えを足す
+    const found = presetRef.current?.(text)
+    if (found) {
+      const at = Date.now().toString(36)
+      setMessages((prev) => {
+        const next: ChatMessage[] = [
+          ...prev,
+          { id: `preset-q-${at}`, role: 'user', parts: [{ type: 'text', text }] },
+          { id: `preset-a-${at}`, role: 'assistant', parts: [{ type: 'text', text: found.answer }], metadata: { follow: found.follow, source: found.source } },
+        ]
+        save(next)
+        return next
+      })
+      onSendRef.current?.()
+      return
+    }
     const ctx = pageContext?.slice(0, MAX_CONTEXT)
     void sendMessage({ text, ...(ctx ? { metadata: { context: ctx } } : {}) })
     onSendRef.current?.()
-  }, [sendMessage])
+  }, [sendMessage, setMessages])
   // 入口で入力した最初の質問を1回だけ送る（StrictMode の二重実行でも1回）
   const sent = React.useRef(false)
   React.useEffect(() => {
@@ -134,7 +218,7 @@ export function Conversation({
 
   // 一番下を読んでいる間は、送ったときも配信中も画面全体を最下部へ追う。利用者が上へ遡ったら追わない
   // 上下のフェード（scroll-fade と同じ見え方）は、頁の端にいる側では出さない
-  const pinned = React.useRef(true)
+  const pinned = React.useRef(!startAtTop)
   const [fade, setFade] = React.useState({ top: false, bottom: false })
   const box = React.useCallback(() => {
     const el = scroller?.current
@@ -180,7 +264,8 @@ export function Conversation({
     measure()
   }, [messages, status, measure, box])
 
-  const suggestions = busy ? [] : suggestionsOf(messages.at(-1))
+  const lastMessage = messages.at(-1)
+  const suggestions = busy ? [] : lastMessage?.metadata?.follow ? lastMessage.metadata.follow.map((q) => ({ label: q, prompt: q })) : suggestionsOf(lastMessage)
   // 応答の生成中で、画面に動くものが無い間は「考えています」を出す。止まって見えないように。
   // 出すのは送った直後と、tool の結果が返ったあと次を組み立てている間だけ。文が出始めたあとは出さない（書き終えた答えの下に出ないように）
   const last = messages.at(-1)?.parts.at(-1)
@@ -211,6 +296,7 @@ export function Conversation({
                     if (p.type !== 'dynamic-tool') return null
                     return <ToolMarker key={i} part={p} />
                   })}
+                  {m.metadata?.source ? <p className="px-1 text-xs text-muted-foreground">作り置きの答え・出典: {m.metadata.source}</p> : null}
                 </MessageContent>
               </Message>
             </div>

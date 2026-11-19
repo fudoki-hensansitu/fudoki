@@ -3,7 +3,7 @@ import * as React from 'react'
 import { createPortal } from 'react-dom'
 import { ArrowSquareOutIcon, ArrowUpIcon, NotePencilIcon, QuotesIcon, RobotIcon, XIcon } from '@phosphor-icons/react'
 import { Link } from '../nav/link'
-import { StartForm } from '../chat/start-form'
+import { SessionVerifier, StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { QUOTE_PREFIX } from '../chat/history'
 import { Hint } from '@/components/hint'
@@ -84,7 +84,17 @@ function BackToTop({ hidden }: { hidden: boolean }) {
 }
 
 
-export function AskDock({ name, code, sitekey, year, section, detail, page, ask = `${name}について質問` }: {
+/** 作り置きの答え（「気になる」の問い） */
+export type PresetAnswer = { answer: string; follow: string[]; source: string }
+/** 頁から聞く欄を動かす手 */
+export interface AskHandle {
+  /** 作り置きの答えのある問いで会話を開く。server の会話は続けて聞くときに作る */
+  openPreset: (question: string) => void
+  /** 新しい会話で聞く欄を開く */
+  openAsk: () => void
+}
+
+export function AskDock({ name, code, sitekey, year, section, detail, page, ask = `${name}について質問`, preset, handle }: {
   name: string
   /** 入力欄と右下のボタンの文言。無ければ「name について質問」 */
   ask?: string
@@ -97,9 +107,15 @@ export function AskDock({ name, code, sitekey, year, section, detail, page, ask 
   section?: string
   /** 詳細に開いている事業・評価シートなど（送るときに読む） */
   detail?: () => string
+  /** 問いに作り置きの答えがあれば返す（「気になる」の問い） */
+  preset?: (question: string) => PresetAnswer | undefined
+  handle?: React.RefObject<AskHandle | null>
 }) {
   const [open, setOpen] = React.useState(true)
-  const [chat, setChat] = React.useState<{ id: string; session: StoredSession }>()
+  // key は会話の画面を作り直す単位。作り置きの答えから始めた会話は、続けて聞いて server の会話ができると id だけが変わる
+  // title は会話の見出し。最初に聞いた問いにする（頁の名前だと、どの会話も同じ見出しになる）
+  const [chat, setChat] = React.useState<{ id: string; key: string; session: StoredSession; live: boolean; title: string }>()
+  const connectRef = React.useRef<(() => Promise<{ id: string; session: StoredSession }>) | undefined>(undefined)
   const [drawer, setDrawer] = React.useState(false)
   const [quote, setQuote] = React.useState('')
   const dock = React.useRef<HTMLDivElement>(null)
@@ -292,11 +308,42 @@ export function AskDock({ name, code, sitekey, year, section, detail, page, ask 
   }
 
   const start = (id: string, session: StoredSession) => {
-    setChat({ id, session })
+    setChat({ id, key: id, session, live: true, title: session.pending ?? name })
     setDrawer(true)
     setOpen(false)
     setQuote('')
   }
+  React.useImperativeHandle(handle, () => ({
+    openPreset: (question) => {
+      const found = preset?.(question)
+      if (!found) return
+      const at = Date.now().toString(36)
+      const session: StoredSession = {
+        token: '',
+        expiresAt: 0,
+        entry: location.pathname,
+        messages: [
+          { id: `preset-q-${at}`, role: 'user', parts: [{ type: 'text', text: question }] },
+          { id: `preset-a-${at}`, role: 'assistant', parts: [{ type: 'text', text: found.answer }], metadata: { follow: found.follow, source: found.source } },
+        ],
+      }
+      void import('../chat/conversation').catch(() => {})
+      setChat({ id: `preset-${at}`, key: `preset-${at}`, session, live: false, title: question })
+      setDrawer(true)
+      setOpen(false)
+      setQuote('')
+    },
+    openAsk: () => restart(),
+  }), [preset])
+  const connect = async () => {
+    if (!connectRef.current) throw new Error('会話を始められませんでした')
+    // 待つ間に別の問いを開いたら、その会話には付けない
+    const key = chat?.key
+    const made = await connectRef.current()
+    setChat((c) => (c && c.key === key ? { ...c, id: made.id, live: true } : c))
+    return made
+  }
+
   const restart = () => {
     setChat(undefined)
     setDrawer(false)
@@ -315,9 +362,9 @@ export function AskDock({ name, code, sitekey, year, section, detail, page, ask 
     >
       <span aria-hidden="true" className="mb-2 h-1.5 w-10 rounded-full bg-border md:hidden" />
       <div className="mx-auto flex w-full max-w-3xl items-center justify-between gap-2" onPointerDown={(e) => e.stopPropagation()}>
-        <span className="flex items-center gap-2 text-sm text-muted-foreground"><RobotIcon className="size-4 text-primary" aria-hidden="true" />{name}について</span>
+        <span className="flex min-w-0 items-center gap-2 text-sm text-muted-foreground"><RobotIcon className="size-4 shrink-0 text-primary" aria-hidden="true" /><span className="truncate">{chat.title}</span></span>
         <div className="flex items-center gap-1 text-muted-foreground">
-          <Hint label="会話を別の頁で開く"><Link href={`/s/${chat.id}`} aria-label="会話を別の頁で開く" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><ArrowSquareOutIcon className="size-4" /></Link></Hint>
+          {chat.live ? <Hint label="会話を別の頁で開く"><Link href={`/s/${chat.id}`} aria-label="会話を別の頁で開く" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><ArrowSquareOutIcon className="size-4" /></Link></Hint> : null}
           <Hint label="新しい会話"><button type="button" onClick={restart} aria-label="新しい会話" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><NotePencilIcon className="size-4" /></button></Hint>
           <Hint label="閉じる（Esc）"><button type="button" onClick={hideDrawer} aria-label="閉じる" className="rounded-md p-2 hover:bg-secondary hover:text-foreground"><XIcon className="size-4" /></button></Hint>
         </div>
@@ -374,7 +421,7 @@ export function AskDock({ name, code, sitekey, year, section, detail, page, ask 
           >
             <div ref={scroller} className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
               <React.Suspense fallback={<p className="p-6 text-sm text-muted-foreground">会話を開いています…</p>}>
-                <Conversation key={chat.id} id={chat.id} stored={chat.session} header={header} scroller={scroller} context={describe} beforeComposer={chip} onSend={() => setQuote('')} />
+                <Conversation key={chat.key} id={chat.key} stored={chat.session} startAtTop={!chat.live} autoFocus={chat.live} connect={connect} preset={preset} header={header} scroller={scroller} context={describe} beforeComposer={<>{chat.live ? null : <SessionVerifier sitekey={sitekey} connectRef={connectRef} />}{chip}</>} onSend={() => setQuote('')} />
               </React.Suspense>
             </div>
           </div>

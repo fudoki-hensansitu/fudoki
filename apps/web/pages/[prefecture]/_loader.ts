@@ -3,7 +3,7 @@
 import { HTTPException } from 'hono/http-exception'
 import { defer } from 'void'
 import type { Context } from 'hono'
-import { emptyHead, financeHead, pageHead, projectFallbackHead, projectHead, type Head } from '../../jurisdiction/html'
+import { emptyHead, financeHead, pageHead, questionsHead, projectFallbackHead, projectHead, type Head } from '../../jurisdiction/html'
 import { appPageYears, FINANCE_SLUG, hasDocument, TAB_SLUGS, tabOfSlug, type Headline, type PageData, type PageFlow, type PageTab } from '../../jurisdiction/types'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../../jurisdiction/domains'
 import { PREFECTURE_MAPS } from '../../jurisdiction/map.generated'
@@ -21,6 +21,8 @@ import { loadLocalFinance } from '../../server/local-finance'
 import { loadRevenue } from '../../server/revenue'
 import { readProjectFull, type ProjectFull } from '../../jurisdiction/app/api'
 import { apiCall, FudokiApiError } from '../../server/fudoki-api'
+import { loadQuestions } from '../../jurisdiction/questions'
+import type { QuestionFeed } from '../../jurisdiction/questions/types'
 
 export const notFound = () => new Response('Not Found\n', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
 export const unavailable = () => new Response('風土記の API に繋がりませんでした。少し待ってからもう一度開いてください。\n', { status: 502, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } })
@@ -44,6 +46,8 @@ export type JurisdictionProps = JurisdictionView & {
   extras?: Promise<YearExtras>
   /** 流れの目ごとの節。defer で HTML の後ろに流す */
   setsu?: Promise<MokuBreakdowns>
+  /** 「気になる」のタブの頁（/tokyo/shinagawa/questions）の問いと作り置きの答え */
+  questions?: QuestionFeed
 }
 
 /** 年度の段（/tokyo/nakano/2024）。4桁の数字だけ */
@@ -110,7 +114,10 @@ async function entryProps(c: Context, path: string): Promise<JurisdictionProps> 
   const years = appPageYears(props.data)
   const initial = years.find((y) => hasDocument(props.data, y, 'initial'))
   const year = initial ?? years.find((y) => hasDocument(props.data, y, 'settlement')) ?? years[0]
-  return year === undefined ? props : { ...props, year, tab: initial !== undefined ? 'money' : 'settled' }
+  if (year === undefined) return props
+  // 入口はまちの頭と問いのフィード（全自治体に問いを持つ）。予算・決算・事業・財政はそこから開く単体の頁
+  const questions = await loadQuestions(props.data.code)
+  return { ...props, year, tab: 'questions', questions }
 }
 
 /** 事業の ID の段。事業の ID と、事業の収録の無い自治体で目を事業の代わりにした ID（moku:<subject_id>） */
@@ -199,19 +206,20 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
   const account = new URL(c.req.url).searchParams.get('account') || ACCOUNT
   // 会計で中身の変わらない頁（予算・決算のタブ以外）の ?account= も 404 にして、CDN の key（void.config.ts の revalidateQueryAllowlist）を増やさせない
   if (account !== ACCOUNT && (!phase || (entry && !entry.accounts?.[phase]?.[String(year)]?.includes(account)))) throw new HTTPException(404, { res: notFound() })
+  // 入口（まちの頭）は最新の当初予算を出すので、同じ年度に決算があっても当初予算を読む
   // 入口（最新の年度の頁）の題・説明文は、最新の決算と、決算より後の最新の当初予算の金額を書く。開いた年度の分は本文から作り、
   // 当初予算を開いたとき（決算のある年度の予算のタブも）の最新の決算だけを本文と同じ段で読む
   const latestSettled = props.data.settlementYears.at(-1)
   const newest = year === appPageYears(props.data)[0]
   const [snapshot, expenditureFlow, revenueFlow, settledSummary] = await Promise.all([
-    entry ? within(loadYearSnapshot(env, entry, year, { tab: props.tab ?? 'overview' }), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
+    entry ? within(loadYearSnapshot(env, entry, year, { tab: props.tab === 'questions' ? 'money' : (props.tab ?? 'overview') }), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
     entry && phase ? within(loadFlowParts(env, entry.code, year, 'moku', phase, account), FLOW_WAIT_MS)
       // 款が1つも無い流れは読めなかったものとして扱う（CDN に置かず、画面が読み直しを出す）
       .then(({ drills, loose }): PageFlow | undefined => (drills.length ? { year, phase, account, drills, loose } : undefined))
       .catch(() => undefined) : undefined,
     // 流れの左に出す一般会計の歳入。読めない・収録の無いときは空にして、歳出の流れだけを描く（頁は止めない）
     entry && phase && account === ACCOUNT ? within(loadRevenueFlow(env, entry.code, year, phase), FLOW_WAIT_MS).catch(() => []) : [],
-    newest && latestSettled !== undefined && (latestSettled !== year || phase === 'initial') ? within(loadSettlementSummary(env, props.data.code, latestSettled), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
+    newest && latestSettled !== undefined && (latestSettled !== year || phase === 'initial' || props.tab === 'questions') ? within(loadSettlementSummary(env, props.data.code, latestSettled), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
   ])
   const flow = expenditureFlow && revenueFlow.length ? { ...expenditureFlow, revenue: revenueFlow } : expenditureFlow
   const opened = snapshot?.years[String(year)]
@@ -260,9 +268,10 @@ export const jurisdictionHead = (p: JurisdictionProps): Head => {
   if (p.projectFull) return projectHead(p.data, p.projectFull)
   if (p.project) return projectFallbackHead(p.data, p.project)
   if (p.tab === 'overview') return financeHead(p.data)
+  if (p.questions) return questionsHead(p.data)
   const year = p.year ?? appPageYears(p.data)[0]
   const opened = year === undefined ? undefined : p.snapshot?.years[String(year)]
-  return pageHead(p.data, p.year, p.tab ? { tab: p.tab } : undefined, opened && year !== undefined ? { year, kind: opened.kind, yen: opened.total, originTitle: opened.originTitle, areas: areasOfFields(opened.fields) } : undefined)
+  return pageHead(p.data, p.year, p.tab && p.tab !== 'questions' ? { tab: p.tab } : undefined, opened && year !== undefined ? { year, kind: opened.kind, yen: opened.total, originTitle: opened.originTitle, areas: areasOfFields(opened.fields) } : undefined)
 }
 
 /** 最後の節に出す近くの自治体の数 */

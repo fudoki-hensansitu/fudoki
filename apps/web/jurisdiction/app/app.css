@@ -2,3 +2,6 @@
 @keyframes app-grow { from { transform: scaleX(0) } to { transform: scaleX(1) } }
 .app-grow { transform-origin: left; animation: app-grow .9s cubic-bezier(.16, 1, .3, 1) both }
 @media (prefers-reduced-motion: reduce) { .app-grow { animation: none } }
+
+/* 「気になる」の札の答えの冒頭。下を薄くして、押すと続きが読めると見せる */
+.q-fade { mask-image: linear-gradient(to bottom, #000 calc(100% - 4rem), transparent) }
