@@ -3,7 +3,7 @@
 // 色・文字・余白は風土記の token と Title の段のまま。色の面（paper・sakura・kincha・ai・night）は読み物の絵の面としてだけ使う（DESIGN.md）。
 // 動くのは冒頭の絵の浮き上がりと、機能の節の録画だけ（見えている間だけ流し、動きを減らす設定では止める）
 import * as React from 'react'
-import { ArrowRightIcon, ArrowSquareOutIcon, ChartLineUpIcon, CheckCircleIcon, EnvelopeSimpleIcon, ScalesIcon, TrophyIcon, UsersThreeIcon, XCircleIcon } from '@phosphor-icons/react'
+import { ArrowRightIcon, ArrowSquareOutIcon, ChartLineUpIcon, CheckCircleIcon, EnvelopeSimpleIcon, ScalesIcon, UsersThreeIcon, XCircleIcon } from '@phosphor-icons/react'
 import { Link } from '../nav/link'
 import { Title } from '@/components/ui/title'
 import { cn } from '@/lib/utils'
@@ -146,15 +146,7 @@ export function Landing() {
             <Logo className="h-9 w-auto sm:h-10" />
             <span className="sr-only">風土記</span>
           </p>
-          {/* 受賞の札。見出しの前に置き、押すと受賞した回の配信を開く */}
-          <a href={AWARD_VIDEO} target="_blank" rel="noopener" className="mt-8 inline-flex items-center gap-2 rounded-full border border-current px-4 py-2 text-sm transition-colors duration-150 hover:bg-brand-fill hover:text-brand-fill-foreground motion-reduce:transition-none sm:mt-10">
-            <TrophyIcon className="size-4 shrink-0" aria-hidden="true" />
-            <span className="text-left">
-              <span className="block sm:inline">都知事杯オープンデータ・ハッカソン</span>
-              <span className="block sm:ml-2 sm:inline">2026 データ活用賞（審査委員特別賞）</span>
-            </span>
-          </a>
-          <Title size="display" as="h1" className="mt-8 leading-tight sm:mt-10">
+          <Title size="display" as="h1" className="mt-10 leading-tight sm:mt-12">
             私のお金は
             <br />
             どこへ行った？
@@ -327,6 +319,24 @@ export function Landing() {
             </li>
           ))}
         </ul>
+      </section>
+
+      {/* 受賞。決め手ではない情報なので冒頭に出さず、不安への答えの前に節で置く（2026-11-19 yuito） */}
+      <section className="mt-28 grid items-center gap-10 sm:mt-40 md:grid-cols-2 md:gap-16" aria-labelledby="award-h">
+        <div>
+          <p className="text-sm text-muted-foreground">受賞</p>
+          <Title size="h1" as="h2" id="award-h" className="mt-2">
+            都知事杯オープンデータ・ハッカソンで受賞しました
+          </Title>
+          <p className="mt-4 text-base leading-relaxed text-muted-foreground">2026 年の大会で、データ活用賞（審査委員特別賞）をいただきました。</p>
+          <a href={AWARD_VIDEO} target="_blank" rel="noopener" className={cn(textLink, 'mt-6')}>
+            発表の配信を見る
+            <ArrowSquareOutIcon className="size-4" aria-hidden="true" />
+          </a>
+        </div>
+        <div className="overflow-hidden rounded-3xl border bg-card">
+          <img className="block h-auto w-full" src="/about/award.webp" width={1200} height={602} alt="データ活用賞（審査委員特別賞）の発表の画面" loading="lazy" decoding="async" />
+        </div>
       </section>
 
       {/* 不安への答え */}
