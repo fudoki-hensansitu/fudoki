@@ -123,14 +123,12 @@ export function MoneyDetail({ open, onClose, wide, moku, units, fields, groups, 
     if (key.id === UNKNOWN_SETSU) return { kind: 'unknown' as const, rows: unknownRows(units) }
     return { kind: 'setsu' as const, ...setsuRows(moku, key.id) }
   }, [key, moku, units])
-  // 押した節は、その会計の同じ節の和を見出しにし、入る区分を説明に出す
-  const item = key?.kind === 'setsuItem' && body?.kind === 'setsuItem' ? { name: setsuLabelOf(key.id) ?? '節', yen: body.rows.reduce((a, r) => a + r.yen, 0), group: groups.find((g) => g.id === setsuGroupOf(key.id))?.name } : undefined
+  // 押した節は、その会計の同じ節の和を見出しにする
+  const item = key?.kind === 'setsuItem' && body?.kind === 'setsuItem' ? { name: setsuLabelOf(key.id) ?? '節', yen: body.rows.reduce((a, r) => a + r.yen, 0) } : undefined
   const head = field ?? group ?? item
   const desc = key?.kind === 'field'
     ? frame?.examples ? `${frame.examples}など。` : undefined
-    : item
-      ? item.group ? `「何に使う？」の${item.group}に入る節です。` : undefined
-      : key?.id === UNKNOWN_SETSU ? '予算書・決算書の内訳が節で分かれていない科目の分です。' : undefined
+    : key?.kind === 'setsu' && key.id === UNKNOWN_SETSU ? '予算書・決算書の内訳が節で分かれていない科目の分です。' : undefined
 
   return (
     <Drawer open={!!open} onOpenChange={(o) => { if (!o) onClose() }} swipeDirection={wide ? 'right' : 'down'}>
