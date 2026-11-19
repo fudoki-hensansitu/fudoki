@@ -1,7 +1,7 @@
 // 全ページの左に置くサイドバー（shadcn の Sidebar）。pages/layout.tsx が置き、頁の間を移っても描き直さない
 import * as React from 'react'
 import { Link } from './link'
-import { ChatIcon, CircleHalfIcon, DesktopIcon, GearSixIcon, GithubLogoIcon, HouseIcon, MagnifyingGlassIcon, MoonIcon, PlugIcon, RobotIcon, SidebarSimpleIcon, SunIcon, XLogoIcon } from '@phosphor-icons/react'
+import { ChatIcon, CircleHalfIcon, DesktopIcon, UserCircleIcon, GithubLogoIcon, HouseIcon, MagnifyingGlassIcon, MoonIcon, PlugIcon, RobotIcon, SidebarSimpleIcon, SunIcon, XLogoIcon } from '@phosphor-icons/react'
 import {
   Sidebar,
   SidebarContent,
@@ -172,7 +172,7 @@ function SettingsMenu({ theme, onPick, className }: { theme: Theme; onPick: (t: 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className={className}>
-        <GearSixIcon />
+        <UserCircleIcon />
         設定
       </DropdownMenuTrigger>
       <DropdownMenuContent side="top" align="end" sideOffset={8} className="w-52">
