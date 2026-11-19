@@ -51,7 +51,7 @@ export function AskTown({ listed, onPick }: { listed: boolean; onPick: (e: MapEn
             </button>
           </div>
           {loc ? (
-            <div className={cn('ob-swap mt-3', !loc.error && 'text-foreground')}>
+            <div className={cn('ob-swap mt-3', !loc.error && 'text-brand-fill-foreground')}>
               <LocateResult loc={loc} onPick={onPick} onRetry={() => void locate()} onClose={() => setLoc(null)} />
             </div>
           ) : (
@@ -68,23 +68,23 @@ export function AskTown({ listed, onPick }: { listed: boolean; onPick: (e: MapEn
 /** 現在地から選ぶときに添える一言。押す前と調べている間の両方に出す */
 const LOCATION_NOTE = '位置情報は保存されません'
 
-/** 現在地の結果。当たったら「このまちを選ぶ」で確かめてから決める（勝手に決めない） */
+/** 現在地の結果。当たったら「このまちを選ぶ」で確かめてから決める（勝手に決めない）。緑の面の中なので、札は名前の欄と同じ --brand-fill の地にする（DESIGN.md の面の地） */
 function LocateResult({ loc, onPick, onRetry, onClose }: { loc: Locate; onPick: (e: MapEntry) => void; onRetry: () => void; onClose: () => void }) {
   if (loc.busy)
     return (
-      <div role="status" className="flex items-center gap-3 rounded-2xl bg-secondary px-4 py-4 text-sm">
-        <span className="ob-ping relative grid size-9 place-items-center rounded-full bg-background text-primary">
+      <div role="status" className="flex items-center gap-3 rounded-2xl bg-brand-fill px-4 py-4 shadow-[var(--shadow-pill)] dark:shadow-none text-sm">
+        <span className="ob-ping relative grid size-9 place-items-center rounded-full bg-secondary text-primary">
           <NavigationArrowIcon className="size-[18px]" />
         </span>
         <span className="flex flex-col gap-1">
           現在地のまちを調べています…
-          <span className="text-xs text-muted-foreground">{LOCATION_NOTE}</span>
+          <span className="text-xs text-brand-fill-muted">{LOCATION_NOTE}</span>
         </span>
       </div>
     )
   if (loc.hit)
     return (
-      <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-secondary px-4 py-4">
+      <div className="flex flex-wrap items-center gap-3 rounded-2xl bg-brand-fill px-4 py-4 shadow-[var(--shadow-pill)] dark:shadow-none">
         <span className="min-w-0 flex-1 text-sm">
           現在地は <b className="text-base">{loc.hit.name}</b> です
         </span>
