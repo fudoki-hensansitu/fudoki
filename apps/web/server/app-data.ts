@@ -35,7 +35,7 @@ async function all<R extends { next_page_token?: string | null }, T>(page: (toke
 }
 
 /** 1年度の款項目を全部。出典は頁ごとの応答に、その頁の行が指すものだけが載るので、全部の頁から集める */
-async function subjectsOf(env: Env, code: string, year: number, kind: Kind) {
+export async function subjectsOf(env: Env, code: string, year: number, kind: Kind) {
   const origins: WebOpOutput<'search_expenditure_subjects'>['origins'] = []
   const { rows } = await all(
     (token) => apiCall(env)('search_expenditure_subjects', { document_kind: kind, fiscal_year: { min: year, max: year }, where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [ACCOUNT] } }, page_size: 1000, ...(token ? { page_token: token } : {}) } as SubjectBody),

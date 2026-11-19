@@ -37,6 +37,11 @@ type Part = UIMessage['parts'][number]
 export function answerParts(parts: Part[]): string {
   const hide = (p: Part): Part => {
     if (p.type === 'text') return { ...p, text: redact(p.text) }
+    // 見せる tool の部品の data（図・表の数字）は画面のためだけのもので、記録には書かない
+    if (p.type === 'dynamic-tool' && p.state === 'output-available' && typeof p.output === 'object' && p.output !== null && 'view' in p.output) {
+      const { view: _view, ...output } = p.output as Record<string, unknown>
+      return hide({ ...p, output })
+    }
     return 'input' in p && p.input !== undefined ? ({ ...p, input: JSON.parse(JSON.stringify(p.input, (_, v: unknown) => (typeof v === 'string' ? redact(v) : v))) } as Part) : p
   }
   const full = JSON.stringify(parts.filter((p) => p.type !== 'reasoning').map(hide))
