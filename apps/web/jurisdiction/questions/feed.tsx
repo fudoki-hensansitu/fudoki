@@ -27,13 +27,13 @@ function Category({ field }: { field?: string }) {
 
 function QuestionCard({ q, onOpen }: { q: Question; onOpen: (q: Question) => void }) {
   return (
-    <article className="relative flex flex-col gap-3 rounded-2xl bg-card p-5 ring-1 ring-inset ring-transparent transition-colors has-[button:hover]:ring-primary has-[button:focus-visible]:ring-primary">
+    <article className="group/q relative flex flex-col gap-3 border-b py-6 first:pt-2">
       {/* 札の全体を押せるようにする。答えの冒頭のリンクは会話の中で押す */}
-      <button type="button" onClick={() => onOpen(q)} className="absolute inset-0 z-10 rounded-2xl focus-visible:outline-none">
+      <button type="button" onClick={() => onOpen(q)} className="absolute inset-0 z-10 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
         <span className="sr-only">{q.q}</span>
       </button>
       <Category field={q.field} />
-      <Title size="h3" className="text-balance">{q.q}</Title>
+      <Title size="h3" className="text-balance transition-colors group-has-[button:hover]/q:text-primary">{q.q}</Title>
       {q.big ? (
         <p className="flex flex-col gap-1">
           <Title size="h2" as="span" className="tabular-nums text-primary">{q.big.value}</Title>
@@ -76,7 +76,7 @@ export function QuestionFeedView({ feed, onOpen }: { feed: QuestionFeed | undefi
           </button>
         ))}
       </div>
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col">
         {items.map((q) => <QuestionCard key={q.id} q={q} onOpen={onOpen} />)}
       </div>
     </section>
@@ -87,8 +87,8 @@ function FeedSkeleton() {
   return (
     <div className="mx-auto flex max-w-[640px] flex-col gap-3" aria-busy="true" aria-label="読み込み中">
       <Skeleton className="h-9 rounded-full" />
-      <Skeleton className="h-64 rounded-2xl" />
-      <Skeleton className="h-64 rounded-2xl" />
+      <Skeleton className="h-64 rounded-lg" />
+      <Skeleton className="h-64 rounded-lg" />
     </div>
   )
 }
