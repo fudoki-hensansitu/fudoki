@@ -10,7 +10,7 @@ import { FieldIcon } from '../../home/parts'
 import { Chip } from '../chip'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../domains'
 import { feedOf } from '.'
-import { loadInterests } from '../../home/towns'
+import { loadInterests, useMyTown } from '../../home/towns'
 import type { Question, QuestionFeed } from './types'
 
 /** 分野をまたぐ問いは、分野の分け方と同じ「その他」に入れる */
@@ -62,7 +62,7 @@ function QuestionCard({ q, onOpen }: { q: Question; onOpen: (q: Question) => voi
 }
 
 export function QuestionFeedView({ feed, onOpen, onAsk }: { feed: QuestionFeed | undefined; onOpen: (q: Question) => void; /** フィードに無いことを聞く欄を開く */ onAsk: () => void }) {
-  // 分野は ?field= に持つ（ホームのレシートの分野の行から、その分野のフィードを開く）
+  // 分野は ?field= に持つ
   const [field, setField] = React.useState<string | null>(null)
   React.useEffect(() => {
     const f = new URLSearchParams(location.search).get('field')
@@ -77,7 +77,9 @@ export function QuestionFeedView({ feed, onOpen, onAsk }: { feed: QuestionFeed |
   }
   // 興味のある分野（ホームのオンボーディングでレシートから選んだもの）。すべてのフィードはその分野の問いから並べる（2026-11-19 yuito）
   const [interests, setInterests] = React.useState<string[]>([])
-  React.useEffect(() => setInterests(loadInterests()), [])
+  // 住んでいるまちを解除したら（「私のまち」の札から）分野も消えるので、まちが変わったら読み直す
+  const { town } = useMyTown()
+  React.useEffect(() => setInterests(loadInterests()), [town?.code])
   if (!feed) return <FeedSkeleton />
   const fields = FRAMES.filter((f) => feed.questions.some((q) => (q.field ?? OTHER_FRAME.id) === f.id))
   const items = feedOf(feed, field, interests)

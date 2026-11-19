@@ -1,4 +1,4 @@
-// いま開いている頁が、住んでいるまちの頁（年度・予算などの頁も）か。サイドバーと下の帯の「私のまち」の選択中に使う
+// いま開いている頁が、住んでいるまちの頁（年度・予算などの頁も）か。サイドバーの住んでいるまちと、下の帯の「ホーム」の選択中に使う
 import { FINANCE_SLUG, TAB_SLUGS } from '../jurisdiction/types'
 
 const TOWN_SEGMENTS = new Set<string>([...Object.values(TAB_SLUGS), FINANCE_SLUG])

@@ -224,8 +224,8 @@ function useFollow(phase: Phase, printing: string | null, card: React.RefObject<
       if (r.bottom > vh) go(window.scrollY + Math.min(r.top - 16, r.bottom - vh + 16), SCROLL_MS, easeInOut)
     }
     if (printing && feed.current) {
-      // 刷り終えたときのレシートの最後（合計・QR コード・詳細）まで送る。紙より長くかけて後から追い、出だしはゆっくりで差し出し口のあたりを見せる。
-      // 末端の下に少し余白を残し、そこへ出てくる他のまちの節に気づけるようにする。
+      // 刷り終えたときのレシートの最後（合計・QR コード・「<まち>を開く」）まで送る。紙より長くかけて後から追い、出だしはゆっくりで差し出し口のあたりを見せる。
+      // 末端の下に少し余白を残し、紙の終わりが分かるようにする。
       // 紙は高さを 0 から伸ばすので、刷り終えた高さは中身の高さ（paperHeight）から求める
       const f = feed.current
       const latest = f.querySelector<HTMLElement>('[data-latest]')
@@ -236,7 +236,7 @@ function useFollow(phase: Phase, printing: string | null, card: React.RefObject<
 
 /** 紙送りの緩急（出だしと終わりだけ緩め、ほぼ一定の速さで送る）。頁送りは別の FOLLOW_EASE で後から追う */
 const PRINT_EASE_CSS = 'cubic-bezier(0.3, 0.1, 0.45, 1)'
-/** 紙を追って送ったあと、レシートの末端の下に残す余白（px）。他のまちの節の見出しが覗く */
+/** 紙を追って送ったあと、レシートの末端の下に残す余白（px） */
 const END_ROOM = 160
 /** 紙を追う頁送りの緩急。出だしと終わりをゆっくりにし、途中も急がない（sine。山でも平均の 1.6 倍ほど）。出だしは差し出し口のあたりを見せる（2026-11-18 yuito） */
 const FOLLOW_EASE = (p: number) => (1 - Math.cos(Math.PI * p)) / 2
