@@ -66,6 +66,7 @@ import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, ty
 import { QuestionFeedView } from '../questions/feed'
 import { Chip } from '../chip'
 import { Mark as BrandMark } from '../../nav/site-nav'
+import { MyTownBadge } from '../my-town-badge'
 import type { Question, QuestionFeed } from '../questions/types'
 import { Title, titleVariants } from '@/components/ui/title'
 import { withExtras, yearView, type AccountTotal, type Proj, type Snapshot, type YearExtras, type YearView } from './data'
@@ -1198,8 +1199,11 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
       <div className="mx-auto max-w-[1120px] px-4 pb-48">
         {hub ? (
           <>
-            {/* 狭い画面はサイドバーが無いので、左上に風土記のマークを置いてホームへ戻れるようにする */}
-            <Link href="/" aria-label="風土記 ホーム" className="mt-4 inline-flex md:hidden"><BrandMark className="size-8 text-primary" /></Link>
+            {/* 狭い画面はサイドバーが無いので、左上に風土記のマークを置いてホームへ戻れるようにする。住んでいるまちの頁なら、右上（狭い画面はマークと同じ行の右）に「私のまち」の札 */}
+            <div className="mt-4 flex h-9 items-center justify-between md:justify-end">
+              <Link href="/" aria-label="風土記 ホーム" className="inline-flex md:hidden"><BrandMark className="size-8 text-primary" /></Link>
+              <MyTownBadge code={data.code} />
+            </div>
             {hero}
             <Separator />
             <div className="pt-6"><QuestionFeedView feed={questions} onOpen={(q) => ask.current?.openPreset(q.q)} onAsk={() => ask.current?.openAsk()} /></div>
