@@ -14,6 +14,8 @@ export interface Line {
 export interface Setsu {
   name: string
   yen: number
+  /** 法定の節（節マスタの ID。setsu-12、R1 以前は setsu-13-2019 など）。歳出の節で、節マスタに当たった行だけ */
+  setsuId?: string
   /** 出典に金額の印字がない。yen の 0 は表示に使わない */
   amountMissing?: true
 }

@@ -147,7 +147,7 @@ export async function loadSetsuByMoku(env: Env, code: string, year: number, moku
       ;(byBreakdown[n.breakdown] ??= []).push(n)
       groups.set(n.subject_id, byBreakdown)
     }
-    for (const [moku, byBreakdown] of groups) setsuByMoku.set(moku, [...pickBreakdown(byBreakdown)].sort(byAmount).map((n) => ({ name: n.name, ...amount(n) })))
+    for (const [moku, byBreakdown] of groups) setsuByMoku.set(moku, [...pickBreakdown(byBreakdown)].sort(byAmount).map((n) => ({ name: n.name, ...amount(n), ...(n.expenditure_setsu_id ? { setsuId: n.expenditure_setsu_id } : {}) })))
   }
   return setsuByMoku
 }
