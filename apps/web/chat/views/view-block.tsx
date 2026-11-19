@@ -1,5 +1,6 @@
 // 見せる tool の部品を会話の中に描く。部品は自治体の頁と同じものを使い、会話の中では drill せず「頁で開く」で頁へ移る。
 // 会話の bundle を軽く保つため、conversation.tsx が lazy で読む（図・表を出した会話だけが読む）
+import * as React from 'react'
 import { ArrowRightIcon } from '@phosphor-icons/react'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Title } from '@/components/ui/title'
@@ -100,8 +101,11 @@ function ExpenditureTableView({ data }: { data: ViewData<'expenditure_table'> })
 }
 
 /** tool の結果に描ける部品があれば描く。無い・古い版の形なら何も出さない（印だけが残る） */
-export default function ViewBlock({ output }: { output: unknown }) {
+export default function ViewBlock({ output, onShown }: { output: unknown; /** 描いた後に呼ぶ（会話が下に付いたままにする） */ onShown?: () => void }) {
   const view = readView(output)
+  React.useEffect(() => {
+    if (view) onShown?.()
+  }, [view, onShown])
   if (!view) return null
   return (
     <div className="flex w-full flex-col gap-3 rounded-2xl border bg-background p-4">

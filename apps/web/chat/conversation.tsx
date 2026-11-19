@@ -270,6 +270,11 @@ export function Conversation({
     if (pinned.current) box().target.scrollTo({ top: box().height })
     measure()
   }, [messages, status, measure, box])
+  // 図・表の部品は lazy で後から描かれ、会話の高さが伸びる。下に付いて読んでいた人は下に付いたままにする
+  const follow = React.useCallback(() => {
+    if (pinned.current) box().target.scrollTo({ top: box().height })
+    measure()
+  }, [measure, box])
 
   const lastMessage = messages.at(-1)
   const suggestions = busy ? [] : lastMessage?.metadata?.follow ? lastMessage.metadata.follow.map((q) => ({ label: q, prompt: q })) : suggestionsOf(lastMessage)
@@ -306,7 +311,7 @@ export function Conversation({
                         <ToolMarker part={p} />
                         {p.state === 'output-available' && hasView(p.output) ? (
                           <React.Suspense fallback={null}>
-                            <ViewBlock output={p.output} />
+                            <ViewBlock output={p.output} onShown={follow} />
                           </React.Suspense>
                         ) : null}
                       </React.Fragment>

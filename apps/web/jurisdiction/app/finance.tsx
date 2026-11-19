@@ -68,7 +68,7 @@ const series = (rows: LocalFinance[], pick: (f: LocalFinance) => number | null) 
 
 /** 義務的経費（扶助費・人件費・公債費）の和。どれかが欠けた年度は null */
 const dutyOf = (f: LocalFinance) => (f.socialAssistance == null || f.personnel == null || f.debtService == null ? null : f.socialAssistance + f.personnel + f.debtService)
-const freeOf = (f: LocalFinance) => {
+export const freeOf = (f: LocalFinance) => {
   const duty = dutyOf(f)
   return duty == null || f.expenditureTotal == null ? null : f.expenditureTotal - duty
 }

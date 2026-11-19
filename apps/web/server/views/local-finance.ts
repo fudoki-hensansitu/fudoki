@@ -1,6 +1,7 @@
 // show_local_finance: 財政タブの「借金と貯金」「事業に回ったお金」「財政の指標」を会話に描く。数字は get_local_finance と同じ web の D1 から引き、AI には要点だけを渡す
 import { dynamicTool, jsonSchema } from 'ai'
 import { FINANCE_SECTIONS } from '../../chat/views/schema'
+import { freeOf } from '../../jurisdiction/app/finance'
 import { jurisdictionPath } from '../../jurisdiction/path'
 import { reiwa } from '../../jurisdiction/types'
 import type { Env } from '../env'
@@ -45,6 +46,9 @@ export function showLocalFinanceTool(env: Env) {
       const at = finance.at(-1)
       if (!at) return viewError('この自治体の決算の指標はありません')
       const { name, population } = entry
+      const shown = (sections?.length ? sections : [...FINANCE_SECTIONS]).filter((s) => (s === 'debt' ? at.localBondBalance != null : s === 'free' ? freeOf(at) != null : true))
+      // 頁の FinanceSections と同じ条件で、描ける節が無ければ空の部品を出さない
+      if (shown.length === 0) return viewError('選んだ節に出せる数字がありません。get_local_finance の数字から文で答えてください')
       const message = [
         SHOWN,
         `${name}の財政の状況（${reiwa(at.year)}決算・普通会計・総務省）: 地方債現在高（まちの借金）${oku(at.localBondBalance)}、積立金現在高（まちの貯金）${oku(at.fundBalance)}、` +
@@ -53,7 +57,7 @@ export function showLocalFinanceTool(env: Env) {
       return viewResult(message, {
         kind: 'local_finance',
         v: 1,
-        data: { name, finance, population, prefecture: code.slice(2, 5) === '000', sections: sections?.length ? sections : [...FINANCE_SECTIONS], path: `${jurisdictionPath(code)}/finance` },
+        data: { name, finance, population, prefecture: code.slice(2, 5) === '000', sections: shown, path: `${jurisdictionPath(code)}/finance` },
       })
     },
     toModelOutput,

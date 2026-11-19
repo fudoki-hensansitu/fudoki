@@ -54,7 +54,7 @@ type ViewResult =
 ### 2. 画面の描き方
 
 - `conversation.tsx` の `dynamic-tool` の part で、`output.view` があれば印の下に `ViewBlock` を出す。`ViewBlock` は `kind` → 部品の表（`chat/views/index.tsx`）を引き、data を渡す。知らない kind・検査に通らない data は何も出さない。
-- 部品は自治体の頁と同じものを使う。頁の props に結び付いた部分（`IncomeFlow` の `openField` など）は、データを受け取るだけの部分を切り出して両方から使う。会話の中の部品は押しても会話の中では drill しない。代わりに部品の下に「頁で開く」（例 `/tokyo/shinagawa/2026/budget`）を置き、自治体の頁へ移る。path は server が `jurisdictionPath` で作って data に入れる（画面の bundle に自治体マスタを載せない）。
+- 部品は自治体の頁と同じものを使う。頁の props に結び付いた部分（`IncomeFlow` の `openField` など）は、データを受け取るだけの部分を切り出して両方から使う。会話の中の部品は押しても会話の中では drill しない。代わりに部品の下に「頁で開く」（例 `/tokyo/shinagawa/2026/budget`）を置き、自治体の頁へ移る。path は server が `yearTabPath`（`server/app-data.ts`）で作って data に入れる（画面の bundle に自治体マスタを載せない）。頁は決算を収録した自治体の最新の数年だけを出すので、頁に無い年度・資料・自治体ではリンクを出さない（部品は描く）。表は1つの自治体・年度・資料のときだけリンクを出す。
 - 会話は自治体の頁の下から出る drawer（狭い）と `/s/:id`（全幅）の両方に出る。部品は狭い幅を前提にし、頁の SP の描き方（`MoneyFlow` の SP、表の横スクロール）に寄せる。
 - 部品の出現は、答えの文より先に tool の結果が届くので、印の下に skeleton を置かず、結果が届いた時点で出す。
 
@@ -72,11 +72,11 @@ type ViewResult =
 - 消した `render_expenditure_view` と同じく、データ tool と同じ入力を受けて引き直す。前の tool の結果を参照させる案（tool call の ID を渡す）は、`execute` に届く履歴が `toModelOutput` で切った text で、行のデータが残っていないので採らない。
 - 出すのは 50 行まで（`page_size` を 50 で頭打ちにする）。結果に `next_page_token` があれば、表の下に「50件まで表示（続きがあります）」と出す。会話の中で続きを読む操作は置かず、続きは AI が `page_token` を渡して同じ tool をもう一度呼ぶ。そのため `content` の text（AI に渡る側）にも、表示した件数・続きがあること・`next_page_token` の値を入れる（`view` は AI に渡らないので、ここに書かないと AI は続きを知れない）。
 - 列は名称・階層・金額・金額の段階・出典の頁。出典の頁は、今の頁と同じく自治体の資料の URL の `#page=` へのリンクにする。
-- 内訳（`search_expenditure_details`）は、分け方（`breakdown`: 事業・節・その他）ごとに見出しを分けて表を区切る。行は AI が選んだ並び（金額の順など）のままなので字下げで親子を見せず、親の内訳の名前（結果に無ければ科目の名前）を添える。事業と節は同じ目の額の別の切り口なので、表に合計の行を置かず、見出しに「分け方の違う表どうしは足せません」を添える（頁の `FlowTable`・MCP の View が軸ごとに分けているのと同じ）。科目（`search_expenditure_subjects`）も合計の行を置かず、階層（款・項・目）の列を出す。
+- 内訳（`search_expenditure_details`）は、分け方（`breakdown`: 事業・節・その他）ごとに見出しを分けて表を区切る。表は結果に分け方が初めて出た順に並べ、各表の中の行は AI が選んだ並び（金額の順など）のままにする。そのため字下げで親子を見せず、親の内訳の名前（結果に無ければ科目の名前）を添える。事業と節は同じ目の額の別の切り口なので、表に合計の行を置かず、見出しに「分け方の違う表どうしは足せません」を添える（頁の `FlowTable`・MCP の View が軸ごとに分けているのと同じ）。科目（`search_expenditure_subjects`）も合計の行を置かず、階層（款・項・目）の列を出す。
 
 **`show_local_finance({ jurisdiction_code, sections?: ('debt' | 'free' | 'indicators')[] })`**
 
-- `loadLocalFinance` と人口から、財政タブの `FinanceSections` の節（借金と貯金・事業に回ったお金・財政の指標）を出す。`sections` で節を絞る（省略は全部）。`FinanceSections` を節ごとに出せるように分ける。
+- `loadLocalFinance` と人口から、財政タブの `FinanceSections` の節（借金と貯金・事業に回ったお金・財政の指標）を出す。`sections` で節を絞る（省略は全部）。`FinanceSections` を節ごとに出せるように分ける。収録していない自治体（決算状況調は全国を持つ）は `loadCatalogEntry` で確かめて `isError` にし、選んだ節に出せる数字が無いとき（`FinanceSections` と同じ条件）も `isError` にする。
 - 既存の `get_local_finance`（数字を AI に渡す tool）は残す。「借金はいくら？」のような問いは数字の tool で答え、「財政の様子を見せて」には見せる tool を使う、と説明に書き分ける。
 
 ### 4. system prompt と上限

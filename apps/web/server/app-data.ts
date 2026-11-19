@@ -53,6 +53,8 @@ const short = (id: string) => id.slice(0, 12)
 
 /** 自治体の頁の予算・決算のタブの path。頁に無い年度（頁は最新の数年だけを出す）・資料は null */
 export function yearTabPath(entry: CatalogEntry, year: number, kind: Kind): string | null {
+  // 決算を収録していない自治体は頁に年度の段が無い（案内だけの頁。pageBase が null）
+  if (shownSettlementYears(entry.settlementYears).length === 0) return null
   if (!appYears(entry).some((y) => y.year === year)) return null
   if (!(kind === 'initial' ? entry.initialYears : entry.settlementYears).includes(year)) return null
   return `${jurisdictionPath(entry.code)}/${year}/${kind === 'initial' ? 'budget' : 'settlement'}`
