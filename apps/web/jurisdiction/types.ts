@@ -196,7 +196,7 @@ export interface Headline {
 export const appPageYears = (d: { settlementYears: number[]; budgetYears: number[] }) =>
   [...new Set([...d.settlementYears, ...d.budgetYears])].sort((a, b) => b - a).slice(0, 3)
 
-/** 自治体の頁のタブ。予算・決算・事業は年度の段の下（/tokyo/shinagawa/2026/budget）、財政（overview）と気になる（questions）は年度の段を持たない（/tokyo/shinagawa/finance）。自治体の頁そのもの（/tokyo/shinagawa）は最新の年度の予算を出す */
+/** 自治体の頁のタブ。予算・決算・事業は年度の段の下（/tokyo/shinagawa/2026/budget）、財政（overview）は年度の段を持たない（/tokyo/shinagawa/finance）。自治体の頁そのもの（/tokyo/shinagawa）は、問いのある自治体ならまちの頭と問いのフィード（questions）、ほかは最新の年度の予算を出す */
 export type PageTab = 'questions' | 'overview' | 'projects' | 'money' | 'settled'
 /** 年度の段の下に置くタブ */
 export type YearTab = Exclude<PageTab, 'overview' | 'questions'>
@@ -204,8 +204,6 @@ export const TAB_SLUGS = { projects: 'projects', money: 'budget', settled: 'sett
 export const TAB_LABELS: Record<YearTab, string> = { projects: '事業', money: '予算', settled: '決算' }
 /** 財政のタブの段。財政は年度をまたぐ指標なので年度の段を持たない */
 export const FINANCE_SLUG = 'finance'
-/** 「気になる」のタブの段。問いは年度に縛らないので年度の段を持たない（/tokyo/shinagawa/questions） */
-export const QUESTIONS_SLUG = 'questions'
 export const tabOfSlug = (slug: string) => (Object.entries(TAB_SLUGS).find(([, s]) => s === slug)?.[0] as YearTab | undefined)
 /** その年度に当初予算・決算（一般会計）を収録しているか。予算・決算のタブはどの年度にも出し、収録の無い年度はタブの中で「まだ収録していない」と出す */
 export const hasDocument = (d: { settlementYears: number[]; initialYears: number[] }, year: number, kind: 'initial' | 'settlement') => (kind === 'initial' ? d.initialYears : d.settlementYears).includes(year)
