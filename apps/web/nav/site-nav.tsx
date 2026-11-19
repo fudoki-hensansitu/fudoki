@@ -215,10 +215,10 @@ function SearchItem({ className }: { className: string }) {
 function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Theme; onPick: (t: Theme) => void }) {
   const [hidden, setHidden] = useHideOnScroll()
   const { path } = useRouter()
-  // 住んでいるまちを選んだ人にはホームが無い（そのまちの頁へ移る）ので、ホームの代わりに「私のまち」を置く（2026-11-19 yuito）
+  // 住んでいるまちを選んだ人のホームは、そのまちの頁（2026-11-19 yuito「ホームイコール登録した町」）
   const { town } = useMyTown()
   const items = [
-    town ? { href: town.path, label: '私のまち', Icon: HouseIcon, active: isTownPath(path, town.path) } : { href: '/', label: 'ホーム', Icon: HouseIcon, active: active === 'home' },
+    { href: town ? town.path : '/', label: 'ホーム', Icon: HouseIcon, active: town ? isTownPath(path, town.path) : active === 'home' },
     { href: '/assistant', label: 'アシスタント', Icon: RobotIcon, active: active === 'assistant' },
     { href: '/compare', label: 'まち比べ', Icon: ArrowsLeftRightIcon, active: active === 'compare' },
   ]
