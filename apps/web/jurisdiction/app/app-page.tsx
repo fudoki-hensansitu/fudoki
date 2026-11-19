@@ -955,6 +955,8 @@ function YearMenu({ years, current, onChange }: { years: number[]; current: numb
 }
 
 // ---------- 頁 ----------
+/** 聞く欄の文言。いま見ているタブのことを聞けると伝える（自治体の名前は頁の頭にあるので繰り返さない） */
+const askLabel = (tab: TabKey) => (tab === 'questions' ? '気になることを質問' : `${{ money: '予算', settled: '決算', projects: '事業', overview: '財政' }[tab]}について質問`)
 const QUESTIONS_TAB: { key: TabKey; label: string; icon: Icon } = { key: 'questions', label: '気になる', icon: ChatCircleTextIcon }
 const TABS: { key: TabKey; label: string; icon: Icon }[] = [
   { key: 'money', label: '予算', icon: WalletIcon },
@@ -1284,7 +1286,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
           )}
         </Tabs>
       </div>
-      <AskDock name={data.name} code={data.code} sitekey={sitekey} year={year} detail={() => (v ? (projectPage ? describeProject(res.peek<Loaded<ProjectFull>>(projectLatestKey(projectPage))) : '') : '')} section={tabs.find((t) => t.key === tab)?.label} preset={preset} handle={ask} />
+      <AskDock name={data.name} code={data.code} sitekey={sitekey} year={year} detail={() => (v ? (projectPage ? describeProject(res.peek<Loaded<ProjectFull>>(projectLatestKey(projectPage))) : '') : '')} section={tabs.find((t) => t.key === tab)?.label} ask={askLabel(tab)} preset={preset} handle={ask} />
     </div>
   )
 }
