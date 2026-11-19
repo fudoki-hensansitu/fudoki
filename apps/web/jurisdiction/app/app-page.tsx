@@ -1180,7 +1180,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
         {doors.map(({ key, sub, year: y }) => {
           const t = TABS.find((x) => x.key === key)!
           return (
-            <Link key={key} href={pageHref(y, key)} onClick={() => setOpening(key)} aria-busy={opening === key} className={cn('flex flex-col items-start gap-1 rounded-xl border bg-card p-4 text-left no-underline transition-colors hover:border-primary', opening === key && 'border-primary')}>
+            <Link key={key} href={pageHref(y, key)} onClick={() => setOpening(key)} aria-busy={opening === key} className={cn('flex flex-col items-start gap-1 rounded-xl border bg-card p-4 text-left no-underline', opening === key && 'border-primary')}>
               {opening === key ? <Spinner className="size-5 text-primary" /> : <t.icon className="size-5 text-muted-foreground" aria-hidden="true" />}
               <span className="text-base font-semibold text-foreground">{t.label}</span>
               <span className="text-xs text-muted-foreground">{sub}</span>
