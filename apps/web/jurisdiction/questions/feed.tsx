@@ -78,6 +78,15 @@ export function QuestionFeedView({ feed, onOpen, onAsk }: { feed: QuestionFeed |
   const fields = FRAMES.filter((f) => feed.questions.some((q) => (q.field ?? OTHER_FRAME.id) === f.id))
   const items = feedOf(feed, field)
   const chip = (on: boolean) => cn('inline-flex h-9 shrink-0 items-center gap-1 rounded-full border px-4 text-sm transition-colors', on ? 'border-primary bg-primary text-primary-foreground' : 'border-input bg-background hover:bg-card')
+  const ask = (
+    <button type="button" onClick={onAsk} className="flex items-center gap-4 rounded-xl border bg-card p-5 text-left">
+      <RobotIcon className="size-6 shrink-0 text-primary" aria-hidden="true" />
+      <Title size="h3" as="span" className="min-w-0 flex-1">ほかのことを聞く</Title>
+      <ArrowRightIcon className="size-5 shrink-0 text-primary" aria-hidden="true" />
+    </button>
+  )
+  // 問いをまだ作っていないまちは、見出しも分野も出さず質問の入口だけを置く
+  if (!feed.questions.length) return <div className="mx-auto max-w-[640px]">{ask}</div>
   return (
     <section aria-labelledby="q-feed-title" className="mx-auto flex max-w-[640px] flex-col gap-4">
       {/* 何が並んでいるかを先に言う（数字の大きい札がいきなり並ぶと驚く） */}
@@ -98,11 +107,7 @@ export function QuestionFeedView({ feed, onOpen, onAsk }: { feed: QuestionFeed |
         {items.map((q) => <QuestionCard key={q.id} q={q} onOpen={onOpen} />)}
       </div>
       {/* フィードを読み終えた人に、並んでいない問いを自分で聞く入口を出す */}
-      <button type="button" onClick={onAsk} className="flex items-center gap-4 rounded-xl border bg-card p-5 text-left">
-        <RobotIcon className="size-6 shrink-0 text-primary" aria-hidden="true" />
-        <Title size="h3" as="span" className="min-w-0 flex-1">ほかのことを聞く</Title>
-        <ArrowRightIcon className="size-5 shrink-0 text-primary" aria-hidden="true" />
-      </button>
+      {ask}
     </section>
   )
 }

@@ -6,11 +6,9 @@ const FEEDS: Record<string, () => Promise<QuestionFeed>> = {
   '131091': () => import('./131091').then((m) => m.feed),
 }
 
-/** 自治体の問い。全自治体に作り置きの問いを持つ */
+/** 自治体の問い。まだ作っていないまちは空のフィード（入口は質問のボタンだけになる） */
 export function loadQuestions(code: string): Promise<QuestionFeed> {
-  const load = FEEDS[code]
-  if (!load) throw new Error(`「気になる」の問いがありません: ${code}`)
-  return load()
+  return FEEDS[code]?.() ?? Promise.resolve({ order: [], questions: [] })
 }
 
 /** 分野のフィード。すべてなら決めた並び、分野なら先頭の問い（1人いくら）とその分野の問い */
