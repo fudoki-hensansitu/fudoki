@@ -321,10 +321,10 @@ export function Landing() {
         </ul>
       </section>
 
-      {/* 受賞。決め手ではない情報なので冒頭に出さず、不安への答えの前に節で置く（2026-11-19 yuito） */}
+      {/* News（受賞）。決め手ではない情報なので冒頭に出さず、不安への答えの前に節で置く（2026-11-19 yuito） */}
       <section className="mt-28 grid items-center gap-10 sm:mt-40 md:grid-cols-2 md:gap-16" aria-labelledby="award-h">
         <div>
-          <p className="text-sm text-muted-foreground">受賞</p>
+          <p className="text-sm text-muted-foreground">News</p>
           <Title size="h1" as="h2" id="award-h" className="mt-2">
             都知事杯オープンデータ・ハッカソンで受賞しました
           </Title>
