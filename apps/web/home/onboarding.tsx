@@ -1,6 +1,6 @@
 // はじめて開いたときの流れ（marketingskills の onboarding skill に沿う）。
-// 住んでいるまちを選ぶ（名前／現在地）だけの1歩。選んだ時点でそのまちに決め、ホームのダッシュボードを出す。要点を見せてから決めさせる2歩目・使い方のツアー・何歩目かの表示・はじめにやることのチェックリストは置かない（直感的でない・何のためにあるか伝わらないため外した、2026-11-17 yuito）。
-// まちの検索は、選ぶ前は住んでいるまちを選ぶ欄（AskTown）、選んだあとはほかのまちを見る欄（OtherTowns）の1つだけ出す。「ホーム」「見るまち」のような通じない言葉は使わない（2026-11-11 yuito）。文言は何が起きるかをそのまま書き、キャッチーにしない
+// 住んでいるまちを選ぶ（名前／現在地）だけの1歩。選んだ時点でそのまちに決め、そのまちの頁へ移る。要点を見せてから決めさせる2歩目・使い方のツアー・何歩目かの表示・はじめにやることのチェックリストは置かない（直感的でない・何のためにあるか伝わらないため外した、2026-11-17 yuito）。
+// まちを選ぶ前は、住んでいるまちを選ぶ欄（AskTown）と、ほかのまちを見る欄（OtherTowns）を出す。「ホーム」「見るまち」のような通じない言葉は使わない（2026-11-11 yuito）。文言は何が起きるかをそのまま書き、キャッチーにしない
 import * as React from 'react'
 import { MagnifyingGlassIcon, NavigationArrowIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
@@ -111,22 +111,17 @@ function LocateResult({ loc, onPick, onRetry, onClose }: { loc: Locate; onPick: 
   )
 }
 
-/** ほかのまちを見る検索。住んでいるまちを選んだあとのホームに出し、選んだまちの頁へ移るだけ（住んでいるまちは変えない）。
- * large ではレシートの下の別の節として大きく出し、アシスタントの入力欄と同じ影を付けてレシートとは別の物に見せる（2026-11-18 yuito） */
-export function OtherTowns({ className, large = false }: { className?: string; large?: boolean }) {
+/** ほかのまちを見る検索。まちを選ぶ前のホームに出し、選んだまちの頁へ移るだけ（住んでいるまちは変えない） */
+export function OtherTowns({ className }: { className?: string }) {
   const [open, setOpen] = React.useState(false)
   return (
-    <div className={cn(!large && 'ob-rise', className)}>
+    <div className={cn('ob-rise', className)}>
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className={cn(
-          'flex w-full items-center gap-3 rounded-full border border-border bg-background px-4 text-left text-muted-foreground transition-colors hover:bg-card',
-          // 影はアシスタントの入力欄（chat/composer.tsx）と同じ（2026-11-18 yuito）
-          large ? 'h-14 px-5 text-base shadow-[var(--shadow-pill)]' : 'h-12 text-sm',
-        )}
+        className="flex h-12 w-full items-center gap-3 rounded-full border border-border bg-background px-4 text-left text-sm text-muted-foreground transition-colors hover:bg-card"
       >
-        <MagnifyingGlassIcon className={cn('shrink-0', large ? 'size-6' : 'size-5')} aria-hidden="true" />
+        <MagnifyingGlassIcon className="size-5 shrink-0" aria-hidden="true" />
         他のまちを探す
       </button>
       <TownPalette open={open} onOpenChange={setOpen} />
@@ -136,14 +131,13 @@ export function OtherTowns({ className, large = false }: { className?: string; l
 
 /**
  * 頁の見出し。サーバーの HTML にも載せるため、まちの有無に関わらず描く。
- * まちを選ぶ前は大きく、選んだあと（ダッシュボード）はロゴのマークと1行の小さめの見出しにする。読み込み中は読み上げだけに残す
+ * ロゴのマークと1行の見出し。読み込み中は読み上げだけに残す
  */
-export function Intro({ mode }: { mode: 'full' | 'compact' | 'hidden' }) {
+export function Intro({ mode }: { mode: 'full' | 'hidden' }) {
   const title = '私のお金はどこへ行った？'
-  // まちを選ぶ前もあとも同じ見出し。浮き上がりはまちを選ぶ前だけ
   const shown = mode !== 'hidden'
   return (
-    <header className={shown ? cn('mb-7 sm:mb-8', mode === 'full' && 'ob-rise') : 'sr-only'}>
+    <header className={shown ? 'ob-rise mb-7 sm:mb-8' : 'sr-only'}>
       <div className="flex items-center gap-3 sm:gap-4">
         {shown ? <Mark className="size-9 shrink-0 text-primary sm:size-11" /> : null}
         <Title size="h1">{title}</Title>

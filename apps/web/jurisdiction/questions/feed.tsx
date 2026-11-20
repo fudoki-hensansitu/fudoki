@@ -61,7 +61,7 @@ function QuestionCard({ q, onOpen }: { q: Question; onOpen: (q: Question) => voi
 }
 
 export function QuestionFeedView({ feed, onOpen, onAsk }: { feed: QuestionFeed | undefined; onOpen: (q: Question) => void; /** フィードに無いことを聞く欄を開く */ onAsk: () => void }) {
-  // 分野は ?field= に持つ（ホームのレシートの分野の行から、その分野のフィードを開く）
+  // 分野は ?field= に持つ
   const [field, setField] = React.useState<string | null>(null)
   React.useEffect(() => {
     const f = new URLSearchParams(location.search).get('field')

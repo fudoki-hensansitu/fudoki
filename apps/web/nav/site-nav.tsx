@@ -26,6 +26,9 @@ import { ArrowsLeftRightIcon } from '@phosphor-icons/react'
 import { NavContent } from './nav-content'
 import { readNavOpen, saveNavOpen } from './nav-state'
 import { TownPalette } from './town-palette'
+import { useRouter } from '@void/react'
+import { useMyTown } from '../home/towns'
+import { isTownPath } from './town-path'
 
 
 export const NAV_SECTIONS = ['home', 'assistant', 'compare'] as const
@@ -211,8 +214,11 @@ function SearchItem({ className }: { className: string }) {
 /** 幅の狭い画面では、サイドバーの代わりに画面の下へ並べる。入らないものは「設定」にまとめる */
 function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Theme; onPick: (t: Theme) => void }) {
   const [hidden, setHidden] = useHideOnScroll()
+  const { path } = useRouter()
+  // 住んでいるまちを選んだ人のホームは、そのまちの頁（2026-11-19 yuito「ホームイコール登録した町」）
+  const { town } = useMyTown()
   const items = [
-    { href: '/', label: 'ホーム', Icon: HouseIcon, active: active === 'home' },
+    { href: town ? town.path : '/', label: 'ホーム', Icon: HouseIcon, active: town ? isTownPath(path, town.path) : active === 'home' },
     { href: '/assistant', label: 'アシスタント', Icon: RobotIcon, active: active === 'assistant' },
     { href: '/compare', label: 'まち比べ', Icon: ArrowsLeftRightIcon, active: active === 'compare' },
   ]
@@ -237,7 +243,7 @@ function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Them
               </NavLink>
             </li>
             {/* 探すはホームの隣（サイドバーで頭にあるのと同じ順） */}
-            {i.href === '/' ? (
+            {i.Icon === HouseIcon ? (
               <li>
                 <SearchItem className={BOTTOM_ITEM} />
               </li>
