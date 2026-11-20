@@ -10,7 +10,6 @@ import { FieldIcon } from '../../home/parts'
 import { Chip } from '../chip'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../domains'
 import { feedOf } from '.'
-import { loadInterests, useMyTown } from '../../home/towns'
 import type { Question, QuestionFeed } from './types'
 
 /** 分野をまたぐ問いは、分野の分け方と同じ「その他」に入れる */
@@ -75,14 +74,9 @@ export function QuestionFeedView({ feed, onOpen, onAsk }: { feed: QuestionFeed |
     else url.searchParams.delete('field')
     history.replaceState(history.state, '', url)
   }
-  // 興味のある分野（ホームのオンボーディングでレシートから選んだもの）。すべてのフィードはその分野の問いから並べる（2026-11-19 yuito）
-  const [interests, setInterests] = React.useState<string[]>([])
-  // 住んでいるまちを解除したら（「私のまち」の札から）分野も消えるので、まちが変わったら読み直す
-  const { town } = useMyTown()
-  React.useEffect(() => setInterests(loadInterests()), [town?.code])
   if (!feed) return <FeedSkeleton />
   const fields = FRAMES.filter((f) => feed.questions.some((q) => (q.field ?? OTHER_FRAME.id) === f.id))
-  const items = feedOf(feed, field, interests)
+  const items = feedOf(feed, field)
   const chip = (on: boolean) => cn('inline-flex h-9 shrink-0 items-center gap-1 rounded-full border px-4 text-sm transition-colors', on ? 'border-primary bg-primary text-primary-foreground' : 'border-input bg-background hover:bg-card')
   const ask = (
     <button type="button" onClick={onAsk} className="flex items-center gap-4 rounded-xl border bg-card p-5 text-left">

@@ -1,5 +1,5 @@
 // はじめて開いたときの流れ（marketingskills の onboarding skill に沿う）。
-// 住んでいるまちを選ぶ（名前／現在地）だけの1歩。選んだ時点でそのまちに決め、札とレシートを出す（レシートから興味のある分野を選ぶ）。要点を見せてから決めさせる2歩目・使い方のツアー・何歩目かの表示・はじめにやることのチェックリストは置かない（直感的でない・何のためにあるか伝わらないため外した、2026-11-17 yuito）。
+// 住んでいるまちを選ぶ（名前／現在地）だけの1歩。選んだ時点でそのまちに決め、そのまちの頁へ移る。要点を見せてから決めさせる2歩目・使い方のツアー・何歩目かの表示・はじめにやることのチェックリストは置かない（直感的でない・何のためにあるか伝わらないため外した、2026-11-17 yuito）。
 // まちを選ぶ前は、住んでいるまちを選ぶ欄（AskTown）と、ほかのまちを見る欄（OtherTowns）を出す。「ホーム」「見るまち」のような通じない言葉は使わない（2026-11-11 yuito）。文言は何が起きるかをそのまま書き、キャッチーにしない
 import * as React from 'react'
 import { MagnifyingGlassIcon, NavigationArrowIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react'
@@ -131,14 +131,13 @@ export function OtherTowns({ className }: { className?: string }) {
 
 /**
  * 頁の見出し。サーバーの HTML にも載せるため、まちの有無に関わらず描く。
- * まちを選ぶ前は大きく、選んだあと（ダッシュボード）はロゴのマークと1行の小さめの見出しにする。読み込み中は読み上げだけに残す
+ * ロゴのマークと1行の見出し。読み込み中は読み上げだけに残す
  */
-export function Intro({ mode }: { mode: 'full' | 'compact' | 'hidden' }) {
+export function Intro({ mode }: { mode: 'full' | 'hidden' }) {
   const title = '私のお金はどこへ行った？'
-  // まちを選ぶ前もあとも同じ見出し。浮き上がりはまちを選ぶ前だけ
   const shown = mode !== 'hidden'
   return (
-    <header className={shown ? cn('mb-7 sm:mb-8', mode === 'full' && 'ob-rise') : 'sr-only'}>
+    <header className={shown ? 'ob-rise mb-7 sm:mb-8' : 'sr-only'}>
       <div className="flex items-center gap-3 sm:gap-4">
         {shown ? <Mark className="size-9 shrink-0 text-primary sm:size-11" /> : null}
         <Title size="h1">{title}</Title>
