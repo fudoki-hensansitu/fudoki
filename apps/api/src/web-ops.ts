@@ -84,7 +84,7 @@ export async function serving(db: Env['DB']): Promise<boolean> {
   }
 }
 
-export async function callWebOp(env: Env, name: string, input: unknown): Promise<WebResult<unknown>> {
+export async function callWebOp(env: Pick<Env, 'DB'>, name: string, input: unknown): Promise<WebResult<unknown>> {
   const fail = (status: number, code: string, message: string) => ({ ok: false as const, status, code, message })
   const target = Object.hasOwn(WEB_OPS, name) ? WEB_OPS[name as WebOpName] : undefined
   if (!target) return fail(404, 'NOT_FOUND', `存在しない操作です: ${name}`)
@@ -121,7 +121,7 @@ export function assistantTools(): AssistantTool[] {
   return assistantToolDefs
 }
 
-export async function callAssistantTool(env: Env, name: string, input: unknown): Promise<WebResult<AssistantToolResult>> {
+export async function callAssistantTool(env: Pick<Env, 'DB'>, name: string, input: unknown): Promise<WebResult<AssistantToolResult>> {
   const def = ASSISTANT_TOOLS.find((t) => t.name === name)
   if (!def) return { ok: false, status: 404, code: 'NOT_FOUND', message: `存在しない tool です: ${name}` }
   const result = await callWebOp(env, name, input)

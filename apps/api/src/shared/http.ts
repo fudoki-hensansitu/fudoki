@@ -9,9 +9,12 @@ export const ErrorBody = z.object({ error: z.object({ code: z.string(), message:
 
 const json = <S extends z.ZodType>(schema: S) => ({ 'application/json': { schema } })
 
-/** GET の route のエラー応答 */
+/** GET の route のエラー応答（API キーの検査を含む） */
 export const getErrors = {
   400: { description: '入力が不正', content: json(ErrorBody) },
+  401: { description: 'API キーが無い・無効', content: json(ErrorBody) },
+  403: { description: 'API キーに権限が無い', content: json(ErrorBody) },
+  429: { description: '呼び出しが多すぎる', content: json(ErrorBody) },
   404: { description: '見つからない', content: json(ErrorBody) },
   503: { description: '提供を止めている', content: json(ErrorBody) },
 }

@@ -1,6 +1,6 @@
 ---
 title: REST API
-description: https://api.fudoki.dev に JSON で問い合わせる。認証は要りません。
+description: https://api.fudoki.dev に JSON で問い合わせる。無料の API キーを Authorization ヘッダーで送ります。
 sidebar:
   icon: /icons/brackets-curly.svg
 ---
@@ -8,16 +8,28 @@ sidebar:
 | 項目 | 値 |
 | --- | --- |
 | ベース URL | `https://api.fudoki.dev` |
-| 認証 | なし |
+| 認証 | API キー（`Authorization: Bearer <API キー>`）。出典 PDF の中継だけは不要 |
+| 流量 | 1 利用者あたり 60 回/分が目安 |
 | 応答 | JSON（出典 PDF の中継だけ `application/pdf`）、`Cache-Control: no-store` |
-| ブラウザから | `/v1/` の下は CORS で許可（`Access-Control-Allow-Origin: *`、Cookie などの資格情報は送らない） |
+| ブラウザから | `/v1/` の下は CORS を許可しません（API キーをブラウザの JavaScript に置かないため）。出典 PDF の中継だけは `Access-Control-Allow-Origin: *` |
+
+## API キーを発行する
+
+[auth.fudoki.dev](https://auth.fudoki.dev) に Google アカウントでログインし、API キーを発行します。料金はかかりません。キーは発行したときに一度だけ表示されるので、環境変数などに保存してください。要らなくなったキーや漏れたキーは同じ頁で失効させます（効くまで最長 5 分かかります）。
+
+キーは `Authorization` ヘッダーで送ります。URL の query（`?api_key=` など）に付けた要求は、キーを使わずに 400 を返します。
+
+```bash
+export FUDOKI_API_KEY='sk_...'
+```
 
 ## 最初の問い合わせ
 
 <Steps>
   <Step title="自治体と収録範囲を確かめる">
     ```bash
-    curl 'https://api.fudoki.dev/v1/jurisdictions?name=%E6%AD%A6%E8%94%B5%E9%87%8E%E5%B8%82'
+    curl 'https://api.fudoki.dev/v1/jurisdictions?name=%E6%AD%A6%E8%94%B5%E9%87%8E%E5%B8%82' \
+      -H "Authorization: Bearer $FUDOKI_API_KEY"
     ```
 
     `name`（部分一致。例は「武蔵野市」）か `code`（6 桁か 5 桁）で絞ると、6 桁の自治体コードと、収録している年度・資料区分・会計、事業評価の年度が返ります。検索の `jurisdiction_code` は 6 桁だけを受け付けるので、ここで引いたコードを使います。
@@ -25,6 +37,7 @@ sidebar:
   <Step title="科目を検索する">
     ```bash
     curl -X POST 'https://api.fudoki.dev/v1/expenditures/subjects:search' \
+      -H "Authorization: Bearer $FUDOKI_API_KEY" \
       -H 'Content-Type: application/json' \
       -d '{
         "document_kind": "settlement",
@@ -39,7 +52,8 @@ sidebar:
   </Step>
   <Step title="内訳を辿る">
     ```bash
-    curl 'https://api.fudoki.dev/v1/expenditures/lines/<subject_id>'
+    curl 'https://api.fudoki.dev/v1/expenditures/lines/<subject_id>' \
+      -H "Authorization: Bearer $FUDOKI_API_KEY"
     ```
 
     科目と、子の科目、直下の内訳を分け方（`breakdown`：事業・節・その他）ごとに返します。内訳の子も同じ `GET /v1/expenditures/lines/<detail_id>` で辿ります。印字の位置は `locations` に入ります。
@@ -68,7 +82,7 @@ sidebar:
 
 応答の `origins` に、行の `origin_id` が指す出典（資料名・公開 URL・形式・SHA-256）が入ります。1 つの自治体（`GET /v1/jurisdictions/{jurisdiction_code}`）は会計ごとの出典も返します。
 
-`GET /v1/expenditures/origins/{origin_id}/pdf` は自治体の公開 PDF を表示用に中継します。取得 URL は `X-Origin-Url`（percent-encoding 済み。`decodeURIComponent` で戻す）、取得日時は `X-Origin-Fetched-At` で返し、取り込み時との一致は検査しません。上限は [MCP の表示](/mcp#表で見るmcp-apps)と同じです。
+`GET /v1/expenditures/origins/{origin_id}/pdf` は自治体の公開 PDF を表示用に中継します。API キーは要りません。取得 URL は `X-Origin-Url`（percent-encoding 済み。`decodeURIComponent` で戻す）、取得日時は `X-Origin-Fetched-At` で返し、取り込み時との一致は検査しません。上限は [MCP の表示](/mcp#表で見るmcp-apps)と同じです。
 
 ## エラーに対処する
 
@@ -76,13 +90,16 @@ sidebar:
 
 | HTTP | code | 起きるとき |
 | --- | --- | --- |
-| 400 | `INVALID_ARGUMENT` | 入力が schema に合わない |
+| 400 | `INVALID_ARGUMENT` | 入力が schema に合わない・API キーを query に付けた |
+| 401 | `UNAUTHENTICATED` | API キーが無い・無効（失効済みを含む） |
+| 403 | `PERMISSION_DENIED` | 風土記で使えない API キー |
 | 404 | `NOT_FOUND` | 科目・内訳や path が無い |
 | 405 | `METHOD_NOT_ALLOWED` | 受け付けないメソッド |
 | 413 | `PAYLOAD_TOO_LARGE` | body が 16 KiB を超える |
 | 415 | `UNSUPPORTED_MEDIA_TYPE` | `Content-Type` が `application/json` でない |
+| 429 | `RESOURCE_EXHAUSTED` | 呼び出しが多すぎる（`Retry-After` の秒数をおいて再試行） |
 | 429 | `PDF_UNAVAILABLE` | PDF 中継の上限を超えた |
 | 502 / 504 | `PDF_UNAVAILABLE` | PDF を取れない・32 MiB 超・20 秒超 |
-| 503 | `UNAVAILABLE` | 提供を止めている |
+| 503 | `UNAVAILABLE` | 提供を止めている・API キーを確かめられない |
 
 各操作の詳細は [API リファレンス](/reference)にあります。
