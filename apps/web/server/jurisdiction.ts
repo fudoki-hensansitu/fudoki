@@ -148,9 +148,12 @@ export async function loadProjectIdsByDetail(env: Env, code: string, year: numbe
   const column = kind === 'initial' ? 'initial_expenditure_detail_id' : 'settlement_expenditure_detail_id'
   // 年度・自治体の条件と合わせても API の bind 上限（90）に収まる件数
   const chunks = Array.from({ length: Math.ceil(detailIds.length / 50) }, (_, i) => detailIds.slice(i * 50, (i + 1) * 50))
-  const pages = await Promise.all(chunks.map((ids) => apiCall(env)('search_projects', { fiscal_year: { min: year, max: year }, where: { jurisdiction_code: { eq: [code] }, [column]: { eq: ids } }, page_size: ids.length })))
+  // 区切った分の一部が読めなくても、読めた分は返す（読めなかった行はブラウザが後で読み直す）。全部読めなければ失敗にする
+  const pages = await Promise.allSettled(chunks.map((ids) => apiCall(env)('search_projects', { fiscal_year: { min: year, max: year }, where: { jurisdiction_code: { eq: [code] }, [column]: { eq: ids } }, page_size: ids.length })))
+  const done = pages.flatMap((p) => (p.status === 'fulfilled' ? [p.value] : []))
+  if (!done.length) throw (pages[0] as PromiseRejectedResult).reason
   const out: Record<string, string> = {}
-  for (const r of pages) for (const y of r.project_years) if (y[column]) out[y[column]] = y.project_id
+  for (const r of done) for (const y of r.project_years) if (y[column]) out[y[column]] = y.project_id
   return out
 }
 

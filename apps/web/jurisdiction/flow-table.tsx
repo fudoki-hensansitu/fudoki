@@ -199,7 +199,9 @@ function Section({ title, drills, total, query, onQuery, onSetsu, project }: { t
     if (!project || !missing.length) return
     for (const id of missing) asked.current.add(id)
     for (let i = 0; i < missing.length; i += 100) {
-      void project.load(missing.slice(i, i + 100)).then((x) => setLinks((l) => ({ ...l, ...x })), () => {})
+      const ids = missing.slice(i, i + 100)
+      // 読めなかった ID は読んだ印を外し、次に行を出し直したときに読み直す
+      void project.load(ids).then((x) => setLinks((l) => ({ ...l, ...x })), () => { for (const id of ids) asked.current.delete(id) })
     }
   }, [missingKey])
   const headingId = React.useId()
