@@ -70,7 +70,7 @@ import { MyTownBadge } from '../my-town-badge'
 import type { Question, QuestionFeed } from '../questions/types'
 import { Title, titleVariants } from '@/components/ui/title'
 import { withExtras, yearView, type AccountTotal, type Proj, type Snapshot, type YearExtras, type YearView } from './data'
-import { fieldSubjects, listKey, listPage, projectLatest, type ListPage, type ListQuery, type ProjectFull } from './api'
+import { fieldSubjects, listKey, listPage, projectLatest, projectLinks, type ListPage, type ListQuery, type ProjectFull } from './api'
 import { ClientSuspense, FAILED, Resources, type Loaded } from './resource'
 import { Amt, yenParts } from './amount'
 import { FinanceSections } from './finance'
@@ -484,7 +484,7 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
   // 詳細の引き出し（入る→使うの分野・何に使う？の区分）。入る→使うは一般会計なので、ほかの会計を開いているときは分野を押したら事業のタブへ移る
   const [detail, setDetail] = React.useState<MoneyDetailKey>()
   const wide = useMedia('(min-width: 768px)')
-  const projectLink = React.useMemo(() => ({ href: (id: string) => projectHref(page.path, id), open: openProject }), [page.path, openProject])
+  const projectLink = React.useMemo(() => ({ href: (id: string) => projectHref(page.path, id), open: openProject, load: (detailIds: string[]) => projectLinks(d.code, v.year, phase, detailIds) }), [page.path, openProject, d.code, v.year, phase])
   const openFieldDetail = (id: string) => (current?.account === GENERAL ? setDetail({ kind: 'field', id }) : openField(id))
   const router = useRouter()
   const accounts = d.accounts ?? []

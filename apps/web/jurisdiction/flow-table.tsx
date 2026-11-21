@@ -46,8 +46,8 @@ interface Node {
   src?: string
   /** 歳出の節の節マスタの ID。あれば行を押すと節の詳細を開く */
   setsuId?: string
-  /** 事業の ID。あれば行を押すと事業の頁へ移る */
-  projectId?: string
+  /** 事業の行の内訳の ID。事業の ID は行を出したときに読む */
+  detailId?: string
   subRows?: Node[]
 }
 
@@ -59,10 +59,10 @@ const toNodes = (drills: Drill[]): Node[] =>
       subRows: k.moku.length ? k.moku.map((m) => ({
         id: m.id, name: m.name, yen: m.yen, missing: m.amountMissing, depth: 2, src: m.src,
         subRows: m.setsu.length || m.projects?.length ? [
-          ...m.setsu.map((s, k): Node => ({ id: `${m.id}:setsu:${k}`, name: s.name, yen: s.yen, missing: s.amountMissing, depth: 3, src: s.src, setsuId: s.setsuId, ...(s.projectId ? { project: true as const, projectId: s.projectId } : {}) })),
+          ...m.setsu.map((s, k): Node => ({ id: `${m.id}:setsu:${k}`, name: s.name, yen: s.yen, missing: s.amountMissing, depth: 3, src: s.src, setsuId: s.setsuId, ...(s.detailId ? { project: true as const, detailId: s.detailId } : {}) })),
           ...(m.projects?.length ? [{
             id: `${m.id}:projects`, name: '事業', yen: 0, depth: 3, group: true as const,
-            subRows: m.projects.map((s, j): Node => ({ id: `${m.id}:project:${j}`, name: s.name, yen: s.yen, missing: s.amountMissing, depth: 4, project: true as const, src: s.src, projectId: s.projectId })),
+            subRows: m.projects.map((s, j): Node => ({ id: `${m.id}:project:${j}`, name: s.name, yen: s.yen, missing: s.amountMissing, depth: 4, project: true as const, src: s.src, detailId: s.detailId })),
           }] : []),
         ] : undefined,
       })) : undefined,
@@ -82,7 +82,7 @@ const features = tableFeatures({
 const column = createColumnHelper<typeof features, Node>()
 const cls = (meta: unknown) => (meta as { className?: string } | undefined)?.className
 
-type ProjectLink = { href: (id: string) => string; open: (id: string) => void }
+type ProjectLink = { href: (id: string) => string; open: (id: string) => void; /** 事業の行（内訳の ID）から事業の ID を読む */ load: (detailIds: string[]) => Promise<Record<string, string>> }
 
 function Section({ title, drills, total, query, onQuery, onSetsu, project }: { title: string; drills: Drill[]; total: number; query: string; onQuery: (q: string) => void; /** 節の行を押したとき（節の詳細を開く） */ onSetsu?: (setsuId: string) => void; /** 事業の行を押したとき（事業の頁へ移る） */ project?: ProjectLink }) {
   const data = React.useMemo(() => toNodes(drills), [drills])
@@ -112,6 +112,10 @@ function Section({ title, drills, total, query, onQuery, onSetsu, project }: { t
   }, [query, term])
   React.useEffect(() => setFound(true), [term])
   const [sorting, setSorting] = React.useState<SortingState>([])
+  // 事業の ID は、開いた・探して出た事業の行の分だけ読む。読めなかった行はリンクにしない（名前だけ出す）
+  const [links, setLinks] = React.useState<Record<string, string>>({})
+  const asked = React.useRef(new Set<string>())
+  const projectIdOf = React.useCallback((n: Node) => (n.detailId ? links[n.detailId] : undefined), [links])
   const columns = React.useMemo(() => column.columns([
     column.accessor('name', {
       // 事業は節の下ではない（目の別の分け方）ので、矢印でなく「・」でつなぐ
@@ -120,6 +124,7 @@ function Section({ title, drills, total, query, onQuery, onSetsu, project }: { t
       cell: (c) => {
         const row = c.row
         const open = row.getIsExpanded()
+        const projectId = projectIdOf(row.original)
         return (
           <div className="flex items-center gap-1" style={{ paddingLeft: `${row.original.depth}rem` }}>
             {row.getCanExpand() ? (
@@ -133,8 +138,8 @@ function Section({ title, drills, total, query, onQuery, onSetsu, project }: { t
               {labelOf(row.original) ? <span className="mr-2 text-muted-foreground">{labelOf(row.original)}</span> : null}
               {/* 押すと詳細を開く節は、キーボードでも開けるようボタンにする */}
               {/* 事業は事業の頁へのリンク。新しいタブでも開けるよう href を持ち、ふつうに押したときは頁の中で移る */}
-              {project && row.original.projectId ? (
-                <a href={project.href(row.original.projectId)} onClick={(e) => { e.stopPropagation(); if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; e.preventDefault(); project.open(row.original.projectId!) }} className="rounded-sm text-foreground underline decoration-dotted underline-offset-4 hover:text-primary focus-visible:outline-2 focus-visible:outline-ring">{row.original.name}</a>
+              {project && projectId ? (
+                <a href={project.href(projectId)} onClick={(e) => { e.stopPropagation(); if (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return; e.preventDefault(); project.open(projectId) }} className="rounded-sm text-foreground underline decoration-dotted underline-offset-4 hover:text-primary focus-visible:outline-2 focus-visible:outline-ring">{row.original.name}</a>
               ) : onSetsu && row.original.setsuId && !row.getCanExpand() ? (
                 <button type="button" onClick={(e) => { e.stopPropagation(); onSetsu(row.original.setsuId!) }} className="rounded-sm text-left focus-visible:outline-2 focus-visible:outline-ring">{row.original.name}</button>
               ) : row.original.name}
@@ -175,7 +180,7 @@ function Section({ title, drills, total, query, onQuery, onSetsu, project }: { t
       ) : null,
       meta: { className: 'w-0 pr-0 text-right' },
     })] : []),
-  ]), [title, levels, depth, total, hasSrc, hasProjects, onSetsu, project])
+  ]), [title, levels, depth, total, hasSrc, hasProjects, onSetsu, project, projectIdOf])
   const table = useTable({
     features,
     columns,
@@ -188,6 +193,15 @@ function Section({ title, drills, total, query, onQuery, onSetsu, project }: { t
     onSortingChange: setSorting,
   })
   const rows = table.getRowModel().rows
+  const missing = project ? rows.flatMap((r) => (r.original.detailId && !asked.current.has(r.original.detailId) ? [r.original.detailId] : [])) : []
+  const missingKey = missing.join(',')
+  React.useEffect(() => {
+    if (!project || !missing.length) return
+    for (const id of missing) asked.current.add(id)
+    for (let i = 0; i < missing.length; i += 100) {
+      void project.load(missing.slice(i, i + 100)).then((x) => setLinks((l) => ({ ...l, ...x })), () => {})
+    }
+  }, [missingKey])
   const headingId = React.useId()
   return (
     <section aria-labelledby={headingId} className="flex flex-col gap-2">
@@ -213,15 +227,18 @@ function Section({ title, drills, total, query, onQuery, onSetsu, project }: { t
           {!rows.length ? (
             <TableRow className="hover:bg-transparent"><TableCell colSpan={columns.length} className="py-6 text-center">「{term}」に当てはまる{title}はありません</TableCell></TableRow>
           ) : null}
-          {rows.map((row) => (
-            <TableRow key={row.id} onClick={row.getCanExpand() ? () => row.toggleExpanded() : project && row.original.projectId ? () => project.open(row.original.projectId!) : onSetsu && row.original.setsuId ? () => onSetsu(row.original.setsuId!) : undefined} className={cn('text-foreground', (row.getCanExpand() || (project && row.original.projectId) || (onSetsu && row.original.setsuId)) && 'cursor-pointer')}>
+          {rows.map((row) => {
+            const projectId = projectIdOf(row.original)
+            return (
+            <TableRow key={row.id} onClick={row.getCanExpand() ? () => row.toggleExpanded() : project && projectId ? () => project.open(projectId) : onSetsu && row.original.setsuId ? () => onSetsu(row.original.setsuId!) : undefined} className={cn('text-foreground', (row.getCanExpand() || (project && projectId) || (onSetsu && row.original.setsuId)) && 'cursor-pointer')}>
               {row.getAllCells().map((cell) => (
                 <TableCell key={cell.id} className={cn('py-2', cls(cell.column.columnDef.meta))}>
                   <table.FlexRender cell={cell} />
                 </TableCell>
               ))}
             </TableRow>
-          ))}
+            )
+          })}
         </TableBody>
       </Table>
       </div>
