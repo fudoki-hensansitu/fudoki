@@ -344,3 +344,7 @@ export const projectLatest = (id: string): Promise<ProjectFull> => webApi(`/api/
 export const fieldSubjects = (code: string, year: number, kind: Kind): Promise<Record<string, string[]>> => webApi(`/api/jurisdictions/${code}/${year}/field-subjects?kind=${kind}`)
 
 
+
+/** 事業の行（内訳の ID）から事業の ID（お金の流れの表で事業の行を出したとき、その行の分だけ読む） */
+export const projectLinks = (code: string, year: number, kind: Kind, detailIds: string[]): Promise<Record<string, string>> =>
+  webApi(`/api/jurisdictions/${code}/${year}/project-links?${new URLSearchParams([['kind', kind], ...detailIds.map((id) => ['detail', id])])}`)

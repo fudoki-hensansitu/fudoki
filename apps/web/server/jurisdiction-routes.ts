@@ -14,7 +14,7 @@ import type { ReceiptOgInput } from './og-receipt'
 import { yearView } from '../jurisdiction/app/data'
 import { perHeadParts } from '../home/per-head'
 import { appYears, loadFieldSubjects, loadYearSnapshot } from './app-data'
-import { loadCatalog, loadCatalogEntry, loadSettlementSummary, searchCatalog, type CatalogEntry } from './jurisdiction'
+import { loadCatalog, loadCatalogEntry, loadProjectIdsByDetail, loadSettlementSummary, searchCatalog, type CatalogEntry } from './jurisdiction'
 import { apiCall, FudokiApiError } from './fudoki-api'
 import { TAB_SLUGS } from '../jurisdiction/types'
 
@@ -191,6 +191,26 @@ export async function fieldSubjectsResponse(env: Env, request: Request, code: st
     if (!/^\d{6}$/.test(code) || !/^\d{4}$/.test(yearText) || (kind !== 'initial' && kind !== 'settlement')) throw new HttpError(400, 'INVALID_ARGUMENT', '自治体コード・年度・資料の形が違います')
     await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
     return new Response(JSON.stringify(await loadFieldSubjects(env, code, Number(yearText), kind)), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': BROWSER_CACHE } })
+  } catch (e) {
+    if (e instanceof HttpError) return errorResponse(e)
+    return errorResponse(new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした'))
+  }
+}
+
+/** 1回で引ける事業の行の数。目1つの事業の行より十分多く、URL が長くなりすぎない数 */
+const MAX_PROJECT_LINKS = 100
+
+/** 事業の行（内訳の ID）から事業の ID（/api/jurisdictions/:code/:year/project-links?kind=&detail=...）。お金の流れの表で事業の行を出したときに、その行の分だけ読む。
+ * 誰でも呼べるので IP ごとの流量と形の検査で守る */
+export async function projectLinksResponse(env: Env, request: Request, code: string, yearText: string): Promise<Response> {
+  try {
+    const params = new URL(request.url).searchParams
+    const kind = params.get('kind')
+    const ids = [...new Set(params.getAll('detail'))]
+    if (!/^\d{6}$/.test(code) || !/^\d{4}$/.test(yearText) || (kind !== 'initial' && kind !== 'settlement')) throw new HttpError(400, 'INVALID_ARGUMENT', '自治体コード・年度・資料の形が違います')
+    if (!ids.length || ids.length > MAX_PROJECT_LINKS || ids.some((id) => !/^[0-9a-f]{64}$/.test(id))) throw new HttpError(400, 'INVALID_ARGUMENT', `内訳の ID は 1〜${MAX_PROJECT_LINKS} 件の 64 桁の16進で渡してください`)
+    await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
+    return new Response(JSON.stringify(await loadProjectIdsByDetail(env, code, Number(yearText), kind, ids)), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': BROWSER_CACHE } })
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e)
     return errorResponse(new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした'))

@@ -142,21 +142,18 @@ const byAmount = (a: { amount_yen: number | null }, b: { amount_yen: number | nu
 /** 目の内訳として出す分け方。節があれば節、無ければ事業（備考・説明の欄）。分け方の違う内訳は混ぜない */
 const pickBreakdown = (byBreakdown: Record<string, ApiDetail[]>) => byBreakdown['節']?.length ? byBreakdown['節'] : (byBreakdown['事業'] ?? [])
 
-/** その年度・資料・会計の事業の行（内訳の ID）から事業の ID。事業の行を押して事業の頁へ移るのに使う */
-async function projectIdsByDetail(env: Env, code: string, year: number, kind: DocumentKind, account: string): Promise<Map<string, string>> {
+/** 事業の行（内訳の ID）から事業の ID。お金の流れの表で事業の行を出したときに、ブラウザがその行の分だけ読む。
+ * 事業の年度の表の内訳の ID の索引で引く（年度の事業を全件読むと品川で約 9 秒かかった） */
+export async function loadProjectIdsByDetail(env: Env, code: string, year: number, kind: DocumentKind, detailIds: string[]): Promise<Record<string, string>> {
   const column = kind === 'initial' ? 'initial_expenditure_detail_id' : 'settlement_expenditure_detail_id'
-  const out = new Map<string, string>()
-  let token: string | undefined
-  do {
-    const r = await apiCall(env)('search_projects', {
-      fiscal_year: { min: year, max: year },
-      where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [account] } },
-      page_size: 1000,
-      ...(token ? { page_token: token } : {}),
-    })
-    for (const y of r.project_years) if (y[column]) out.set(y[column], y.project_id)
-    token = r.next_page_token ?? undefined
-  } while (token)
+  // 年度・自治体の条件と合わせても API の bind 上限（90）に収まる件数
+  const chunks = Array.from({ length: Math.ceil(detailIds.length / 50) }, (_, i) => detailIds.slice(i * 50, (i + 1) * 50))
+  // 区切った分の一部が読めなくても、読めた分は返す（読めなかった行はブラウザが後で読み直す）。全部読めなければ失敗にする
+  const pages = await Promise.allSettled(chunks.map((ids) => apiCall(env)('search_projects', { fiscal_year: { min: year, max: year }, where: { jurisdiction_code: { eq: [code] }, [column]: { eq: ids } }, page_size: ids.length })))
+  const done = pages.flatMap((p) => (p.status === 'fulfilled' ? [p.value] : []))
+  if (!done.length) throw (pages[0] as PromiseRejectedResult).reason
+  const out: Record<string, string> = {}
+  for (const r of done) for (const y of r.project_years) if (y[column]) out[y[column]] = y.project_id
   return out
 }
 
@@ -172,11 +169,7 @@ export async function loadMokuBreakdowns(env: Env, code: string, year: number, m
   // 年度・資料・自治体・会計・分け方・深さの条件と合わせても API の bind 上限（90）に収まる件数。区切った分は並べて読む
   const chunks = Array.from({ length: Math.ceil(mokuIds.length / 50) }, (_, i) => mokuIds.slice(i * 50, (i + 1) * 50))
   const origins: OriginUrls = new Map()
-  // 事業の頁へ移れるよう、事業の行には事業の ID を添える。読めなくても内訳は出す
-  const [pages, projectIds] = await Promise.all([
-    Promise.all(chunks.map((ids) => searchAll(env, 'details', code, year, { depth: { eq: [1] }, breakdown: { eq: ['節', '事業'] }, subject_id: { eq: ids } }, kind, account, origins))),
-    projectIdsByDetail(env, code, year, kind, account).catch(() => new Map<string, string>()),
-  ])
+  const pages = await Promise.all(chunks.map((ids) => searchAll(env, 'details', code, year, { depth: { eq: [1] }, breakdown: { eq: ['節', '事業'] }, subject_id: { eq: ids } }, kind, account, origins)))
   for (const rows of pages) {
     const groups = new Map<string, Record<string, ApiDetail[]>>()
     for (const n of rows) {
@@ -184,10 +177,8 @@ export async function loadMokuBreakdowns(env: Env, code: string, year: number, m
       ;(byBreakdown[n.breakdown] ??= []).push(n)
       groups.set(n.subject_id, byBreakdown)
     }
-    const toSetsu = (n: ApiDetail): Setsu => {
-      const projectId = n.breakdown === '事業' ? projectIds.get(n.detail_id) : undefined
-      return { name: n.name, ...amount(n), ...(n.expenditure_setsu_id ? { setsuId: n.expenditure_setsu_id } : {}), ...(projectId ? { projectId } : {}), ...srcOf(n, origins) }
-    }
+    // 事業の行は内訳の ID を添え、事業の ID は表がその行を出したときに読む（loadProjectIdsByDetail）
+    const toSetsu = (n: ApiDetail): Setsu => ({ name: n.name, ...amount(n), ...(n.expenditure_setsu_id ? { setsuId: n.expenditure_setsu_id } : {}), ...(n.breakdown === '事業' ? { detailId: n.detail_id } : {}), ...srcOf(n, origins) })
     for (const [moku, byBreakdown] of groups) {
       const picked = pickBreakdown(byBreakdown)
       setsuByMoku.set(moku, [...picked].sort(byAmount).map(toSetsu))

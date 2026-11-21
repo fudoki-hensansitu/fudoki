@@ -220,4 +220,13 @@ describe('最初の画面に要らない分', () => {
     expect((await get('/api/jurisdictions/131148/2025/field-subjects?kind=other')).status).toBe(400)
     expect((await get('/api/jurisdictions/131148/2025/field-subjects?kind=initial', web(API))).status).toBe(503)
   })
+  test('事業の行の事業の ID（/api/jurisdictions/:code/:year/project-links）は形・資料の種類・内訳の ID が違えば 400、流量の binding が無ければ 503', async () => {
+    const id = 'a'.repeat(64)
+    expect((await get(`/api/jurisdictions/nakano/2025/project-links?kind=initial&detail=${id}`)).status).toBe(400)
+    expect((await get(`/api/jurisdictions/131148/2025/project-links?kind=other&detail=${id}`)).status).toBe(400)
+    expect((await get('/api/jurisdictions/131148/2025/project-links?kind=initial')).status).toBe(400)
+    expect((await get('/api/jurisdictions/131148/2025/project-links?kind=initial&detail=x')).status).toBe(400)
+    expect((await get(`/api/jurisdictions/131148/2025/project-links?kind=initial&${Array.from({ length: 101 }, (_, i) => `detail=${i.toString(16).padStart(64, '0')}`).join('&')}`)).status).toBe(400)
+    expect((await get(`/api/jurisdictions/131148/2025/project-links?kind=initial&detail=${id}`, web(API))).status).toBe(503)
+  })
 })
