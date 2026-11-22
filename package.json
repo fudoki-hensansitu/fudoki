@@ -5,6 +5,7 @@
   "workspaces": {
     "packages": [
       "apps/*",
+      "apps/samples/*",
       "packages/*",
       "pipeline"
     ],
@@ -26,11 +27,14 @@
   "scripts": {
     "build:api": "bun run --cwd apps/api build",
     "build:docs": "bun run --cwd apps/docs build",
+    "build:spending": "bun run --cwd apps/samples/spending build",
     "build:web": "bun run --cwd apps/web build",
     "deploy:api": "bun run --cwd apps/api deploy",
     "deploy:docs": "bun run --cwd apps/docs deploy",
+    "deploy:spending": "bun run --cwd apps/samples/spending deploy",
     "deploy:web": "bun run --cwd apps/web deploy",
     "dev:api": "bun run --cwd apps/api dev",
+    "dev:spending": "bun run --cwd apps/samples/spending dev",
     "dev:web": "bun run --cwd apps/web dev",
     "inspect:mcp": "bun run --cwd apps/api inspect",
     "lint": "bun run --filter '@fudoki/*' lint",

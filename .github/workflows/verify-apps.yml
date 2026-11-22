@@ -29,8 +29,8 @@ jobs:
           version: 2026.8.6
           install_args: bun node
       - run: bun install --frozen-lockfile
-      - run: bun run --filter './apps/*' --filter './packages/*' typecheck
-      - run: bun run --filter './apps/*' --filter './packages/*' lint
-      - run: bun run --filter './apps/*' --filter './packages/*' test
+      - run: bun run --filter './apps/*' --filter './apps/samples/*' --filter './packages/*' typecheck
+      - run: bun run --filter './apps/*' --filter './apps/samples/*' --filter './packages/*' lint
+      - run: bun run --filter './apps/*' --filter './apps/samples/*' --filter './packages/*' test
       # 公開面が pipeline を import せず、web にデータの binding・api に R2 の binding が無いこと
       - run: bun pipeline/verify/boundaries.ts
