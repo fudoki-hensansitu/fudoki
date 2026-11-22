@@ -66,7 +66,7 @@ export function TownSearch({ placeholder, brand = false, className }: { placehol
   }
   return (
     // focus が欄の外へ出たときだけ閉じる（欄の中の「もっと見る」などへ移るときは閉じない）
-    <div ref={root} onBlur={(e) => !root.current?.contains(e.relatedTarget as Node | null) && setTimeout(() => setOpen(false), 150)} className={cn('relative', className)}>
+    <div ref={root} onBlur={(e) => !root.current?.contains(e.relatedTarget as Node | null) && setTimeout(() => !root.current?.contains(document.activeElement) && setOpen(false), 150)} className={cn('relative', className)}>
       <label className={cn('flex h-12 items-center gap-2 rounded-full px-4 text-sm', brand ? 'bg-brand-fill text-brand-fill-foreground shadow-[var(--shadow-pill)] dark:shadow-none' : 'border border-border bg-background')}>
         <MagnifyingGlassIcon className={cn('size-5 shrink-0', brand ? 'text-brand-fill-muted' : 'text-muted-foreground')} aria-hidden="true" />
         <input
