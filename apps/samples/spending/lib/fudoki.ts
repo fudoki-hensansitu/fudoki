@@ -104,5 +104,7 @@ export const pageTitle = (name: string, year: number) => `${name}の1人あた�
 
 /** 風土記の本体。分野の続き・「詳細」・紋章はそこへ繋ぐ */
 export const FUDOKI_ORIGIN = 'https://fudoki.dev'
-/** このサイト。シェアのリンクと OG 画像の絶対 URL に使う */
-export const SITE_ORIGIN = 'https://spending.fudoki.dev'
+/** このサイトの origin。風土記の本体（fudoki.dev）の Worker が BASE の下をこのサイトの Worker へ渡す。シェアのリンクと OG 画像の絶対 URL に使う */
+export const SITE_ORIGIN = FUDOKI_ORIGIN
+/** このサイトの頁を置く path（pages/spending/ と同じ。本体の apps/web の middleware が中継する path とも揃える） */
+export const BASE = '/spending'

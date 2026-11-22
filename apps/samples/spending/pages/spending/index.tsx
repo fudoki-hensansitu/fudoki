@@ -1,5 +1,5 @@
-import { AskTown } from '../components/ask-town'
-import { Footer, Intro } from '../components/intro'
+import { AskTown } from '../../components/ask-town'
+import { Footer, Intro } from '../../components/intro'
 
 export default function Index() {
   return (

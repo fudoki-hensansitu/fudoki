@@ -1,10 +1,10 @@
-// まちのレシートの頁（/<自治体コード>?year=）。風土記の本体から、その年度（無ければ最新）の1年度のデータと、本体での頁の path を読む。
+// まちのレシートの頁（/spending/<自治体コード>?year=）。風土記の本体から、その年度（無ければ最新）の1年度のデータと、本体での頁の path を読む。
 // 収録の無い自治体・頁に無い年度は 404。シェアされたリンクもこの頁で、OG 画像はそのまちのその年度の札とレシート（本体が描く）
 import { defineHandler, defineHead } from 'void'
 import { HTTPException } from 'hono/http-exception'
-import { SITE_ORIGIN, pageTitle, type Snapshot, type TownEntry } from '../lib/fudoki'
-import { DESCRIPTION } from '../lib/copy'
-import { fudokiFetch, loadSnapshot, type Env } from '../server/fudoki'
+import { BASE, SITE_ORIGIN, pageTitle, type Snapshot, type TownEntry } from '../../lib/fudoki'
+import { DESCRIPTION } from '../../lib/copy'
+import { fudokiFetch, loadSnapshot, type Env } from '../../server/fudoki'
 
 export type Props = { d: Snapshot; town: TownEntry }
 
@@ -33,7 +33,7 @@ export const loader = defineHandler<Props>(async (c) => {
 
 export const head = defineHead<Props>((_c, { d, town }) => {
   const title = pageTitle(town.name, d.year)
-  const url = `${SITE_ORIGIN}/${town.code}?year=${d.year}`
+  const url = `${SITE_ORIGIN}${BASE}/${town.code}?year=${d.year}`
   return {
     title,
     meta: [

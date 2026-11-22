@@ -1,4 +1,4 @@
-// まちの札（spending.fudoki.dev）。もとは風土記のホームにあったもの（#1024 で外した）。緑の札で予算と1人あたりの額を順に数え上げ、札の下端の差し出し口から分野ごとの1人あたりのレシートを刷り出す。
+// まちの札（fudoki.dev/spending）。もとは風土記のホームにあったもの（#1024 で外した）。緑の札で予算と1人あたりの額を順に数え上げ、札の下端の差し出し口から分野ごとの1人あたりのレシートを刷り出す。
 // 年度を替えて刷り直すときは、紙を切らずに続けて刷る。前の紙は新しい紙に押し出されて垂れ、下で奥へ折り返してレシートの裏を上へ戻る（キャタピラーのような1本の続いた紙）。
 // 札そのものをレジに見立て、平らな描き方に揃える。押し出された前の紙だけを立体にする（ribbon3d.ts）。
 // 1人あたりは予算を人口で割った額（払った税金の額ではない）。分野の行の和が合計に合うよう、大きい端数から1円ずつ足して丸める
@@ -70,7 +70,7 @@ function Odometer({ to, delay = 0 }: { to: number; delay?: number }) {
 /** 相対の url を、いま開いている origin に付けて外から開ける形にする */
 const absolute = (url: string) => (typeof location === 'undefined' ? url : new URL(url, location.origin).href)
 
-/** シェアで添えるリンク。このまちのこの年度のレシートの頁（spending.fudoki.dev）。OG 画像もそのまちのその年度の札とレシートになる */
+/** シェアで添えるリンク。このまちのこの年度のレシートの頁（fudoki.dev/spending）。OG 画像もそのまちのその年度の札とレシートになる */
 const shareUrl = (path: string, year: number) => `${SITE_ORIGIN}${path}?${new URLSearchParams({ year: String(year) })}`
 /** X に添える文言（2026-11-17 yuito） */
 const SHARE_TEXT = '私のお金はどこへ行った？ | 風土記'
@@ -691,7 +691,7 @@ export function ReceiptMachine({ path, name, kind, v, year, pop, base, head, onP
             </div>
           ) : null}
         </dl>
-        {pop && askTax ? <SalaryInput code={path.slice(1)} name={name} kind={kind} on={!!tax} onTax={setTax} /> : null}
+        {pop && askTax ? <SalaryInput code={path.slice(path.lastIndexOf('/') + 1)} name={name} kind={kind} on={!!tax} onTax={setTax} /> : null}
         {/* 札の下端の差し出し口。紙はここから出る */}
         {receipt ? <div className="rm-slot" aria-hidden="true" /> : null}
       </section>
