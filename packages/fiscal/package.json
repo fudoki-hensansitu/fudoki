@@ -4,6 +4,7 @@
   "type": "module",
   "exports": {
     "./cofog-master": "./cofog-master.ts",
+    "./domains": "./domains.ts",
     "./setsu-master": "./setsu-master.ts"
   },
   "scripts": {

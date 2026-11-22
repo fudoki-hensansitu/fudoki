@@ -1,0 +1,177 @@
+/* ホームのうちのまちの札（レジに見立てる）と、その下端の差し出し口から出てくるレシート。
+ * 紙は札のすぐ下に敷き、差し出し口の線から下だけを見せる（.rc-feed が切り口）。紙は高さを伸ばして末端（合計・QR）から見せ、刷り直すときは切らずに続けて刷り、
+ * 押し出された前の紙は立体（receipt.tsx の Ribbon）で垂らし、下で折り返してレシートの裏を上へ戻し、札の裏へ潜らせる。
+ * 重なりは、前の紙の立体 < 札 < 今のレシート。そのために .rm だけを重なりの区切りにし、間の .rc-feed・.rc-print では区切らない */
+.rm {
+  position: relative;
+  isolation: isolate;
+}
+.rc-feed {
+  position: relative;
+  /* 上端を札の差し出し口の溝の中心に重ねる（.rm-slot の bottom + 高さの半分） */
+  margin-top: -22px;
+  overflow: hidden;
+  padding: 0 0 28px;
+}
+.rc-print {
+  position: relative;
+  margin-inline: auto;
+  width: min(440px, calc(100% - 40px));
+}
+/* 紙の影。紙は下端を mask で切るので、影は紙の入れ物と立体の canvas に drop-shadow で付ける（.rc-print に付けると重なりが区切られ、立体を札の裏へ回せない）。
+ * canvas は z-index: -1 のままなので、filter で重なりが区切られても札の裏にいる */
+.rc-strip,
+.rc-ribbon-dom,
+.rc-ribbon-canvas {
+  filter: drop-shadow(0 1px 1px rgba(43, 39, 35, 0.12)) drop-shadow(0 8px 16px rgba(43, 39, 35, 0.1));
+}
+/* 下に前の紙が続いているときは、今の紙の影を継ぎ目に落とさない（左右だけに付ける。下は前の紙が影を持つ） */
+.rc-strip.rc-joined {
+  filter: none;
+  box-shadow: -10px 0 14px -10px rgba(43, 39, 35, 0.22), 10px 0 14px -10px rgba(43, 39, 35, 0.22);
+}
+.rc-paper {
+  position: relative;
+  background: var(--page);
+  color: var(--page-foreground);
+  /* 紙は明暗で変えないので、中の色も明るいときの値に固定する */
+  --muted-foreground: #6b655c;
+  --border: #ddd6c8;
+  --card: #f8f5ee;
+  --primary: #2f5d43;
+  padding: 40px clamp(14px, 5%, 22px) 34px;
+  /* 下端だけ、ちぎった跡のぎざぎざ */
+  -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 8px) no-repeat, conic-gradient(from -45deg at bottom, transparent 90deg, #000 0) bottom / 14px 8px repeat-x;
+  mask: linear-gradient(#000 0 0) top / 100% calc(100% - 8px) no-repeat, conic-gradient(from -45deg at bottom, transparent 90deg, #000 0) bottom / 14px 8px repeat-x;
+}
+/* 差し出し口の影。紙の頭はここを通るので、紙ではなく差し出し口の下に付ける（続けて刷った紙が下へ送られても、影は口に残る） */
+.rc-print::after {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 40px;
+  pointer-events: none;
+  z-index: 1;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.04) 45%, transparent);
+}
+/* 紙がまだ無いとき（初めての数え上げ）は出さない */
+.rc-print:not(:has(.rc-strip, .rc-ribbon))::after {
+  display: none;
+}
+/* 下に前の紙が続いているときは、今の紙の下端をちぎらない（1本の続いた紙） */
+.rc-joined .rc-paper {
+  -webkit-mask: none;
+  mask: none;
+}
+/* 一枚の紙の入れ物（receipt.tsx の Strip）。高さを 0 から伸ばして刷り出す。紙の末端（合計・QR）から先に出す。伸びている途中は紙の下端を入れ物の下端に揃え、頭（まちの名前）は差し出し口の中に隠れていて最後に出る */
+.rc-strip {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  /* 今のレシートは札の手前に出る。折り返して戻る前の紙（.rc-ribbon）は、その裏を通る */
+  position: relative;
+  z-index: 1;
+}
+/* 押し出された前の紙（receipt.tsx の Ribbon）。立体は紙の左右に余白を持たせて、.rc-print の上端から敷く */
+.rc-ribbon {
+  position: absolute;
+  inset: 0 0 auto;
+}
+.rc-ribbon-canvas {
+  position: absolute;
+  top: 0;
+  /* 立体は札（.rm-card）より奥に置く。戻る紙は札の下端で札の裏へ潜って見えなくなる */
+  z-index: -1;
+}
+/* 立体を描くまで、いちばん新しい前の紙を DOM のまま同じ場所に出す */
+.rc-ribbon-dom {
+  position: absolute;
+  inset: 0 0 auto;
+}
+/* 次の紙を刷り始めるまで、前の紙の頭（差し出し口の線から札の下端まで、.rc-feed の margin-top の分）だけを札の手前に出す。影は札の下で立体が持つ */
+.rc-ribbon-lip {
+  clip-path: inset(0 0 calc(100% - 22px) 0);
+  filter: none;
+}
+/* 紙の境の切れ目（ミシン目）。立体の絵にも同じものを描く（receipt.tsx の perforated） */
+.rc-ribbon-dom::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1.5px;
+  z-index: 1;
+  background: repeating-linear-gradient(90deg, transparent 0 3px, rgba(0, 0, 0, 0.3) 3px 7px);
+}
+/* 数字の札。札そのものをレジに見立て、平らなまま動かさない（数字だけが数え上がる）。下端に差し出し口（.rm-slot）を持つ */
+.rm-card {
+  position: relative;
+  border-radius: 24px;
+  background: var(--brand);
+}
+/* 数え上げの桁（receipt.tsx の Odometer）。見えない数字で幅と行の高さ・ベースラインを取り、その上に 0〜9 の帯を重ねて縦に転がす。
+ * 切り取りは clip-path にする（overflow: hidden だと inline-block のベースラインが下端に移り、円と揃わない） */
+.rm-digit {
+  position: relative;
+  display: inline-block;
+  clip-path: inset(0);
+}
+.rm-reel {
+  position: absolute;
+  inset: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  line-height: 1;
+  animation: rm-roll 1600ms cubic-bezier(0.2, 0.6, 0.2, 1) both;
+}
+@keyframes rm-roll {
+  to { transform: translateY(var(--to)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .rm-reel {
+    animation: none;
+    transform: translateY(var(--to));
+  }
+}
+/* 札の見出し・金額を一つずつ浮かび上がらせる（出す時刻は motion.ts の BEAT を style で渡す）。場所は最初から取っておき、頁を揺らさない */
+.rm-in {
+  animation: rm-in 500ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes rm-in {
+  from { opacity: 0; transform: translateY(12px); }
+}
+/* 札の下端の差し出し口。紙（.rc-print）より少し広い溝で、中心が .rc-feed の上端に来る（下から 22px） */
+.rm-slot {
+  position: absolute;
+  left: 50%;
+  bottom: 16px;
+  height: 12px;
+  width: min(468px, calc(100% - 12px));
+  transform: translateX(-50%);
+  border-radius: 6px;
+  background: linear-gradient(180deg, #050d09 0%, #13261c 100%);
+  box-shadow: inset 0 4px 5px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+.rc-rule {
+  border-top: 1px dashed var(--border);
+}
+.rc-lead {
+  flex: 1;
+  min-width: 12px;
+  border-bottom: 1px dotted var(--border);
+  transform: translateY(-4px);
+}
+.rc-qr {
+  display: block;
+  width: 88px;
+  height: 88px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .rm-in {
+    animation: none;
+  }
+}
+/* 札の中の、予算と1人あたりの区切り */
+.rm-divider {
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+}
