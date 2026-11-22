@@ -14,7 +14,9 @@ export default function TownPage({ d, town }: Props) {
   const v = yearView(d)
   // 風土記の本体での、そのまちのその年度の path（分野の事業へのリンクに使う）
   const base = `${town.path}/${d.year}`
-  const [printed, setPrinted] = React.useState(false)
+  // 刷り終えたまち（別のまちへ移ったら、そのまちを刷り終えるまで他のまちの節を出さない）
+  const [printedCode, setPrintedCode] = React.useState<string | null>(null)
+  const printed = printedCode === town.code
   return (
     <>
       <Intro />
@@ -22,7 +24,7 @@ export default function TownPage({ d, town }: Props) {
       <div className="min-h-[150svh]">
         <ReceiptMachine
           key={town.code}
-          onPrinted={() => setPrinted(true)}
+          onPrinted={() => setPrintedCode(town.code)}
           path={`/${town.code}`}
           name={town.name}
           kind={town.kind}

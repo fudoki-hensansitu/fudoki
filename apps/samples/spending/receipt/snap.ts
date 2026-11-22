@@ -46,12 +46,14 @@ export async function paperCanvas(el: HTMLElement, { scale, shade = true, skip, 
       g.textBaseline = 'middle'
       if ('letterSpacing' in g) (g as CanvasRenderingContext2D & { letterSpacing: string }).letterSpacing = '0px'
       const range = document.createRange()
-      // 1字ずつ置く（折り返し・字間・揃えを画面のまま写す）
-      for (let i = 0; i < text.length; i++) {
-        const ch = text[i]!
+      // 1字ずつ置く（折り返し・字間・揃えを画面のまま写す）。𠮷 のような2単位の字も1字として置く
+      let i = 0
+      for (const ch of text) {
+        const at = i
+        i += ch.length
         if (!ch.trim()) continue
-        range.setStart(node, i)
-        range.setEnd(node, i + 1)
+        range.setStart(node, at)
+        range.setEnd(node, i)
         const r = range.getBoundingClientRect()
         if (!r.width) continue
         g.fillText(ch, r.left - box.left, r.top - box.top + r.height / 2)

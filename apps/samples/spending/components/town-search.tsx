@@ -39,23 +39,34 @@ export function TownSearch({ placeholder, brand = false, className }: { placehol
   /** 今の語（続きが届いたときに語が変わっていたら捨てる） */
   const latest = React.useRef(q)
   latest.current = q
+  /** 読んでいる続きの cursor（「もっと見る」を続けて押しても同じ続きを二度足さない） */
+  const pending = React.useRef<string | null>(null)
   const more = () => {
     const asked = q
-    if (page?.next) void search(asked.trim(), page.next).then((p) => p && latest.current === asked && setPage((x) => (x ? { entries: [...x.entries, ...p.entries], next: p.next } : p)))
+    const next = page?.next
+    if (!next || pending.current === next) return
+    pending.current = next
+    void search(asked.trim(), next)
+      .then((p) => p && latest.current === asked && setPage((x) => (x ? { entries: [...x.entries, ...p.entries], next: p.next } : p)))
+      .finally(() => pending.current === next && (pending.current = null))
   }
+  const root = React.useRef<HTMLDivElement>(null)
   const entries = page?.entries ?? []
   const pick = (e: TownEntry) => {
     setOpen(false)
     visit(`/${e.code}`)
   }
   const onKey = (e: React.KeyboardEvent) => {
+    // 日本語の変換を確定する Enter で、候補を選ばない
+    if (e.nativeEvent.isComposing || e.keyCode === 229) return
     if (e.key === 'ArrowDown') (e.preventDefault(), setOpen(true), setActive((i) => Math.min(i + 1, entries.length - 1)))
     else if (e.key === 'ArrowUp') (e.preventDefault(), setActive((i) => Math.max(i - 1, 0)))
     else if (e.key === 'Enter' && entries[active]) (e.preventDefault(), pick(entries[active]))
     else if (e.key === 'Escape') setOpen(false)
   }
   return (
-    <div className={cn('relative', className)}>
+    // focus が欄の外へ出たときだけ閉じる（欄の中の「もっと見る」などへ移るときは閉じない）
+    <div ref={root} onBlur={(e) => !root.current?.contains(e.relatedTarget as Node | null) && setTimeout(() => setOpen(false), 150)} className={cn('relative', className)}>
       <label className={cn('flex h-12 items-center gap-2 rounded-full px-4 text-sm', brand ? 'bg-brand-fill text-brand-fill-foreground shadow-[var(--shadow-pill)] dark:shadow-none' : 'border border-border bg-background')}>
         <MagnifyingGlassIcon className={cn('size-5 shrink-0', brand ? 'text-brand-fill-muted' : 'text-muted-foreground')} aria-hidden="true" />
         <input
@@ -68,7 +79,6 @@ export function TownSearch({ placeholder, brand = false, className }: { placehol
           placeholder={placeholder}
           onChange={(e) => (setQ(e.target.value), setOpen(true))}
           onFocus={() => setOpen(true)}
-          onBlur={() => setTimeout(() => setOpen(false), 150)}
           onKeyDown={onKey}
           className={cn('min-w-0 flex-1 bg-transparent text-base outline-none sm:text-sm', brand ? 'placeholder:text-brand-fill-muted' : 'placeholder:text-muted-foreground')}
         />

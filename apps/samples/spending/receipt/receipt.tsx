@@ -195,7 +195,7 @@ function FieldRow({ f, yen, base }: { f: Field; yen: number; /** 風土記での
               <Yen n={m.yen} />
             </li>
           ))}
-          {rest > 0 && top.length > 0 ? (
+          {rest > 0 ? (
             <li className="flex items-baseline gap-2 py-1 text-xs text-muted-foreground">
               <span>ほか</span>
               <span className="rc-lead" />
@@ -353,15 +353,21 @@ function perforated(texture: HTMLCanvasElement, height: number) {
   return c
 }
 
-/** 数字だけを取り出す（全角・カンマ・円を許す） */
-const digits = (text: string) => Number(text.normalize('NFKC').replace(/[^\d]/g, ''))
+/** 金額の文字を数にする（全角・カンマ・空白・円を許す）。それ以外の字（負の符号・小数点など）があれば NaN */
+const yenOf = (text: string) => {
+  const t = text.normalize('NFKC').replace(/[,\s円]/g, '')
+  return /^\d+$/.test(t) ? Number(t) : Number.NaN
+}
 
 /** 小さな数の欄（家族の数・ボーナスの月数） */
 function Count({ label, value, onChange }: { label: string; value: number; onChange: (n: number) => void }) {
   return (
     <label className="flex items-center justify-between gap-3">
       <span>{label}</span>
-      <input type="number" min={0} max={12} inputMode="numeric" value={value} onChange={(e) => onChange(Math.max(0, Math.min(12, digits(e.target.value))))} className="h-9 w-16 rounded-full bg-brand-fill px-3 text-center text-base text-brand-fill-foreground tabular-nums outline-none" />
+      <input type="number" min={0} max={12} inputMode="numeric" value={value} onChange={(e) => {
+          const n = e.target.valueAsNumber
+          if (Number.isInteger(n) && n >= 0 && n <= 12) onChange(n)
+        }} className="h-9 w-16 rounded-full bg-brand-fill px-3 text-center text-base text-brand-fill-foreground tabular-nums outline-none" />
     </label>
   )
 }
@@ -376,7 +382,7 @@ function SalaryInput({ code, name, kind, on, onTax }: { code: string; name: stri
   const set = (patch: Partial<Household>) => setH((x) => ({ ...x, ...patch }))
   const submit = (e: React.FormEvent) => {
     e.preventDefault()
-    const monthly = digits(text)
+    const monthly = yenOf(text)
     if (!(monthly > 0 && monthly < 100_000_000)) return
     const tax = residentTax(monthly, h, code)
     const mine = kind === '都道府県' ? tax.pref : tax.city
@@ -415,7 +421,7 @@ function SalaryInput({ code, name, kind, on, onTax }: { code: string; name: stri
           <Count label="扶養している家族（16歳以上）" value={h.dependents} onChange={(n) => set({ dependents: n })} />
           <Count label="16歳未満の子" value={h.children} onChange={(n) => set({ children: n })} />
           <label className="flex items-center justify-between gap-3">
-            <span>40歳以上</span>
+            <span>40〜64歳</span>
             <input type="checkbox" checked={h.over40} onChange={(e) => set({ over40: e.target.checked })} className="size-5 accent-[var(--brand-fill)]" />
           </label>
           <Count label="ボーナス（年に月給の何か月分）" value={h.bonusMonths} onChange={(n) => set({ bonusMonths: n })} />
