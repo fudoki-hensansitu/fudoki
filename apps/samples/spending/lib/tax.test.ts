@@ -17,6 +17,13 @@ describe('residentTax', () => {
     expect(family.city).toBeLessThan(one.city)
   })
 
+  test('指定都市は所得割を市 8%・道府県 2% で分け、合計は変わらない', () => {
+    const tokyo = residentTax(300_000)
+    const yokohama = residentTax(300_000, STANDARD, '141003')
+    expect(yokohama.city).toBeGreaterThan(tokyo.city)
+    expect(Math.abs(yokohama.city + yokohama.pref - (tokyo.city + tokyo.pref))).toBeLessThanOrEqual(100)
+  })
+
   test('ボーナスは年収に入る', () => {
     expect(residentTax(300_000, { ...STANDARD, bonusMonths: 4 }).salary).toBe(4_800_000)
   })

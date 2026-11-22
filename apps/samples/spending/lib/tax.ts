@@ -60,14 +60,18 @@ const FLAT_PREF = 1_000
 export type ResidentTax = {
   /** 1年の給与（額面） */
   salary: number
-  /** 区市町村に払う分（所得割 6% と均等割） */
+  /** 区市町村に払う分（所得割 6%（指定都市は 8%）と均等割） */
   city: number
-  /** 都道府県に払う分（所得割 4% と均等割） */
+  /** 都道府県に払う分（所得割 4%（指定都市の住民は 2%）と均等割） */
   pref: number
 }
 
-/** 月給（額面）から1年の住民税を見積もる。非課税の線と調整控除は1級地（東京23区など）のもの */
-export function residentTax(monthly: number, h: Household = STANDARD): ResidentTax {
+/** 指定都市（20市）の自治体コード。住民の所得割は市 8%・道府県 2%（2018年度から。道府県から市へ税源を移した） */
+const DESIGNATED = new Set(['011002', '041009', '111007', '121002', '141003', '141305', '141500', '151009', '221007', '221309', '231002', '261009', '271004', '271403', '281000', '331007', '341002', '401005', '401307', '431001'])
+
+/** 月給（額面）から1年の住民税を見積もる。code は住んでいる区市町村のコードで、指定都市なら所得割を市 8%・道府県 2% で分ける。
+ * 非課税の線と調整控除は1級地（東京23区など）のもの */
+export function residentTax(monthly: number, h: Household = STANDARD, code = ''): ResidentTax {
   const salary = Math.round(monthly * (12 + h.bonusMonths))
   const income = Math.max(0, salary - employmentDeduction(salary))
   const people = 1 + (h.spouse ? 1 : 0) + h.dependents + h.children
@@ -80,7 +84,8 @@ export function residentTax(monthly: number, h: Household = STANDARD): ResidentT
   const taxable = Math.floor(Math.max(0, income - deductions) / 1000) * 1000
   const gap = GAP * (1 + (h.spouse ? 1 : 0) + h.dependents)
   const adjust = taxable <= 2_000_000 ? Math.min(gap, taxable) * 0.05 : Math.max((gap - (taxable - 2_000_000)) * 0.05, 2_500)
-  // 所得割は 100 円未満を切り捨てる。調整控除は 6:4 で分ける
-  const part = (rate: number, share: number) => Math.max(0, Math.floor((taxable * rate - adjust * share) / 100) * 100)
-  return { salary, city: part(0.06, 0.6) + flat.city, pref: part(0.04, 0.4) + flat.pref }
+  // 所得割は 100 円未満を切り捨てる。調整控除は税率と同じ割合（6:4、指定都市は 8:2）で分ける
+  const cityRate = DESIGNATED.has(code) ? 0.08 : 0.06
+  const part = (rate: number) => Math.max(0, Math.floor((taxable * rate - adjust * rate * 10) / 100) * 100)
+  return { salary, city: part(cityRate) + flat.city, pref: part(0.1 - cityRate) + flat.pref }
 }

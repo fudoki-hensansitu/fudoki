@@ -368,7 +368,7 @@ function Count({ label, value, onChange }: { label: string; value: number; onCha
 
 /** 月給（額面）を入れる欄。住民税の通知額は覚えていないので、月給から見積もる（lib/tax.ts）。家族・年齢・ボーナスは標準を既定にし、変えたい人だけ開く。
  * 入れた額はこの画面の中だけで使い、保存も送信もしない（URL・シェア・QR にも載せない） */
-function SalaryInput({ name, kind, on, onTax }: { name: string; kind: string; on: boolean; onTax: (tax: ResidentTax | null) => void }) {
+function SalaryInput({ code, name, kind, on, onTax }: { code: string; name: string; kind: string; on: boolean; onTax: (tax: ResidentTax | null) => void }) {
   const [text, setText] = React.useState('')
   const [h, setH] = React.useState<Household>(STANDARD)
   const [none, setNone] = React.useState(false)
@@ -378,7 +378,7 @@ function SalaryInput({ name, kind, on, onTax }: { name: string; kind: string; on
     e.preventDefault()
     const monthly = digits(text)
     if (!(monthly > 0 && monthly < 100_000_000)) return
-    const tax = residentTax(monthly, h)
+    const tax = residentTax(monthly, h, code)
     const mine = kind === '都道府県' ? tax.pref : tax.city
     setNone(mine === 0)
     onTax(mine > 0 ? tax : null)
@@ -685,7 +685,7 @@ export function ReceiptMachine({ path, name, kind, v, year, pop, base, head, onP
             </div>
           ) : null}
         </dl>
-        {pop && askTax ? <SalaryInput name={name} kind={kind} on={!!tax} onTax={setTax} /> : null}
+        {pop && askTax ? <SalaryInput code={path.slice(1)} name={name} kind={kind} on={!!tax} onTax={setTax} /> : null}
         {/* 札の下端の差し出し口。紙はここから出る */}
         {receipt ? <div className="rm-slot" aria-hidden="true" /> : null}
       </section>
