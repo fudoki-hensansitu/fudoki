@@ -2,6 +2,7 @@
 import { Link } from '@void/react'
 import { Mark } from './mark'
 import { Title } from './title'
+import { BASE } from '../lib/fudoki'
 
 export const TITLE = '私のお金はどこへ行った？'
 
@@ -12,7 +13,7 @@ export function Intro({ home = false }: { home?: boolean }) {
       <Title size="h1" as={home ? 'h1' : 'p'}>{TITLE}</Title>
     </div>
   )
-  return <header className="ob-rise mb-7 sm:mb-8">{home ? body : <Link href="/" className="no-underline">{body}</Link>}</header>
+  return <header className="ob-rise mb-7 sm:mb-8">{home ? body : <Link href={BASE} className="no-underline">{body}</Link>}</header>
 }
 
 /** 頁の下。このサイトが風土記のデータで作られていることと、本体への入口 */

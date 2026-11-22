@@ -21,6 +21,8 @@ const shared = {
     { binding: 'WEB', service: 'fudoki-api', entrypoint: 'Web' },
     // 出典の頁の文字を読む内部の RPC（apps/api の SourcePages）。頁の文字は apps/api が D1 から読む
     { binding: 'SOURCES', service: 'fudoki-api', entrypoint: 'SourcePages' },
+    // 小さなサブサイト（apps/samples/<名前>）の Worker。fudoki.dev/<名前> の下を渡す（middleware/00.samples.ts）。サブサイトは自分の入口を持たない
+    { binding: 'SPENDING', service: 'fudoki-spending' },
   ],
   // 値は server/limits.ts の CHAT_RATE_LIMIT・VIEW_RATE_LIMIT と同じ（試験が照合する）。namespace は apps/api の 1001 と別にする
   ratelimits: [

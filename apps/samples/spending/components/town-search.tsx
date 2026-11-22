@@ -4,7 +4,7 @@ import * as React from 'react'
 import { MagnifyingGlassIcon } from '@phosphor-icons/react'
 import { useRouter } from '@void/react'
 import { cn } from '../lib/cn'
-import type { TownEntry } from '../lib/fudoki'
+import { BASE, type TownEntry } from '../lib/fudoki'
 import { Emblem } from './parts'
 
 type Page = { entries: TownEntry[]; next: string | null }
@@ -54,7 +54,7 @@ export function TownSearch({ placeholder, brand = false, className }: { placehol
   const entries = page?.entries ?? []
   const pick = (e: TownEntry) => {
     setOpen(false)
-    visit(`/${e.code}`)
+    visit(`${BASE}/${e.code}`)
   }
   const onKey = (e: React.KeyboardEvent) => {
     // 日本語の変換を確定する Enter で、候補を選ばない

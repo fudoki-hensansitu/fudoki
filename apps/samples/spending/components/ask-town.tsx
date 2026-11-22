@@ -4,7 +4,7 @@ import * as React from 'react'
 import { NavigationArrowIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react'
 import { useRouter } from '@void/react'
 import { cn } from '../lib/cn'
-import { withCheckDigit, type TownEntry } from '../lib/fudoki'
+import { BASE, withCheckDigit, type TownEntry } from '../lib/fudoki'
 import { LocateError, locateMunicipality } from '../lib/locate'
 import { Title } from './title'
 import { TownSearch } from './town-search'
@@ -50,7 +50,7 @@ export function AskTown() {
       </div>
       {loc ? (
         <div className={cn('ob-swap mt-3', !loc.error && 'text-brand-fill-foreground')}>
-          <LocateResult loc={loc} onPick={(e) => visit(`/${e.code}`)} onRetry={() => void locate()} onClose={() => setLoc(null)} />
+          <LocateResult loc={loc} onPick={(e) => visit(`${BASE}/${e.code}`)} onRetry={() => void locate()} onClose={() => setLoc(null)} />
         </div>
       ) : (
         <p className="mt-3 text-xs opacity-75">{LOCATION_NOTE}</p>

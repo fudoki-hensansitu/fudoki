@@ -1,5 +1,5 @@
 name: deploy-spending
-# main に入った spending（spending.fudoki.dev、apps/samples/spending）の変更をデプロイする。
+# main に入った spending（fudoki.dev/spending、apps/samples/spending）の変更をデプロイする。
 # データは本体の Worker（fudoki）を Service Binding で読むだけなので、web の deploy を待たない
 on:
   push:
