@@ -181,10 +181,19 @@ def covered_by_notes(page, items: list[Word]) -> list[Word]:
         dropped.update(index for index in inside if index not in own)
         if own and not covered:
             point = centre(items[own[0]])
-            if any(within(point, (w.x0, w.y0, w.x1, w.y1)) for index, w in enumerate(items) if index not in own):
+            partial = [index for index, w in enumerate(items) if index not in own and within(point, (w.x0, w.y0, w.x1, w.y1))]
+            if not partial:
+                dropped.update(own)  # a note over nothing printed corrects nothing (a stray `8` in a heading, 栃木県 2024)
+                continue
+            # A note over the code of a code Poppler joined to its name (`1` over the `3` of `3環境性能割`, 栃木県の
+            # 予算書 2024 の歳入): the code's characters are dropped and the name keeps the rest of the word.
+            split = _code_under_note(page, items[partial[0]], box, left, top) if len(partial) == 1 else None
+            if split is None:
                 raise ValueError(f'a note `{box[4]}` covers only part of a printed word and cannot be read in its place')
-            dropped.update(own)  # a note over nothing printed corrects nothing (a stray `8` in a heading, 栃木県 2024)
-        elif own:
+            hidden, rest = split
+            placed[partial[0]] = rest
+            covered = [hidden]
+        if own:
             # The note reads in place of what it covers, set to the right end of the printed words as a code or an
             # amount is: where the note's own text box happens to sit says nothing about the column.
             shift = max(w.x1 for w in covered) - max(items[index].x1 for index in own)
@@ -211,6 +220,24 @@ def _note_over_print(printed: list[Word], pasted: list[Word], indices: list[int]
     dy = min(word.y0 for word in printed) - min(word.y0 for word in pasted)
     return {index: Word(word.text, word.x0 + dx, word.y0 + dy, word.x1 + dx, word.y1 + dy)
             for index, word in zip(indices, pasted)}
+
+
+def _code_under_note(page, word: Word, box: tuple, left: float, top: float) -> tuple[Word, Word] | None:
+    """The leading digits of a word that a note covers, and the rest of the word, when the note covers exactly the
+    code joined to a name (`3` of `3環境性能割`). None when the covered characters are not the word's leading digits."""
+    inside = sorted((char for char in getattr(page, 'chars', ())
+                     if word.x0 - .5 <= (char['x0'] + char['x1']) / 2 - left <= word.x1 + .5
+                     and word.y0 - .5 <= (char['top'] + char['bottom']) / 2 - top <= word.y1 + .5
+                     and not char['text'].isspace()), key=lambda char: char['x0'])
+    if ''.join(char['text'] for char in inside) != word.text:
+        return None
+    under = [box[0] <= (char['x0'] + char['x1']) / 2 - left <= box[2] for char in inside]
+    count = under.index(False) if False in under else len(under)
+    if not count or count == len(inside) or any(under[count:]) or not word.text[:count].isdigit():
+        return None
+    hidden = Word(word.text[:count], inside[0]['x0'] - left, word.y0, inside[count - 1]['x1'] - left, word.y1)
+    rest = Word(word.text[count:], inside[count]['x0'] - left, word.y0, word.x1, word.y1)
+    return hidden, rest
 
 
 def _page_chars_in(page, word: Word, left: float, top: float) -> bool:

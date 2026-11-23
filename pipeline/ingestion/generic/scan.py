@@ -1325,7 +1325,20 @@ def read_pages(source: dict, options: dict, settings: dict | None, selected: lis
     printed = add_name_readings(printed, options.get('name_readings'))
     if (marks := document_quirk('bracket_marks')) is not None:
         printed = marks.module.drop(printed)
-    return read_units(printed, options.get('unit_readings')), observation, variants
+    return read_units(printed, options.get('unit_readings')), read_ink(observation, options.get('amount_readings')), variants
+
+
+def read_ink(observation: dict, readings: list[dict] | None) -> dict:
+    """The unread ink a declared amount reading covers is read (`amount_readings`: the `△` OCR left unread before a
+    figure it read, declared with the figure over both, 栃木県の当初予算書 R8 p9)."""
+    boxes = [(r['page'], box) for r in readings or () for box in r['boxes']]
+    if not boxes:
+        return observation
+    inside = lambda number, ink: any(page == number and box[0] <= (ink[0] + ink[2]) / 2 <= box[2]
+                                     and box[1] <= (ink[1] + ink[3]) / 2 <= box[3] for page, box in boxes)
+    pages_ = [{**page_, 'unread_ink': [ink for ink in page_['unread_ink'] if not inside(page_['page_number'], ink)]}
+              if page_.get('unread_ink') else page_ for page_ in observation.get('pages', [])]
+    return {**observation, 'pages': pages_}
 
 
 def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict | None = None):

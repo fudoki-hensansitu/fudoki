@@ -1,0 +1,626 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "090000",
+    "fiscal_year": 2022,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4b8f14f6c137beafbd46ec83c5f156e25da9673b6dae250e2fee030649a575be"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入の内訳の注記（充当先・調定の内訳など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "amount_ends_name": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "public-debt-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "04b553a4a2bfb83eeeb7eb87599d7abe4fbe9a5c346e2d1904f6cac80c2c075e"
+        }
+      ],
+      "options": {
+        "account": "公債管理特別会計",
+        "table_id": "public-debt-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "text_layer": {
+                "character_map": {
+                  "�": ""
+                }
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入の内訳の注記（充当先・調定の内訳など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "amount_ends_name": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "public-debt-revenue"
+        }
+      ]
+    },
+    {
+      "id": "hospital-loan-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "fd4fab36be69909efd66ab20b6f707d03142f945b99ea3a89a56b746f6d43a57"
+        }
+      ],
+      "options": {
+        "account": "地方独立行政法人県立病院貸付金特別会計",
+        "table_id": "hospital-loan-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "text_layer": {
+                "character_map": {
+                  "�": ""
+                }
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入の内訳の注記（充当先・調定の内訳など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "amount_ends_name": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "hospital-loan-revenue"
+        }
+      ]
+    },
+    {
+      "id": "single-parent-loan-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "74da262ab109226d62fc1bc1396e9a2ee72b065df95d68668de122ea2153bdcf"
+        }
+      ],
+      "options": {
+        "account": "母子父子寡婦福祉資金貸付事業特別会計",
+        "table_id": "single-parent-loan-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "text_layer": {
+                "character_map": {
+                  "�": ""
+                }
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入の内訳の注記（充当先・調定の内訳など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "amount_ends_name": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "single-parent-loan-revenue"
+        }
+      ]
+    },
+    {
+      "id": "disability-mutual-aid-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "778df1d6a7dc5f1dbfb06093d59eda7ada4484766253d346197f20723e49b6e6"
+        }
+      ],
+      "options": {
+        "account": "心身障害者扶養共済事業特別会計",
+        "table_id": "disability-mutual-aid-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "text_layer": {
+                "character_map": {
+                  "�": ""
+                }
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入の内訳の注記（充当先・調定の内訳など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "amount_ends_name": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "disability-mutual-aid-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b7447927445341648a19bf498487ab00e709c668f846f8b5bf408514003d49a7"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "text_layer": {
+                "character_map": {
+                  "�": ""
+                }
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入の内訳の注記（充当先・調定の内訳など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "amount_ends_name": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "sme-advancement-loan-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3ed7c07bc999233ef3c24ad67372c646538aaff932a30c0b62c0772a17908e5d"
+        }
+      ],
+      "options": {
+        "account": "中小企業高度化等資金貸付事業特別会計",
+        "table_id": "sme-advancement-loan-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "text_layer": {
+                "character_map": {
+                  "�": ""
+                }
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入の内訳の注記（充当先・調定の内訳など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "amount_ends_name": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "sme-advancement-loan-revenue"
+        }
+      ]
+    },
+    {
+      "id": "farming-support-loan-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d55de45990ede5d3fa8a4e3f48625da9758b1ae59a79eb41df4d653790b384b0"
+        }
+      ],
+      "options": {
+        "account": "就農支援資金貸付事業特別会計",
+        "table_id": "farming-support-loan-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "text_layer": {
+                "character_map": {
+                  "�": ""
+                }
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入の内訳の注記（充当先・調定の内訳など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "amount_ends_name": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "farming-support-loan-revenue"
+        }
+      ]
+    },
+    {
+      "id": "prefectural-forest-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ec6e1935b518b8022f7952468366b5da0c1a3a4ec559f65b2e6adc36d2fd9f9"
+        }
+      ],
+      "options": {
+        "account": "県営林事業特別会計",
+        "table_id": "prefectural-forest-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "text_layer": {
+                "character_map": {
+                  "�": ""
+                }
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入の内訳の注記（充当先・調定の内訳など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "amount_ends_name": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "prefectural-forest-revenue"
+        }
+      ]
+    },
+    {
+      "id": "forestry-improvement-loan-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "df2e389bbe1de46e1323c9109ff651b896e41deec9f97619a22fbc8fdb0f4c16"
+        }
+      ],
+      "options": {
+        "account": "林業・木材産業改善資金貸付事業特別会計",
+        "table_id": "forestry-improvement-loan-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "text_layer": {
+                "character_map": {
+                  "�": ""
+                }
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入の内訳の注記（充当先・調定の内訳など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "amount_ends_name": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "forestry-improvement-loan-revenue"
+        }
+      ]
+    }
+  ]
+}

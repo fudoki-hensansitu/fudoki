@@ -396,7 +396,8 @@ def _header_bottom(page: Page, frame, one_row: bool = False, title: bool = False
     first = min(digits) if digits else bottom
     candidates = [y for y in full if top + 1 < y <= first + 1]
     if one_row:
-        candidates = candidates[:1]
+        # The header row starts under the title box (栃木県の決算書の歳入: the first page's frame opens with `歳入`).
+        candidates = [y for y in candidates if above < y][:1]
     # A row that prints only the unit (`千円` over each column) opens the body on the pages whose header rule is read
     # whole; a page that draws a full rule under it too (国分寺市) keeps it in the body as well: the header ends at the
     # rule across most of the frame above that row. The body under the unit row may print text and no figures before

@@ -98,6 +98,7 @@
     "amount_on_next_page": "ingestion.generic.patterns.quirks.amount_on_next_page",
     "amount_over_page": "ingestion.generic.patterns.quirks.amount_over_page",
     "amounts_beside_names": "ingestion.generic.patterns.quirks.amounts_beside_names",
+    "amount_ends_name": "ingestion.generic.patterns.quirks.amount_ends_name",
     "bracket_line_closes_name": "ingestion.generic.patterns.quirks.bracket_line_closes_name",
     "bracket_marks": "ingestion.generic.patterns.quirks.bracket_marks",
     "bracketed_counts": "ingestion.generic.patterns.quirks.bracketed_counts",
