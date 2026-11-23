@@ -1,0 +1,66 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132098",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b7493f1236a42feee3ea180d9af5411bcdcbbd28b7de48bf593bed2207d5ecb4"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "2024年度／予算額": {
+                  "heading": "本年度予算額"
+                },
+                "2024年度／構成比": {
+                  "kind": "ignore"
+                },
+                "2023年度／予算額": {
+                  "heading": "前年度予算額"
+                },
+                "2023年度／構成比": {
+                  "kind": "ignore"
+                },
+                "比較／増減額": {
+                  "heading": "比較"
+                },
+                "比較／増減率": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    }
+  ]
+}
