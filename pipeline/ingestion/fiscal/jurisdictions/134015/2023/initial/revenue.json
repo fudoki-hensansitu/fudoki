@@ -127,6 +127,115 @@
           "table_id": "long-term-care-revenue"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "3a60109d77822c63d8f87d5f7bce044eb3398ef4e0b38051ef7f1825569a72b2"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-revenue",
+        "pages": [
+          [
+            10,
+            16
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "skewed": true
+              },
+              "header": {
+                "staircase": true,
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "unnumbered_abolished_names": true,
+            "rule_ink": true,
+            "skewed_cell_rows": true,
+            "shifted_pages": true,
+            "skewed_frames": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p10-taino-kanji",
+            "page": 10,
+            "observation_id": "p10:full-page:a0:result0:r48",
+            "observed_name": "滯",
+            "corrected_name": "滞",
+            "reason": "原典の画像では節「4 医療給付費分滞納繰越分」の「滞」は常用の字形で印字されている。Paddle は旧字体の「滯」と読んだ。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-revenue-ocr-1",
+          "origin_sha256": "3a60109d77822c63d8f87d5f7bce044eb3398ef4e0b38051ef7f1825569a72b2",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16
+            ]
+          },
+          "sha256": "aaae56410a2cd05b3759137f79bec03fa4059d07cf66e29894b45b6ed46f6626",
+          "bytes": 1135844
+        }
+      ]
     }
   ]
 }
