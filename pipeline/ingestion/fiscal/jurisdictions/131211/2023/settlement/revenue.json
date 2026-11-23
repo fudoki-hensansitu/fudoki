@@ -1,0 +1,1182 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131211",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true
+              },
+              "header": {
+                "staircase": "款項目節"
+              },
+              "columns": {
+                "決算額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "explained_projects": {
+              "budget": "予算現額",
+              "settled": "決算",
+              "items_axis": "決算説明",
+              "title": "予算説明",
+              "rows_axis": "節",
+              "items": "excluded",
+              "remainder": "surplus"
+            }
+          }
+        },
+        "pages": [
+          [
+            14,
+            191
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "p100-r43",
+            "page": 100,
+            "observation_id": "p100:full-page:a0:result0:r43",
+            "observed_name": "ソーシヤル",
+            "corrected_name": "ソーシャル",
+            "reason": "物理100頁の節「14 スクールソーシャルワーカー活用事業補助金」。原画は小書きの「ャ」で、OCR が並字の「ヤ」と読み、同じ節の担当部課の行の名前と食い違い、担当部課の行を合計の行の子として読めなかった。"
+          },
+          {
+            "id": "p104-r61",
+            "page": 104,
+            "observation_id": "p104:full-page:a0:result0:r61",
+            "observed_name": "世带",
+            "corrected_name": "世帯",
+            "reason": "物理104頁の節「29 保育所等利用多子世帯負担軽減事業補助金」。OCR が「帯」を簡体字の「带」と読み、同じ節の担当部課の行の名前と食い違い、担当部課の行を合計の行の子として読めなかった。"
+          },
+          {
+            "id": "p134-r50",
+            "page": 134,
+            "observation_id": "p134:full-page:a0:result0:r50",
+            "observed_name": "サホート",
+            "corrected_name": "サポート",
+            "reason": "物理134頁の節「11 スクール・サポート・スタッフ配置支援事業補助金」。原画は「ポ」で、OCR が「ホ」と読み、同じ節の担当部課の行の名前と食い違い、担当部課の行を合計の行の子として読めなかった。"
+          },
+          {
+            "id": "p134-r53",
+            "page": 134,
+            "observation_id": "p134:full-page:a0:result0:r53",
+            "observed_name": "サート",
+            "corrected_name": "サポート",
+            "reason": "物理134頁の節「11 スクール・サポート・スタッフ配置支援事業補助金」の担当部課の行。OCR が「ポ」を読み落とした。"
+          },
+          {
+            "id": "p186-r75",
+            "page": 186,
+            "observation_id": "p186:full-page:a0:result0:r75",
+            "observed_name": "ケ了",
+            "corrected_name": "ケア",
+            "reason": "物理186頁の節「33 産後ケア事業利用者負担金」。原画は片仮名の「ア」で、OCR が「了」と読み、同じ節の担当部課の行の名前と食い違い、担当部課の行を合計の行の子として読めなかった。"
+          },
+          {
+            "id": "auto-p108-r14",
+            "page": 108,
+            "observation_id": "p108:full-page:a0:result0:r14",
+            "observed_name": "ンタ一地域",
+            "corrected_name": "ンター地域",
+            "reason": "物理108頁の「38児童発達支援センター地域支援体制確保事業補」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p108-r18",
+            "page": 108,
+            "observation_id": "p108:full-page:a0:result0:r18",
+            "observed_name": "ンタ一地域",
+            "corrected_name": "ンター地域",
+            "reason": "物理108頁の「38児童発達支援センター地域支援体制確保事業補」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p108-r69",
+            "page": 108,
+            "observation_id": "p108:full-page:a0:result0:r69",
+            "observed_name": "ンタ一機能",
+            "corrected_name": "ンター機能",
+            "reason": "物理108頁の「43教育支援センター機能強化補助事業補助金」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p108-r72",
+            "page": 108,
+            "observation_id": "p108:full-page:a0:result0:r72",
+            "observed_name": "ンタ一機能",
+            "corrected_name": "ンター機能",
+            "reason": "物理108頁の「43教育支援センター機能強化補助事業補助金」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p116-r18",
+            "page": 116,
+            "observation_id": "p116:full-page:a0:result0:r18",
+            "observed_name": "ンタ一等設",
+            "corrected_name": "ンター等設",
+            "reason": "物理116頁の「66ひきこもり地域支援センター等設置運営事業補」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p118-r61",
+            "page": 118,
+            "observation_id": "p118:full-page:a0:result0:r61",
+            "observed_name": "ェク卜補助",
+            "corrected_name": "ェクト補助",
+            "reason": "物理118頁の「9都市農地保全支援プロジェクト補助金【投資】」。OCR が片仮名「ト」を「卜」と読んだ。"
+          },
+          {
+            "id": "auto-p148-r86",
+            "page": 148,
+            "observation_id": "p148:full-page:a0:result0:r86",
+            "observed_name": "物品壳払収",
+            "corrected_name": "物品売払収",
+            "reason": "物理148頁の「1 一般物品売払収入」。OCR が「売」を簡体字の形「壳」と読んだ。"
+          },
+          {
+            "id": "auto-p150-r3",
+            "page": 150,
+            "observation_id": "p150:full-page:a0:result0:r3",
+            "observed_name": "物品壳払収",
+            "corrected_name": "物品売払収",
+            "reason": "物理150頁の「1 一般物品売払収入」。OCR が「売」を簡体字の形「壳」と読んだ。"
+          },
+          {
+            "id": "auto-p150-r63",
+            "page": 150,
+            "observation_id": "p150:full-page:a0:result0:r63",
+            "observed_name": "土地壳払収",
+            "corrected_name": "土地売払収",
+            "reason": "物理150頁の「1 土地売払収入」。OCR が「売」を簡体字の形「壳」と読んだ。"
+          },
+          {
+            "id": "auto-p150-r66",
+            "page": 150,
+            "observation_id": "p150:full-page:a0:result0:r66",
+            "observed_name": "土地壳払収",
+            "corrected_name": "土地売払収",
+            "reason": "物理150頁の「1 土地売払収入」。OCR が「売」を簡体字の形「壳」と読んだ。"
+          },
+          {
+            "id": "auto-p150-r90",
+            "page": 150,
+            "observation_id": "p150:full-page:a0:result0:r90",
+            "observed_name": "トナ一事業",
+            "corrected_name": "トナー事業",
+            "reason": "物理150頁の「2協働・協創パートナー事業寄付金」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p150-r93",
+            "page": 150,
+            "observation_id": "p150:full-page:a0:result0:r93",
+            "observed_name": "トナ一事業",
+            "corrected_name": "トナー事業",
+            "reason": "物理150頁の「2協働・協創パートナー事業寄付金」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p154-r102",
+            "page": 154,
+            "observation_id": "p154:full-page:a0:result0:r102",
+            "observed_name": "創パ一トナ一基金",
+            "corrected_name": "創パートナー基金",
+            "reason": "物理154頁の「4協働·協創パートナー基金繰入金」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p156-r13",
+            "page": 156,
+            "observation_id": "p156:full-page:a0:result0:r13",
+            "observed_name": "トナ一基金",
+            "corrected_name": "トナー基金",
+            "reason": "物理156頁の「4協働・協創パートナー基金繰入金」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p162-r91",
+            "page": 162,
+            "observation_id": "p162:full-page:a0:result0:r91",
+            "observed_name": "人ホ一ム整",
+            "corrected_name": "人ホーム整",
+            "reason": "物理162頁の「10特別養護老人ホーム整備費貸付金元金」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p162-r94",
+            "page": 162,
+            "observation_id": "p162:full-page:a0:result0:r94",
+            "observed_name": "人ホ一ム整",
+            "corrected_name": "人ホーム整",
+            "reason": "物理162頁の「10特別養護老人ホーム整備費貸付金元金」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p162-r100",
+            "page": 162,
+            "observation_id": "p162:full-page:a0:result0:r100",
+            "observed_name": "人ホ一ム整",
+            "corrected_name": "人ホーム整",
+            "reason": "物理162頁の「11 特別養護老人ホーム整備費貸付金利子」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p162-r103",
+            "page": 162,
+            "observation_id": "p162:full-page:a0:result0:r103",
+            "observed_name": "人ホ一ム整",
+            "corrected_name": "人ホーム整",
+            "reason": "物理162頁の「11特別養護老人ホーム整備費貸付金利子」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p176-r62",
+            "page": 176,
+            "observation_id": "p176:full-page:a0:result0:r62",
+            "observed_name": "用者力一ド再",
+            "corrected_name": "用者カード再",
+            "reason": "物理176頁の「16自転車駐車場利用者カード再発行手数料」。OCR が片仮名「カ」を漢字の「力」と読んだ、長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p176-r65",
+            "page": 176,
+            "observation_id": "p176:full-page:a0:result0:r65",
+            "observed_name": "用者力一ド再",
+            "corrected_name": "用者カード再",
+            "reason": "物理176頁の「16自転車駐車場利用者カード再発行手数料」。OCR が片仮名「カ」を漢字の「力」と読んだ、長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p178-r91",
+            "page": 178,
+            "observation_id": "p178:full-page:a0:result0:r91",
+            "observed_name": "ンタ一運営",
+            "corrected_name": "ンター運営",
+            "reason": "物理178頁の「26防災センター運営分担金」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p178-r94",
+            "page": 178,
+            "observation_id": "p178:full-page:a0:result0:r94",
+            "observed_name": "ンタ一運営",
+            "corrected_name": "ンター運営",
+            "reason": "物理178頁の「26防災センター運営分担金」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p30-r84",
+            "page": 30,
+            "observation_id": "p30:full-page:a0:result0:r84",
+            "observed_name": "興ホ一ル",
+            "corrected_name": "興ホール",
+            "reason": "物理30頁の「4産業振興ホール」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p50-r33",
+            "page": 50,
+            "observation_id": "p50:full-page:a0:result0:r33",
+            "observed_name": "9省工ネ建",
+            "corrected_name": "9省エネ建",
+            "reason": "物理50頁の「19省エネ建築物認定」。OCR が片仮名「エ」を漢字の「工」と読んだ。"
+          },
+          {
+            "id": "auto-p50-r36",
+            "page": 50,
+            "observation_id": "p50:full-page:a0:result0:r36",
+            "observed_name": "9省工ネ建",
+            "corrected_name": "9省エネ建",
+            "reason": "物理50頁の「19省エネ建築物認定」。OCR が片仮名「エ」を漢字の「工」と読んだ。"
+          },
+          {
+            "id": "auto-p78-r69",
+            "page": 78,
+            "observation_id": "p78:full-page:a0:result0:r69",
+            "observed_name": "番号力一ド交",
+            "corrected_name": "番号カード交",
+            "reason": "物理78頁の「2個人番号カード交付事務費補助金」。OCR が片仮名「カ」を漢字の「力」と読んだ、長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p78-r72",
+            "page": 78,
+            "observation_id": "p78:full-page:a0:result0:r72",
+            "observed_name": "番号力一ド交",
+            "corrected_name": "番号カード交",
+            "reason": "物理78頁の「2個人番号カード交付事務費補助金」。OCR が片仮名「カ」を漢字の「力」と読んだ、長音「ー」を漢数字の「一」と読んだ。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "p68-r28",
+            "page": 68,
+            "observation_id": "p68:full-page:a0:result0:r28",
+            "observed": "1",
+            "reason": "物理68頁の節「26 生活困窮者就労準備支援事業費等補助金【投資】」は名前の閉じ括弧「】」だけを2行目に折り返して刷る（合計の行と担当部課の行の2か所）。OCR はこれを「1」と読み、番号だけの名前の無い行にした。この読みは使わず、同じ位置の名前を「】」として読む。"
+          },
+          {
+            "id": "p68-r33",
+            "page": 68,
+            "observation_id": "p68:full-page:a0:result0:r33",
+            "observed": "1",
+            "reason": "物理68頁の節「26 生活困窮者就労準備支援事業費等補助金【投資】」は名前の閉じ括弧「】」だけを2行目に折り返して刷る（合計の行と担当部課の行の2か所）。OCR はこれを「1」と読み、番号だけの名前の無い行にした。この読みは使わず、同じ位置の名前を「】」として読む。"
+          }
+        ],
+        "name_readings": [
+          {
+            "id": "p68-r28-bracket",
+            "page": 68,
+            "box": [
+              81.8,
+              241.2,
+              89.5,
+              252.7
+            ],
+            "name": "】",
+            "reason": "物理68頁の節「26 生活困窮者就労準備支援事業費等補助金【投資】」は名前の閉じ括弧「】」だけを2行目に折り返して刷る（合計の行と担当部課の行の2か所）。OCR はこれを「1」と読み、番号だけの名前の無い行にした。この読みは使わず、同じ位置の名前を「】」として読む。"
+          },
+          {
+            "id": "p68-r33-bracket",
+            "page": 68,
+            "box": [
+              81.8,
+              270.2,
+              89.5,
+              281.9
+            ],
+            "name": "】",
+            "reason": "物理68頁の節「26 生活困窮者就労準備支援事業費等補助金【投資】」は名前の閉じ括弧「】」だけを2行目に折り返して刷る（合計の行と担当部課の行の2か所）。OCR はこれを「1」と読み、番号だけの名前の無い行にした。この読みは使わず、同じ位置の名前を「】」として読む。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-ocr-1",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "acf19ee9b38e89721f2ed30fd79f8664c321b73d5f6c2acd10d8e7e69f2c52e4",
+          "bytes": 3401691
+        },
+        {
+          "id": "general-revenue-ocr-2",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "f33cf4544b44c960d71314f630e0eeb04a35f2b44fd88e91c8032a75f1e9fc3c",
+          "bytes": 3081696
+        },
+        {
+          "id": "general-revenue-ocr-3",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "dd8b2b0689a407598495abf7276cffdab0c5bc4d7fa3d9bd5d109237ceea29cf",
+          "bytes": 2811615
+        },
+        {
+          "id": "general-revenue-ocr-4",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c374ceb8619615c001b4b86135b6759d6652178230259bc6c06e1db9286b9f97",
+          "bytes": 3054137
+        },
+        {
+          "id": "general-revenue-ocr-5",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "8f1de41346b7013d7b8d21f67832eea40946e5138985a64c7a4af347b9b9b11b",
+          "bytes": 3190703
+        },
+        {
+          "id": "general-revenue-ocr-6",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70,
+              71,
+              72,
+              73
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "aeb4f3362e3bf3f11c510306f7fd0a7803e66fc4603bb0353e207acce629e373",
+          "bytes": 3144335
+        },
+        {
+          "id": "general-revenue-ocr-7",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80,
+              81,
+              82,
+              83
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a3b9cdc1bd0c8228c77185785ad6df011c2be92e39746259aaa72f0338f8f809",
+          "bytes": 3208263
+        },
+        {
+          "id": "general-revenue-ocr-8",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90,
+              91,
+              92,
+              93
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "ee2816ef934b48db43ddc29da49b3edd415f9e32487f585416b6ddcd691a3340",
+          "bytes": 3175086
+        },
+        {
+          "id": "general-revenue-ocr-9",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              94,
+              95,
+              96,
+              97,
+              98,
+              99,
+              100,
+              101,
+              102,
+              103
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "671b367a3dc447746fc417ca84582bcdbf9e3bf199fcef51a88902ca86b85787",
+          "bytes": 3129809
+        },
+        {
+          "id": "general-revenue-ocr-10",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              104,
+              105,
+              106,
+              107,
+              108,
+              109,
+              110,
+              111,
+              112,
+              113
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "42fbf6b4d4782fcf80478d83635fe914247a2cec2fd195ca23f52268fcd775ed",
+          "bytes": 3110262
+        },
+        {
+          "id": "general-revenue-ocr-11",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              114,
+              115,
+              116,
+              117,
+              118,
+              119,
+              120,
+              121,
+              122,
+              123
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "53b3b9cb3e2813571237bc4a95171efb3eee671e11648866fdbf0a6079737307",
+          "bytes": 3085558
+        },
+        {
+          "id": "general-revenue-ocr-12",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              124,
+              125,
+              126,
+              127,
+              128,
+              129,
+              130,
+              131,
+              132,
+              133
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "b3c2a939d323e3c539811cc68d78ccef13a2f20fbd19f9badc4626052c792c7a",
+          "bytes": 3279260
+        },
+        {
+          "id": "general-revenue-ocr-13",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              134,
+              135,
+              136,
+              137,
+              138,
+              139,
+              140,
+              141,
+              142,
+              143
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c762e66cb556bd4352a1e6dde02a66ca18ebe76dda7956797db3b2a786c499fc",
+          "bytes": 3106432
+        },
+        {
+          "id": "general-revenue-ocr-14",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              144,
+              145,
+              146,
+              147,
+              148,
+              149,
+              150,
+              151,
+              152,
+              153
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "d6e3009d6b6c86289d67479f16b53af5ccb2f19dfd883f7b390f6bace8c2bd43",
+          "bytes": 3063839
+        },
+        {
+          "id": "general-revenue-ocr-15",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              154,
+              155,
+              156,
+              157,
+              158,
+              159,
+              160,
+              161,
+              162,
+              163
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "8594940ecbe74140fb44e9f514374714b30d1c3d38dd3fab8cdf9ea4d0714d8d",
+          "bytes": 3314978
+        },
+        {
+          "id": "general-revenue-ocr-16",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              164,
+              165,
+              166,
+              167,
+              168,
+              169,
+              170,
+              171,
+              172,
+              173
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "d4d34c3bfa876db0be6240939b849a8e0738d6d26228dbae4bbe7b95d4a3c04c",
+          "bytes": 3069172
+        },
+        {
+          "id": "general-revenue-ocr-17",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              174,
+              175,
+              176,
+              177,
+              178,
+              179,
+              180,
+              181,
+              182,
+              183
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "46364c31a86f00b579372a95af724e64fe0575731db1b0e07c7aad0ee77aaff2",
+          "bytes": 3024140
+        },
+        {
+          "id": "general-revenue-ocr-18",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              184,
+              185,
+              186,
+              187,
+              188,
+              189,
+              190,
+              191
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "18d14bc1bcc2be51ac15a4df65c1c1721b006bce7fb52a669b0e50776e2631ca",
+          "bytes": 2188486
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "nhi-revenue-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true
+              },
+              "header": {
+                "staircase": "款項目節"
+              },
+              "columns": {
+                "決算額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "explained_projects": {
+              "budget": "予算現額",
+              "settled": "決算",
+              "items_axis": "決算説明",
+              "title": "予算説明",
+              "rows_axis": "節",
+              "items": "excluded",
+              "remainder": "surplus"
+            }
+          }
+        },
+        "pages": [
+          [
+            464,
+            477
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p470-item-code",
+            "page": 470,
+            "observation_id": "p470:full-page:a0:result0:r13",
+            "observed": "(3)",
+            "reason": "物理470頁の1行目は前の頁から続く決算説明の項目「(3) 1,391,591,604円」で、見出しの直下に刷られ、見出しの帯に入る。歳入の決算説明の項目は取り込まない（explained_projects の items: excluded）ので、この読みも使わない。"
+          },
+          {
+            "id": "p470-item-amount",
+            "page": 470,
+            "observation_id": "p470:full-page:a0:result0:r14",
+            "observed": "1,391,591,604円",
+            "reason": "物理470頁の1行目は前の頁から続く決算説明の項目「(3) 1,391,591,604円」で、見出しの直下に刷られ、見出しの帯に入る。歳入の決算説明の項目は取り込まない（explained_projects の items: excluded）ので、この読みも使わない。"
+          }
+        ],
+        "name_corrections": []
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-revenue-ocr-1",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              464,
+              465,
+              466,
+              467,
+              468,
+              469,
+              470,
+              471,
+              472,
+              473
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "241eeec92b0a33ddcc48f2e677ce670b189837b3bb0185a23165938483e17dc5",
+          "bytes": 3316222
+        },
+        {
+          "id": "nhi-revenue-ocr-2",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              474,
+              475,
+              476,
+              477
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "288cfd4da8e213af864102d16cb2f7f3448055e1c6eac6b26825be540ea10643",
+          "bytes": 788556
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-revenue-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true
+              },
+              "header": {
+                "staircase": "款項目節"
+              },
+              "columns": {
+                "決算額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "explained_projects": {
+              "budget": "予算現額",
+              "settled": "決算",
+              "items_axis": "決算説明",
+              "title": "予算説明",
+              "rows_axis": "節",
+              "items": "excluded",
+              "remainder": "surplus"
+            }
+          }
+        },
+        "pages": [
+          [
+            506,
+            517
+          ]
+        ],
+        "name_corrections": []
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-revenue-ocr-1",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              506,
+              507,
+              508,
+              509,
+              510,
+              511,
+              512,
+              513,
+              514,
+              515
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "73f10da54a420831dbe296643d032f7711aafd9c0c8ac98a6439dc021e35a791",
+          "bytes": 3239478
+        },
+        {
+          "id": "kaigo-revenue-ocr-2",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              516,
+              517
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "ceb1038edbdbaf107503ac719eaa763f5e4a45bff7d972f153e413c778006ce8",
+          "bytes": 308336
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-revenue-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true
+              },
+              "header": {
+                "staircase": "款項目節"
+              },
+              "columns": {
+                "決算額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "explained_projects": {
+              "budget": "予算現額",
+              "settled": "決算",
+              "items_axis": "決算説明",
+              "title": "予算説明",
+              "rows_axis": "節",
+              "items": "excluded",
+              "remainder": "surplus"
+            }
+          }
+        },
+        "pages": [
+          [
+            544,
+            551
+          ]
+        ],
+        "name_corrections": []
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-revenue-ocr-1",
+          "origin_sha256": "159554f17b129997e2384b76b50a4b17341983b0faf10a89b268fba3f0c6459e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              544,
+              545,
+              546,
+              547,
+              548,
+              549,
+              550,
+              551
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "7e0db966d652228564ef7876b77ebc7979709824d06845cbdb9fac78e0297d0a",
+          "bytes": 2447530
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue-detail"
+        }
+      ]
+    }
+  ]
+}

@@ -1244,8 +1244,14 @@ def declared_unread(built, logicals_: list, columns: dict | None, observation: d
                            and b.excluded['bbox'][0] <= cx <= b.excluded['bbox'][2]
                            and b.excluded['bbox'][1] <= cy <= b.excluded['bbox'][3]
                            for logical in logicals_ for b in logical.bands)
-            if not unit and not bracket and not ruled and not declined and any(b.page == page_['page_number'] and b.kind == 'amount'
-                                and b.x0 - b.offset < cx < b.x1 - b.offset and b.body_top < cy < b.body_bottom
+            # A framed block read on its own (`framed_blocks`: the 節 block under a 目's frame) is the nearer table of
+            # the ink: in a column of it the conversion declares out (its 説明), the ink is no figure of the page's
+            # amount columns whose body runs over the block (131211 R5 当初 p3, a bracket the 説明 wraps).
+            within = lambda b: (b.page == page_['page_number'] and b.x0 - b.offset < cx < b.x1 - b.offset
+                                and b.body_top < cy < b.body_bottom)
+            undeclared = [b for logical in logicals_ for b in logical.bands if within(b) and b.kind is None and b.excluded]
+            if not unit and not bracket and not ruled and not declined and any(b.kind == 'amount' and within(b) and not any(
+                    b.body_top < o.body_top and o.body_bottom < b.body_bottom for o in undeclared)
                                 for logical in logicals_ for b in logical.bands):
                 built.unowned.append({'kind': 'unread ink in amount column', 'page': page_['page_number'], 'box': box})
         # A line the strip seam cut and no single re-read gave back (`settle_seams`) stops the conversion in any
