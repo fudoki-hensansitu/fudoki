@@ -1,0 +1,234 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "133035",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "d11c6ada687aca5ad9663bd1c98bb58f624530d4674c1751c349872dce33a364"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-revenue-ocr-1",
+          "origin_sha256": "d11c6ada687aca5ad9663bd1c98bb58f624530d4674c1751c349872dce33a364",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "bf3eb53d20fe67c283748a45c3dec732efff90ae0abf14f77d17d72db18c3538",
+          "bytes": 1992834
+        },
+        {
+          "id": "general-initial-revenue-ocr-2",
+          "origin_sha256": "d11c6ada687aca5ad9663bd1c98bb58f624530d4674c1751c349872dce33a364",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9859d0860cfd5ddc5f6096e1c8727bae869516c77cba0079a55350eca64b70b7",
+          "bytes": 2387804
+        },
+        {
+          "id": "general-initial-revenue-ocr-3",
+          "origin_sha256": "d11c6ada687aca5ad9663bd1c98bb58f624530d4674c1751c349872dce33a364",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "5a3e6ca4954e5e13de46ba69173209a297cb3239d097a373203959d486c9ceab",
+          "bytes": 2374923
+        },
+        {
+          "id": "general-initial-revenue-ocr-4",
+          "origin_sha256": "d11c6ada687aca5ad9663bd1c98bb58f624530d4674c1751c349872dce33a364",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              42,
+              43,
+              44,
+              45
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "3cd54a70d47f1835ea86a97d0090ba6745df20c5b3f4ddaea4006d436e34d3fe",
+          "bytes": 584088
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額",
+                  "kind": "amount"
+                },
+                "前年度": {
+                  "heading": "前年度予算額",
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "目(事業)": {
+                  "heading": "目"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "titles_on_one_line": true,
+            "rule_ink": true,
+            "glued_titles": true,
+            "broken_column_rules": true,
+            "header_characters": true
+          }
+        },
+        "pages": [
+          [
+            12,
+            45
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "p40-r18",
+            "page": 40,
+            "observation_id": "p40:full-page:a0:result0:r18",
+            "observed_name": "箱根ヶ崎",
+            "corrected_name": "箱根ケ崎",
+            "reason": "原典の画像では「ケ」を並の大きさで印字している（箱根ケ崎・殿ケ谷）。Paddle は小さい「ヶ」と読んだ。"
+          },
+          {
+            "id": "p41-r12",
+            "page": 41,
+            "observation_id": "p41:full-page:a0:result0:r12",
+            "observed_name": "殿ヶ谷",
+            "corrected_name": "殿ケ谷",
+            "reason": "原典の画像では「ケ」を並の大きさで印字している（箱根ケ崎・殿ケ谷）。Paddle は小さい「ヶ」と読んだ。"
+          },
+          {
+            "id": "p41-r21",
+            "page": 41,
+            "observation_id": "p41:full-page:a0:result0:r21",
+            "observed_name": "箱根ヶ崎",
+            "corrected_name": "箱根ケ崎",
+            "reason": "原典の画像では「ケ」を並の大きさで印字している（箱根ケ崎・殿ケ谷）。Paddle は小さい「ヶ」と読んだ。"
+          },
+          {
+            "id": "p41-r22",
+            "page": 41,
+            "observation_id": "p41:full-page:a0:result0:r22",
+            "observed_name": "箱根ヶ崎",
+            "corrected_name": "箱根ケ崎",
+            "reason": "原典の画像では「ケ」を並の大きさで印字している（箱根ケ崎・殿ケ谷）。Paddle は小さい「ヶ」と読んだ。"
+          },
+          {
+            "id": "p23-r59",
+            "page": 23,
+            "observation_id": "p23:full-page:a0:result0:r59",
+            "observed_name": "コミュニテイ",
+            "corrected_name": "コミュニティ",
+            "reason": "原典の画像では小さい「ィ」を印字している。Paddle は並の「イ」と読んだ。"
+          },
+          {
+            "id": "p25-r38",
+            "page": 25,
+            "observation_id": "p25:full-page:a0:result0:r38",
+            "observed_name": "閱覧",
+            "corrected_name": "閲覧",
+            "reason": "原典の画像では日本の字形「閲」で印字されている。Paddle は中国語の字形「閱」で読んだ。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    }
+  ]
+}
