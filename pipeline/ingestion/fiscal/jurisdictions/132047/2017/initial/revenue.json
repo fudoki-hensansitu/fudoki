@@ -1,0 +1,31 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132047",
+    "fiscal_year": 2017,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "csv-33c9a74874f122d5",
+      "converter": "fiscal/layouts/csv/convert.py",
+      "inputs": [
+        {
+          "sha256": "33c9a74874f122d5306f78429b0f67be42120f80c511306176d8f892eb4f3428"
+        }
+      ],
+      "options": {
+        "encoding": "cp932",
+        "table_id": "csv-33c9a74874f122d5",
+        "amount_column": "08予算額",
+        "amount_unit": "千円"
+      },
+      "expected_tables": [
+        {
+          "table_id": "csv-33c9a74874f122d5"
+        }
+      ]
+    }
+  ]
+}
