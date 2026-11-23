@@ -1,0 +1,388 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132063",
+    "fiscal_year": 2025,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "97474a5260644fe43a25e8387aafd7eb851feee1b4b55277289ad22473daf2f0"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "比較額(増減率%)": {
+                  "kind": "ignore"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は調定額・収入歩合・補助の基本額と率などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "codeless_name_levels": true,
+            "repeated_subject_headings": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "a4b93fcd551f2aeb7710b2199efd37e52832b247511af98d3882c78b843711de"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "比較額(増減率%)": {
+                  "kind": "ignore"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は調定額・収入歩合・補助の基本額と率などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "codeless_name_levels": true,
+            "digit_set_codes": 4.4,
+            "two_digit_codes_over_rules": "left"
+          }
+        },
+        "pages": [
+          [
+            6,
+            8
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p8-repeated-heading-1",
+            "page": 8,
+            "observation_id": "p8:full-page:a0:result0:r18",
+            "observed": "一般会計繰入金",
+            "reason": "物理8頁の科目の欄の頭に、前の頁から続く項・目（一般会計繰入金）の名前だけを番号なしで印字し直している。スキャンの読みでは印字し直した名前が別の科目になり、前の頁から続く節の親が切れるので、印字し直した名前の読みは使わない。"
+          },
+          {
+            "id": "p8-repeated-heading-2",
+            "page": 8,
+            "observation_id": "p8:full-page:a0:result0:r20",
+            "observed": "一般会計繰入金",
+            "reason": "物理8頁の科目の欄の頭に、前の頁から続く項・目（一般会計繰入金）の名前だけを番号なしで印字し直している。スキャンの読みでは印字し直した名前が別の科目になり、前の頁から続く節の親が切れるので、印字し直した名前の読みは使わない。"
+          },
+          {
+            "id": "p8-setsu-22-tail",
+            "page": 8,
+            "observation_id": "p8:full-page:a0:result0:r19",
+            "observed": "金",
+            "reason": "物理7頁の末の節「22 財政安定化支援事業繰入金」は名前が頁の末で切れ、最後の字「金」を次の頁（物理8頁）の節の欄の頭に番号・金額なしで印字している。続きの字の読みは使わず、名前を印字のとおり「財政安定化支援事業繰入金」と読む（同じ節は2026年度の文字 PDF で1つの名前）。"
+          },
+          {
+            "id": "p8-setsu-25-glued",
+            "page": 8,
+            "observation_id": "p8:full-page:a0:result0:r21",
+            "observed": "25その他一般会計繰入金",
+            "reason": "物理8頁の節「25 その他一般会計繰入金」は番号と名前を1語に読み（25その他一般会計繰入金）、名前の始まりが他の節より6pt右に置かれて、前の節の内訳（細節）に読まれた。描いた頁では番号は他の2桁の節と同じ位置、名前は他の節の名前と同じ位置に印字されている。この読みは使わず、番号と名前を印字の位置で読む。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p7-setsu-22-tail",
+            "page": 7,
+            "observation_id": "p7:full-page:a0:result0:r178",
+            "observed_name": "財政安定化支援事業繰入",
+            "corrected_name": "財政安定化支援事業繰入金",
+            "reason": "物理7頁の末の節「22 財政安定化支援事業繰入金」は名前が頁の末で切れ、最後の字「金」を次の頁（物理8頁）の節の欄の頭に番号・金額なしで印字している。続きの字の読みは使わず、名前を印字のとおり「財政安定化支援事業繰入金」と読む（同じ節は2026年度の文字 PDF で1つの名前）。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "p8-setsu-25",
+            "page": 8,
+            "box": [
+              651.8,
+              137.3,
+              661.4,
+              147.3
+            ],
+            "code": "25",
+            "name": "その他一般会計繰入金",
+            "name_box": [
+              665.4,
+              137.3,
+              766.0,
+              147.3
+            ],
+            "reason": "物理8頁の節「25 その他一般会計繰入金」は番号と名前を1語に読み（25その他一般会計繰入金）、名前の始まりが他の節より6pt右に置かれて、前の節の内訳（細節）に読まれた。描いた頁では番号は他の2桁の節と同じ位置、名前は他の節の名前と同じ位置に印字されている。この読みは使わず、番号と名前を印字の位置で読む。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-revenue-ocr-1",
+          "origin_sha256": "a4b93fcd551f2aeb7710b2199efd37e52832b247511af98d3882c78b843711de",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              6,
+              7,
+              8
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "71bf2d5928d31068030fd0e58889270bceffd7b6e2eaa80aabb6f1ae737bf44e",
+          "bytes": 1421548
+        }
+      ]
+    },
+    {
+      "id": "late-elderly-medical-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "91dc0aee64b129f8f7a9b1b46e4af013400d9245e62aafa14a6817d8085d54de"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "late-elderly-medical-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "比較額(増減率%)": {
+                  "kind": "ignore"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は調定額・収入歩合・補助の基本額と率などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "codeless_name_levels": true,
+            "repeated_subject_headings": true
+          }
+        },
+        "pages": [
+          [
+            6,
+            7
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "late-elderly-medical-revenue"
+        }
+      ]
+    },
+    {
+      "id": "care-insurance-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "9437ccca231376963dbf1f368e24b8431bc306a75368e29568e19a18e8619401"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "care-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "比較額(増減率%)": {
+                  "kind": "ignore"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は調定額・収入歩合・補助の基本額と率などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "codeless_name_levels": true,
+            "repeated_subject_headings": true
+          }
+        },
+        "pages": [
+          [
+            6,
+            9
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "public-land-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "0a36bb41c3b0cca4dd007de1df4ec5610aae189fe1ece2481d4c9cb9ab3da88b"
+        }
+      ],
+      "options": {
+        "account": "公共用地特別会計",
+        "table_id": "public-land-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "比較額(増減率%)": {
+                  "kind": "ignore"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は調定額・収入歩合・補助の基本額と率などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "codeless_name_levels": true,
+            "repeated_subject_headings": true
+          }
+        },
+        "pages": [
+          [
+            7,
+            8
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "public-land-revenue"
+        }
+      ]
+    }
+  ]
+}

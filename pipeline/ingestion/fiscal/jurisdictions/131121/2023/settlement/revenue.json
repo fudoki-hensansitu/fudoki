@@ -1,0 +1,717 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131121",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "a57aea1583f7e25c05fb0a1219eb31d31c04bd22362f89fae2ae04b680a09937"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-settlement-ocr-1",
+          "origin_sha256": "a57aea1583f7e25c05fb0a1219eb31d31c04bd22362f89fae2ae04b680a09937",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14
+            ]
+          },
+          "sha256": "68e2ae4f39d2cdeb85c4c90d7a8dc1446e8ea9955d179ccbb708d55f86751999",
+          "bytes": 1864029
+        },
+        {
+          "id": "general-settlement-ocr-2",
+          "origin_sha256": "a57aea1583f7e25c05fb0a1219eb31d31c04bd22362f89fae2ae04b680a09937",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24
+            ]
+          },
+          "sha256": "5f5c1f899bac43731feb1aa974ca82f93ad21aea247432fdd125c1c5dbcddea3",
+          "bytes": 3813672
+        },
+        {
+          "id": "general-settlement-ocr-3",
+          "origin_sha256": "a57aea1583f7e25c05fb0a1219eb31d31c04bd22362f89fae2ae04b680a09937",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34
+            ]
+          },
+          "sha256": "bea2ea5ba5f1d6367db4366d7ddaf31fe357e72f16c9daf01a6ed629b823893c",
+          "bytes": 3321928
+        },
+        {
+          "id": "general-settlement-ocr-4",
+          "origin_sha256": "a57aea1583f7e25c05fb0a1219eb31d31c04bd22362f89fae2ae04b680a09937",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44
+            ]
+          },
+          "sha256": "0d4d8fb784e1d23dca5d7f914676fd2cd04806773a35d7192a9423dbcd18c2f9",
+          "bytes": 2886618
+        },
+        {
+          "id": "general-settlement-ocr-5",
+          "origin_sha256": "a57aea1583f7e25c05fb0a1219eb31d31c04bd22362f89fae2ae04b680a09937",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54
+            ]
+          },
+          "sha256": "756c1160e130a9e1518f0e428228ca3a058a4c2a6f156a09275265fb582cda0a",
+          "bytes": 3824058
+        },
+        {
+          "id": "general-settlement-ocr-6",
+          "origin_sha256": "a57aea1583f7e25c05fb0a1219eb31d31c04bd22362f89fae2ae04b680a09937",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61
+            ]
+          },
+          "sha256": "064223fcc33cd29b117f614b3435d314dd76083bb9ae47ed0f1821a68235a3bf",
+          "bytes": 2150723
+        },
+        {
+          "id": "general-settlement-ocr-7",
+          "origin_sha256": "a57aea1583f7e25c05fb0a1219eb31d31c04bd22362f89fae2ae04b680a09937",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              4
+            ]
+          },
+          "sha256": "ffc91417c66ad180ccc99831d3cf5280f582dfcb4ab1f84aca13fcc65841f174",
+          "bytes": 562793
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の内訳の説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_number_wraps": true
+          }
+        },
+        "pages": [
+          [
+            4,
+            61
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "general-revenue-継続費",
+            "pages": [
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61
+            ],
+            "box": [
+              169.0,
+              98.5,
+              209.0,
+              150.0
+            ],
+            "text": "継続費及び繰越事業費繰越財源充当額",
+            "reason": "歳入の予算現額の「継続費及び繰越事業費繰越財源充当額」の升は4行に分けて印字し、OCR が頁によって「継続費及び」「充当額」だけを読むなど切れ切れに読む。見出しが欄にそろわず、この欄の額が予算現額の計の木に入っていた。原典の描画で升の罫線の位置（冊ごとにどの頁も同じ）を確かめ、升の中に箱を置いて見出しを宣言する。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-settlement"
+        }
+      ]
+    },
+    {
+      "id": "nhi-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "2c03c379bc2e63f56ab426af5ae8ee0181297c2d63e6b5deb047fd8784cced4a"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "nhi-settlement-ocr-1",
+          "origin_sha256": "2c03c379bc2e63f56ab426af5ae8ee0181297c2d63e6b5deb047fd8784cced4a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ]
+          },
+          "sha256": "d9c97376d844df544d1c9c43eef8e2ff33fac9cef0e0cc403a1567ae87c5eefc",
+          "bytes": 2611565
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "nhi-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の内訳の説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            4,
+            13
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "nhi-revenue-継続費",
+            "pages": [
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "box": [
+              171.0,
+              96.5,
+              211.0,
+              150.0
+            ],
+            "text": "継続費及び繰越事業費繰越財源充当額",
+            "reason": "歳入の予算現額の「継続費及び繰越事業費繰越財源充当額」の升は4行に分けて印字し、OCR が頁によって「継続費及び」「充当額」だけを読むなど切れ切れに読む。見出しが欄にそろわず、この欄の額が予算現額の計の木に入っていた。原典の描画で升の罫線の位置（冊ごとにどの頁も同じ）を確かめ、升の中に箱を置いて見出しを宣言する。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "nhi-settlement"
+        }
+      ]
+    },
+    {
+      "id": "kouki-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "2c03c379bc2e63f56ab426af5ae8ee0181297c2d63e6b5deb047fd8784cced4a"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kouki-settlement-ocr-1",
+          "origin_sha256": "2c03c379bc2e63f56ab426af5ae8ee0181297c2d63e6b5deb047fd8784cced4a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              28,
+              29,
+              30,
+              31,
+              32,
+              33
+            ]
+          },
+          "sha256": "0c6f0623375e5ae7b473bc5b0a75d00a85a098f5c6da54d830d7cf2dad2aaaaa",
+          "bytes": 1444717
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "kouki-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の内訳の説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            28,
+            33
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "kouki-revenue-継続費",
+            "pages": [
+              28,
+              29,
+              30,
+              31,
+              32,
+              33
+            ],
+            "box": [
+              171.0,
+              96.5,
+              211.0,
+              150.0
+            ],
+            "text": "継続費及び繰越事業費繰越財源充当額",
+            "reason": "歳入の予算現額の「継続費及び繰越事業費繰越財源充当額」の升は4行に分けて印字し、OCR が頁によって「継続費及び」「充当額」だけを読むなど切れ切れに読む。見出しが欄にそろわず、この欄の額が予算現額の計の木に入っていた。原典の描画で升の罫線の位置（冊ごとにどの頁も同じ）を確かめ、升の中に箱を置いて見出しを宣言する。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-settlement"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "2c03c379bc2e63f56ab426af5ae8ee0181297c2d63e6b5deb047fd8784cced4a"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kaigo-settlement-ocr-1",
+          "origin_sha256": "2c03c379bc2e63f56ab426af5ae8ee0181297c2d63e6b5deb047fd8784cced4a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53
+            ]
+          },
+          "sha256": "15fe0170ebc2833cde354ecf682a5a849f7e9cf1077e76c4e30b8c36da28c10a",
+          "bytes": 2237171
+        },
+        {
+          "id": "kaigo-settlement-ocr-2",
+          "origin_sha256": "2c03c379bc2e63f56ab426af5ae8ee0181297c2d63e6b5deb047fd8784cced4a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              54
+            ]
+          },
+          "sha256": "feec7268f704fe11ce72524ccc2f111955cf1cdc23863c2ff4e175bd8f49c305",
+          "bytes": 455361
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "kaigo-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の内訳の説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            44,
+            54
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "kaigo-revenue-継続費",
+            "pages": [
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54
+            ],
+            "box": [
+              171.0,
+              96.5,
+              211.0,
+              150.0
+            ],
+            "text": "継続費及び繰越事業費繰越財源充当額",
+            "reason": "歳入の予算現額の「継続費及び繰越事業費繰越財源充当額」の升は4行に分けて印字し、OCR が頁によって「継続費及び」「充当額」だけを読むなど切れ切れに読む。見出しが欄にそろわず、この欄の額が予算現額の計の木に入っていた。原典の描画で升の罫線の位置（冊ごとにどの頁も同じ）を確かめ、升の中に箱を置いて見出しを宣言する。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-settlement"
+        }
+      ]
+    },
+    {
+      "id": "school-lunch-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "2c03c379bc2e63f56ab426af5ae8ee0181297c2d63e6b5deb047fd8784cced4a"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "school-lunch-settlement-ocr-1",
+          "origin_sha256": "2c03c379bc2e63f56ab426af5ae8ee0181297c2d63e6b5deb047fd8784cced4a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "pages": [
+              69,
+              70,
+              71,
+              72
+            ]
+          },
+          "sha256": "1cb39ddbbefe935ee66a3ff13ca1e09c08386cbebdac877c642ff2450f59f357",
+          "bytes": 674110
+        }
+      ],
+      "options": {
+        "account": "学校給食費会計",
+        "table_id": "school-lunch-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の内訳の説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            69,
+            72
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "school-lunch-revenue-継続費",
+            "pages": [
+              69,
+              70,
+              71,
+              72
+            ],
+            "box": [
+              171.0,
+              96.5,
+              211.0,
+              150.0
+            ],
+            "text": "継続費及び繰越事業費繰越財源充当額",
+            "reason": "歳入の予算現額の「継続費及び繰越事業費繰越財源充当額」の升は4行に分けて印字し、OCR が頁によって「継続費及び」「充当額」だけを読むなど切れ切れに読む。見出しが欄にそろわず、この欄の額が予算現額の計の木に入っていた。原典の描画で升の罫線の位置（冊ごとにどの頁も同じ）を確かめ、升の中に箱を置いて見出しを宣言する。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "school-lunch-settlement"
+        }
+      ]
+    }
+  ]
+}

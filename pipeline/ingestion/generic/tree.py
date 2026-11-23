@@ -652,6 +652,9 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
             code, name = held  # `(2)７歳以上…` is item 2; `(26所 児童定員…)` is no item number
         if code is not None and (full := document_quirk('full_width_names')) is not None and full.module.names(raw_text):
             code, name = None, line_text
+        if (code is not None and not name and not money and entries and entries[-1][3]
+                and (wraps := document_quirk('bracketed_number_wraps')) is not None and wraps.module.wraps(raw_text)):
+            code, name = None, line_text  # `返還金・戻入金` / `（２）`: the bracketed end of the name above
         script = re.match(r'([0-9]+)(?=[０-９])', raw_text)
         if stops is not None and (stopped := stops.module.split(raw_text)) is not None:
             code, name = stopped[0], normalize(stopped[1])  # `6．５歳児…`: item 6, not 6.5

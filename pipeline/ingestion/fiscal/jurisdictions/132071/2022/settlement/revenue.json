@@ -1,0 +1,60 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132071",
+    "fiscal_year": 2022,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "19b9f62e009d35d220c39e7c780f9d6200b6ad26ba9bcffccdc3853089ec07bf"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "予算に対する収入率(%)": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    }
+  ]
+}
