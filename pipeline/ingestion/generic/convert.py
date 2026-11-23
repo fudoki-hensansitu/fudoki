@@ -680,7 +680,8 @@ def correct_parents(nodes: list[dict], rules: list[dict] | None) -> list[str]:
                 raise ValueError(f'A parent correction must find one {what}: {rule["id"]} ({len(found)})')
             return found[0]
         child = one(rule['page'], rule['code'], rule['name'], 'item', rule.get('axis'))
-        parent = one(rule['parent_page'], rule['parent_code'], rule['parent_name'], 'parent')
+        # (`parent_axis` tells a 目 from the 節 under it that prints the same code and name, 132292 R8 介護保険の歳入 p11)
+        parent = one(rule['parent_page'], rule['parent_code'], rule['parent_name'], 'parent', rule.get('parent_axis'))
         child['parent_node_key'] = parent['node_key']
         notes.append(f'{rule["page"]}頁 {rule["code"] or ""}{rule["name"]}→{rule["parent_code"] or ""}{rule["parent_name"]}の下')
     return notes

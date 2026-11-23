@@ -274,6 +274,7 @@
     "amount_under_name": "ingestion.generic.patterns.quirks.amount_under_name",
     "blank_line_breaks": "ingestion.generic.patterns.quirks.blank_line_breaks",
     "stacked_subject_owner": "ingestion.generic.patterns.quirks.stacked_subject_owner",
-    "uncounted_subject_lines": "ingestion.generic.patterns.quirks.uncounted_subject_lines"
+    "uncounted_subject_lines": "ingestion.generic.patterns.quirks.uncounted_subject_lines",
+    "merged_subject_heading": "ingestion.generic.patterns.quirks.merged_subject_heading"
   }
 }
