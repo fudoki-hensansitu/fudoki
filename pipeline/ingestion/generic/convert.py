@@ -287,6 +287,13 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
               and TOTAL_ROW.search(normalize(note.get('label') or ''))]
     regions += [{'kind': '総括', 'reason': '合計の行。款の和には入れない統制値。見開きでは見出しの語が反対の頁にある。',
                  'page': note['page'], 'bbox': list(note['box'])} for note in totals]
+    if (uncounted := document_quirk('uncounted_subject_lines')) is not None:
+        # The lines of the subject column the workflow declares no 款・項・目 (a group of 款, a part of one printed again).
+        for note in built.notes:
+            line = uncounted.module.declared(uncounted.value, note.get('label')) \
+                if note.get('kind') == 'total amount' and note.get('box') else None
+            if line is not None:
+                regions.append({'kind': line['kind'], 'reason': line['reason'], 'page': note['page'], 'bbox': list(note['box'])})
     return regions
 
 

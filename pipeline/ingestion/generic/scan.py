@@ -1455,7 +1455,8 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
         and any(page == u['page'] and box[0] <= (u['box'][0] + u['box'][2]) / 2 <= box[2]
                 and box[1] <= (u['box'][1] + u['box'][3]) / 2 <= box[3] for page, box in headings))]
     built.notes.extend(recovered)
-    report.unit = check_units(built, kind, options['account'], bool(options.get('partial')))
+    report.unit = check_units(built, kind, options['account'], bool(options.get('partial')),
+                              rounded=document_quirk('rounded_items'))
     if report.unit['stopped'] and stop:
         raise ValueError(f'Unit check failed: {report.unit}')
     kept, notes, amounts, unresolved, codes = split_notes(built)
