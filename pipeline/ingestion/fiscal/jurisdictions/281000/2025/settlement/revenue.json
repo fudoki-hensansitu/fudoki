@@ -1,0 +1,1156 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "281000",
+    "fiscal_year": 2025,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "698d3784c11f8f037eeccd54b4c9ee1b8857322b9091ddb1c44312e879879047"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general",
+        "name_corrections": [
+          {
+            "id": "kessan01-1-kan-5",
+            "page": 1,
+            "code": "5",
+            "observed_name": "株式等譲渡所得割交付",
+            "corrected_name": "株式等譲渡所得割交付金",
+            "reason": "款の名前を2行に組み、2行目の「金」を項の名前の欄の左に印字する。文字層が「金」を項の名前の頭に読み、款の名前から落とした。原典の描画で印字を確認した（当初予算の説明書の同じ款の名前とも一致する）。"
+          },
+          {
+            "id": "kessan01-1-kou-5-1",
+            "page": 1,
+            "code": "1",
+            "observed_name": "株式等譲渡所得割交付金金",
+            "corrected_name": "株式等譲渡所得割交付金",
+            "reason": "款の名前を2行に組み、2行目の「金」を項の名前の欄の左に印字する。文字層が「金」を項の名前の頭に読み、款の名前から落とした。原典の描画で印字を確認した（当初予算の説明書の同じ款の名前とも一致する）。"
+          },
+          {
+            "id": "kessan01-2-kan-15",
+            "page": 2,
+            "code": "15",
+            "observed_name": "交通安全対策特別交付",
+            "corrected_name": "交通安全対策特別交付金",
+            "reason": "款の名前を2行に組み、2行目の「金」を項の名前の欄の左に印字する。文字層が「金」を項の名前の頭に読み、款の名前から落とした。原典の描画で印字を確認した（当初予算の説明書の同じ款の名前とも一致する）。"
+          },
+          {
+            "id": "kessan01-2-kou-15-1",
+            "page": 2,
+            "code": "1",
+            "observed_name": "交通安全対策特別交付金金",
+            "corrected_name": "交通安全対策特別交付金",
+            "reason": "款の名前を2行に組み、2行目の「金」を項の名前の欄の左に印字する。文字層が「金」を項の名前の頭に読み、款の名前から落とした。原典の描画で印字を確認した（当初予算の説明書の同じ款の名前とも一致する）。"
+          }
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general"
+        }
+      ]
+    },
+    {
+      "id": "market-keizai",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7dea177ff5c96ff13304d2289b2c7281c58f8fc50b57a2389841cefbc991d166"
+        }
+      ],
+      "options": {
+        "account": "市場事業費",
+        "table_id": "market-keizai",
+        "partial": true,
+        "division": "経済観光局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "short_staircase_rules": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "market-keizai"
+        }
+      ]
+    },
+    {
+      "id": "meat-keizai",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7dea177ff5c96ff13304d2289b2c7281c58f8fc50b57a2389841cefbc991d166"
+        }
+      ],
+      "options": {
+        "account": "食肉センター事業費",
+        "table_id": "meat-keizai",
+        "partial": true,
+        "division": "経済観光局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "meat-keizai"
+        }
+      ]
+    },
+    {
+      "id": "nhi-fukushi",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "f4d6a3ac3579a500ab3b0f183715f0555e47f5b5462bb125d3147eb016b53d35"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業費",
+        "table_id": "nhi-fukushi",
+        "partial": true,
+        "division": "福祉局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "nhi-fukushi"
+        }
+      ]
+    },
+    {
+      "id": "care-fukushi",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "f4d6a3ac3579a500ab3b0f183715f0555e47f5b5462bb125d3147eb016b53d35"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業費",
+        "table_id": "care-fukushi",
+        "partial": true,
+        "division": "福祉局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-fukushi"
+        }
+      ]
+    },
+    {
+      "id": "elderly-fukushi",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "f4d6a3ac3579a500ab3b0f183715f0555e47f5b5462bb125d3147eb016b53d35"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業費",
+        "table_id": "elderly-fukushi",
+        "partial": true,
+        "division": "福祉局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-fukushi"
+        }
+      ]
+    },
+    {
+      "id": "care-kenkou",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d66efa3c7ee4c9e65653d303527f5245a4be7c62345fc00d1ff923b866d751eb"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業費",
+        "table_id": "care-kenkou",
+        "partial": true,
+        "division": "健康局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-kenkou"
+        }
+      ]
+    },
+    {
+      "id": "parking-kensetsu",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "25ca03bde39ad5edf192f83c1610bb26aa8d2c95746b79868eb3941bb960a6e7"
+        }
+      ],
+      "options": {
+        "account": "駐車場事業費",
+        "table_id": "parking-kensetsu",
+        "partial": true,
+        "division": "建設局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "調定額／前年度以前繰越額": {
+                  "kind": "ignore"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "parking-kensetsu"
+        }
+      ]
+    },
+    {
+      "id": "redevelopment-toshi",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "0c90642d4e9d652eb8737c655bc91c91ac6b2be35f83e54358b32fad14ca852c"
+        }
+      ],
+      "options": {
+        "account": "市街地再開発事業費",
+        "table_id": "redevelopment-toshi",
+        "partial": true,
+        "division": "都市局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "redevelopment-toshi"
+        }
+      ]
+    },
+    {
+      "id": "debt-gyozai",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "b383281a737384c375a62d0bede8bcfc1bb85c9d22c9a3120e74ed381c1ad7f3"
+        }
+      ],
+      "options": {
+        "account": "公債費",
+        "table_id": "debt-gyozai",
+        "partial": true,
+        "division": "行財政局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "rules": {
+                "row_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "short_staircase_rules": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p34-sewer-r81",
+            "page": 34,
+            "observation_id": "p34:full-page:a0:result0:r81",
+            "observed": "下",
+            "reason": "目「8 下水道事業会計繰入金」は名前を3行に組み、番号と金額は2行目の高さに印字する。1行目と3行目の読み（3行を縦に読んだ右端の字を含む）は2行目と別の行として読まれ、金額の無い目が2つでき、節が3行目の下に付く。この読みは使わず、2行目の読みに番号を足し、名前の訂正で名前を直す。"
+          },
+          {
+            "id": "p34-sewer-r82",
+            "page": 34,
+            "observation_id": "p34:full-page:a0:result0:r82",
+            "observed": "水",
+            "reason": "目「8 下水道事業会計繰入金」は名前を3行に組み、番号と金額は2行目の高さに印字する。1行目と3行目の読み（3行を縦に読んだ右端の字を含む）は2行目と別の行として読まれ、金額の無い目が2つでき、節が3行目の下に付く。この読みは使わず、2行目の読みに番号を足し、名前の訂正で名前を直す。"
+          },
+          {
+            "id": "p34-sewer-r83",
+            "page": 34,
+            "observation_id": "p34:full-page:a0:result0:r83",
+            "observed": "道計金",
+            "reason": "目「8 下水道事業会計繰入金」は名前を3行に組み、番号と金額は2行目の高さに印字する。1行目と3行目の読み（3行を縦に読んだ右端の字を含む）は2行目と別の行として読まれ、金額の無い目が2つでき、節が3行目の下に付く。この読みは使わず、2行目の読みに番号を足し、名前の訂正で名前を直す。"
+          },
+          {
+            "id": "p34-sewer-r90",
+            "page": 34,
+            "observation_id": "p34:full-page:a0:result0:r90",
+            "observed": "繰",
+            "reason": "目「8 下水道事業会計繰入金」は名前を3行に組み、番号と金額は2行目の高さに印字する。1行目と3行目の読み（3行を縦に読んだ右端の字を含む）は2行目と別の行として読まれ、金額の無い目が2つでき、節が3行目の下に付く。この読みは使わず、2行目の読みに番号を足し、名前の訂正で名前を直す。"
+          },
+          {
+            "id": "p34-sewer-r91",
+            "page": 34,
+            "observation_id": "p34:full-page:a0:result0:r91",
+            "observed": "入",
+            "reason": "目「8 下水道事業会計繰入金」は名前を3行に組み、番号と金額は2行目の高さに印字する。1行目と3行目の読み（3行を縦に読んだ右端の字を含む）は2行目と別の行として読まれ、金額の無い目が2つでき、節が3行目の下に付く。この読みは使わず、2行目の読みに番号を足し、名前の訂正で名前を直す。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "p34-sewer-code",
+            "page": 34,
+            "box": [
+              87.0,
+              364.0,
+              91.2,
+              369.0
+            ],
+            "code": "8",
+            "reason": "目「8 下水道事業会計繰入金」の番号「8」を OCR が読んでいない。原典の描画（物理34頁）で、2行目の高さに印字した番号を確認した。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p33-moku-3",
+            "page": 33,
+            "code": "3",
+            "observed_name": "食肉センタ一事業費繰入金",
+            "corrected_name": "食肉センター事業費繰入金",
+            "reason": "目の名前の欄が狭く、名前を2〜3行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理33頁）で印字を確認した。"
+          },
+          {
+            "id": "p33-moku-4",
+            "page": 33,
+            "code": "4",
+            "observed_name": "母子寡婦福祉資金貸付事業",
+            "corrected_name": "母子寡婦福祉資金貸付事業会計繰入金",
+            "reason": "目の名前の欄が狭く、名前を2〜3行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理33頁）で印字を確認した。"
+          },
+          {
+            "id": "p34-moku-8",
+            "page": 34,
+            "code": "8",
+            "observed_name": "事業会",
+            "corrected_name": "下水道事業会計繰入金",
+            "reason": "目の名前の欄が狭く、名前を2〜3行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理34頁）で印字を確認した。"
+          },
+          {
+            "id": "p35-moku-11",
+            "page": 35,
+            "code": "11",
+            "observed_name": "高速鉄道事計繰入金",
+            "corrected_name": "高速鉄道事業会計繰入金",
+            "reason": "目の名前の欄が狭く、名前を2〜3行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理35頁）で印字を確認した。"
+          },
+          {
+            "id": "p35-moku-13",
+            "page": 35,
+            "code": "13",
+            "observed_name": "事業会繰入",
+            "corrected_name": "工業用水道事業会計繰入金",
+            "reason": "目の名前の欄が狭く、名前を2〜3行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理35頁）で印字を確認した。"
+          },
+          {
+            "id": "p33-setsu-1-5",
+            "page": 33,
+            "code": "5",
+            "observed_name": "満期一括償",
+            "corrected_name": "満期一括償還積立金",
+            "reason": "節の名前の欄が狭く、「満期一括償還積立金」を3行に組むため、OCR が一部の行を落とした。原典の描画（物理33頁）で印字を確認した。"
+          },
+          {
+            "id": "p33-setsu-3-4",
+            "page": 33,
+            "code": "4",
+            "observed_name": "満期一括償還",
+            "corrected_name": "満期一括償還積立金",
+            "reason": "節の名前の欄が狭く、「満期一括償還積立金」を3行に組むため、OCR が一部の行を落とした。原典の描画（物理33頁）で印字を確認した。"
+          },
+          {
+            "id": "p34-setsu-5-4",
+            "page": 34,
+            "code": "4",
+            "observed_name": "満期一括償還積金",
+            "corrected_name": "満期一括償還積立金",
+            "reason": "節の名前の欄が狭く、「満期一括償還積立金」を3行に組むため、OCR が一部の行を落とした。原典の描画（物理34頁）で印字を確認した。"
+          },
+          {
+            "id": "p34-setsu-6-4",
+            "page": 34,
+            "code": "4",
+            "observed_name": "满期一括償還",
+            "corrected_name": "満期一括償還積立金",
+            "reason": "節の名前の欄が狭く、「満期一括償還積立金」を3行に組むため、OCR が一部の行を落とした。原典の描画（物理34頁）で印字を確認した。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "debt-gyozai"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "debt-gyozai-revenue-ocr-1",
+          "origin_sha256": "b383281a737384c375a62d0bede8bcfc1bb85c9d22c9a3120e74ed381c1ad7f3",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              33,
+              34,
+              35,
+              36
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            }
+          },
+          "sha256": "d3a9588bab6d643b7f666c54bff25892658f24d1a6497a614e743603c0e52843",
+          "bytes": 2013995
+        }
+      ]
+    },
+    {
+      "id": "airport-kouwan",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "c30a29e0f8b3ede6c43ddab0bb5edf48a0b974fe8b16c6e03563eda8d685421a"
+        }
+      ],
+      "options": {
+        "account": "空港整備事業費",
+        "table_id": "airport-kouwan",
+        "partial": true,
+        "division": "港湾局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p68-kou-3",
+            "page": 68,
+            "code": "3",
+            "observed_name": "財収入",
+            "corrected_name": "財産収入",
+            "reason": "項の名前「財産収入」を字間を空けて組み、OCR が「産」を落とした。原典の描画（物理68頁）で印字を確認した。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "airport-kouwan"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "airport-kouwan-revenue-ocr-1",
+          "origin_sha256": "c30a29e0f8b3ede6c43ddab0bb5edf48a0b974fe8b16c6e03563eda8d685421a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              68
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            }
+          },
+          "sha256": "045b4d7a1ab7d4b6cc04f2c50e2708e813236a7499f814ee36072041342238cb",
+          "bytes": 820828
+        }
+      ]
+    }
+  ]
+}
