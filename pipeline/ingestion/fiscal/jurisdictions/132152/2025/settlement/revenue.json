@@ -1,0 +1,352 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132152",
+    "fiscal_year": 2025,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat",
+                "quirks": {
+                  "name_over_code_line": true
+                }
+              }
+            }
+          }
+        },
+        "amount_corrections": [
+          {
+            "id": "p30-amount-dropped-zero",
+            "page": 30,
+            "observation_id": "p30:full-page:a0:result1:r97",
+            "observed_amount": "231,000, 00",
+            "corrected_amount": "231,000,000",
+            "reason": "Paddle が頁30の道路橋りよう事業債・調定額の末尾の0を落として読んだ。原典の画像で231,000,000の印字を確認し、木の検査で確かめる。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p27-r63-sale",
+            "page": 27,
+            "observation_id": "p27:full-page:a0:result0:r63",
+            "observed_name": "壳",
+            "corrected_name": "売",
+            "reason": "原画の目の名称は「不動産売払収入」。Paddle が売を中国語の字形の壳と読んだ。"
+          },
+          {
+            "id": "p27-r68-sale",
+            "page": 27,
+            "observation_id": "p27:full-page:a0:result0:r68",
+            "observed_name": "壳",
+            "corrected_name": "売",
+            "reason": "原画の目の名称は「物品売払収入」。Paddle が売を中国語の字形の壳と読んだ。"
+          },
+          {
+            "id": "p27-r113-sale",
+            "page": 27,
+            "observation_id": "p27:full-page:a0:result1:r113",
+            "observed_name": "壳",
+            "corrected_name": "売",
+            "reason": "原画の節の名称は「不動産売払収入」。Paddle が売を中国語の字形の壳と読んだ。"
+          },
+          {
+            "id": "p27-r123-sale",
+            "page": 27,
+            "observation_id": "p27:full-page:a0:result1:r123",
+            "observed_name": "壳",
+            "corrected_name": "売",
+            "reason": "原画の節の名称は「物品売払収入」。Paddle が売を中国語の字形の壳と読んだ。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-ocr-1",
+          "origin_sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              19,
+              20,
+              21,
+              22
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "cd0af37f4b77ac8ffbf40f860aab03084b96972d8a4667cadd4e485927e93033",
+          "bytes": 2731533
+        },
+        {
+          "id": "general-revenue-ocr-2",
+          "origin_sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              23,
+              24,
+              25,
+              26
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "41d8df8db71d24e2f5d598e41843f2c9409e4615b0e0f0fa9412ffc742a43b47",
+          "bytes": 2437557
+        },
+        {
+          "id": "general-revenue-ocr-3",
+          "origin_sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              27,
+              28,
+              29,
+              30
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "b96a657050639b9178491ff148f38828adae4bedf5bd7b0425ffc07319a60c6f",
+          "bytes": 2572995
+        }
+      ]
+    },
+    {
+      "id": "kokuho-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "kokuho-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat",
+                "quirks": {
+                  "name_over_code_line": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kokuho-revenue-ocr-1",
+          "origin_sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              85,
+              86,
+              87
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "f70d72876929569de722baa51ac462f6697e37fc4a75b8a5ee9ea087f191ae9a",
+          "bytes": 1673366
+        }
+      ]
+    },
+    {
+      "id": "kaigo-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat",
+                "quirks": {
+                  "name_over_code_line": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kaigo-revenue-ocr-1",
+          "origin_sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              105,
+              106,
+              107,
+              108
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "7f08153dff8e0867dfc4b906fbc9803cc35afd01cc36a28e73b73fb2dd9fb237",
+          "bytes": 2353867
+        }
+      ]
+    },
+    {
+      "id": "kouki-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat",
+                "quirks": {
+                  "name_over_code_line": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kouki-revenue-ocr-1",
+          "origin_sha256": "07383e3a59124efacb1ebf072f1ee6bd0758837b469901b42c83b9b8824fde1d",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              129,
+              130
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c469612446d41c4ecf6351ec07c81a12ec49f6a555199e8a41a1feeb5374cdbe",
+          "bytes": 1246490
+        }
+      ]
+    }
+  ]
+}
