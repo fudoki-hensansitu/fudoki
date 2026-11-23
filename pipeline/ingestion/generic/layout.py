@@ -268,6 +268,8 @@ def _frames(page: Page, spread: dict | None = None,
     # 40pt drawn as 39.96 (小平市 R7 決算 p46: a table of one row under the header, the 節 column's edge from the
     # 節 heading's rule to the foot) is 40pt: the length is measured in floats.
     xs = {x for x, length in drawn.items() if length > 39.9}
+    if (short := document_quirk('short_staircase_rules')) is not None:
+        xs |= short.module.edges(page)
     if spread is not None:
         # Only the declared spread's gutter: never split a column at an
         # interior row endpoint. The nearest repeated edge on each side bounds it.

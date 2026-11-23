@@ -243,6 +243,7 @@
     "shifted_pages": "ingestion.generic.patterns.quirks.shifted_pages",
     "skewed_frames": "ingestion.generic.patterns.quirks.skewed_frames",
     "unruled_frame_top": "ingestion.generic.patterns.quirks.unruled_frame_top",
+    "short_staircase_rules": "ingestion.generic.patterns.quirks.short_staircase_rules",
     "broken_column_rules": "ingestion.generic.patterns.quirks.broken_column_rules",
     "glued_titles": "ingestion.generic.patterns.quirks.glued_titles",
     "header_characters": "ingestion.generic.patterns.quirks.header_characters",
