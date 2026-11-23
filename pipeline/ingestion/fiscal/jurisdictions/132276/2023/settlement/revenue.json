@@ -1,0 +1,839 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132276",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "0068344cd543ee3bd5e3c6662718ca63fc5aaed5581706c8982987d47f22022f"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "pages": [
+          [
+            22,
+            67
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 200
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_pieces_as_digits": true,
+            "rule_ink": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p30-r39",
+            "page": 30,
+            "observation_id": "p30:full-page:a0:result0:r39",
+            "observed_name": "1 新型コ口ナ",
+            "corrected_name": "1 新型コロナ",
+            "reason": "原画の頁30の印字は「1 新型コロナ」。OCR が片仮名の「ロ」を「口」と読んだ。"
+          },
+          {
+            "id": "p32-r20",
+            "page": 32,
+            "observation_id": "p32:full-page:a0:result0:r20",
+            "observed_name": "1 民生費负担",
+            "corrected_name": "1 民生費負担",
+            "reason": "原画の頁32の印字は「1 民生費負担」。OCR が「負」を簡体字の「负」と読んだ。"
+          },
+          {
+            "id": "p32-r67",
+            "page": 32,
+            "observation_id": "p32:full-page:a0:result0:r67",
+            "observed_name": "タ一使用料",
+            "corrected_name": "ター使用料",
+            "reason": "原画の頁32の印字は「ター使用料」。OCR が片仮名の長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "p32-r78",
+            "page": 32,
+            "observation_id": "p32:full-page:a0:result0:r78",
+            "observed_name": "タ一使用料",
+            "corrected_name": "ター使用料",
+            "reason": "原画の頁32の印字は「ター使用料」。OCR が片仮名の長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "p34-r23",
+            "page": 34,
+            "observation_id": "p34:full-page:a0:result0:r23",
+            "observed_name": "タ一使用料",
+            "corrected_name": "ター使用料",
+            "reason": "原画の頁34の印字は「ター使用料」。OCR が片仮名の長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "p34-r55",
+            "page": 34,
+            "observation_id": "p34:full-page:a0:result0:r55",
+            "observed_name": "夕一使用料",
+            "corrected_name": "ター使用料",
+            "reason": "原画の頁34の印字は「ター使用料」。OCR が片仮名の「タ」を「夕」と読んだ、片仮名の長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "p34-r58",
+            "page": 34,
+            "observation_id": "p34:full-page:a0:result0:r58",
+            "observed_name": "タ一使用料",
+            "corrected_name": "ター使用料",
+            "reason": "原画の頁34の印字は「ター使用料」。OCR が片仮名の長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "p36-r26",
+            "page": 36,
+            "observation_id": "p36:full-page:a0:result0:r26",
+            "observed_name": "4 閱覧手数料",
+            "corrected_name": "4 閲覧手数料",
+            "reason": "原画の頁36の印字は「4 閲覧手数料」。OCR が「閲」を「閱」と読んだ。"
+          },
+          {
+            "id": "p37-r37",
+            "page": 37,
+            "observation_id": "p37:full-page:a0:result0:r37",
+            "observed_name": "市民課閱覧手数料",
+            "corrected_name": "市民課閲覧手数料",
+            "reason": "原画の頁37の印字は「市民課閲覧手数料」。OCR が「閲」を「閱」と読んだ。"
+          },
+          {
+            "id": "p38-r29",
+            "page": 38,
+            "observation_id": "p38:full-page:a0:result0:r29",
+            "observed_name": "1 民生费国庫",
+            "corrected_name": "1 民生費国庫",
+            "reason": "原画の頁38の印字は「1 民生費国庫」。OCR が「費」を簡体字の「费」と読んだ。"
+          },
+          {
+            "id": "p39-r60",
+            "page": 39,
+            "observation_id": "p39:full-page:a0:result0:r60",
+            "observed_name": "障害者医療费負担金（育成医療)",
+            "corrected_name": "障害者医療費負担金（育成医療)",
+            "reason": "原画の頁39の印字は「障害者医療費負担金（育成医療)」。OCR が「費」を簡体字の「费」と読んだ。"
+          },
+          {
+            "id": "p41-r54",
+            "page": 41,
+            "observation_id": "p41:full-page:a0:result0:r54",
+            "observed_name": "地域生活支援事業费",
+            "corrected_name": "地域生活支援事業費",
+            "reason": "原画の頁41の印字は「地域生活支援事業費」。OCR が「費」を簡体字の「费」と読んだ。"
+          },
+          {
+            "id": "p42-r38",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r38",
+            "observed_name": "5 消防费国庫",
+            "corrected_name": "5 消防費国庫",
+            "reason": "原画の頁42の印字は「5 消防費国庫」。OCR が「費」を簡体字の「费」と読んだ。"
+          },
+          {
+            "id": "p43-r41",
+            "page": 43,
+            "observation_id": "p43:full-page:a0:result0:r41",
+            "observed_name": "社会資本整備総合交付金(住宅·建築物安全ス卜ック",
+            "corrected_name": "社会資本整備総合交付金(住宅·建築物安全ストック",
+            "reason": "原画の頁43の印字は「社会資本整備総合交付金(住宅·建築物安全ストック」。OCR が片仮名の「ト」を「卜」と読んだ。"
+          },
+          {
+            "id": "p43-r59",
+            "page": 43,
+            "observation_id": "p43:full-page:a0:result0:r59",
+            "observed_name": "学用品费",
+            "corrected_name": "学用品費",
+            "reason": "原画の頁43の印字は「学用品費」。OCR が「費」を簡体字の「费」と読んだ。"
+          },
+          {
+            "id": "p43-r61",
+            "page": 43,
+            "observation_id": "p43:full-page:a0:result0:r61",
+            "observed_name": "新入学用品费",
+            "corrected_name": "新入学用品費",
+            "reason": "原画の頁43の印字は「新入学用品費」。OCR が「費」を簡体字の「费」と読んだ。"
+          },
+          {
+            "id": "p43-r81",
+            "page": 43,
+            "observation_id": "p43:full-page:a0:result0:r81",
+            "observed_name": "学用品费",
+            "corrected_name": "学用品費",
+            "reason": "原画の頁43の印字は「学用品費」。OCR が「費」を簡体字の「费」と読んだ。"
+          },
+          {
+            "id": "p43-r83",
+            "page": 43,
+            "observation_id": "p43:full-page:a0:result0:r83",
+            "observed_name": "新入学用品费",
+            "corrected_name": "新入学用品費",
+            "reason": "原画の頁43の印字は「新入学用品費」。OCR が「費」を簡体字の「费」と読んだ。"
+          },
+          {
+            "id": "p43-r93",
+            "page": 43,
+            "observation_id": "p43:full-page:a0:result0:r93",
+            "observed_name": "公立学校情報機器活用支援体制整備费補助金",
+            "corrected_name": "公立学校情報機器活用支援体制整備費補助金",
+            "reason": "原画の頁43の印字は「公立学校情報機器活用支援体制整備費補助金」。OCR が「費」を簡体字の「费」と読んだ。"
+          },
+          {
+            "id": "p47-r82",
+            "page": 47,
+            "observation_id": "p47:full-page:a0:result0:r82",
+            "observed_name": "地域生活支援事業费",
+            "corrected_name": "地域生活支援事業費",
+            "reason": "原画の頁47の印字は「地域生活支援事業費」。OCR が「費」を簡体字の「费」と読んだ。"
+          },
+          {
+            "id": "p49-r7",
+            "page": 49,
+            "observation_id": "p49:full-page:a0:result0:r7",
+            "observed_name": "障害者日中活動系サ一ビス推進事業補助金",
+            "corrected_name": "障害者日中活動系サービス推進事業補助金",
+            "reason": "原画の頁49の印字は「障害者日中活動系サービス推進事業補助金」。OCR が片仮名の長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "p53-r7",
+            "page": 53,
+            "observation_id": "p53:full-page:a0:result0:r7",
+            "observed_name": "教育支援センタ一機能強化補助事業補助金",
+            "corrected_name": "教育支援センター機能強化補助事業補助金",
+            "reason": "原画の頁53の印字は「教育支援センター機能強化補助事業補助金」。OCR が片仮名の長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "p53-r19",
+            "page": 53,
+            "observation_id": "p53:full-page:a0:result0:r19",
+            "observed_name": "GIGAスクール運営支援センタ一整備支援事業補助金",
+            "corrected_name": "GIGAスクール運営支援センター整備支援事業補助金",
+            "reason": "原画の頁53の印字は「GIGAスクール運営支援センター整備支援事業補助金」。OCR が片仮名の長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "p56-r57",
+            "page": 56,
+            "observation_id": "p56:full-page:a0:result0:r57",
+            "observed_name": "2 財産壳払収入",
+            "corrected_name": "2 財産売払収入",
+            "reason": "原画の頁56の印字は「2 財産売払収入」。OCR が「売」を「壳」と読んだ。"
+          },
+          {
+            "id": "p56-r62",
+            "page": 56,
+            "observation_id": "p56:full-page:a0:result0:r62",
+            "observed_name": "1 物品壳払収",
+            "corrected_name": "1 物品売払収",
+            "reason": "原画の頁56の印字は「1 物品売払収」。OCR が「売」を「壳」と読んだ。"
+          },
+          {
+            "id": "p56-r70",
+            "page": 56,
+            "observation_id": "p56:full-page:a0:result0:r70",
+            "observed_name": "2 不動産壳払",
+            "corrected_name": "2 不動産売払",
+            "reason": "原画の頁56の印字は「2 不動産売払」。OCR が「売」を「壳」と読んだ。"
+          },
+          {
+            "id": "p56-r76",
+            "page": 56,
+            "observation_id": "p56:full-page:a0:result0:r76",
+            "observed_name": "1 土地壳払収入",
+            "corrected_name": "1 土地売払収入",
+            "reason": "原画の頁56の印字は「1 土地売払収入」。OCR が「売」を「壳」と読んだ。"
+          },
+          {
+            "id": "p62-r78",
+            "page": 62,
+            "observation_id": "p62:full-page:a0:result0:r78",
+            "observed_name": "2 自己负担金収",
+            "corrected_name": "2 自己負担金収",
+            "reason": "原画の頁62の印字は「2 自己負担金収」。OCR が「負」を簡体字の「负」と読んだ。"
+          },
+          {
+            "id": "p62-r87",
+            "page": 62,
+            "observation_id": "p62:full-page:a0:result0:r87",
+            "observed_name": "1 障害福祉サ一",
+            "corrected_name": "1 障害福祉サー",
+            "reason": "原画の頁62の印字は「1 障害福祉サー」。OCR が片仮名の長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "p65-r55",
+            "page": 65,
+            "observation_id": "p65:full-page:a0:result0:r55",
+            "observed_name": "芸術公演チケッ卜等売上金",
+            "corrected_name": "芸術公演チケット等売上金",
+            "reason": "原画の頁65の印字は「芸術公演チケット等売上金」。OCR が片仮名の「ト」を「卜」と読んだ。"
+          },
+          {
+            "id": "p67-r54",
+            "page": 67,
+            "observation_id": "p67:full-page:a0:result0:r54",
+            "observed_name": "小学校卜イレ改修事業債(繰越明許分)",
+            "corrected_name": "小学校トイレ改修事業債(繰越明許分)",
+            "reason": "原画の頁67の印字は「小学校トイレ改修事業債(繰越明許分)」。OCR が片仮名の「ト」を「卜」と読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-ocr-1",
+          "origin_sha256": "0068344cd543ee3bd5e3c6662718ca63fc5aaed5581706c8982987d47f22022f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "fe5158db3c54e5be29d98b36583496b5a23fbff12213c3c452f3442097a26df2",
+          "bytes": 2904165
+        },
+        {
+          "id": "general-revenue-ocr-2",
+          "origin_sha256": "0068344cd543ee3bd5e3c6662718ca63fc5aaed5581706c8982987d47f22022f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "b1a7eb4c8c5e84d665c04215ef868e31b9b7f0a5f2db084823653f2541b4aec9",
+          "bytes": 2836101
+        },
+        {
+          "id": "general-revenue-ocr-3",
+          "origin_sha256": "0068344cd543ee3bd5e3c6662718ca63fc5aaed5581706c8982987d47f22022f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "4288c88902582b46d1d7e873efc6787d25ecd4ff559fd0e0c1cfdffc5ca8b22d",
+          "bytes": 2777170
+        },
+        {
+          "id": "general-revenue-ocr-4",
+          "origin_sha256": "0068344cd543ee3bd5e3c6662718ca63fc5aaed5581706c8982987d47f22022f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "cfece75a80325123b37b1cf6eb2ead0dc9aef861e22614d3ed2e234e116cb010",
+          "bytes": 2631584
+        },
+        {
+          "id": "general-revenue-ocr-5",
+          "origin_sha256": "0068344cd543ee3bd5e3c6662718ca63fc5aaed5581706c8982987d47f22022f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              62,
+              63,
+              64,
+              65,
+              66,
+              67
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "2a805e5dd1cbcb495ea80f606a915c30b4ae20650f14f5f8629455ec21c195ef",
+          "bytes": 1625730
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "882641cb795b966af9a97149314e5ae0a7c15ec1e144fb6cdc140d57de274c1f"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "nhi-revenue",
+        "pages": [
+          [
+            14,
+            21
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 200
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_pieces_as_digits": true,
+            "rule_ink": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p14-r37",
+            "page": 14,
+            "observation_id": "p14:full-page:a0:result0:r37",
+            "observed_name": "1 医療給付费分",
+            "corrected_name": "1 医療給付費分",
+            "reason": "原画の頁14の印字は「1 医療給付費分」。OCR が「費」を簡体字の「费」と読んだ。"
+          },
+          {
+            "id": "p14-r47",
+            "page": 14,
+            "observation_id": "p14:full-page:a0:result0:r47",
+            "observed_name": "4 医療給付费分",
+            "corrected_name": "4 医療給付費分",
+            "reason": "原画の頁14の印字は「4 医療給付費分」。OCR が「費」を簡体字の「费」と読んだ。"
+          },
+          {
+            "id": "p14-r64",
+            "page": 14,
+            "observation_id": "p14:full-page:a0:result0:r64",
+            "observed_name": "1 医療給付费分",
+            "corrected_name": "1 医療給付費分",
+            "reason": "原画の頁14の印字は「1 医療給付費分」。OCR が「費」を簡体字の「费」と読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-revenue-ocr-1",
+          "origin_sha256": "882641cb795b966af9a97149314e5ae0a7c15ec1e144fb6cdc140d57de274c1f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "980b02cb3e25c1d65f820cc410ee25e1d939805811ad734a9b885ba7eed79f31",
+          "bytes": 2119832
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "882641cb795b966af9a97149314e5ae0a7c15ec1e144fb6cdc140d57de274c1f"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "elderly-revenue",
+        "pages": [
+          [
+            58,
+            63
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 200
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_pieces_as_digits": true,
+            "rule_ink": true
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "elderly-revenue-ocr-1",
+          "origin_sha256": "882641cb795b966af9a97149314e5ae0a7c15ec1e144fb6cdc140d57de274c1f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              58,
+              59,
+              60,
+              61,
+              62,
+              63
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "1307d3a2349ea95c63f4a68f9bd2a26b4504b11229b3f75099bed7b0d3a82434",
+          "bytes": 1356925
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "elderly-revenue"
+        }
+      ]
+    },
+    {
+      "id": "care",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "882641cb795b966af9a97149314e5ae0a7c15ec1e144fb6cdc140d57de274c1f"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "care-revenue",
+        "pages": [
+          [
+            82,
+            91
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 200
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_pieces_as_digits": true,
+            "rule_ink": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p82-r50",
+            "page": 82,
+            "observation_id": "p82:full-page:a0:result0:r50",
+            "observed_name": "1 国庫负担金",
+            "corrected_name": "1 国庫負担金",
+            "reason": "原画の頁82の印字は「1 国庫負担金」。OCR が「負」を簡体字の「负」と読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "care-revenue-ocr-1",
+          "origin_sha256": "882641cb795b966af9a97149314e5ae0a7c15ec1e144fb6cdc140d57de274c1f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              82,
+              83,
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90,
+              91
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "ffadb81beafcab546e23cfc2d54b9ef681a6a8cc1f6e7ea896c2bf12ceff5852",
+          "bytes": 2323159
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "care-revenue"
+        }
+      ]
+    },
+    {
+      "id": "nishiguchi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "882641cb795b966af9a97149314e5ae0a7c15ec1e144fb6cdc140d57de274c1f"
+        }
+      ],
+      "options": {
+        "account": "羽村市福生都市計画事業羽村駅西口土地区画整理事業会計",
+        "table_id": "nishiguchi-revenue",
+        "pages": [
+          [
+            140,
+            143
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 200
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_pieces_as_digits": true,
+            "rule_ink": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p142-r34",
+            "page": 142,
+            "observation_id": "p142:full-page:a0:result0:r34",
+            "observed_name": "1 市预金利子",
+            "corrected_name": "1 市預金利子",
+            "reason": "原画の頁142の印字は「1 市預金利子」。OCR が「預」を簡体字の「预」と読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "nishiguchi-revenue-ocr-1",
+          "origin_sha256": "882641cb795b966af9a97149314e5ae0a7c15ec1e144fb6cdc140d57de274c1f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              140,
+              141,
+              142,
+              143
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "ded376831aadf965c2558ced58078e1b405da20f6759f8ec86587a7dd232537e",
+          "bytes": 985690
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nishiguchi-revenue"
+        }
+      ]
+    }
+  ]
+}
