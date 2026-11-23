@@ -87,7 +87,8 @@
           "description": "The layout pattern `titled_table`: the table among others on the same pages that is printed under `title` (小笠原村 R5 決算の `表15`); `continued` are the pages that go on with it and print no title.",
           "properties": {
             "title": {"type": "string", "minLength": 1},
-            "continued": {"type": "array", "uniqueItems": true, "items": {"type": "integer", "minimum": 1}}
+            "continued": {"type": "array", "uniqueItems": true, "items": {"type": "integer", "minimum": 1}},
+            "table": {"type": "integer", "minimum": 1, "description": "Which ruled table of a continued page is the one (default 1). A facing page that goes on with a lower table names 2."}
           }
         },
         "carried": {"const": true, "description": "Only the first page of a run prints the column headings (八丈町 R6): a frame drawn with the same column rules as a frame read before it, whose top prints fewer than half of its heading words, takes its headings and is body from its top rule."},

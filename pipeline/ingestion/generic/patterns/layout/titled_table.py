@@ -7,6 +7,9 @@ goes on over the next page, over a frame of its own, with the next table under i
   the first line below the table that no vertical rule crosses (or to the foot of the page);
 - `continued`: the pages that go on with the table and print no title. Their section runs from the top of the page
   to the same first line below the first ruled table.
+- `table`: which ruled table of the `continued` pages (they print no title) is the one (1 by default). A facing page that goes on
+  with a lower table (歳入 over 歳出 in the 款別一覧表) names `table: 2`; its section runs from the end of the
+  table before to the first line below the table.
 
 The rest of the page is no part of the table (its words and rules stay out of the frame). A page of the scope that is
 neither named in `continued` nor prints the title is an error: the declaration must name every page.
@@ -17,7 +20,7 @@ from ingestion.generic.observe import Page
 from ingestion.generic.patterns.layout.purpose_section import crossed, MIN_RULE
 
 
-def section(page: Page, title: str, continued: list[int]) -> Page:
+def section(page: Page, title: str, continued: list[int], table: int = 1) -> Page:
     verticals = [rule for rule in page.rules if rule.vertical and rule.y1 - rule.y0 >= MIN_RULE]
     rows = sorted(lines(list(page.words)), key=lambda line: min(w.y0 for w in line))
     if page.number in continued:
@@ -29,13 +32,16 @@ def section(page: Page, title: str, continued: list[int]) -> Page:
             raise ValueError(f'Page {page.number}: expected one title {title} outside the tables, found {len(found)}')
         start = found[0]
         top = max(w.y1 for w in rows[start])
-    bottom, inside = page.height, False
+    bottom, inside, seen = page.height, False, 0
     for line in rows[start + 1:]:
         if crossed(line, verticals):
             inside = True
         elif inside:
+            seen += 1
             bottom = min(w.y0 for w in line)
-            break
+            if seen == (table if page.number in continued else 1):
+                break
+            top, inside, bottom = bottom, False, page.height
     if not inside:
         raise ValueError(f'Page {page.number}: no ruled table under {title if start >= 0 else "the top of the page"}')
     words = [w for w in page.words if top <= (w.y0 + w.y1) / 2 < bottom]
@@ -47,7 +53,8 @@ def read(pages, *, header=None, **options):
     declared = (header or {}).get('section')
     if not declared:
         raise ValueError('The layout pattern titled_table needs header.section')
-    cut = [section(page, declared['title'], declared.get('continued', [])) for page in pages]
+    cut = [section(page, declared['title'], declared.get('continued', []), declared.get('table', 1))
+           for page in pages]
     pages = layout.logical_pages(cut, header=header, **options)
     # The table's pages print no open heading again: a 款 at the top of a page is a new one, even when its name is a
     # character from the one before (民生費 / 衛生費).
