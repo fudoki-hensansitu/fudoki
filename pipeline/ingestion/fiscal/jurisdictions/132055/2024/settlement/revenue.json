@@ -525,6 +525,373 @@
           }
         ]
       }
+    },
+    {
+      "id": "kaigo-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "8a55ea8b28d42221fb2d4e72ab410334e38ce1210254ffe29e0bbe3241823053"
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kaigo-revenue-ocr-1",
+          "origin_sha256": "8a55ea8b28d42221fb2d4e72ab410334e38ce1210254ffe29e0bbe3241823053",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "897492e042bfba302ff83d0237b93cc66325232951e7e77f5c4368aaddbbc8de",
+          "bytes": 2521486
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-revenue",
+        "pages": [
+          [
+            12,
+            21
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の内訳（現年課税分の課税標準額・税率、事業ごとの補助金の名前と額）と滞納繰越分の再掲で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "unbracketed_repeats": {
+              "columns": 5
+            }
+          }
+        },
+        "header_readings": [
+          {
+            "id": "kaigo-revenue-継続費及び繰越事業費繰越財源充当額",
+            "pages": [
+              12,
+              14,
+              16,
+              18,
+              20
+            ],
+            "box": [
+              266.0,
+              117.0,
+              338.0,
+              155.0
+            ],
+            "text": "継続費及び繰越事業費繰越財源充当額",
+            "reason": "左頁の「継続費および繰越事業費繰越財源充当額」の升は3行に分けて「および」と仮名で印字し、見出しの辞書の語（継続費及び繰越事業費繰越財源充当額）に当たらず、升が上の「予算現額」と読まれた。原典の描画で升の印字と罫線の位置を確かめ、どの頁も同じ位置なので升の見出しを宣言する（一般会計の歳入の冊と同じ様式・同じ位置）。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "kaigo-revenue-p18-full-page-a0-result0-r73-サー",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r73",
+            "observed_name": "サ一",
+            "corrected_name": "サー",
+            "reason": "原典の画像では「2介護予防サー」と印字されている。Paddle が長音「ー」を漢数字の「一」に読んだ（サ一→サー）。"
+          },
+          {
+            "id": "kaigo-revenue-p18-full-page-a0-result0-r80-サー",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r80",
+            "observed_name": "サ一",
+            "corrected_name": "サー",
+            "reason": "原典の画像では「1介護予防サー」と印字されている。Paddle が長音「ー」を漢数字の「一」に読んだ（サ一→サー）。"
+          },
+          {
+            "id": "kaigo-revenue-p18-full-page-a0-result0-r87-サー",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r87",
+            "observed_name": "サ一",
+            "corrected_name": "サー",
+            "reason": "原典の画像では「1介護予防サー」と印字されている。Paddle が長音「ー」を漢数字の「一」に読んだ（サ一→サー）。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "kouki-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "5d1191eeb937f01355300537d1aefc3709c8aebda07f938f0562b2ec60ba74c7"
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kouki-revenue-ocr-1",
+          "origin_sha256": "5d1191eeb937f01355300537d1aefc3709c8aebda07f938f0562b2ec60ba74c7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              10,
+              11,
+              12,
+              13
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "accedb45dc280eb7eb2d3ac8266a5ca56a80f6b15f21408436cb95e6fcbd65e2",
+          "bytes": 1060491
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-revenue",
+        "pages": [
+          [
+            10,
+            13
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の内訳（現年課税分の課税標準額・税率、事業ごとの補助金の名前と額）と滞納繰越分の再掲で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "unbracketed_repeats": {
+              "columns": 5
+            }
+          }
+        },
+        "header_readings": [
+          {
+            "id": "kouki-revenue-継続費及び繰越事業費繰越財源充当額",
+            "pages": [
+              10,
+              12
+            ],
+            "box": [
+              266.0,
+              117.0,
+              338.0,
+              155.0
+            ],
+            "text": "継続費及び繰越事業費繰越財源充当額",
+            "reason": "左頁の「継続費および繰越事業費繰越財源充当額」の升は3行に分けて「および」と仮名で印字し、見出しの辞書の語（継続費及び繰越事業費繰越財源充当額）に当たらず、升が上の「予算現額」と読まれた。原典の描画で升の印字と罫線の位置を確かめ、どの頁も同じ位置なので升の見出しを宣言する（一般会計の歳入の冊と同じ様式・同じ位置）。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "nhi-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "4d64d287ff321cb08080fa923963d308f551dc19f5b305b46e75b67ce9113303"
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "nhi-revenue-ocr-1",
+          "origin_sha256": "4d64d287ff321cb08080fa923963d308f551dc19f5b305b46e75b67ce9113303",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6dbda90a5ac0aac8c7b6f472195ceb37b4a73400304df39056f3dacd93f502da",
+          "bytes": 1641058
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "nhi-revenue",
+        "pages": [
+          [
+            12,
+            17
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の内訳（現年課税分の課税標準額・税率、事業ごとの補助金の名前と額）と滞納繰越分の再掲で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "unbracketed_repeats": {
+              "columns": 5
+            }
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "nhi-revenue-p12-r29",
+            "page": 12,
+            "observation_id": "p12:full-page:a0:result0:r29",
+            "observed": "税",
+            "reason": "物理12頁の項「1 国民健康保険税」の2行目「税」。2行目を1字分左に出して印字し、OCR の箱が名前の書き出しより左にかかったため、2行目が別の科目と読まれた。原典の描画で印字を確かめ、この読みは使わず、名前の書き出しに揃えて宣言する。"
+          }
+        ],
+        "name_readings": [
+          {
+            "id": "nhi-revenue-p12-y194-x64",
+            "page": 12,
+            "box": [
+              64.5,
+              194.4,
+              76.0,
+              206.4
+            ],
+            "name": "税",
+            "reason": "物理12頁の項「1 国民健康保険税」の2行目「税」。2行目を1字分左に出して印字し、OCR の箱が名前の書き出しより左にかかったため、2行目が別の科目と読まれた。原典の描画で印字を確かめ、この読みは使わず、名前の書き出しに揃えて宣言する。"
+          }
+        ],
+        "header_readings": [
+          {
+            "id": "nhi-revenue-継続費及び繰越事業費繰越財源充当額",
+            "pages": [
+              12,
+              14,
+              16
+            ],
+            "box": [
+              266.0,
+              117.0,
+              338.0,
+              155.0
+            ],
+            "text": "継続費及び繰越事業費繰越財源充当額",
+            "reason": "左頁の「継続費および繰越事業費繰越財源充当額」の升は3行に分けて「および」と仮名で印字し、見出しの辞書の語（継続費及び繰越事業費繰越財源充当額）に当たらず、升が上の「予算現額」と読まれた。原典の描画で升の印字と罫線の位置を確かめ、どの頁も同じ位置なので升の見出しを宣言する（一般会計の歳入の冊と同じ様式・同じ位置）。"
+          }
+        ]
+      }
     }
   ]
 }
