@@ -1,0 +1,147 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132233",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "a6b88aadf956902dfd8ea10634de2a9b194a7a782d80ee568fd031676d5d8c39"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "numbered_names": true,
+            "unnumbered_abolished_names": true,
+            "vector_rules": true,
+            "grouped_ends_at_rule": true,
+            "padded_number_boxes": true,
+            "unnumbered_names_at_rule": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p26-r63-ryou",
+            "page": 26,
+            "observation_id": "p26:full-page:a0:result0:r63",
+            "observed_name": "りよう",
+            "corrected_name": "りょう",
+            "reason": "頁26の節「1 道路橋りょう費補助金」。原画は小書きの「ょ」で（令和6年度の歳入事項別明細書の文字も「道路橋りょう費補助金」）、OCR が並字の「よ」と読んだ。"
+          },
+          {
+            "id": "p31-r22-uri",
+            "page": 31,
+            "observation_id": "p31:full-page:a0:result0:r22",
+            "observed_name": "壳",
+            "corrected_name": "売",
+            "reason": "頁31の目「2 物品売払収入」。OCR が「売」を中国語の字形「壳」と読んだ。"
+          },
+          {
+            "id": "p32-r7-uri",
+            "page": 32,
+            "observation_id": "p32:full-page:a0:result0:r7",
+            "observed_name": "壳",
+            "corrected_name": "売",
+            "reason": "頁32の節「1 土地売払収入」。OCR が「売」を中国語の字形「壳」と読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-ocr-1",
+          "origin_sha256": "a6b88aadf956902dfd8ea10634de2a9b194a7a782d80ee568fd031676d5d8c39",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "167ea67574eb126a1174c4b5d1759da71bcd4c5e328ad5620e969c85ee3bf9ee",
+          "bytes": 9717577
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    }
+  ]
+}

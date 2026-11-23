@@ -1,0 +1,27 @@
+{"criteria": {"false": "取り込むべきでない数字。例: 款・項・目・節・事業の番号、頁番号、年月日・年度・議決の号数（令和8年第6号）、住所の番地、人数・件数・回数・面積などの数量、率（％）、本文や注記の中の数字、「第10節へ同項同目第8節から流用 12,846」のような流用・充用の注記の金額。", "true": "表の項目（科目・事業）の金額として取り込むべき値。例: 予算額、補正額、決算額、支出済額、不用額、事業費、国・県支出金など、表の金額の欄に印字された円の金額（0 や 1,234,000 のような値も含む）。"}, "instructions": "日本の自治体の決算書（歳出）のある頁から、数字を1つ取り出した。文脈は `items.{id}` にある（同じ行の語を左から並べた文、列の見出し、上下の行）。取り出した数字 `items.{id}.対象の数字`（同じ行では【】で示す）は、表の項目の金額として取り込むべき値か。", "kind": "digit-recheck", "model": "jev-1.13.0", "threshold": 0.7, "version": 1}
+{"fp":"4f1b4f1ed76c2f1ba0b36434601ea37a","p":0.05,"t":"general-revenue"}
+{"fp":"e2c8ebcb155590a8592b540ad1d261dc","p":0.06,"t":"general-revenue"}
+{"fp":"2ec03afbb68f82d3cecdd091200071f3","p":0.1,"t":"kaigo-revenue"}
+{"fp":"496599f8162db6d1aefc1fc51368bb1a","p":0.07,"t":"kaigo-revenue"}
+{"fp":"4f1b4f1ed76c2f1ba0b36434601ea37a","p":0.05,"t":"kaigo-revenue"}
+{"fp":"5269ff1b225fa5fd02ca2b54a4ae56a5","p":0.08,"t":"kaigo-revenue"}
+{"fp":"64723b5cd6672aec00737f9fc0a78189","p":0.08,"t":"kaigo-revenue"}
+{"fp":"a978e5b314356bb8c6e198cc2c5d11a9","p":0.08,"t":"kaigo-revenue"}
+{"fp":"e2c8ebcb155590a8592b540ad1d261dc","p":0.06,"t":"kaigo-revenue"}
+{"fp":"e89e3416211523ae6e0e1ad8d104983d","p":0.07,"t":"kaigo-revenue"}
+{"fp":"4f1b4f1ed76c2f1ba0b36434601ea37a","p":0.05,"t":"kokuho-revenue"}
+{"fp":"74258f5ffbdcaec0bf635c911b7c89ab","p":0.09,"t":"kokuho-revenue"}
+{"fp":"9511b4674f2f8b8c246227ff7aafac7b","p":0.07,"t":"kokuho-revenue"}
+{"fp":"9d2fda4bfe9202175378f802362bbb65","p":0.07,"t":"kokuho-revenue"}
+{"fp":"c7b32fcd17151c8a739357532ca32dc7","p":0.08,"t":"kokuho-revenue"}
+{"fp":"e2c8ebcb155590a8592b540ad1d261dc","p":0.06,"t":"kokuho-revenue"}
+{"fp":"4f1b4f1ed76c2f1ba0b36434601ea37a","p":0.05,"t":"kouki-revenue"}
+{"fp":"608e571322d8b617cff9f38c5a495bcd","p":0.19,"t":"kouki-revenue"}
+{"fp":"d02ec94a869cfb108f4add39d6c2c2b0","p":0.22,"t":"kouki-revenue"}
+{"fp":"d3cdb7f5e4e6143b5bd0cec71dbfb349","p":0.09,"t":"kouki-revenue"}
+{"fp":"e2c8ebcb155590a8592b540ad1d261dc","p":0.06,"t":"kouki-revenue"}
+{"fp":"4f1b4f1ed76c2f1ba0b36434601ea37a","p":0.05,"t":"toshikaku-revenue"}
+{"fp":"5f98608660e3f0cc80ec65f564c5458d","p":0.19,"t":"toshikaku-revenue"}
+{"fp":"8b2a608b31bfad0eae14fcd7072e3290","p":0.12,"t":"toshikaku-revenue"}
+{"fp":"e2c8ebcb155590a8592b540ad1d261dc","p":0.06,"t":"toshikaku-revenue"}
+{"fp":"e6dcf5bae9e421aa1ea92b7859f2f2a5","p":0.08,"t":"toshikaku-revenue"}
