@@ -1,0 +1,1128 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "090000",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement-1",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "29cd3fe0f3257ea105145da382bcfa6ad3fa4ca1dfe7727cc17b80c529c3f4db"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-1",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true,
+                "unagreed": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入の内訳の注記（充当先・調定の内訳など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "amount_ends_name": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "one_row_header": true,
+            "ocr_start_jitter": true
+          }
+        },
+        "partial": true,
+        "name_corrections": [
+          {
+            "id": "p1-misread-0",
+            "page": 1,
+            "code": null,
+            "y": 413.9,
+            "observed_name": "現年课税分",
+            "corrected_name": "現年課税分",
+            "reason": "課を中国語の字形 课 で読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p1-misread-1",
+            "page": 1,
+            "code": null,
+            "y": 498.3,
+            "observed_name": "現年课税分",
+            "corrected_name": "現年課税分",
+            "reason": "課を中国語の字形 课 で読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p3-misread-2",
+            "page": 3,
+            "code": null,
+            "y": 245.9,
+            "observed_name": "現年课税分",
+            "corrected_name": "現年課税分",
+            "reason": "課を中国語の字形 课 で読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p3-misread-3",
+            "page": 3,
+            "code": null,
+            "y": 301.6,
+            "observed_name": "現年课税分",
+            "corrected_name": "現年課税分",
+            "reason": "課を中国語の字形 课 で読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p5-misread-4",
+            "page": 5,
+            "code": null,
+            "observed_name": "現年课税分",
+            "corrected_name": "現年課税分",
+            "reason": "課を中国語の字形 课 で読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p7-misread-5",
+            "page": 7,
+            "code": null,
+            "y": 162.0,
+            "observed_name": "現年课税分",
+            "corrected_name": "現年課税分",
+            "reason": "課を中国語の字形 课 で読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p7-misread-6",
+            "page": 7,
+            "code": null,
+            "y": 245.7,
+            "observed_name": "現年课税分",
+            "corrected_name": "現年課税分",
+            "reason": "課を中国語の字形 课 で読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p7-misread-7",
+            "page": 7,
+            "code": null,
+            "observed_name": "滞納澡越分",
+            "corrected_name": "滞納繰越分",
+            "reason": "繰を 澡 と読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p13-misread-8",
+            "page": 13,
+            "code": null,
+            "observed_name": "肢体不自由児費負担金(リ八",
+            "corrected_name": "肢体不自由児費負担金(リハ)",
+            "reason": "原画は「(リハ)」で、ハを 八 と読み閉じ括弧を落としていた。"
+          },
+          {
+            "id": "p23-misread-9",
+            "page": 23,
+            "code": null,
+            "observed_name": "栃木へリポ一卜使用料",
+            "corrected_name": "栃木ヘリポート使用料",
+            "reason": "片仮名を形の似た漢字・記号に読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p27-misread-10",
+            "page": 27,
+            "code": null,
+            "observed_name": "畜産酪農研究センタ一使用料",
+            "corrected_name": "畜産酪農研究センター使用料",
+            "reason": "片仮名を形の似た漢字・記号に読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p41-misread-11",
+            "page": 41,
+            "code": null,
+            "observed_name": "福祉人材センタ一運営費補助金",
+            "corrected_name": "福祉人材センター運営費補助金",
+            "reason": "片仮名を形の似た漢字・記号に読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p47-misread-12",
+            "page": 47,
+            "code": null,
+            "observed_name": "救命救急センタ一運営費補助金",
+            "corrected_name": "救命救急センター運営費補助金",
+            "reason": "片仮名を形の似た漢字・記号に読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p47-misread-13",
+            "page": 47,
+            "code": null,
+            "observed_name": "救急医療情報センタ一運営費補助金",
+            "corrected_name": "救急医療情報センター運営費補助金",
+            "reason": "片仮名を形の似た漢字・記号に読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p49-misread-14",
+            "page": 49,
+            "code": null,
+            "observed_name": "8,020運動・口腔保健推進事業費補助金",
+            "corrected_name": "8020運動・口腔保健推進事業費補助金",
+            "reason": "原画は「8020運動」で、名前の数字に桁区切りを入れて読んでいた。"
+          },
+          {
+            "id": "p51-misread-15",
+            "page": 51,
+            "code": null,
+            "observed_name": "地域脱炭素移行・再工ネ推進交付金",
+            "corrected_name": "地域脱炭素移行・再エネ推進交付金",
+            "reason": "片仮名を形の似た漢字・記号に読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p61-misread-16",
+            "page": 61,
+            "code": null,
+            "observed_name": "地域食品産業連携プロジェク卜推進事業補助金",
+            "corrected_name": "地域食品産業連携プロジェクト推進事業補助金",
+            "reason": "片仮名を形の似た漢字・記号に読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p63-misread-17",
+            "page": 63,
+            "code": null,
+            "observed_name": "国内森林資源活用・木材産業国際競争力強化対策地方公共曲",
+            "corrected_name": "国内森林資源活用・木材産業国際競争力強化対策地方公共団体事業",
+            "reason": "原画の2行目は「国際競争力強化対策地方公共団体事業」で、区分の欄の右の罫を越えて印字され、団を 曲 と読み罫の先の「体事業」が落ちていた。"
+          },
+          {
+            "id": "p67-misread-18",
+            "page": 67,
+            "code": null,
+            "observed_name": "エネルギ-教育推進事業交付金",
+            "corrected_name": "エネルギ−教育推進事業交付金",
+            "reason": "原画の長音は他の年の決算書と同じ字形で、OCR は半角のハイフンで読んでいた。"
+          },
+          {
+            "id": "p69-misread-19",
+            "page": 69,
+            "code": null,
+            "observed_name": "発信モデル事業費補助金",
+            "corrected_name": "「食文化ストーリー」創出・発信モデル事業費補助金",
+            "reason": "原画は「「食文化ストーリー」創出・／発信モデル事業費補助金」の2行で、OCR が1行目を落としていた。"
+          },
+          {
+            "id": "p73-misread-20",
+            "page": 73,
+            "code": null,
+            "observed_name": "在外選挙人名簿登錄事務委託金",
+            "corrected_name": "在外選挙人名簿登録事務委託金",
+            "reason": "録を 錄 の字形で読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p75-misread-21",
+            "page": 75,
+            "code": null,
+            "observed_name": "新幹線鉄道騷音調査委託金",
+            "corrected_name": "新幹線鉄道騒音調査委託金",
+            "reason": "騒を 騷 の字形で読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p77-misread-22",
+            "page": 77,
+            "code": null,
+            "observed_name": "スーパーサイエンスハイスク一ル事務員配置事業委託金",
+            "corrected_name": "スーパーサイエンスハイスクール事務員配置事業委託金",
+            "reason": "片仮名を形の似た漢字・記号に読んでいた（原画で確かめた）。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-1"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-settlement-1-ocr-1",
+          "origin_sha256": "29cd3fe0f3257ea105145da382bcfa6ad3fa4ca1dfe7727cc17b80c529c3f4db",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70,
+              71,
+              72,
+              73,
+              74,
+              75,
+              76,
+              77,
+              78
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "vlm_fallback": false
+          },
+          "sha256": "0e9be2b2932744497d2af16ae41d6f13c5f58d827777dbcc1db2370e67f9bfc9",
+          "bytes": 13996192
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-2",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d988841d6005b0c0807093ceb8487c5b40d838576afba29f604116f08da766e5"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-2",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入の内訳の注記（充当先・調定の内訳など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "amount_ends_name": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "one_row_header": true,
+            "ocr_start_jitter": true
+          }
+        },
+        "partial": true,
+        "name_readings": [
+          {
+            "id": "p9-setsu-under-header",
+            "page": 9,
+            "box": [
+              632.9,
+              106.3,
+              726.0,
+              115.9
+            ],
+            "name": "公有財産売払収入",
+            "reason": "物理9頁の左頁は、前の見開きの目「5 公有財産売払収入」の節「公有財産売払収入」（予算無し、調定額・収入済額は右の10頁）を見出しの下の1行目に印字する。OCR は読んだが、頁どうしで見出しを合わせるとき見出しの升の語として除かれるので、その位置の名前を補う。"
+          }
+        ],
+        "continued_rows": {
+          "subjects": [
+            {
+              "code": "9",
+              "name": "国庫支出金"
+            },
+            {
+              "code": "3",
+              "name": "委託金"
+            },
+            {
+              "code": "8",
+              "name": "教育費委託金"
+            }
+          ],
+          "rows": []
+        },
+        "name_corrections": [
+          {
+            "id": "p1-overflowing-setsu",
+            "page": 1,
+            "code": null,
+            "observed_name": "高等学校情報科等強化によるデジタル人材の供給体制整備支",
+            "corrected_name": "高等学校情報科等強化によるデジタル人材の供給体制整備支援事業",
+            "reason": "原画の2行目は「デジタル人材の供給体制整備支援事業」で、区分の欄の右の罫を越えて金額の欄まで印字されている。罫で切ると「援事業」が名前から落ちるので、印字された名前に直す。"
+          },
+          {
+            "id": "p3-misread-0",
+            "page": 3,
+            "code": null,
+            "observed_name": "マロ二工緑化基金利子収入",
+            "corrected_name": "マロニエ緑化基金利子収入",
+            "reason": "片仮名を形の似た漢字・記号に読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p9-misread-1",
+            "page": 9,
+            "code": null,
+            "observed_name": "般寄附金",
+            "corrected_name": "一般寄附金",
+            "reason": "原画は「一般寄附金」で、先頭の 一 を落としていた。"
+          },
+          {
+            "id": "p15-misread-2",
+            "page": 15,
+            "code": null,
+            "observed_name": "水源林整備基金澡入金",
+            "corrected_name": "水源林整備基金繰入金",
+            "reason": "繰を 澡 と読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p17-misread-3",
+            "page": 17,
+            "code": "49",
+            "observed_name": "マ口二工緑化基金繰入金",
+            "corrected_name": "マロニエ緑化基金繰入金",
+            "reason": "片仮名を形の似た漢字・記号に読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p17-misread-4",
+            "page": 17,
+            "code": null,
+            "observed_name": "マ口二工緑化基金繰入金",
+            "corrected_name": "マロニエ緑化基金繰入金",
+            "reason": "片仮名を形の似た漢字・記号に読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p25-misread-5",
+            "page": 25,
+            "code": null,
+            "observed_name": "経営サポ一卜資金貸付金元金",
+            "corrected_name": "経営サポート資金貸付金元金",
+            "reason": "片仮名を形の似た漢字・記号に読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p33-misread-6",
+            "page": 33,
+            "code": null,
+            "observed_name": "宝じ収入",
+            "corrected_name": "宝くじ収入",
+            "reason": "原画は「宝くじ収入」で、く を落としていた。"
+          },
+          {
+            "id": "p35-misread-7",
+            "page": 35,
+            "code": null,
+            "observed_name": "公報揭載料",
+            "corrected_name": "公報掲載料",
+            "reason": "掲を 揭 の字形で読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p37-misread-8",
+            "page": 37,
+            "code": null,
+            "observed_name": "自治総合センタ一事務交付金",
+            "corrected_name": "自治総合センター事務交付金",
+            "reason": "片仮名を形の似た漢字・記号に読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p39-misread-9",
+            "page": 39,
+            "code": null,
+            "observed_name": "サイエンスミュージアムネツ卜情報提供収入",
+            "corrected_name": "サイエンスミュージアムネット情報提供収入",
+            "reason": "片仮名を形の似た漢字・記号に読んでいた（原画で確かめた）。"
+          },
+          {
+            "id": "p43-misread-10",
+            "page": 43,
+            "code": null,
+            "observed_name": "県有施設省工ネ加速化事業費",
+            "corrected_name": "県有施設省エネ加速化事業費",
+            "reason": "片仮名を形の似た漢字・記号に読んでいた（原画で確かめた）。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-2"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-settlement-2-ocr-1",
+          "origin_sha256": "d988841d6005b0c0807093ceb8487c5b40d838576afba29f604116f08da766e5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "vlm_fallback": false
+          },
+          "sha256": "41610892c444420164e4b7d3b3d975bb69baa26d55aef542a06239c7a37f222d",
+          "bytes": 9129177
+        }
+      ]
+    },
+    {
+      "id": "public-debt-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a8afa0aa48b491eb4167e1d7f47e49a065f8388c1b69d5cc1bd8fb17bf8c266b"
+        }
+      ],
+      "options": {
+        "account": "公債管理特別会計",
+        "table_id": "public-debt-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入の内訳の注記（充当先・調定の内訳など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "amount_ends_name": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "public-debt-revenue"
+        }
+      ]
+    },
+    {
+      "id": "hospital-loan-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "f95ede7be7fe7c64d891bf69c11a78ade3d734fa58d7e83341de7cc4cb918bdc"
+        }
+      ],
+      "options": {
+        "account": "地方独立行政法人県立病院貸付金特別会計",
+        "table_id": "hospital-loan-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入の内訳の注記（充当先・調定の内訳など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "amount_ends_name": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "hospital-loan-revenue"
+        }
+      ]
+    },
+    {
+      "id": "single-parent-loan-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "84f49f366db53a533578c896a6b5d304c8dbb2e83f150acf6d34aa50368a2c06"
+        }
+      ],
+      "options": {
+        "account": "母子父子寡婦福祉資金貸付事業特別会計",
+        "table_id": "single-parent-loan-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入の内訳の注記（充当先・調定の内訳など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "amount_ends_name": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "single-parent-loan-revenue"
+        }
+      ]
+    },
+    {
+      "id": "disability-mutual-aid-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ca1fbdd096ce95750089418c0bf72c96e3d102b01fb4fb2167adf7f3165daca4"
+        }
+      ],
+      "options": {
+        "account": "心身障害者扶養共済事業特別会計",
+        "table_id": "disability-mutual-aid-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入の内訳の注記（充当先・調定の内訳など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "amount_ends_name": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "disability-mutual-aid-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8245fa9b68dcc433fac2f7abb6474a70be6404df29803342e6f109edf48e19d9"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入の内訳の注記（充当先・調定の内訳など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "amount_ends_name": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "sme-advancement-loan-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "29a7e6e19d1d4a5c59cef1ef8447b0f966bd590037c3d193e7d2703232e0ee05"
+        }
+      ],
+      "options": {
+        "account": "中小企業高度化等資金貸付事業特別会計",
+        "table_id": "sme-advancement-loan-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入の内訳の注記（充当先・調定の内訳など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "amount_ends_name": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "sme-advancement-loan-revenue"
+        }
+      ]
+    },
+    {
+      "id": "farming-support-loan-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "88169247ef700a6a16eedab661f09b0ce54eb588ccf29b59d3a7536ab9d3b8cc"
+        }
+      ],
+      "options": {
+        "account": "就農支援資金貸付事業特別会計",
+        "table_id": "farming-support-loan-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入の内訳の注記（充当先・調定の内訳など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "amount_ends_name": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "farming-support-loan-revenue"
+        }
+      ]
+    },
+    {
+      "id": "prefectural-forest-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "33351a37514197c7317e6f48a4e7e399e1c1bf2580e0bc5009190212430ff8ee"
+        }
+      ],
+      "options": {
+        "account": "県営林事業特別会計",
+        "table_id": "prefectural-forest-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入の内訳の注記（充当先・調定の内訳など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "amount_ends_name": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "prefectural-forest-revenue"
+        }
+      ]
+    },
+    {
+      "id": "forestry-improvement-loan-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4371e7dacf88400e8422997ae0ce7d885ac9470ecbcfa8dead60230513be3f4f"
+        }
+      ],
+      "options": {
+        "account": "林業・木材産業改善資金貸付事業特別会計",
+        "table_id": "forestry-improvement-loan-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入の内訳の注記（充当先・調定の内訳など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "amount_ends_name": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "forestry-improvement-loan-revenue"
+        }
+      ]
+    }
+  ]
+}
