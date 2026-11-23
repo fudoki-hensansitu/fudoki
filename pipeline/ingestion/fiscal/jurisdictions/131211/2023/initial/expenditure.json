@@ -484,6 +484,538 @@
           "table_id": "general-initial-2"
         }
       ]
+    },
+    {
+      "id": "national-health-initial-1",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "02da1d18ef52a1bc91901010a352a2c0ab28bb85ebb83d4d29218a90cf704307"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-initial-1-ocr-1",
+          "origin_sha256": "02da1d18ef52a1bc91901010a352a2c0ab28bb85ebb83d4d29218a90cf704307",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              83,
+              84
+            ]
+          },
+          "sha256": "319db49eb16594ffe29c02a186b6ef092f1be08ea469ce0ed432c2e5c706887d",
+          "bytes": 521695
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-initial-1",
+        "workflow": {
+          "layout": {
+            "pattern": "framed_blocks",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "財源内訳／区分": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目ごとに財源の種類と額が並び、歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "財源内訳／金額": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目ごとに財源の種類と額が並び、歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "節／区分": {
+                  "heading": "節"
+                }
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "note_kinds": {
+                    "区長": "基準額",
+                    "副区長": "基準額",
+                    "教育長": "基準額",
+                    "監査委員": "基準額"
+                  }
+                },
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_characters": true,
+            "kana_successors": true,
+            "lost_name_characters": true
+          }
+        },
+        "pages": [
+          [
+            83,
+            84
+          ]
+        ],
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial-1"
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial-2",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6940afbf75f23892dccc05e2b0bccd9f1dc895284fd75d67bbb8d0815b438f40"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-initial-2-ocr-1",
+          "origin_sha256": "6940afbf75f23892dccc05e2b0bccd9f1dc895284fd75d67bbb8d0815b438f40",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ]
+          },
+          "sha256": "9d7f2faeb49fc4b6e39ad1548e70c2c0991bd900ac63c3ab0a094ebe4677bbe7",
+          "bytes": 2634341
+        },
+        {
+          "id": "national-health-initial-2-ocr-2",
+          "origin_sha256": "6940afbf75f23892dccc05e2b0bccd9f1dc895284fd75d67bbb8d0815b438f40",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              11,
+              12
+            ]
+          },
+          "sha256": "d83b0d4a2360544618e67455cacdd8b34da45a45397755300e66509a42d08d14",
+          "bytes": 438383
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-initial-2",
+        "workflow": {
+          "layout": {
+            "pattern": "framed_blocks",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "財源内訳／区分": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目ごとに財源の種類と額が並び、歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "財源内訳／金額": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目ごとに財源の種類と額が並び、歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "節／区分": {
+                  "heading": "節"
+                }
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "note_kinds": {
+                    "区長": "基準額",
+                    "副区長": "基準額",
+                    "教育長": "基準額",
+                    "監査委員": "基準額"
+                  }
+                },
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_characters": true,
+            "kana_successors": true,
+            "lost_name_characters": true
+          }
+        },
+        "pages": [
+          [
+            1,
+            12
+          ]
+        ],
+        "partial": true,
+        "continued_rows": {
+          "subjects": [
+            {
+              "code": "1",
+              "name": "総務費"
+            },
+            {
+              "code": "1",
+              "name": "総務管理費"
+            },
+            {
+              "code": "4",
+              "name": "連合会負担金"
+            }
+          ],
+          "rows": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial-2"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6940afbf75f23892dccc05e2b0bccd9f1dc895284fd75d67bbb8d0815b438f40"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-initial-ocr-1",
+          "origin_sha256": "6940afbf75f23892dccc05e2b0bccd9f1dc895284fd75d67bbb8d0815b438f40",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50
+            ]
+          },
+          "sha256": "2d8d03e92185ae97313cbc929c8f77be0e6cdb8724960f514697c8b46cd25c95",
+          "bytes": 2778699
+        },
+        {
+          "id": "long-term-care-initial-ocr-2",
+          "origin_sha256": "6940afbf75f23892dccc05e2b0bccd9f1dc895284fd75d67bbb8d0815b438f40",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              51
+            ]
+          },
+          "sha256": "8be36172c947a3b035b4dedea4993bd6707546355f9e73c90a22527887edf1be",
+          "bytes": 221578
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "framed_blocks",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "財源内訳／区分": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目ごとに財源の種類と額が並び、歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "財源内訳／金額": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目ごとに財源の種類と額が並び、歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "節／区分": {
+                  "heading": "節"
+                }
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "note_kinds": {
+                    "区長": "基準額",
+                    "副区長": "基準額",
+                    "教育長": "基準額",
+                    "監査委員": "基準額"
+                  }
+                },
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_characters": true,
+            "kana_successors": true,
+            "lost_name_characters": true
+          }
+        },
+        "pages": [
+          [
+            41,
+            51
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "p42-r4-kana",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r4",
+            "observed_name": "使用料及び賃借料",
+            "corrected_name": "ク 使用料及び賃借料",
+            "reason": "物理42頁、説明「ク 使用料及び賃借料」。OCR が行頭の片仮名の記号を読み落とし、上の行の子にしていた。原典の描画で記号を確かめた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ]
+    },
+    {
+      "id": "late-elderly-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6940afbf75f23892dccc05e2b0bccd9f1dc895284fd75d67bbb8d0815b438f40"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "late-elderly-initial-ocr-1",
+          "origin_sha256": "6940afbf75f23892dccc05e2b0bccd9f1dc895284fd75d67bbb8d0815b438f40",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              78,
+              79,
+              80,
+              81,
+              82,
+              83
+            ]
+          },
+          "sha256": "345e7adce0805f270969532a3d18885e3cca1410600bde7d5f28f67b5da206b7",
+          "bytes": 1450459
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "late-elderly-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "framed_blocks",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "財源内訳／区分": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目ごとに財源の種類と額が並び、歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "財源内訳／金額": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目ごとに財源の種類と額が並び、歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "節／区分": {
+                  "heading": "節"
+                }
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "note_kinds": {
+                    "区長": "基準額",
+                    "副区長": "基準額",
+                    "教育長": "基準額",
+                    "監査委員": "基準額"
+                  }
+                },
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_characters": true,
+            "kana_successors": true,
+            "lost_name_characters": true
+          }
+        },
+        "pages": [
+          [
+            78,
+            83
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "late-elderly-initial"
+        }
+      ]
     }
   ]
 }
