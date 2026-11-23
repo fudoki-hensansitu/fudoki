@@ -210,6 +210,304 @@
           }
         ]
       }
+    },
+    {
+      "id": "kaigo-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "3824b699a8cac75aa37cd04291ca4783017179beae1070872b4856117b951bab"
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kaigo-revenue-ocr-1",
+          "origin_sha256": "3824b699a8cac75aa37cd04291ca4783017179beae1070872b4856117b951bab",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true,
+            "merged_lines": true
+          },
+          "sha256": "c950caa6b15c68d4f02750c760d59aae892a5c85e5641dd041af555e080f2df0",
+          "bytes": 1298395
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-revenue",
+        "pages": [
+          [
+            8,
+            15
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の内訳（課税標準額・税率・調定見込額・収納率、事業ごとの補助金の名前と額）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "partial_headings": true,
+            "marked_subjects": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "kaigo-revenue-p13-r22-paren",
+            "page": 13,
+            "observation_id": "p13:full-page:a0:result0:r22",
+            "observed_name": "生活支援総合事業",
+            "corrected_name": "生活支援総合事業)",
+            "reason": "原典の画像では節「2 地域支援事業繰入金（介護予防・日常生活支援総合事業）」の3行目は「生活支援総合事業)」と印字されている。閉じ括弧を欄の際に詰めて刷り、OCR が読み落とした。"
+          }
+        ]
+      }
+    },
+    {
+      "id": "kouki-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "b48c508288b602960f6bddb80622b490bc1b8f7495dd10a92f0188415f82a337"
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kouki-revenue-ocr-1",
+          "origin_sha256": "b48c508288b602960f6bddb80622b490bc1b8f7495dd10a92f0188415f82a337",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              8,
+              9,
+              10,
+              11
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true,
+            "merged_lines": true
+          },
+          "sha256": "2cce8d30fd6b15c2aa52046beb7bceebbf1e72d5b6ec364cfbd7dee32d02f525",
+          "bytes": 520671
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-revenue",
+        "pages": [
+          [
+            8,
+            11
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の内訳（課税標準額・税率・調定見込額・収納率、事業ごとの補助金の名前と額）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "partial_headings": true,
+            "marked_subjects": true
+          }
+        }
+      }
+    },
+    {
+      "id": "nhi-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "8c9f49ec6333bded679f5e9673a3d2fc9de2e6d9c84074269082a8ce26907bf4"
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "nhi-revenue-ocr-1",
+          "origin_sha256": "8c9f49ec6333bded679f5e9673a3d2fc9de2e6d9c84074269082a8ce26907bf4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              8,
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true,
+            "merged_lines": true
+          },
+          "sha256": "7f139434331849a5b97347b522232aea621fa7cf5948c6e72fa111bb475d305f",
+          "bytes": 920128
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "nhi-revenue",
+        "pages": [
+          [
+            8,
+            13
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの収入の内訳（課税標準額・税率・調定見込額・収納率、事業ごとの補助金の名前と額）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "partial_headings": true,
+            "marked_subjects": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "nhi-revenue-p8-r37-dot",
+            "page": 8,
+            "observation_id": "p8:full-page:a0:result0:r37",
+            "observed_name": "·",
+            "corrected_name": "・",
+            "reason": "原典の画像では「社会保障・税番号制度」と印字されている。Paddle が中黒を中国語の字形の「·」に読んだ（·→・）。"
+          },
+          {
+            "id": "nhi-revenue-p8-r37-mark",
+            "page": 8,
+            "observation_id": "p8:full-page:a0:result0:r37",
+            "observed_name": "社会保障・税番号制度",
+            "corrected_name": "○社会保障・税番号制度システム整備費補助金",
+            "reason": "物理8頁の廃止した科目「社会保障・税番号制度システム整備費補助金」（本年度 0）。番号の代わりに ○ を印字し、名前を2行に折り返す。OCR は ○ を読み落とし、2行目を別の科目と読んだ。原典の描画で印字を確かめ、○ と2行目を名前に戻し、2行目の読みは使わない。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "nhi-revenue-p8-r41",
+            "page": 8,
+            "observation_id": "p8:full-page:a0:result0:r41",
+            "observed": "システム整備費補助金",
+            "reason": "物理8頁の廃止した科目「社会保障・税番号制度システム整備費補助金」（本年度 0）。番号の代わりに ○ を印字し、名前を2行に折り返す。OCR は ○ を読み落とし、2行目を別の科目と読んだ。原典の描画で印字を確かめ、○ と2行目を名前に戻し、2行目の読みは使わない。"
+          }
+        ]
+      }
     }
   ]
 }

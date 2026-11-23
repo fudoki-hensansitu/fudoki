@@ -2121,6 +2121,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     bracketed = quirk(document, 'bracketed_subjects')
     # So is one marked `○` (`marked_subjects`): `○衛生費都負担金` is no misread of the open `1 民生費都負担金` (132055 R5).
     marked_subjects = quirk(document, 'marked_subjects')
+    between_lines = quirk(document, 'amounts_between_name_lines')
     # `repeated_heading_owns_nothing`: a heading the page prints again takes no amount of the line it is on.
     owners = ('node', 'total') if quirk(document, 'repeated_heading_owns_nothing') is not None else ('node', 'repeat', 'total')
     for logical in logicals:
@@ -2204,7 +2205,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 if (between := quirk(document, 'code_between_name_lines')) is not None:
                     group_items = between.module.join(group_items)  # a 節 name wrapped round its code (132292)
                 if (centered := quirk((layout or {}).get(group.axis), 'centered_codes')) is not None:
-                    group_items = centered.module.regroup(group_items)
+                    group_items = centered.module.regroup(group_items, centered.value)
                 if (digit_set := quirk(document, 'digit_set_codes')) is not None:
                     digit_set.module.measure(group_items, digit_set.value)
             if group.subject and uncounted is not None:
@@ -2727,7 +2728,12 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     previous = next((s for s in stack if s.level == item.level), None)
                 if previous is not None and repeats(previous, item, logical.ocr) and not (
                         item.code is None and item.lines and any(q is not None and q.module.marked(item.lines[0])
-                                                                 for q in (bracketed, marked_subjects))):
+                                                                 for q in (bracketed, marked_subjects))) and not (
+                        # (the quirk `amounts_between_name_lines`: a codeless name one character off the open heading
+                        # with amounts in its own row is a subject the year drops, not the heading misread)
+                        between_lines is not None and item.code is None and previous.code is not None
+                        and normalize(previous.name or '') != normalize(item.name or '')
+                        and prints_row_amounts(item, logical)):
                     item.key = previous.key  # a repeated subject heading on a continuation page
                     item.role = 'repeat'
                     shown = next((g for g in item.glyphs[:3] if CODE.match(normalize(g.text))), None)
@@ -3202,6 +3208,8 @@ def prints_row_amounts(item: Item, logical: Logical) -> bool:
     prints its name only; a codeless subject of the same name with amounts of its own is a subject (a 目 the year drops,
     `ＳＤＧｓ推進費 0 148,882` under the 項 `ＳＤＧｓ推進費`, 131237 当初予算 R5 p184)."""
     first = item.lines[0] if item.lines else item.glyphs
+    if item.lines and document_quirk('amounts_between_name_lines') is not None:
+        first = [g for line in item.lines for g in line]  # the row runs the name's height (the quirk)
     top, bottom = min(g.y0 for g in first), max(g.y1 for g in first)
     own = []  # the amount columns right after the subject's: a breakdown's columns further right are not its row
     for band in sorted((b for b in logical.bands if b.x0 >= item.group.x1 - .5 and b.kind is not None), key=lambda b: b.x0):
