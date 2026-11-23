@@ -1,0 +1,363 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132136",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5ae08b8c8306372f7f48d4adfd044ba950f2cffcb84954e4023be467756b8f3d"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は調定見込額・収入歩合などの積算の基と所管課の注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "name_tails_over_pages": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "partial_headings": true,
+            "one_row_header": true
+          }
+        },
+        "pages": [
+          [
+            18,
+            83
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "8dd3bbfeee7a44f7173f8476c3a48c923b8d12cdbc37453d225d34de3b2c3cb3"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は調定見込額・収入歩合などの積算の基と所管課の注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true
+              },
+              "rules": {
+                "dark": 180
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position",
+                "quirks": {
+                  "name_tails_over_pages": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "partial_headings": true,
+            "code_after_amount": {
+              "code_digits": 6
+            },
+            "nearest_subject_code": true
+          }
+        },
+        "pages": [
+          [
+            14,
+            21
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-revenue-ocr-1",
+          "origin_sha256": "8dd3bbfeee7a44f7173f8476c3a48c923b8d12cdbc37453d225d34de3b2c3cb3",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "65aa6010db50e66b5dc11c92590378ce6b78b9695c99f89833328cad5fc5ffff",
+          "bytes": 1677249
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "10258dabe26c2b5c568b93961af8e8cf9ae98dc7bf2ec6a9bd4423f7789dbbd3"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "long-term-care-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は調定見込額・収入歩合などの積算の基と所管課の注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true
+              },
+              "rules": {
+                "dark": 180
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position",
+                "quirks": {
+                  "name_tails_over_pages": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "partial_headings": true,
+            "code_after_amount": {
+              "code_digits": 6
+            },
+            "nearest_subject_code": true
+          }
+        },
+        "pages": [
+          [
+            14,
+            21
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-revenue-ocr-1",
+          "origin_sha256": "10258dabe26c2b5c568b93961af8e8cf9ae98dc7bf2ec6a9bd4423f7789dbbd3",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e8fac1da14f079822c0bfff2bb170152765450c7738b9ca58d0ca3dcf1b5db0c",
+          "bytes": 1475401
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "92e5bfe6c8feeb11bff2ed28d35efdea2fa7260550cadce473616dde086ab04c"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は調定見込額・収入歩合などの積算の基と所管課の注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true
+              },
+              "rules": {
+                "dark": 180
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position",
+                "quirks": {
+                  "name_tails_over_pages": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "partial_headings": true,
+            "code_after_amount": {
+              "code_digits": 6
+            },
+            "nearest_subject_code": true
+          }
+        },
+        "pages": [
+          [
+            14,
+            17
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-revenue-ocr-1",
+          "origin_sha256": "92e5bfe6c8feeb11bff2ed28d35efdea2fa7260550cadce473616dde086ab04c",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              14,
+              15,
+              16,
+              17
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "aca64348c1f9b6dbf9ab792953095429b6e39e69c63fb15e38f8ffc977d15fa2",
+          "bytes": 721347
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-revenue"
+        }
+      ]
+    }
+  ]
+}
