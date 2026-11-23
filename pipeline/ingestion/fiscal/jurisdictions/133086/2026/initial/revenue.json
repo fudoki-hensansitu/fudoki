@@ -84,6 +84,705 @@
           "table_id": "general-revenue"
         }
       ]
+    },
+    {
+      "id": "forest-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4fdfbd0ba98e7632922c4a30f4eb3cbfe90c77182f5cd75672655474a454e2d3"
+        }
+      ],
+      "options": {
+        "account": "都民の森管理運営事業特別会計",
+        "table_id": "forest-revenue",
+        "pages": [
+          [
+            6,
+            6
+          ],
+          [
+            8,
+            8
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "目(事業)": {
+                  "kind": "label",
+                  "heading": "目"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "rules": {
+                "row_gaps": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands",
+              "amounts": "next_row",
+              "fourth_level_axis": "事業"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "titles_on_one_line": true,
+            "bracketed_subjects": true,
+            "one_row_header": true,
+            "repeated_heading_owns_nothing": true,
+            "codeless_priced_moku": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "forest-revenue"
+        }
+      ]
+    },
+    {
+      "id": "furusato-village-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce30e9210bc3e8ee0816ebe9793d4e01e25e60cbda5669c010f58afea2d81baf"
+        }
+      ],
+      "options": {
+        "account": "山のふるさと村管理運営事業特別会計",
+        "table_id": "furusato-village-revenue",
+        "pages": [
+          [
+            6,
+            6
+          ],
+          [
+            8,
+            8
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "目(事業)": {
+                  "kind": "label",
+                  "heading": "目"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "rules": {
+                "row_gaps": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands",
+              "amounts": "next_row",
+              "fourth_level_axis": "事業"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "titles_on_one_line": true,
+            "bracketed_subjects": true,
+            "one_row_header": true,
+            "repeated_heading_owns_nothing": true,
+            "codeless_priced_moku": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "furusato-village-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6605ee691a40e12efed8bc9db847976749ffb9e852119c6406e97b8d141ccee6"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "目(事業)": {
+                  "kind": "label",
+                  "heading": "目"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "row_gaps": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands",
+              "amounts": "next_row",
+              "fourth_level_axis": "事業"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "titles_on_one_line": true,
+            "bracketed_subjects": true,
+            "one_row_header": true,
+            "repeated_heading_owns_nothing": true,
+            "codeless_priced_moku": true
+          }
+        },
+        "pages": [
+          [
+            8,
+            8
+          ],
+          [
+            10,
+            12
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ed1e2f7c416cfd8a952fc70c1ddd87aad69a35d4fee7d7075be5a9190bfe6369"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-revenue",
+        "pages": [
+          [
+            7,
+            7
+          ],
+          [
+            9,
+            11
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "目(事業)": {
+                  "kind": "label",
+                  "heading": "目"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands",
+              "amounts": "next_row",
+              "fourth_level_axis": "事業"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "titles_on_one_line": true,
+            "bracketed_subjects": true,
+            "one_row_header": true,
+            "repeated_heading_owns_nothing": true,
+            "codeless_priced_moku": true,
+            "slashed_cells": true,
+            "ocr_start_jitter": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "kou-p10-r94",
+            "page": 10,
+            "observation_id": "p10:full-page:a0:result0:r94",
+            "observed": "(項) 0 3 預金利子",
+            "reason": "項の題字「(項) 03 預金利子」を、OCR が番号の2字の間を空けて「0 3」と読み、「0」が番号から離れる。原典の画像で番号は「03」と印字されているので、読みを除き、題字を印字の位置で読み直す。"
+          },
+          {
+            "id": "kou-p11-r29",
+            "page": 11,
+            "observation_id": "p11:full-page:a0:result0:r29",
+            "observed": "(項) 0 5 雑入",
+            "reason": "項の題字「(項) 05 雑入」を、OCR が番号の2字の間を空けて「0 5」と読み、「0」が番号から離れる。原典の画像で番号は「05」と印字されているので、読みを除き、題字を印字の位置で読み直す。"
+          }
+        ],
+        "name_readings": [
+          {
+            "id": "kou-p10-r94-mark",
+            "page": 10,
+            "box": [
+              362.1,
+              429.0,
+              381.0,
+              440.1
+            ],
+            "name": "(項)",
+            "reason": "項の題字「(項) 03 預金利子」を、OCR が番号の2字の間を空けて「0 3」と読み、「0」が番号から離れる。原典の画像で番号は「03」と印字されているので、読みを除き、題字を印字の位置で読み直す。"
+          },
+          {
+            "id": "kou-p10-r94-code",
+            "page": 10,
+            "box": [
+              384.6,
+              429.0,
+              394.9,
+              440.1
+            ],
+            "name": "03",
+            "reason": "項の題字「(項) 03 預金利子」を、OCR が番号の2字の間を空けて「0 3」と読み、「0」が番号から離れる。原典の画像で番号は「03」と印字されているので、読みを除き、題字を印字の位置で読み直す。"
+          },
+          {
+            "id": "kou-p10-r94-name",
+            "page": 10,
+            "box": [
+              403.1,
+              429.0,
+              440.0,
+              440.1
+            ],
+            "name": "預金利子",
+            "reason": "項の題字「(項) 03 預金利子」を、OCR が番号の2字の間を空けて「0 3」と読み、「0」が番号から離れる。原典の画像で番号は「03」と印字されているので、読みを除き、題字を印字の位置で読み直す。"
+          },
+          {
+            "id": "kou-p11-r29-mark",
+            "page": 11,
+            "box": [
+              362.5,
+              143.7,
+              380.8,
+              154.5
+            ],
+            "name": "(項)",
+            "reason": "項の題字「(項) 05 雑入」を、OCR が番号の2字の間を空けて「0 5」と読み、「0」が番号から離れる。原典の画像で番号は「05」と印字されているので、読みを除き、題字を印字の位置で読み直す。"
+          },
+          {
+            "id": "kou-p11-r29-code",
+            "page": 11,
+            "box": [
+              384.4,
+              143.7,
+              395.2,
+              154.5
+            ],
+            "name": "05",
+            "reason": "項の題字「(項) 05 雑入」を、OCR が番号の2字の間を空けて「0 5」と読み、「0」が番号から離れる。原典の画像で番号は「05」と印字されているので、読みを除き、題字を印字の位置で読み直す。"
+          },
+          {
+            "id": "kou-p11-r29-name",
+            "page": 11,
+            "box": [
+              401.4,
+              143.7,
+              421.1,
+              154.5
+            ],
+            "name": "雑入",
+            "reason": "項の題字「(項) 05 雑入」を、OCR が番号の2字の間を空けて「0 5」と読み、「0」が番号から離れる。原典の画像で番号は「05」と印字されているので、読みを除き、題字を印字の位置で読み直す。"
+          }
+        ],
+        "rule_ink": [
+          {
+            "id": "p10-top-row-rules",
+            "page": 10,
+            "boxes": [
+              [
+                204.0,
+                81.5,
+                218.5,
+                98.0
+              ],
+              [
+                263.5,
+                81.5,
+                278.0,
+                98.0
+              ],
+              [
+                331.5,
+                81.5,
+                337.5,
+                98.0
+              ]
+            ],
+            "reason": "頁10の最初の行は前の頁の目を括弧で繰り返す行（01（一般会計繰入金））で、金額の升は空いている。原画で確かめると、残った墨は本年度・前年度・比較の升の縦罫の切れ端で、数字ではない。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-revenue-ocr-1",
+          "origin_sha256": "ed1e2f7c416cfd8a952fc70c1ddd87aad69a35d4fee7d7075be5a9190bfe6369",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              7,
+              9,
+              10,
+              11
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "85c487e64504badade4389c385a376db53f9c3a8fc9a9f1aaa7bed30e663bc5b",
+          "bytes": 830719
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "db09e826810071f8cd84e66baed5f430dd5f9e7d83198ee213ef49dce9745160"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-revenue",
+        "pages": [
+          [
+            9,
+            9
+          ],
+          [
+            11,
+            15
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "目(事業)": {
+                  "kind": "label",
+                  "heading": "目"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands",
+              "amounts": "next_row",
+              "fourth_level_axis": "事業"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "titles_on_one_line": true,
+            "bracketed_subjects": true,
+            "one_row_header": true,
+            "repeated_heading_owns_nothing": true,
+            "codeless_priced_moku": true,
+            "slashed_cells": true,
+            "ocr_start_jitter": true,
+            "skewed_cell_rows": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "kou-p14-r97",
+            "page": 14,
+            "observation_id": "p14:full-page:a0:result0:r97",
+            "observed": "(項) 0 3 雑入",
+            "reason": "項の題字「(項) 03 雑入」を、OCR が番号の2字の間を空けて「0 3」と読み、「0」が番号から離れる。原典の画像で番号は「03」と印字されているので、読みを除き、題字を印字の位置で読み直す。"
+          },
+          {
+            "id": "kou-p15-r1",
+            "page": 15,
+            "observation_id": "p15:full-page:a0:result0:r1",
+            "observed": "(項) 0 3 雑入",
+            "reason": "項の題字「(項) 03 雑入」を、OCR が番号の2字の間を空けて「0 3」と読み、「0」が番号から離れる。原典の画像で番号は「03」と印字されているので、読みを除き、題字を印字の位置で読み直す。"
+          },
+          {
+            "id": "kou-p15-r46",
+            "page": 15,
+            "observation_id": "p15:full-page:a0:result0:r46",
+            "observed": "(項) 0 1 繰越金",
+            "reason": "項の題字「(項) 01 繰越金」を、OCR が番号の2字の間を空けて「0 1」と読み、「0」が番号から離れる。原典の画像で番号は「01」と印字されているので、読みを除き、題字を印字の位置で読み直す。"
+          }
+        ],
+        "name_readings": [
+          {
+            "id": "kou-p14-r97-mark",
+            "page": 14,
+            "box": [
+              362.9,
+              429.5,
+              381.3,
+              439.6
+            ],
+            "name": "(項)",
+            "reason": "項の題字「(項) 03 雑入」を、OCR が番号の2字の間を空けて「0 3」と読み、「0」が番号から離れる。原典の画像で番号は「03」と印字されているので、読みを除き、題字を印字の位置で読み直す。"
+          },
+          {
+            "id": "kou-p14-r97-code",
+            "page": 14,
+            "box": [
+              384.7,
+              429.5,
+              394.8,
+              439.6
+            ],
+            "name": "03",
+            "reason": "項の題字「(項) 03 雑入」を、OCR が番号の2字の間を空けて「0 3」と読み、「0」が番号から離れる。原典の画像で番号は「03」と印字されているので、読みを除き、題字を印字の位置で読み直す。"
+          },
+          {
+            "id": "kou-p14-r97-name",
+            "page": 14,
+            "box": [
+              402.2,
+              429.5,
+              420.5,
+              439.6
+            ],
+            "name": "雑入",
+            "reason": "項の題字「(項) 03 雑入」を、OCR が番号の2字の間を空けて「0 3」と読み、「0」が番号から離れる。原典の画像で番号は「03」と印字されているので、読みを除き、題字を印字の位置で読み直す。"
+          },
+          {
+            "id": "kou-p15-r1-mark",
+            "page": 15,
+            "box": [
+              362.6,
+              48.9,
+              380.9,
+              58.8
+            ],
+            "name": "(項)",
+            "reason": "項の題字「(項) 03 雑入」を、OCR が番号の2字の間を空けて「0 3」と読み、「0」が番号から離れる。原典の画像で番号は「03」と印字されているので、読みを除き、題字を印字の位置で読み直す。"
+          },
+          {
+            "id": "kou-p15-r1-code",
+            "page": 15,
+            "box": [
+              384.0,
+              48.9,
+              395.5,
+              58.8
+            ],
+            "name": "03",
+            "reason": "項の題字「(項) 03 雑入」を、OCR が番号の2字の間を空けて「0 3」と読み、「0」が番号から離れる。原典の画像で番号は「03」と印字されているので、読みを除き、題字を印字の位置で読み直す。"
+          },
+          {
+            "id": "kou-p15-r1-name",
+            "page": 15,
+            "box": [
+              400.5,
+              48.9,
+              420.7,
+              58.8
+            ],
+            "name": "雑入",
+            "reason": "項の題字「(項) 03 雑入」を、OCR が番号の2字の間を空けて「0 3」と読み、「0」が番号から離れる。原典の画像で番号は「03」と印字されているので、読みを除き、題字を印字の位置で読み直す。"
+          },
+          {
+            "id": "kou-p15-r46-mark",
+            "page": 15,
+            "box": [
+              362.4,
+              250.7,
+              380.1,
+              261.0
+            ],
+            "name": "(項)",
+            "reason": "項の題字「(項) 01 繰越金」を、OCR が番号の2字の間を空けて「0 1」と読み、「0」が番号から離れる。原典の画像で番号は「01」と印字されているので、読みを除き、題字を印字の位置で読み直す。"
+          },
+          {
+            "id": "kou-p15-r46-code",
+            "page": 15,
+            "box": [
+              384.9,
+              250.7,
+              396.2,
+              261.0
+            ],
+            "name": "01",
+            "reason": "項の題字「(項) 01 繰越金」を、OCR が番号の2字の間を空けて「0 1」と読み、「0」が番号から離れる。原典の画像で番号は「01」と印字されているので、読みを除き、題字を印字の位置で読み直す。"
+          },
+          {
+            "id": "kou-p15-r46-name",
+            "page": 15,
+            "box": [
+              401.5,
+              250.7,
+              431.0,
+              261.0
+            ],
+            "name": "繰越金",
+            "reason": "項の題字「(項) 01 繰越金」を、OCR が番号の2字の間を空けて「0 1」と読み、「0」が番号から離れる。原典の画像で番号は「01」と印字されているので、読みを除き、題字を印字の位置で読み直す。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-revenue-ocr-1",
+          "origin_sha256": "db09e826810071f8cd84e66baed5f430dd5f9e7d83198ee213ef49dce9745160",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              9,
+              11,
+              12,
+              13,
+              14,
+              15
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "d7e89202709793c738c200dafd93a2abbd6faf048408870c699b53c489cbc45d",
+          "bytes": 1798586
+        }
+      ]
     }
   ]
 }
