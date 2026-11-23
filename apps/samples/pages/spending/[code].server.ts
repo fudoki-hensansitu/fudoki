@@ -2,9 +2,10 @@
 // 収録の無い自治体・頁に無い年度は 404。シェアされたリンクもこの頁で、OG 画像はそのまちのその年度の札とレシート（本体が描く）
 import { defineHandler, defineHead } from 'void'
 import { HTTPException } from 'hono/http-exception'
-import { BASE, SITE_ORIGIN, pageTitle, type Snapshot, type TownEntry } from '../../lib/fudoki'
-import { DESCRIPTION } from '../../lib/copy'
-import { fudokiFetch, loadSnapshot, type Env } from '../../server/fudoki'
+import { BASE, SITE_ORIGIN, pageTitle, type Snapshot, type TownEntry } from '../../spending/lib/fudoki'
+import { DESCRIPTION } from '../../spending/lib/copy'
+import { fudokiFetch, type Env } from '../../server/fudoki'
+import { loadSnapshot } from '../../spending/server/snapshot'
 
 export type Props = { d: Snapshot; town: TownEntry }
 

@@ -1,6 +1,6 @@
 # apps
 
-公開面。web（fudoki.dev）・api（api.fudoki.dev）・docs（docs.fudoki.dev）の3つの Cloudflare Workers と、`samples/` の小さなサブサイト。
+公開面。web（fudoki.dev）・api（api.fudoki.dev）・docs（docs.fudoki.dev）の3つの Cloudflare Workers と、`samples/` の小さなサンプル（まとめて1つの Worker）。
 
 ## web（`@fudoki/web`）
 
@@ -35,27 +35,29 @@
 - 見た目は `theme.css` で本体（DESIGN.md の色・書体・薄緑のサイドバー）に揃える。icon は `public/icons/` の Phosphor（regular）の SVG を `/icons/<name>.svg` で指し、`theme.css` の mask で文字色に塗る。SVG を frontmatter や import で渡さない
 - ロゴは fudoki.dev への戻り口
 
-## samples（`apps/samples/*`）
+## samples（`apps/samples`）
 
-風土記のデータを一つの問いに絞って見せる小さなサブサイト。サイトを足すたびに repo を作らず、ここに dir を切る（2026-11-22 yuito）。package 名は `@fudoki/<name>`、Worker は `fudoki-<name>`、配信はドメインを分けず `fudoki.dev/<name>`（2026-11-22 yuito）。
+風土記のデータを一つの問いに絞って見せる小さなサンプル。サンプルを足すたびに repo を作らず（2026-11-22 yuito）、Worker も分けない（2026-11-23 yuito）。全サンプルで1つの Void アプリ（package `@fudoki/samples`、Worker `fudoki-samples`）にし、配信はドメインを分けず `fudoki.dev/<name>`（2026-11-22 yuito）。
 
-- 自分の入口（custom domain・workers.dev）を持たない。web の `middleware/00.samples.ts` が `/<name>` の下を Service Binding（`void.config.ts` の services）でそのまま渡すので、頁は `pages/<name>/` に置き、Vite の資産も `build.assetsDir` で `/<name>/assets` に置く
+- サンプルの頁は `pages/<name>/`（その頁だけの layout も置く）、それ以外のコード（部品・lib・CSS）は `<name>/` に置く。サンプルどうしで共有するのは本体を読む口（`server/fudoki.ts`）と middleware（本体への中継・CSP）だけ
+- 自分の入口（custom domain・workers.dev）を持たない。web の `middleware/00.samples.ts` が `/<name>` と `/samples` の下を Service Binding（`void.config.ts` の services の `SAMPLES`）でそのまま渡す。Vite の資産は `build.assetsDir` で `/samples/assets` に置く。サンプルを足したら web の middleware の `PREFIXES` に path を足す
+- web に畳まず Worker を分けているのは、web の ISR のキャッシュ（KV）が deploy のたびに空になるため。サンプルの deploy で本体の頁のキャッシュを捨てない（2026-11-23）
 - データ（D1・KV・R2）の binding を持たず、本体の Worker（`fudoki`、web）を Service Binding で読むだけにする。手元の `vite dev` は Service Binding の先が無いので公開の fudoki.dev を読む
 - 分野の並び・名前などの判断は `packages/` から import して web と共有し、写さない。他の app（`apps/web` など）からは import しない
-- 依存は root の `catalog:` を使い、void・cf の版は web に揃える。void 1.10 の静的ファイル（`/<name>/assets/*`）は各 sample の `scripts/static-assets.ts` で Worker を通さないようにする
-- main に入ると `deploy-<name>.yml` がデプロイする
+- 依存は root の `catalog:` を使い、void・cf の版は web に揃える。void 1.10 の静的ファイル（`/samples/assets/*`）は `scripts/static-assets.ts` で Worker を通さないようにする
+- main に入ると `deploy-samples.yml` がデプロイする
 
-### spending（`@fudoki/spending`）
+### spending
 
-「私のお金はどこへ行った？」に絞ったサイト（`fudoki.dev/spending`、Worker `fudoki-spending`）。まちを選ぶと、最新の決算を住民1人あたりに割ったレシートが出る。月給（額面）を入れると、その人が払う住民税のうちそのまちの分を見積もり（`lib/tax.ts`）、その額を分野に割って刷り直す。入れた額は保存・送信せず、URL・シェアにも載せない。
+「私のお金はどこへ行った？」に絞ったサンプル（`fudoki.dev/spending`）。まちを選ぶと、最新の決算を住民1人あたりに割ったレシートが出る。月給（額面）を入れると、その人が払う住民税のうちそのまちの分を見積もり（`spending/lib/tax.ts`）、その額を分野に割って刷り直す。入れた額は保存・送信せず、URL・シェアにも載せない。
 
-- 頁: まちを選ぶ頁（`/spending`）とレシートの頁（`/spending/<自治体コード>?year=`）。path の頭は `lib/fudoki.ts` の `BASE`。レシートの演出（数え上げ・紙送り・押し出された紙の three.js）は `receipt/`
-- 画面は同じ origin の本体の `/api/jurisdictions*`・`/jurisdictions/<code>/emblem.svg`・`receipt.png` を呼ぶ。loader は Service Binding で本体から読み（`server/fudoki.ts`）、手元の `vite dev` では middleware がこれらを公開の fudoki.dev へ中継する。web がこれらの path や応答の形を変えるときは spending も直す
-- 色・字の token は `styles/app.css` に web の `tokens.css` から写している
+- 頁: まちを選ぶ頁（`/spending`）とレシートの頁（`/spending/<自治体コード>?year=`）。path の頭は `spending/lib/fudoki.ts` の `BASE`。レシートの演出（数え上げ・紙送り・押し出された紙の three.js）は `spending/receipt/`
+- 画面は同じ origin の本体の `/api/jurisdictions*`・`/jurisdictions/<code>/emblem.svg`・`receipt.png` を呼ぶ。loader は Service Binding で本体から読み（`spending/server/snapshot.ts`）、手元の `vite dev` では middleware がこれらを公開の fudoki.dev へ中継する。web がこれらの path や応答の形を変えるときは spending も直す
+- 色・字の token は `spending/styles/app.css` に web の `tokens.css` から写している
 
 ## 配信
 
-- web は `https://fudoki.dev/`（`web/void.config.ts`）。spending は `https://fudoki.dev/spending`（web が渡す）。公開 web の絶対 URL（`canonical`・`og:image`）はこのドメインを指す
+- web は `https://fudoki.dev/`（`web/void.config.ts`）。samples は `https://fudoki.dev/<name>`（web が渡す）。公開 web の絶対 URL（`canonical`・`og:image`）はこのドメインを指す
 - main に入ると GitHub Actions がデプロイする（`deploy-web.yml`・`deploy-api.yml`・`deploy-docs.yml`、パスで対象を分ける）。手元の `deploy:*` は手動で出し直すときだけ使う。web の D1 の migration は deploy-web・deploy-preview-web が deploy の前に当てる。api の D1 の migration は自動では流さない
 - web を変える PR は `deploy-preview-web.yml` が Worker Previews で `pr-<番号>.fudoki.dev` に出す（binding・var は `void.config.ts` の `preview` の分岐。PR を閉じたら消す。fork の PR は出さない）。preview は Cloudflare Access の「fudoki previews」の背後に置き（宛先は Worker 単位の `preview_worker`）、noindex は付けない
 - build・deploy は公開 app のコードだけを扱い、dbt・出典の全量生成は実行しない

@@ -1,4 +1,6 @@
-// fudoki.dev/spending の Worker（fudoki-spending）。自分の入口（custom domain・workers.dev）は持たず、本体の Worker（fudoki、apps/web）が /spending の下を Service Binding で渡す。
+// 小さなサンプル（fudoki.dev/spending など）をまとめて配る Worker（fudoki-samples）。サンプルごとに Worker を分けず、頁は pages/<名前>/、その他のコードは <名前>/ に置く。
+// 自分の入口（custom domain・workers.dev）は持たず、本体の Worker（fudoki、apps/web）が各サンプルの path と /samples/assets の下を Service Binding で渡す。
+// web と Worker を分けておくのは、web の ISR のキャッシュが deploy のたびに空になるため（サンプルの deploy で本体のキャッシュを捨てない）。
 // データ（D1・KV・R2）の binding は持たず、風土記の本体の Worker（fudoki）を Service Binding で読むだけにする（server/fudoki.ts）
 import { defineConfig } from 'void/config'
 
@@ -12,7 +14,7 @@ export default defineConfig({
       { property: 'og:type', content: 'website' },
       { property: 'og:site_name', content: '風土記（fudoki）' },
       { property: 'og:locale', content: 'ja_JP' },
-      // まちの頁はそのまちのレシートの画像に替える（pages/[code].server.ts）
+      // spending のまちの頁はそのまちのレシートの画像に替える（pages/spending/[code].server.ts）
       { property: 'og:image', content: 'https://fudoki.dev/og.png' },
       { name: 'twitter:card', content: 'summary_large_image' },
     ],
@@ -22,7 +24,7 @@ export default defineConfig({
     compatibility_date: '2026-11-09',
   },
   cloudflare: {
-    name: 'fudoki-spending',
+    name: 'fudoki-samples',
     workers_dev: false,
     observability: { enabled: true, head_sampling_rate: 1 },
     services: [{ binding: 'FUDOKI', service: 'fudoki' }],

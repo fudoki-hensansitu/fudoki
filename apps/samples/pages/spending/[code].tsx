@@ -2,12 +2,12 @@
 // 年度は loader が決めた一つだけを出し、札の上で切り替えない（2026-11-20 yuito「年度と詳細とか入れなくて良い」）。
 // レシートの末端まで頁が送られたら、他のまちを探す節を出す
 import * as React from 'react'
-import { ReceiptMachine } from '../../receipt/receipt'
-import { Emblem } from '../../components/parts'
-import { Title } from '../../components/title'
-import { Footer, Intro } from '../../components/intro'
-import { TownSearch } from '../../components/town-search'
-import { BASE, yearView } from '../../lib/fudoki'
+import { ReceiptMachine } from '../../spending/receipt/receipt'
+import { Emblem } from '../../spending/components/parts'
+import { Title } from '../../spending/components/title'
+import { Footer, Intro } from '../../spending/components/intro'
+import { TownSearch } from '../../spending/components/town-search'
+import { BASE, yearView } from '../../spending/lib/fudoki'
 import type { Props } from './[code].server'
 
 export default function TownPage({ d, town }: Props) {
