@@ -1,0 +1,652 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132276",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "62e02d51baff7156bcbaf9dfebf9509aea736f3d6b11f63ed275b9c05ed25f44"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "pages": [
+          [
+            22,
+            69
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p69-total-assessed",
+            "page": 69,
+            "observation_id": "p69:full-page:a0:result0:r17",
+            "observed": "27,010,638,0242",
+            "reason": "頁69の歳入合計の調定額 27,010,638,024 と収入済額 26,834,406,391 は罫線をはさんで詰めて印字され、OCR が収入済額の先頭の 2 を調定額の末尾にも読み（27,010,638,0242）、罫線で切ると収入済額の読みと重なって桁が崩れる。この2つの読みは使わず、2つの金額をその数字の位置で読む。原画で確かめた。"
+          },
+          {
+            "id": "p69-total-received",
+            "page": 69,
+            "observation_id": "p69:full-page:a0:result0:r18",
+            "observed": "26,834, 406, 391",
+            "reason": "頁69の歳入合計の調定額 27,010,638,024 と収入済額 26,834,406,391 は罫線をはさんで詰めて印字され、OCR が収入済額の先頭の 2 を調定額の末尾にも読み（27,010,638,0242）、罫線で切ると収入済額の読みと重なって桁が崩れる。この2つの読みは使わず、2つの金額をその数字の位置で読む。原画で確かめた。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p69-total-assessed",
+            "page": 69,
+            "boxes": [
+              [
+                65.0,
+                766.4,
+                131.0,
+                776.2
+              ]
+            ],
+            "amount": "27,010,638,024",
+            "reason": "頁69の歳入合計の調定額。収入済額と罫線をはさんで詰めて印字され、OCR が収入済額の先頭の 2 を末尾にも読んだので、読みを捨ててこの位置で読む。原画で確かめた。"
+          },
+          {
+            "id": "p69-total-received",
+            "page": 69,
+            "boxes": [
+              [
+                137.0,
+                766.0,
+                205.0,
+                776.4
+              ]
+            ],
+            "amount": "26,834,406,391",
+            "reason": "頁69の歳入合計の収入済額。調定額と罫線をはさんで詰めて印字され、OCR が先頭の 2 を調定額の末尾にも読んだので、読みを捨ててこの位置で読む。原画で確かめた。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p32-r67",
+            "page": 32,
+            "observation_id": "p32:full-page:a0:result0:r67",
+            "observed_name": "タ一使用料",
+            "corrected_name": "ター使用料",
+            "reason": "原画の頁32の印字は「ター使用料」。OCR が片仮名の長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "p32-r78",
+            "page": 32,
+            "observation_id": "p32:full-page:a0:result0:r78",
+            "observed_name": "タ一使用料",
+            "corrected_name": "ター使用料",
+            "reason": "原画の頁32の印字は「ター使用料」。OCR が片仮名の長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "p34-r34",
+            "page": 34,
+            "observation_id": "p34:full-page:a0:result0:r34",
+            "observed_name": "タ一使用料",
+            "corrected_name": "ター使用料",
+            "reason": "原画の頁34の印字は「ター使用料」。OCR が片仮名の長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "p34-r64",
+            "page": 34,
+            "observation_id": "p34:full-page:a0:result0:r64",
+            "observed_name": "タ一使用料",
+            "corrected_name": "ター使用料",
+            "reason": "原画の頁34の印字は「ター使用料」。OCR が片仮名の長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "p34-r67",
+            "page": 34,
+            "observation_id": "p34:full-page:a0:result0:r67",
+            "observed_name": "タ一使用料",
+            "corrected_name": "ター使用料",
+            "reason": "原画の頁34の印字は「ター使用料」。OCR が片仮名の長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "p36-r25",
+            "page": 36,
+            "observation_id": "p36:full-page:a0:result0:r25",
+            "observed_name": "4 閱覧手数料",
+            "corrected_name": "4 閲覧手数料",
+            "reason": "原画の頁36の印字は「4 閲覧手数料」。OCR が「閲」を「閱」と読んだ。"
+          },
+          {
+            "id": "p37-r35",
+            "page": 37,
+            "observation_id": "p37:full-page:a0:result0:r35",
+            "observed_name": "市民課閱覧手数料",
+            "corrected_name": "市民課閲覧手数料",
+            "reason": "原画の頁37の印字は「市民課閲覧手数料」。OCR が「閲」を「閱」と読んだ。"
+          },
+          {
+            "id": "p43-r41",
+            "page": 43,
+            "observation_id": "p43:full-page:a0:result0:r41",
+            "observed_name": "社会資本整備総合交付金（住宅・建築物安全ス卜ック",
+            "corrected_name": "社会資本整備総合交付金（住宅・建築物安全ストック",
+            "reason": "原画の頁43の印字は「社会資本整備総合交付金（住宅・建築物安全ストック」。OCR が片仮名の「ト」を「卜」と読んだ。"
+          },
+          {
+            "id": "p53-r17",
+            "page": 53,
+            "observation_id": "p53:full-page:a0:result0:r17",
+            "observed_name": "教育支援センタ一機能強化補助事業補助金",
+            "corrected_name": "教育支援センター機能強化補助事業補助金",
+            "reason": "原画の頁53の印字は「教育支援センター機能強化補助事業補助金」。OCR が片仮名の長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "p58-r36",
+            "page": 58,
+            "observation_id": "p58:full-page:a0:result0:r36",
+            "observed_name": "1 土地壳払収入",
+            "corrected_name": "1 土地売払収入",
+            "reason": "原画の頁58の印字は「1 土地売払収入」。OCR が「売」を「壳」と読んだ。"
+          },
+          {
+            "id": "p64-r35",
+            "page": 64,
+            "observation_id": "p64:full-page:a0:result0:r35",
+            "observed_name": "1 障害福祉サ一",
+            "corrected_name": "1 障害福祉サー",
+            "reason": "原画の頁64の印字は「1 障害福祉サー」。OCR が片仮名の長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "p65-r112",
+            "page": 65,
+            "observation_id": "p65:full-page:a0:result0:r112",
+            "observed_name": "22 諸収入 3 雑入 2 介護サ一ビス収入",
+            "corrected_name": "22 諸収入 3 雑入 2 介護サービス収入",
+            "reason": "原画の頁65の印字は「22 諸収入 3 雑入 2 介護サービス収入」。OCR が片仮名の長音「ー」を漢数字の「一」と読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-ocr-1",
+          "origin_sha256": "62e02d51baff7156bcbaf9dfebf9509aea736f3d6b11f63ed275b9c05ed25f44",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "f00a332da65b292881814b29c8e66254469b503a9f42c7a8662d364df7d9d7ad",
+          "bytes": 2886233
+        },
+        {
+          "id": "general-revenue-ocr-2",
+          "origin_sha256": "62e02d51baff7156bcbaf9dfebf9509aea736f3d6b11f63ed275b9c05ed25f44",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "57a3afac2c7145c41a95d576d3f6716c81bc09cc0e7f0e9277536be1c49d1cc4",
+          "bytes": 2824905
+        },
+        {
+          "id": "general-revenue-ocr-3",
+          "origin_sha256": "62e02d51baff7156bcbaf9dfebf9509aea736f3d6b11f63ed275b9c05ed25f44",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "d0bb3ca09e097422675500f272e75eed1ffce3975690b88adc0538d0921508a5",
+          "bytes": 2765926
+        },
+        {
+          "id": "general-revenue-ocr-4",
+          "origin_sha256": "62e02d51baff7156bcbaf9dfebf9509aea736f3d6b11f63ed275b9c05ed25f44",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e61e5e730d622f66c8e3ea0e86d89fe0bc71f473b6415b7923f45d933a8746b6",
+          "bytes": 2531825
+        },
+        {
+          "id": "general-revenue-ocr-5",
+          "origin_sha256": "62e02d51baff7156bcbaf9dfebf9509aea736f3d6b11f63ed275b9c05ed25f44",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a649352a6a1d1d389421692ae464ff74ffd7079bc2fc9dcf7be07dc8332f6f71",
+          "bytes": 1911289
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "9a0e63093ebc6e8c7a079c05b7410c9b6bbc3bcb25787a56405d405a7a48ffa8"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "nhi-revenue",
+        "pages": [
+          [
+            14,
+            19
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-revenue-ocr-1",
+          "origin_sha256": "9a0e63093ebc6e8c7a079c05b7410c9b6bbc3bcb25787a56405d405a7a48ffa8",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              14,
+              15,
+              16,
+              17,
+              18,
+              19
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "f6d8d59b58f202163268dc66e8e4b93ae7d41e419c894780b34f2a2be959c84c",
+          "bytes": 1774173
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "9a0e63093ebc6e8c7a079c05b7410c9b6bbc3bcb25787a56405d405a7a48ffa8"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "elderly-revenue",
+        "pages": [
+          [
+            50,
+            55
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "elderly-revenue-ocr-1",
+          "origin_sha256": "9a0e63093ebc6e8c7a079c05b7410c9b6bbc3bcb25787a56405d405a7a48ffa8",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              50,
+              51,
+              52,
+              53,
+              54,
+              55
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "55261158dce28d9fd5dddfec68daf3f48c78d717b9d9de7835241fe5c354a5f6",
+          "bytes": 1448963
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "elderly-revenue"
+        }
+      ]
+    },
+    {
+      "id": "care",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "9a0e63093ebc6e8c7a079c05b7410c9b6bbc3bcb25787a56405d405a7a48ffa8"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "care-revenue",
+        "pages": [
+          [
+            76,
+            85
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "care-revenue-ocr-1",
+          "origin_sha256": "9a0e63093ebc6e8c7a079c05b7410c9b6bbc3bcb25787a56405d405a7a48ffa8",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              76,
+              77,
+              78,
+              79,
+              80,
+              81,
+              82,
+              83,
+              84,
+              85
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9e8a7d40e687e943bc850a3619580f349042284d0ac3553db5cef25092b1dbd2",
+          "bytes": 2352940
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "care-revenue"
+        }
+      ]
+    },
+    {
+      "id": "nishiguchi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "9a0e63093ebc6e8c7a079c05b7410c9b6bbc3bcb25787a56405d405a7a48ffa8"
+        }
+      ],
+      "options": {
+        "account": "羽村市福生都市計画事業羽村駅西口土地区画整理事業会計",
+        "table_id": "nishiguchi-revenue",
+        "pages": [
+          [
+            134,
+            137
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "nishiguchi-revenue-ocr-1",
+          "origin_sha256": "9a0e63093ebc6e8c7a079c05b7410c9b6bbc3bcb25787a56405d405a7a48ffa8",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              134,
+              135,
+              136,
+              137
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "3d1fd8640b91559d883cd7918a689f096785c24292e7b2af47157dc5220e7640",
+          "bytes": 868081
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nishiguchi-revenue"
+        }
+      ]
+    }
+  ]
+}

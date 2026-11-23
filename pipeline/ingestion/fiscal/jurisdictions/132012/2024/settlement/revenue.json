@@ -1,0 +1,647 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132012",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "51206fb84d7365cec1607e8b8260bacf3f598e597ad2696ea264bfd4d2da3e8e"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "区分款別": {
+                  "heading": "款"
+                },
+                "予算現額／当初予算額／金額": {
+                  "heading": "当初予算額"
+                },
+                "予算現額／当初予算額／構成比": {
+                  "kind": "ignore"
+                },
+                "予算現額／繰越事業費繰越財源充当額": {
+                  "heading": "繰越事業費繰越財源充当額"
+                },
+                "予算現額／計／金額": {
+                  "heading": "予算現額"
+                },
+                "予算現額／計／構成比": {
+                  "kind": "ignore"
+                },
+                "調定額／金額": {
+                  "heading": "調定額"
+                },
+                "調定額／構成比": {
+                  "kind": "ignore"
+                },
+                "決算額／収入済額": {
+                  "heading": "収入済額"
+                },
+                "決算額／構成比": {
+                  "kind": "ignore"
+                },
+                "決算額／調定額対比": {
+                  "kind": "ignore"
+                },
+                "決算額／予算現額対比": {
+                  "kind": "ignore"
+                },
+                "収入未済額／金額": {
+                  "heading": "収入未済額"
+                },
+                "収入未済額／構成比": {
+                  "kind": "ignore"
+                },
+                "還付未済額": {
+                  "excluded": {
+                    "kind": "別の表",
+                    "reason": "還付未済額は収入済額のうち過誤納で還付が済んでいない額で、調定額・収入済額・不納欠損額・収入未済額の関係の外にある。款の金額の段階に当たらないので取り込まない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kokuho-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "51206fb84d7365cec1607e8b8260bacf3f598e597ad2696ea264bfd4d2da3e8e"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "kokuho-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "titled_table",
+            "options": {
+              "header": {
+                "section": {
+                  "title": "歳入",
+                  "continued": [
+                    485
+                  ]
+                }
+              },
+              "columns": {
+                "区分款別": {
+                  "heading": "款"
+                },
+                "予算現額／当初予算額／金額": {
+                  "heading": "当初予算額"
+                },
+                "予算現額／当初予算額／構成比": {
+                  "kind": "ignore"
+                },
+                "予算現額／繰越事業費繰越財源充当額": {
+                  "heading": "繰越事業費繰越財源充当額"
+                },
+                "予算現額／計／金額": {
+                  "heading": "予算現額"
+                },
+                "予算現額／計／構成比": {
+                  "kind": "ignore"
+                },
+                "調定額／金額": {
+                  "heading": "調定額"
+                },
+                "調定額／構成比": {
+                  "kind": "ignore"
+                },
+                "決算額／収入済額": {
+                  "heading": "収入済額"
+                },
+                "決算額／構成比": {
+                  "kind": "ignore"
+                },
+                "決算額／調定額対比": {
+                  "kind": "ignore"
+                },
+                "決算額／予算現額対比": {
+                  "kind": "ignore"
+                },
+                "収入未済額／金額": {
+                  "heading": "収入未済額"
+                },
+                "収入未済額／構成比": {
+                  "kind": "ignore"
+                },
+                "還付未済額": {
+                  "excluded": {
+                    "kind": "別の表",
+                    "reason": "還付未済額は収入済額のうち過誤納で還付が済んでいない額で、調定額・収入済額・不納欠損額・収入未済額の関係の外にある。款の金額の段階に当たらないので取り込まない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kouki-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "51206fb84d7365cec1607e8b8260bacf3f598e597ad2696ea264bfd4d2da3e8e"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "titled_table",
+            "options": {
+              "header": {
+                "section": {
+                  "title": "歳入",
+                  "continued": [
+                    507
+                  ]
+                }
+              },
+              "columns": {
+                "区分款別": {
+                  "heading": "款"
+                },
+                "予算現額／当初予算額／金額": {
+                  "heading": "当初予算額"
+                },
+                "予算現額／当初予算額／構成比": {
+                  "kind": "ignore"
+                },
+                "予算現額／繰越事業費繰越財源充当額": {
+                  "heading": "繰越事業費繰越財源充当額"
+                },
+                "予算現額／計／金額": {
+                  "heading": "予算現額"
+                },
+                "予算現額／計／構成比": {
+                  "kind": "ignore"
+                },
+                "調定額／金額": {
+                  "heading": "調定額"
+                },
+                "調定額／構成比": {
+                  "kind": "ignore"
+                },
+                "決算額／収入済額": {
+                  "heading": "収入済額"
+                },
+                "決算額／構成比": {
+                  "kind": "ignore"
+                },
+                "決算額／調定額対比": {
+                  "kind": "ignore"
+                },
+                "決算額／予算現額対比": {
+                  "kind": "ignore"
+                },
+                "収入未済額／金額": {
+                  "heading": "収入未済額"
+                },
+                "収入未済額／構成比": {
+                  "kind": "ignore"
+                },
+                "還付未済額": {
+                  "excluded": {
+                    "kind": "別の表",
+                    "reason": "還付未済額は収入済額のうち過誤納で還付が済んでいない額で、調定額・収入済額・不納欠損額・収入未済額の関係の外にある。款の金額の段階に当たらないので取り込まない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "51206fb84d7365cec1607e8b8260bacf3f598e597ad2696ea264bfd4d2da3e8e"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "titled_table",
+            "options": {
+              "header": {
+                "section": {
+                  "title": "歳入",
+                  "continued": [
+                    521
+                  ]
+                }
+              },
+              "columns": {
+                "区分款別": {
+                  "heading": "款"
+                },
+                "予算現額／当初予算額／金額": {
+                  "heading": "当初予算額"
+                },
+                "予算現額／当初予算額／構成比": {
+                  "kind": "ignore"
+                },
+                "予算現額／繰越事業費繰越財源充当額": {
+                  "heading": "繰越事業費繰越財源充当額"
+                },
+                "予算現額／計／金額": {
+                  "heading": "予算現額"
+                },
+                "予算現額／計／構成比": {
+                  "kind": "ignore"
+                },
+                "調定額／金額": {
+                  "heading": "調定額"
+                },
+                "調定額／構成比": {
+                  "kind": "ignore"
+                },
+                "決算額／収入済額": {
+                  "heading": "収入済額"
+                },
+                "決算額／構成比": {
+                  "kind": "ignore"
+                },
+                "決算額／調定額対比": {
+                  "kind": "ignore"
+                },
+                "決算額／予算現額対比": {
+                  "kind": "ignore"
+                },
+                "収入未済額／金額": {
+                  "heading": "収入未済額"
+                },
+                "収入未済額／構成比": {
+                  "kind": "ignore"
+                },
+                "還付未済額": {
+                  "excluded": {
+                    "kind": "別の表",
+                    "reason": "還付未済額は収入済額のうち過誤納で還付が済んでいない額で、調定額・収入済額・不納欠損額・収入未済額の関係の外にある。款の金額の段階に当たらないので取り込まない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-revenue"
+        }
+      ]
+    },
+    {
+      "id": "boshi-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "51206fb84d7365cec1607e8b8260bacf3f598e597ad2696ea264bfd4d2da3e8e"
+        }
+      ],
+      "options": {
+        "account": "母子・父子福祉資金特別会計",
+        "table_id": "boshi-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "titled_table",
+            "options": {
+              "header": {
+                "section": {
+                  "title": "歳入",
+                  "continued": [
+                    545
+                  ]
+                }
+              },
+              "columns": {
+                "区分款別": {
+                  "heading": "款"
+                },
+                "予算現額／当初予算額／金額": {
+                  "heading": "当初予算額"
+                },
+                "予算現額／当初予算額／構成比": {
+                  "kind": "ignore"
+                },
+                "予算現額／繰越事業費繰越財源充当額": {
+                  "heading": "繰越事業費繰越財源充当額"
+                },
+                "予算現額／計／金額": {
+                  "heading": "予算現額"
+                },
+                "予算現額／計／構成比": {
+                  "kind": "ignore"
+                },
+                "調定額／金額": {
+                  "heading": "調定額"
+                },
+                "調定額／構成比": {
+                  "kind": "ignore"
+                },
+                "決算額／収入済額": {
+                  "heading": "収入済額"
+                },
+                "決算額／構成比": {
+                  "kind": "ignore"
+                },
+                "決算額／調定額対比": {
+                  "kind": "ignore"
+                },
+                "決算額／予算現額対比": {
+                  "kind": "ignore"
+                },
+                "収入未済額／金額": {
+                  "heading": "収入未済額"
+                },
+                "収入未済額／構成比": {
+                  "kind": "ignore"
+                },
+                "還付未済額": {
+                  "excluded": {
+                    "kind": "別の表",
+                    "reason": "還付未済額は収入済額のうち過誤納で還付が済んでいない額で、調定額・収入済額・不納欠損額・収入未済額の関係の外にある。款の金額の段階に当たらないので取り込まない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "boshi-revenue"
+        }
+      ]
+    },
+    {
+      "id": "tochi-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "51206fb84d7365cec1607e8b8260bacf3f598e597ad2696ea264bfd4d2da3e8e"
+        }
+      ],
+      "options": {
+        "account": "土地取得事業特別会計",
+        "table_id": "tochi-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "titled_table",
+            "options": {
+              "header": {
+                "section": {
+                  "title": "歳入",
+                  "continued": [
+                    551
+                  ]
+                }
+              },
+              "columns": {
+                "区分款別": {
+                  "heading": "款"
+                },
+                "予算現額／当初予算額／金額": {
+                  "heading": "当初予算額"
+                },
+                "予算現額／当初予算額／構成比": {
+                  "kind": "ignore"
+                },
+                "予算現額／繰越事業費繰越財源充当額": {
+                  "heading": "繰越事業費繰越財源充当額"
+                },
+                "予算現額／計／金額": {
+                  "heading": "予算現額"
+                },
+                "予算現額／計／構成比": {
+                  "kind": "ignore"
+                },
+                "調定額／金額": {
+                  "heading": "調定額"
+                },
+                "調定額／構成比": {
+                  "kind": "ignore"
+                },
+                "決算額／収入済額": {
+                  "heading": "収入済額"
+                },
+                "決算額／構成比": {
+                  "kind": "ignore"
+                },
+                "決算額／調定額対比": {
+                  "kind": "ignore"
+                },
+                "決算額／予算現額対比": {
+                  "kind": "ignore"
+                },
+                "収入未済額／金額": {
+                  "heading": "収入未済額"
+                },
+                "収入未済額／構成比": {
+                  "kind": "ignore"
+                },
+                "還付未済額": {
+                  "excluded": {
+                    "kind": "別の表",
+                    "reason": "還付未済額は収入済額のうち過誤納で還付が済んでいない額で、調定額・収入済額・不納欠損額・収入未済額の関係の外にある。款の金額の段階に当たらないので取り込まない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "tochi-revenue"
+        }
+      ]
+    },
+    {
+      "id": "chushajo-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "51206fb84d7365cec1607e8b8260bacf3f598e597ad2696ea264bfd4d2da3e8e"
+        }
+      ],
+      "options": {
+        "account": "駐車場事業特別会計",
+        "table_id": "chushajo-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "titled_table",
+            "options": {
+              "header": {
+                "section": {
+                  "title": "歳入",
+                  "continued": [
+                    557
+                  ]
+                }
+              },
+              "columns": {
+                "区分款別": {
+                  "heading": "款"
+                },
+                "予算現額／当初予算額／金額": {
+                  "heading": "当初予算額"
+                },
+                "予算現額／当初予算額／構成比": {
+                  "kind": "ignore"
+                },
+                "予算現額／繰越事業費繰越財源充当額": {
+                  "heading": "繰越事業費繰越財源充当額"
+                },
+                "予算現額／計／金額": {
+                  "heading": "予算現額"
+                },
+                "予算現額／計／構成比": {
+                  "kind": "ignore"
+                },
+                "調定額／金額": {
+                  "heading": "調定額"
+                },
+                "調定額／構成比": {
+                  "kind": "ignore"
+                },
+                "決算額／収入済額": {
+                  "heading": "収入済額"
+                },
+                "決算額／構成比": {
+                  "kind": "ignore"
+                },
+                "決算額／調定額対比": {
+                  "kind": "ignore"
+                },
+                "決算額／予算現額対比": {
+                  "kind": "ignore"
+                },
+                "収入未済額／金額": {
+                  "heading": "収入未済額"
+                },
+                "収入未済額／構成比": {
+                  "kind": "ignore"
+                },
+                "還付未済額": {
+                  "excluded": {
+                    "kind": "別の表",
+                    "reason": "還付未済額は収入済額のうち過誤納で還付が済んでいない額で、調定額・収入済額・不納欠損額・収入未済額の関係の外にある。款の金額の段階に当たらないので取り込まない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "chushajo-revenue"
+        }
+      ]
+    }
+  ]
+}
