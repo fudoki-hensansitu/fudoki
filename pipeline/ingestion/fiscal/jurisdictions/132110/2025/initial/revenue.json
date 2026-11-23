@@ -268,6 +268,114 @@
           "table_id": "elderly-medical-revenue"
         }
       ]
+    },
+    {
+      "id": "long-term-care-insurance-initial-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "75a7ebebc9a22f82b118905be972385054933697c16728b85eedb1cb34ffd60e"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "long-term-care-insurance-revenue",
+        "pages": [
+          [
+            113,
+            113
+          ],
+          [
+            115,
+            115
+          ],
+          [
+            117,
+            117
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（課税基本台数・税率・調定見込額・収入歩合など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_code_at_top": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true,
+            "unnumbered_names_at_rule": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "care-p117-fee-kou",
+            "page": 117,
+            "observation_id": "p117:full-page:a0:result0:r33",
+            "observed": "手数料",
+            "reason": "物理117頁は文字層が無く（字を線で描いた頁）、OCR で読む。前年度にだけあった款「使用料及び手数料」・項「手数料」・目「総務手数料」は番号を印字せず、項「手数料」の名前は項の欄の名前の始まり（目の欄の罫 88.0pt の右 0.75pt、288dpi の描画で墨の左端 88.75pt）に印字される。OCR の語の箱は左に 2pt ほど広く（86.6pt）、罫の左に出て目の段に読まれたので、この読みは使わず、名前を描画で測った箱で宣言する。"
+          }
+        ],
+        "name_readings": [
+          {
+            "id": "care-p117-fee-kou",
+            "page": 117,
+            "box": [
+              88.75,
+              248.5,
+              127.75,
+              259.0
+            ],
+            "name": "手数料",
+            "reason": "物理117頁は文字層が無く（字を線で描いた頁）、OCR で読む。前年度にだけあった款「使用料及び手数料」・項「手数料」・目「総務手数料」は番号を印字せず、項「手数料」の名前は項の欄の名前の始まり（目の欄の罫 88.0pt の右 0.75pt、288dpi の描画で墨の左端 88.75pt）に印字される。OCR の語の箱は左に 2pt ほど広く（86.6pt）、罫の左に出て目の段に読まれたので、この読みは使わず、名前を描画で測った箱で宣言する。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-insurance-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-ocr-p117",
+          "origin_sha256": "75a7ebebc9a22f82b118905be972385054933697c16728b85eedb1cb34ffd60e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              117
+            ],
+            "config": {
+              "page_strips": 1
+            },
+            "vlm_fallback": false
+          },
+          "sha256": "2cd96dc5aa65a665e34b34a948527660d3d141b9de4926cd41a94d900a091e63",
+          "bytes": 68042
+        }
+      ]
     }
   ]
 }
