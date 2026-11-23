@@ -38,6 +38,16 @@ class CoveredByNotesTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             covered_by_notes(page, words)
 
+    def test_a_note_over_the_code_joined_to_a_name_takes_the_code_s_place(self):
+        # 栃木県の予算書 2024 の歳入: `1` を `3環境性能割` の `3` の上に貼る。Poppler は番号と名前を1語に読む
+        text = '3環境性能割'
+        edges = [52.0, 56.0, 64.0, 72.0, 80.0, 88.0, 96.0]  # the digit is half as wide as the kanji
+        chars = [{'text': c, 'x0': edges[i], 'x1': edges[i + 1], 'top': 195.0, 'bottom': 203.0} for i, c in enumerate(text)]
+        words = [Word(text, 52.0, 195.0, 96.0, 203.0), Word('1', 53.0, 195.0, 57.0, 203.0)]
+        page = SimpleNamespace(annots=[note('1', 50.0, 193.0, 58.0, 205.0)], chars=chars)
+        self.assertEqual(covered_by_notes(page, words),
+                         [Word('環境性能割', 56.0, 195.0, 96.0, 203.0), Word('1', 52.0, 195.0, 56.0, 203.0)])
+
     def test_a_note_whose_text_is_not_read_stops_the_reading(self):
         # Poppler does not print the note's text: dropping the covered number would lose the item's code
         words = [Word('6', 55.9, 474.6, 59.9, 482.6)]

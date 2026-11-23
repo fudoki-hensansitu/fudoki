@@ -76,6 +76,461 @@
           "table_id": "general-initial"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "f217246b0e5dc438037d7958b5f9d081218a5d0f6a4b3bbbc32ce2ae3e9fb4e2"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-insurance-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "節／区分": {
+                  "heading": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "code_after_amount": true,
+            "codeless_beside_repeated_code": true,
+            "unnumbered_abolished_names": true,
+            "unnumbered_names_at_rule": true
+          }
+        },
+        "pages": [
+          [
+            13,
+            28
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "national-health-insurance-p13-header-compare",
+            "pages": [
+              13
+            ],
+            "box": [
+              320.5,
+              96.7,
+              367.9,
+              111.9
+            ],
+            "text": "比較",
+            "reason": "見出しの升「比較」を OCR が「比，較」と読んだ（原画は 比較／増(△)減 の2行）。"
+          },
+          {
+            "id": "national-health-insurance-p17-header-compare",
+            "pages": [
+              17
+            ],
+            "box": [
+              320.0,
+              95.7,
+              368.1,
+              113.1
+            ],
+            "text": "比較",
+            "reason": "見出しの升「比較」を OCR が「比，較」と読んだ（原画は 比較／増(△)減 の2行）。"
+          },
+          {
+            "id": "national-health-insurance-p19-header-compare",
+            "pages": [
+              19
+            ],
+            "box": [
+              320.5,
+              96.7,
+              367.9,
+              111.9
+            ],
+            "text": "比較",
+            "reason": "見出しの升「比較」を OCR が「比，較」と読んだ（原画は 比較／増(△)減 の2行）。"
+          },
+          {
+            "id": "national-health-insurance-p23-header-compare",
+            "pages": [
+              23
+            ],
+            "box": [
+              320.5,
+              96.7,
+              367.9,
+              111.9
+            ],
+            "text": "比較",
+            "reason": "見出しの升「比較」を OCR が「比，較」と読んだ（原画は 比較／増(△)減 の2行）。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-initial-ocr-1",
+          "origin_sha256": "f217246b0e5dc438037d7958b5f9d081218a5d0f6a4b3bbbc32ce2ae3e9fb4e2",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ]
+          },
+          "sha256": "528d37d546c032f64056fecd71fb8a4761d62f9ff87b19a05ca4d69a34b5aeb5",
+          "bytes": 1085106
+        },
+        {
+          "id": "national-health-insurance-initial-ocr-2",
+          "origin_sha256": "f217246b0e5dc438037d7958b5f9d081218a5d0f6a4b3bbbc32ce2ae3e9fb4e2",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28
+            ]
+          },
+          "sha256": "c090c42997deb3064cf7201d96a3a3a3be096a49f55cabdb5909a006379d6ff4",
+          "bytes": 678600
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7c7e9ee749b9d36f449d053294d8d39703fa5b075307ba44c2c4108915369c1c"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "節／区分": {
+                  "heading": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "code_after_amount": true,
+            "codeless_beside_repeated_code": true,
+            "unnumbered_abolished_names": true,
+            "framed_spread_pages": true
+          }
+        },
+        "pages": [
+          [
+            13,
+            34
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-initial-ocr-1",
+          "origin_sha256": "7c7e9ee749b9d36f449d053294d8d39703fa5b075307ba44c2c4108915369c1c",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ]
+          },
+          "sha256": "d2b16cf7b8196aee258a46f8fd6048bb2a85c31105db7aa6d56c71c1eb82bc8f",
+          "bytes": 1148549
+        },
+        {
+          "id": "long-term-care-initial-ocr-2",
+          "origin_sha256": "7c7e9ee749b9d36f449d053294d8d39703fa5b075307ba44c2c4108915369c1c",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31
+            ]
+          },
+          "sha256": "614e7b98c217c23f1c01a7bbc9b8e18e21ee15f75216a216507cdb6ce55faa82",
+          "bytes": 793181
+        },
+        {
+          "id": "long-term-care-initial-ocr-3",
+          "origin_sha256": "7c7e9ee749b9d36f449d053294d8d39703fa5b075307ba44c2c4108915369c1c",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              32,
+              33,
+              34
+            ]
+          },
+          "sha256": "7f7bf1ba7b6d75d19f665060b2447a9ff2aaae425d158edec2dbe5d88fa8743d",
+          "bytes": 208679
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "989d88d5868dd62d9679792afcfdef822845b478063152bc5030040246ea4a28"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "節／区分": {
+                  "heading": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "code_after_amount": true,
+            "codeless_beside_repeated_code": true,
+            "unnumbered_abolished_names": true,
+            "framed_spread_pages": true
+          }
+        },
+        "pages": [
+          [
+            13,
+            20
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "elderly-medical-p13-header-compare",
+            "pages": [
+              13
+            ],
+            "box": [
+              328.2,
+              110.8,
+              376.3,
+              127.5
+            ],
+            "text": "比較",
+            "reason": "見出しの升「比較」を OCR が「比，較」と読んだ（原画は 比較／増(△)減 の2行）。"
+          },
+          {
+            "id": "elderly-medical-p15-header-compare",
+            "pages": [
+              15
+            ],
+            "box": [
+              328.2,
+              110.8,
+              376.3,
+              127.5
+            ],
+            "text": "比較",
+            "reason": "見出しの升「比較」を OCR が「比，較」と読んだ（原画は 比較／増(△)減 の2行）。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-initial-ocr-1",
+          "origin_sha256": "989d88d5868dd62d9679792afcfdef822845b478063152bc5030040246ea4a28",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ]
+          },
+          "sha256": "2f5b5c84b6be07fe51c7432cf5b33e129fc4976b11136a3bbaa079a8fafb7ba6",
+          "bytes": 943345
+        }
+      ]
     }
   ]
 }

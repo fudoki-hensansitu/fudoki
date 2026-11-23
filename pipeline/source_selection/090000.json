@@ -12,7 +12,7 @@
       "candidates": [
         {
           "id": "representative",
-          "title": "令和3年度栃木県歳入歳出決算事項別明細書（歳出）",
+          "title": "令和3年度栃木県歳入歳出決算事項別明細書（歳出・歳入）",
           "landing_url": "https://www.pref.tochigi.lg.jp/i02/2021kessan.html",
           "inspected_at": "2026-11-15T06:00:00+00:00",
           "files": [
@@ -49,6 +49,16 @@
                       "end": 4
                     }
                   ]
+                },
+                {
+                  "account": "公債管理特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
                 }
               ]
             },
@@ -65,6 +75,16 @@
                     {
                       "start": 3,
                       "end": 4
+                    }
+                  ]
+                },
+                {
+                  "account": "地方独立行政法人県立病院貸付金特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
                     }
                   ]
                 }
@@ -85,6 +105,16 @@
                       "end": 8
                     }
                   ]
+                },
+                {
+                  "account": "母子父子寡婦福祉資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
+                    }
+                  ]
                 }
               ]
             },
@@ -101,6 +131,16 @@
                     {
                       "start": 5,
                       "end": 6
+                    }
+                  ]
+                },
+                {
+                  "account": "心身障害者扶養共済事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
                     }
                   ]
                 }
@@ -121,6 +161,16 @@
                       "end": 10
                     }
                   ]
+                },
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 6
+                    }
+                  ]
                 }
               ]
             },
@@ -137,6 +187,16 @@
                     {
                       "start": 7,
                       "end": 12
+                    }
+                  ]
+                },
+                {
+                  "account": "就農支援資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 6
                     }
                   ]
                 }
@@ -157,6 +217,16 @@
                       "end": 10
                     }
                   ]
+                },
+                {
+                  "account": "県営林事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 6
+                    }
+                  ]
                 }
               ]
             },
@@ -173,6 +243,16 @@
                     {
                       "start": 5,
                       "end": 6
+                    }
+                  ]
+                },
+                {
+                  "account": "林業・木材産業改善資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
                     }
                   ]
                 }
@@ -193,13 +273,41 @@
                       "end": 8
                     }
                   ]
+                },
+                {
+                  "account": "中小企業高度化等資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.pref.tochigi.lg.jp/i02/documents/03r3ippansainyujikoubetu.pdf",
+              "sha256": "fdcc1bd618617a60b8a58a50924577ab42465c841200920301fddbf1309a78b3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 130
+                    }
+                  ]
                 }
               ]
             }
           ]
         }
       ],
-      "reason": "会計管理課の「令和3（2021）年度栃木県歳入歳出決算書」の頁（https://www.pref.tochigi.lg.jp/i02/2021kessan.html）。一般会計は「歳入歳出決算事項別明細書（歳出）」の1冊、特別会計は会計ごとの事項別明細書の歳出の頁。どれも Adobe InDesign で組んだ text PDF。見開き2頁で1枚の表になり、左頁に款・項・目と予算現額（当初予算額・補正予算額・繰越事業費繰越額・予備費支出及び流用増減・計）と節（区分・金額）、右頁に支出済額・翌年度繰越額（継続費逓次繰越・繰越明許費繰越・事故繰越し）・不用額・備考を円単位で印字する。範囲は事項別明細書の歳出の見開きだけ（予備費支出及び流用増減内訳・実質収支に関する調書は範囲外）。令和3年度の特別会計9つの事項別明細書は文字が輪郭の図形になっていて文字の層を持たない（pdftotext で文字が出ず、画像も無い）ので、罫線は描画から、文字は OCR で読む。様式は一般会計と同じ。令和2年度以前は歳出の事項別明細書を公開していない（決算書の款・項だけ、確認日 2026-11-15）。",
+      "reason": "会計管理課の「令和3（2021）年度栃木県歳入歳出決算書」の頁（https://www.pref.tochigi.lg.jp/i02/2021kessan.html）。一般会計は「歳入歳出決算事項別明細書（歳出）」の1冊、特別会計は会計ごとの事項別明細書の歳出の頁。どれも Adobe InDesign で組んだ text PDF。見開き2頁で1枚の表になり、左頁に款・項・目と予算現額（当初予算額・補正予算額・繰越事業費繰越額・予備費支出及び流用増減・計）と節（区分・金額）、右頁に支出済額・翌年度繰越額（継続費逓次繰越・繰越明許費繰越・事故繰越し）・不用額・備考を円単位で印字する。範囲は事項別明細書の歳出の見開きだけ（予備費支出及び流用増減内訳・実質収支に関する調書は範囲外）。令和3年度の特別会計9つの事項別明細書は文字が輪郭の図形になっていて文字の層を持たない（pdftotext で文字が出ず、画像も無い）ので、罫線は描画から、文字は OCR で読む。様式は一般会計と同じ。令和2年度以前は歳出の事項別明細書を公開していない（決算書の款・項だけ、確認日 2026-11-15）。歳入は一般会計の「歳入歳出決算事項別明細書（歳入）」の1冊（text PDF）と、特別会計の同じファイルの事項別明細書の歳入の見開きを範囲に足した（左頁に款・項・目・予算現額・節、右頁に調定額・収入済額・不納欠損額・収入未済額・備考。確認日 2026-11-23）。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -254,9 +362,14 @@
             "key": "fiscal/source-selection/090000/2021/settlement-4.pdf",
             "sha256": "7c95902bd0a8b82a18daf7a9fbacb958cd5570c33da27a763203cca0e46a26db",
             "final_url": "https://www.pref.tochigi.lg.jp/i02/documents/20221201102746.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/090000/2021/settlement-10.pdf",
+            "sha256": "fdcc1bd618617a60b8a58a50924577ab42465c841200920301fddbf1309a78b3",
+            "final_url": "https://www.pref.tochigi.lg.jp/i02/documents/03r3ippansainyujikoubetu.pdf"
           }
         ],
-        "archived_at": "2026-11-15T07:59:29.591Z"
+        "archived_at": "2026-11-23T14:18:16.137Z"
       }
     },
     {
@@ -268,7 +381,7 @@
       "candidates": [
         {
           "id": "representative",
-          "title": "令和4年度栃木県歳入歳出決算事項別明細書（歳出）",
+          "title": "令和4年度栃木県歳入歳出決算事項別明細書（歳出・歳入）",
           "landing_url": "https://www.pref.tochigi.lg.jp/i02/2019kesssan/2022kessan.html",
           "inspected_at": "2026-11-15T06:00:00+00:00",
           "files": [
@@ -305,6 +418,16 @@
                       "end": 4
                     }
                   ]
+                },
+                {
+                  "account": "公債管理特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
                 }
               ]
             },
@@ -321,6 +444,16 @@
                     {
                       "start": 3,
                       "end": 4
+                    }
+                  ]
+                },
+                {
+                  "account": "地方独立行政法人県立病院貸付金特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
                     }
                   ]
                 }
@@ -341,6 +474,16 @@
                       "end": 8
                     }
                   ]
+                },
+                {
+                  "account": "母子父子寡婦福祉資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
+                    }
+                  ]
                 }
               ]
             },
@@ -357,6 +500,16 @@
                     {
                       "start": 5,
                       "end": 6
+                    }
+                  ]
+                },
+                {
+                  "account": "心身障害者扶養共済事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
                     }
                   ]
                 }
@@ -377,6 +530,16 @@
                       "end": 10
                     }
                   ]
+                },
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 6
+                    }
+                  ]
                 }
               ]
             },
@@ -393,6 +556,16 @@
                     {
                       "start": 5,
                       "end": 8
+                    }
+                  ]
+                },
+                {
+                  "account": "中小企業高度化等資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
                     }
                   ]
                 }
@@ -413,6 +586,16 @@
                       "end": 12
                     }
                   ]
+                },
+                {
+                  "account": "就農支援資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 6
+                    }
+                  ]
                 }
               ]
             },
@@ -429,6 +612,16 @@
                     {
                       "start": 7,
                       "end": 10
+                    }
+                  ]
+                },
+                {
+                  "account": "県営林事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 6
                     }
                   ]
                 }
@@ -449,13 +642,41 @@
                       "end": 6
                     }
                   ]
+                },
+                {
+                  "account": "林業・木材産業改善資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.pref.tochigi.lg.jp/i02/2019kesssan/documents/03r4ippansainyuujikoubetu.pdf",
+              "sha256": "4b8f14f6c137beafbd46ec83c5f156e25da9673b6dae250e2fee030649a575be",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 130
+                    }
+                  ]
                 }
               ]
             }
           ]
         }
       ],
-      "reason": "会計管理課の「令和4（2022）年度栃木県歳入歳出決算書」の頁（https://www.pref.tochigi.lg.jp/i02/2019kesssan/2022kessan.html）。一般会計は「歳入歳出決算事項別明細書（歳出）」の1冊、特別会計は会計ごとの事項別明細書の歳出の頁。どれも Adobe InDesign で組んだ text PDF。見開き2頁で1枚の表になり、左頁に款・項・目と予算現額（当初予算額・補正予算額・繰越事業費繰越額・予備費支出及び流用増減・計）と節（区分・金額）、右頁に支出済額・翌年度繰越額（継続費逓次繰越・繰越明許費繰越・事故繰越し）・不用額・備考を円単位で印字する。範囲は事項別明細書の歳出の見開きだけ（予備費支出及び流用増減内訳・実質収支に関する調書は範囲外）。",
+      "reason": "会計管理課の「令和4（2022）年度栃木県歳入歳出決算書」の頁（https://www.pref.tochigi.lg.jp/i02/2019kesssan/2022kessan.html）。一般会計は「歳入歳出決算事項別明細書（歳出）」の1冊、特別会計は会計ごとの事項別明細書の歳出の頁。どれも Adobe InDesign で組んだ text PDF。見開き2頁で1枚の表になり、左頁に款・項・目と予算現額（当初予算額・補正予算額・繰越事業費繰越額・予備費支出及び流用増減・計）と節（区分・金額）、右頁に支出済額・翌年度繰越額（継続費逓次繰越・繰越明許費繰越・事故繰越し）・不用額・備考を円単位で印字する。範囲は事項別明細書の歳出の見開きだけ（予備費支出及び流用増減内訳・実質収支に関する調書は範囲外）。歳入は一般会計の「歳入歳出決算事項別明細書（歳入）」の1冊と、特別会計の同じファイルの事項別明細書の歳入の見開きを範囲に足した（左頁に款・項・目・予算現額・節、右頁に調定額・収入済額・不納欠損額・収入未済額・備考。確認日 2026-11-23）。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -510,9 +731,14 @@
             "key": "fiscal/source-selection/090000/2022/settlement-9.pdf",
             "sha256": "df2e389bbe1de46e1323c9109ff651b896e41deec9f97619a22fbc8fdb0f4c16",
             "final_url": "https://www.pref.tochigi.lg.jp/i02/2019kesssan/documents/02r4ringyoumokuzaijikoubetu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/090000/2022/settlement-11.pdf",
+            "sha256": "4b8f14f6c137beafbd46ec83c5f156e25da9673b6dae250e2fee030649a575be",
+            "final_url": "https://www.pref.tochigi.lg.jp/i02/2019kesssan/documents/03r4ippansainyuujikoubetu.pdf"
           }
         ],
-        "archived_at": "2026-11-15T05:44:55.919Z"
+        "archived_at": "2026-11-23T14:18:20.015Z"
       }
     },
     {
@@ -524,7 +750,7 @@
       "candidates": [
         {
           "id": "representative",
-          "title": "令和5年度栃木県歳入歳出決算事項別明細書（歳出）",
+          "title": "令和5年度栃木県歳入歳出決算事項別明細書（歳出・歳入）",
           "landing_url": "https://www.pref.tochigi.lg.jp/i02/2019kesssan/2023kessan.html",
           "inspected_at": "2026-11-15T06:00:00+00:00",
           "files": [
@@ -561,6 +787,16 @@
                       "end": 4
                     }
                   ]
+                },
+                {
+                  "account": "公債管理特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
+                    }
+                  ]
                 }
               ]
             },
@@ -577,6 +813,16 @@
                     {
                       "start": 3,
                       "end": 4
+                    }
+                  ]
+                },
+                {
+                  "account": "地方独立行政法人県立病院貸付金特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 2
                     }
                   ]
                 }
@@ -597,6 +843,16 @@
                       "end": 8
                     }
                   ]
+                },
+                {
+                  "account": "母子父子寡婦福祉資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
+                    }
+                  ]
                 }
               ]
             },
@@ -613,6 +869,16 @@
                     {
                       "start": 5,
                       "end": 6
+                    }
+                  ]
+                },
+                {
+                  "account": "心身障害者扶養共済事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
                     }
                   ]
                 }
@@ -633,6 +899,16 @@
                       "end": 10
                     }
                   ]
+                },
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 6
+                    }
+                  ]
                 }
               ]
             },
@@ -649,6 +925,16 @@
                     {
                       "start": 5,
                       "end": 8
+                    }
+                  ]
+                },
+                {
+                  "account": "中小企業高度化等資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
                     }
                   ]
                 }
@@ -669,6 +955,16 @@
                       "end": 12
                     }
                   ]
+                },
+                {
+                  "account": "就農支援資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 6
+                    }
+                  ]
                 }
               ]
             },
@@ -685,6 +981,16 @@
                     {
                       "start": 5,
                       "end": 8
+                    }
+                  ]
+                },
+                {
+                  "account": "県営林事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
                     }
                   ]
                 }
@@ -705,13 +1011,59 @@
                       "end": 6
                     }
                   ]
+                },
+                {
+                  "account": "林業・木材産業改善資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.pref.tochigi.lg.jp/i02/2019kesssan/documents/03-1r5ippansainyuujikoubetu.pdf",
+              "sha256": "29cd3fe0f3257ea105145da382bcfa6ad3fa4ca1dfe7727cc17b80c529c3f4db",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 78
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.pref.tochigi.lg.jp/i02/2019kesssan/documents/03-2r5ippansainyuujikoubetu.pdf",
+              "sha256": "d988841d6005b0c0807093ceb8487c5b40d838576afba29f604116f08da766e5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 50
+                    }
+                  ]
                 }
               ]
             }
           ]
         }
       ],
-      "reason": "会計管理課の「令和5（2023）年度栃木県歳入歳出決算書」の頁（https://www.pref.tochigi.lg.jp/i02/2019kesssan/2023kessan.html）。一般会計は「歳入歳出決算事項別明細書（歳出）」の1冊、特別会計は会計ごとの事項別明細書の歳出の頁。どれも Adobe InDesign で組んだ text PDF。見開き2頁で1枚の表になり、左頁に款・項・目と予算現額（当初予算額・補正予算額・繰越事業費繰越額・予備費支出及び流用増減・計）と節（区分・金額）、右頁に支出済額・翌年度繰越額（継続費逓次繰越・繰越明許費繰越・事故繰越し）・不用額・備考を円単位で印字する。範囲は事項別明細書の歳出の見開きだけ（予備費支出及び流用増減内訳・実質収支に関する調書は範囲外）。",
+      "reason": "会計管理課の「令和5（2023）年度栃木県歳入歳出決算書」の頁（https://www.pref.tochigi.lg.jp/i02/2019kesssan/2023kessan.html）。一般会計は「歳入歳出決算事項別明細書（歳出）」の1冊、特別会計は会計ごとの事項別明細書の歳出の頁。どれも Adobe InDesign で組んだ text PDF。見開き2頁で1枚の表になり、左頁に款・項・目と予算現額（当初予算額・補正予算額・繰越事業費繰越額・予備費支出及び流用増減・計）と節（区分・金額）、右頁に支出済額・翌年度繰越額（継続費逓次繰越・繰越明許費繰越・事故繰越し）・不用額・備考を円単位で印字する。範囲は事項別明細書の歳出の見開きだけ（予備費支出及び流用増減内訳・実質収支に関する調書は範囲外）。歳入は一般会計の「歳入歳出決算事項別明細書（歳入）」の2冊（文字が輪郭の図形で文字の層を持たないので OCR で読む）と、特別会計の同じファイルの事項別明細書の歳入の見開きを範囲に足した（左頁に款・項・目・予算現額・節、右頁に調定額・収入済額・不納欠損額・収入未済額・備考。確認日 2026-11-23）。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -766,9 +1118,19 @@
             "key": "fiscal/source-selection/090000/2023/settlement-3.pdf",
             "sha256": "4371e7dacf88400e8422997ae0ce7d885ac9470ecbcfa8dead60230513be3f4f",
             "final_url": "https://www.pref.tochigi.lg.jp/i02/2019kesssan/documents/02r5ringyoumokuzaijikoubetu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/090000/2023/settlement-11.pdf",
+            "sha256": "29cd3fe0f3257ea105145da382bcfa6ad3fa4ca1dfe7727cc17b80c529c3f4db",
+            "final_url": "https://www.pref.tochigi.lg.jp/i02/2019kesssan/documents/03-1r5ippansainyuujikoubetu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/090000/2023/settlement-12.pdf",
+            "sha256": "d988841d6005b0c0807093ceb8487c5b40d838576afba29f604116f08da766e5",
+            "final_url": "https://www.pref.tochigi.lg.jp/i02/2019kesssan/documents/03-2r5ippansainyuujikoubetu.pdf"
           }
         ],
-        "archived_at": "2026-11-15T05:45:12.458Z"
+        "archived_at": "2026-11-23T14:18:25.864Z"
       }
     },
     {
@@ -949,13 +1311,113 @@
                       "end": 499
                     }
                   ]
+                },
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 7,
+                      "end": 73
+                    }
+                  ]
+                },
+                {
+                  "account": "公債管理特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 254,
+                      "end": 255
+                    }
+                  ]
+                },
+                {
+                  "account": "地方独立行政法人県立病院貸付金特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 259,
+                      "end": 260
+                    }
+                  ]
+                },
+                {
+                  "account": "母子父子寡婦福祉資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 266,
+                      "end": 268
+                    }
+                  ]
+                },
+                {
+                  "account": "心身障害者扶養共済事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 275,
+                      "end": 279
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 283,
+                      "end": 287
+                    }
+                  ]
+                },
+                {
+                  "account": "県営林事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 301,
+                      "end": 306
+                    }
+                  ]
+                },
+                {
+                  "account": "林業・木材産業改善資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 319,
+                      "end": 320
+                    }
+                  ]
+                },
+                {
+                  "account": "中小企業高度化等資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 325,
+                      "end": 327
+                    }
+                  ]
+                },
+                {
+                  "account": "就農支援資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 335,
+                      "end": 338
+                    }
+                  ]
                 }
               ]
             }
           ]
         }
       ],
-      "reason": "財政課の「予算案について」の年度別の頁（https://www.pref.tochigi.lg.jp/b01/5gian.html）にある第399回通常会議（2月）の予算案（1）説明書。当初予算の一般会計・特別会計9つ・企業会計6つの歳入歳出予算事項別明細書（企業会計は予算実施計画）を1冊に収める text PDF（Adobe の組版、pdftotext で文字が出る）。歳出の事項別明細書は1頁に款・項・目と本年度・前年度・比較・本年度の財源内訳（国庫支出金・地方債・その他・一般財源）、節（区分・金額）、説明（事業名と金額）を千円単位で印字する。範囲は各会計の「3 歳出」の頁だけ（給与費明細書・債務負担行為・地方債の調書は範囲外）。企業会計（流域下水道・電気・水道・工業用水道・用地造成・施設管理）は予算実施計画の様式（1つの枠に収益的・資本的の収入と支出を見出しで分けて印字する）で、その頁（流域下水道 344〜347、電気 373〜376、水道 405〜407、工業用水道 439〜441、用地造成 470〜472、施設管理 496〜499）を範囲に入れ、収益的支出と資本的支出を読む。物理頁: 一般会計 74〜197、公債管理特別会計 256、地方独立行政法人県立病院貸付金特別会計 261〜262、母子父子寡婦福祉資金貸付事業特別会計 269、心身障害者扶養共済事業特別会計 280、国民健康保険特別会計 288〜289、県営林事業特別会計 307〜309、林業・木材産業改善資金貸付事業特別会計 321〜322、中小企業高度化等資金貸付事業特別会計 328〜329、就農支援資金貸付事業特別会計 339〜342。令和5年度以前の予算案説明書は財政課の頁から外れている（令和4年度の会議の頁 /b01/387.html は 404、確認日 2026-11-15）。",
+      "reason": "財政課の「予算案について」の年度別の頁（https://www.pref.tochigi.lg.jp/b01/5gian.html）にある第399回通常会議（2月）の予算案（1）説明書。当初予算の一般会計・特別会計9つ・企業会計6つの歳入歳出予算事項別明細書（企業会計は予算実施計画）を1冊に収める text PDF（Adobe の組版、pdftotext で文字が出る）。歳出の事項別明細書は1頁に款・項・目と本年度・前年度・比較・本年度の財源内訳（国庫支出金・地方債・その他・一般財源）、節（区分・金額）、説明（事業名と金額）を千円単位で印字する。範囲は各会計の「3 歳出」の頁だけ（給与費明細書・債務負担行為・地方債の調書は範囲外）。企業会計（流域下水道・電気・水道・工業用水道・用地造成・施設管理）は予算実施計画の様式（1つの枠に収益的・資本的の収入と支出を見出しで分けて印字する）で、その頁（流域下水道 344〜347、電気 373〜376、水道 405〜407、工業用水道 439〜441、用地造成 470〜472、施設管理 496〜499）を範囲に入れ、収益的支出と資本的支出を読む。物理頁: 一般会計 74〜197、公債管理特別会計 256、地方独立行政法人県立病院貸付金特別会計 261〜262、母子父子寡婦福祉資金貸付事業特別会計 269、心身障害者扶養共済事業特別会計 280、国民健康保険特別会計 288〜289、県営林事業特別会計 307〜309、林業・木材産業改善資金貸付事業特別会計 321〜322、中小企業高度化等資金貸付事業特別会計 328〜329、就農支援資金貸付事業特別会計 339〜342。令和5年度以前の予算案説明書は財政課の頁から外れている（令和4年度の会議の頁 /b01/387.html は 404、確認日 2026-11-15）。歳入は各会計の「2 歳入」の頁（一般会計 7〜73、特別会計は各会計の歳出の前の頁）を範囲に足した（款ごとに頁を改め、項・目と本年度・前年度・比較、節（区分・金額）、説明を印字する）。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -979,7 +1441,7 @@
       "candidates": [
         {
           "id": "representative",
-          "title": "令和6年度栃木県歳入歳出決算事項別明細書（歳出）",
+          "title": "令和6年度栃木県歳入歳出決算事項別明細書（歳出・歳入）",
           "landing_url": "https://www.pref.tochigi.lg.jp/i02/2019kesssan/documents/r6kessann.html",
           "inspected_at": "2026-11-15T06:00:00+00:00",
           "files": [
@@ -1016,6 +1478,16 @@
                       "end": 6
                     }
                   ]
+                },
+                {
+                  "account": "公債管理特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 4
+                    }
+                  ]
                 }
               ]
             },
@@ -1032,6 +1504,16 @@
                     {
                       "start": 5,
                       "end": 6
+                    }
+                  ]
+                },
+                {
+                  "account": "地方独立行政法人県立病院貸付金特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 4
                     }
                   ]
                 }
@@ -1052,6 +1534,16 @@
                       "end": 10
                     }
                   ]
+                },
+                {
+                  "account": "母子父子寡婦福祉資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 6
+                    }
+                  ]
                 }
               ]
             },
@@ -1068,6 +1560,16 @@
                     {
                       "start": 7,
                       "end": 8
+                    }
+                  ]
+                },
+                {
+                  "account": "心身障害者扶養共済事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 6
                     }
                   ]
                 }
@@ -1088,6 +1590,16 @@
                       "end": 13
                     }
                   ]
+                },
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 4,
+                      "end": 9
+                    }
+                  ]
                 }
               ]
             },
@@ -1104,6 +1616,16 @@
                     {
                       "start": 7,
                       "end": 10
+                    }
+                  ]
+                },
+                {
+                  "account": "中小企業高度化等資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 6
                     }
                   ]
                 }
@@ -1124,6 +1646,16 @@
                       "end": 16
                     }
                   ]
+                },
+                {
+                  "account": "就農支援資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 10
+                    }
+                  ]
                 }
               ]
             },
@@ -1140,6 +1672,16 @@
                     {
                       "start": 7,
                       "end": 10
+                    }
+                  ]
+                },
+                {
+                  "account": "県営林事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 6
                     }
                   ]
                 }
@@ -1160,13 +1702,41 @@
                       "end": 10
                     }
                   ]
+                },
+                {
+                  "account": "林業・木材産業改善資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 6
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.pref.tochigi.lg.jp/i02/2019kesssan/documents/documents/02r6ippansainyuujikoubetu.pdf",
+              "sha256": "0d3379fb7ff87f7d5cdfb528dfc4391ae2742a040efc700c7292bc9e5651037d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 130
+                    }
+                  ]
                 }
               ]
             }
           ]
         }
       ],
-      "reason": "会計管理課の「令和6（2024）年度栃木県歳入歳出決算書」の頁（https://www.pref.tochigi.lg.jp/i02/2019kesssan/documents/r6kessann.html）。一般会計は「歳入歳出決算事項別明細書（歳出）」の1冊、特別会計は会計ごとの事項別明細書（決算書・事項別明細書・実質収支に関する調書を1冊に収める）の歳出の頁。どれも Adobe InDesign で組んだ text PDF。見開き2頁で1枚の表になり、左頁に款・項・目と予算現額（当初予算額・補正予算額・繰越事業費繰越額・予備費支出及び流用増減・計）と節（区分・金額）、右頁に支出済額・翌年度繰越額（継続費逓次繰越・繰越明許費繰越・事故繰越し）・不用額・備考を円単位で印字する。範囲は事項別明細書の歳出の見開きだけ（予備費支出及び流用増減内訳・実質収支に関する調書は範囲外）。",
+      "reason": "会計管理課の「令和6（2024）年度栃木県歳入歳出決算書」の頁（https://www.pref.tochigi.lg.jp/i02/2019kesssan/documents/r6kessann.html）。一般会計は「歳入歳出決算事項別明細書（歳出）」の1冊、特別会計は会計ごとの事項別明細書（決算書・事項別明細書・実質収支に関する調書を1冊に収める）の歳出の頁。どれも Adobe InDesign で組んだ text PDF。見開き2頁で1枚の表になり、左頁に款・項・目と予算現額（当初予算額・補正予算額・繰越事業費繰越額・予備費支出及び流用増減・計）と節（区分・金額）、右頁に支出済額・翌年度繰越額（継続費逓次繰越・繰越明許費繰越・事故繰越し）・不用額・備考を円単位で印字する。範囲は事項別明細書の歳出の見開きだけ（予備費支出及び流用増減内訳・実質収支に関する調書は範囲外）。歳入は一般会計の「歳入歳出決算事項別明細書（歳入）」の1冊と、特別会計の同じファイルの事項別明細書の歳入の見開きを範囲に足した（左頁に款・項・目・予算現額・節、右頁に調定額・収入済額・不納欠損額・収入未済額・備考。確認日 2026-11-23）。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -1221,9 +1791,14 @@
             "key": "fiscal/source-selection/090000/2024/settlement-7.pdf",
             "sha256": "a8a634eedb32a59ae2501efb4d03552672b95d06cd261ff2f3a4d7b59e79ba81",
             "final_url": "https://www.pref.tochigi.lg.jp/i02/2019kesssan/documents/documents/9r6ringyoumokuzai.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/090000/2024/settlement-11.pdf",
+            "sha256": "0d3379fb7ff87f7d5cdfb528dfc4391ae2742a040efc700c7292bc9e5651037d",
+            "final_url": "https://www.pref.tochigi.lg.jp/i02/2019kesssan/documents/documents/02r6ippansainyuujikoubetu.pdf"
           }
         ],
-        "archived_at": "2026-11-15T05:45:31.582Z"
+        "archived_at": "2026-11-23T14:18:28.674Z"
       }
     },
     {
@@ -1404,13 +1979,113 @@
                       "end": 498
                     }
                   ]
+                },
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 7,
+                      "end": 72
+                    }
+                  ]
+                },
+                {
+                  "account": "公債管理特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 253,
+                      "end": 254
+                    }
+                  ]
+                },
+                {
+                  "account": "地方独立行政法人県立病院貸付金特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 258,
+                      "end": 259
+                    }
+                  ]
+                },
+                {
+                  "account": "母子父子寡婦福祉資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 265,
+                      "end": 267
+                    }
+                  ]
+                },
+                {
+                  "account": "心身障害者扶養共済事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 274,
+                      "end": 278
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 282,
+                      "end": 286
+                    }
+                  ]
+                },
+                {
+                  "account": "県営林事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 300,
+                      "end": 305
+                    }
+                  ]
+                },
+                {
+                  "account": "林業・木材産業改善資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 319,
+                      "end": 320
+                    }
+                  ]
+                },
+                {
+                  "account": "中小企業高度化等資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 325,
+                      "end": 327
+                    }
+                  ]
+                },
+                {
+                  "account": "就農支援資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 335,
+                      "end": 338
+                    }
+                  ]
                 }
               ]
             }
           ]
         }
       ],
-      "reason": "財政課の「予算案について」の年度別の頁（https://www.pref.tochigi.lg.jp/b01/6gian.html）にある第405回通常会議（2月）の予算案（1）説明書。当初予算の一般会計・特別会計9つ・企業会計6つの歳入歳出予算事項別明細書（企業会計は予算実施計画）を1冊に収める text PDF（Adobe の組版、pdftotext で文字が出る）。歳出の事項別明細書は1頁に款・項・目と本年度・前年度・比較・本年度の財源内訳（国庫支出金・地方債・その他・一般財源）、節（区分・金額）、説明（事業名と金額）を千円単位で印字する。範囲は各会計の「3 歳出」の頁だけ（給与費明細書・債務負担行為・地方債の調書は範囲外）。企業会計（流域下水道・電気・水道・工業用水道・用地造成・施設管理）は予算実施計画の様式（1つの枠に収益的・資本的の収入と支出を見出しで分けて印字する）で、その頁（流域下水道 344〜347、電気 373〜376、水道 406〜408、工業用水道 439〜441、用地造成 469〜471、施設管理 495〜498）を範囲に入れ、収益的支出と資本的支出を読む。物理頁: 一般会計 73〜197、公債管理特別会計 255、地方独立行政法人県立病院貸付金特別会計 260〜261、母子父子寡婦福祉資金貸付事業特別会計 268、心身障害者扶養共済事業特別会計 279、国民健康保険特別会計 287〜288、県営林事業特別会計 306〜309、林業・木材産業改善資金貸付事業特別会計 321〜322、中小企業高度化等資金貸付事業特別会計 328〜329、就農支援資金貸付事業特別会計 339〜342。令和5年度以前の予算案説明書は財政課の頁から外れている（令和4年度の会議の頁 /b01/387.html は 404、確認日 2026-11-15）。",
+      "reason": "財政課の「予算案について」の年度別の頁（https://www.pref.tochigi.lg.jp/b01/6gian.html）にある第405回通常会議（2月）の予算案（1）説明書。当初予算の一般会計・特別会計9つ・企業会計6つの歳入歳出予算事項別明細書（企業会計は予算実施計画）を1冊に収める text PDF（Adobe の組版、pdftotext で文字が出る）。歳出の事項別明細書は1頁に款・項・目と本年度・前年度・比較・本年度の財源内訳（国庫支出金・地方債・その他・一般財源）、節（区分・金額）、説明（事業名と金額）を千円単位で印字する。範囲は各会計の「3 歳出」の頁だけ（給与費明細書・債務負担行為・地方債の調書は範囲外）。企業会計（流域下水道・電気・水道・工業用水道・用地造成・施設管理）は予算実施計画の様式（1つの枠に収益的・資本的の収入と支出を見出しで分けて印字する）で、その頁（流域下水道 344〜347、電気 373〜376、水道 406〜408、工業用水道 439〜441、用地造成 469〜471、施設管理 495〜498）を範囲に入れ、収益的支出と資本的支出を読む。物理頁: 一般会計 73〜197、公債管理特別会計 255、地方独立行政法人県立病院貸付金特別会計 260〜261、母子父子寡婦福祉資金貸付事業特別会計 268、心身障害者扶養共済事業特別会計 279、国民健康保険特別会計 287〜288、県営林事業特別会計 306〜309、林業・木材産業改善資金貸付事業特別会計 321〜322、中小企業高度化等資金貸付事業特別会計 328〜329、就農支援資金貸付事業特別会計 339〜342。令和5年度以前の予算案説明書は財政課の頁から外れている（令和4年度の会議の頁 /b01/387.html は 404、確認日 2026-11-15）。歳入は各会計の「2 歳入」の頁（一般会計 7〜72、特別会計は各会計の歳出の前の頁）を範囲に足した（款ごとに頁を改め、項・目と本年度・前年度・比較、節（区分・金額）、説明を印字する）。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -1603,13 +2278,113 @@
                       "end": 499
                     }
                   ]
+                },
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 7,
+                      "end": 73
+                    }
+                  ]
+                },
+                {
+                  "account": "公債管理特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 256,
+                      "end": 257
+                    }
+                  ]
+                },
+                {
+                  "account": "地方独立行政法人県立病院貸付金特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 261,
+                      "end": 262
+                    }
+                  ]
+                },
+                {
+                  "account": "母子父子寡婦福祉資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 268,
+                      "end": 270
+                    }
+                  ]
+                },
+                {
+                  "account": "心身障害者扶養共済事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 277,
+                      "end": 281
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 285,
+                      "end": 289
+                    }
+                  ]
+                },
+                {
+                  "account": "県営林事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 303,
+                      "end": 308
+                    }
+                  ]
+                },
+                {
+                  "account": "林業・木材産業改善資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 321,
+                      "end": 322
+                    }
+                  ]
+                },
+                {
+                  "account": "中小企業高度化等資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 327,
+                      "end": 329
+                    }
+                  ]
+                },
+                {
+                  "account": "就農支援資金貸付事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 337,
+                      "end": 339
+                    }
+                  ]
                 }
               ]
             }
           ]
         }
       ],
-      "reason": "財政課の「予算案について」の年度別の頁（https://www.pref.tochigi.lg.jp/b01/7gian.html）にある第412回通常会議（2月）の予算案（1）説明書。当初予算の一般会計・特別会計9つ・企業会計6つの歳入歳出予算事項別明細書（企業会計は予算実施計画）を1冊に収める text PDF（Adobe の組版、pdftotext で文字が出る）。歳出の事項別明細書は1頁に款・項・目と本年度・前年度・比較・本年度の財源内訳（国庫支出金・地方債・その他・一般財源）、節（区分・金額）、説明（事業名と金額）を千円単位で印字する。範囲は各会計の「3 歳出」の頁だけ（給与費明細書・債務負担行為・地方債の調書は範囲外）。企業会計（流域下水道・電気・水道・工業用水道・用地造成・施設管理）は予算実施計画の様式（1つの枠に収益的・資本的の収入と支出を見出しで分けて印字する）で、その頁（流域下水道 344〜347、電気 373〜376、水道 405〜407、工業用水道 439〜441、用地造成 469〜471、施設管理 495〜499）を範囲に入れ、収益的支出と資本的支出を読む。物理頁: 一般会計 74〜198、公債管理特別会計 258、地方独立行政法人県立病院貸付金特別会計 263〜264、母子父子寡婦福祉資金貸付事業特別会計 271、心身障害者扶養共済事業特別会計 282、国民健康保険特別会計 290〜291、県営林事業特別会計 309〜311、林業・木材産業改善資金貸付事業特別会計 323〜324、中小企業高度化等資金貸付事業特別会計 330〜331、就農支援資金貸付事業特別会計 340〜342。令和5年度以前の予算案説明書は財政課の頁から外れている（令和4年度の会議の頁 /b01/387.html は 404、確認日 2026-11-15）。",
+      "reason": "財政課の「予算案について」の年度別の頁（https://www.pref.tochigi.lg.jp/b01/7gian.html）にある第412回通常会議（2月）の予算案（1）説明書。当初予算の一般会計・特別会計9つ・企業会計6つの歳入歳出予算事項別明細書（企業会計は予算実施計画）を1冊に収める text PDF（Adobe の組版、pdftotext で文字が出る）。歳出の事項別明細書は1頁に款・項・目と本年度・前年度・比較・本年度の財源内訳（国庫支出金・地方債・その他・一般財源）、節（区分・金額）、説明（事業名と金額）を千円単位で印字する。範囲は各会計の「3 歳出」の頁だけ（給与費明細書・債務負担行為・地方債の調書は範囲外）。企業会計（流域下水道・電気・水道・工業用水道・用地造成・施設管理）は予算実施計画の様式（1つの枠に収益的・資本的の収入と支出を見出しで分けて印字する）で、その頁（流域下水道 344〜347、電気 373〜376、水道 405〜407、工業用水道 439〜441、用地造成 469〜471、施設管理 495〜499）を範囲に入れ、収益的支出と資本的支出を読む。物理頁: 一般会計 74〜198、公債管理特別会計 258、地方独立行政法人県立病院貸付金特別会計 263〜264、母子父子寡婦福祉資金貸付事業特別会計 271、心身障害者扶養共済事業特別会計 282、国民健康保険特別会計 290〜291、県営林事業特別会計 309〜311、林業・木材産業改善資金貸付事業特別会計 323〜324、中小企業高度化等資金貸付事業特別会計 330〜331、就農支援資金貸付事業特別会計 340〜342。令和5年度以前の予算案説明書は財政課の頁から外れている（令和4年度の会議の頁 /b01/387.html は 404、確認日 2026-11-15）。歳入は各会計の「2 歳入」の頁（一般会計 7〜73、特別会計は各会計の歳出の前の頁）を範囲に足した（款ごとに頁を改め、項・目と本年度・前年度・比較、節（区分・金額）、説明を印字する）。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",

@@ -1,0 +1,774 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132195",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "pages": [
+          [
+            34,
+            51
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "general-seam-p34-1",
+            "page": 34,
+            "observation_id": "p34:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-seam-p35-1",
+            "page": 35,
+            "observation_id": "p35:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-seam-p36-1",
+            "page": 36,
+            "observation_id": "p36:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-seam-p37-1",
+            "page": 37,
+            "observation_id": "p37:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-seam-p38-1",
+            "page": 38,
+            "observation_id": "p38:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-seam-p39-1",
+            "page": 39,
+            "observation_id": "p39:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-seam-p40-1",
+            "page": 40,
+            "observation_id": "p40:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-seam-p41-1",
+            "page": 41,
+            "observation_id": "p41:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-seam-p42-1",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-seam-p43-1",
+            "page": 43,
+            "observation_id": "p43:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-seam-p44-1",
+            "page": 44,
+            "observation_id": "p44:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-seam-p45-1",
+            "page": 45,
+            "observation_id": "p45:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-seam-p46-1",
+            "page": 46,
+            "observation_id": "p46:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-seam-p47-1",
+            "page": 47,
+            "observation_id": "p47:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-seam-p48-1",
+            "page": 48,
+            "observation_id": "p48:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-seam-p49-1",
+            "page": 49,
+            "observation_id": "p49:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-seam-p50-1",
+            "page": 50,
+            "observation_id": "p50:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-seam-p51-1",
+            "page": 51,
+            "observation_id": "p51:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "general-kana-p38-r30",
+            "page": 38,
+            "observation_id": "p38:full-page:a0:result0:r30",
+            "observed_name": "2新型コ口ナ",
+            "corrected_name": "2新型コロナ",
+            "reason": "原典の画像で「コロナ」と印字されている。Paddle はカタカナの「ロ」を漢字の「口」と読んだ。"
+          },
+          {
+            "id": "general-kana-p39-r74",
+            "page": 39,
+            "observation_id": "p39:full-page:a0:result1:r74",
+            "observed_name": "1道路橋りよう費",
+            "corrected_name": "1道路橋りょう費",
+            "reason": "原典の画像で「橋りょう」と印字されている。Paddle は小さい「ょ」を「よ」と読んだ。字形の対応表は1字ずつで、よ→ょ は置けないので、この行だけを宣言する。"
+          },
+          {
+            "id": "general-kana-p43-r71",
+            "page": 43,
+            "observation_id": "p43:full-page:a0:result1:r71",
+            "observed_name": "1道路橋りよう費",
+            "corrected_name": "1道路橋りょう費",
+            "reason": "原典の画像で「橋りょう」と印字されている。Paddle は小さい「ょ」を「よ」と読んだ。字形の対応表は1字ずつで、よ→ょ は置けないので、この行だけを宣言する。"
+          },
+          {
+            "id": "general-kana-p46-r62",
+            "page": 46,
+            "observation_id": "p46:full-page:a0:result1:r62",
+            "observed_name": "1道路橋りよう費",
+            "corrected_name": "1道路橋りょう費",
+            "reason": "原典の画像で「橋りょう」と印字されている。Paddle は小さい「ょ」を「よ」と読んだ。字形の対応表は1字ずつで、よ→ょ は置けないので、この行だけを宣言する。"
+          },
+          {
+            "id": "general-kana-p47-r83",
+            "page": 47,
+            "observation_id": "p47:full-page:a0:result1:r83",
+            "observed_name": "1道路橋りよう費",
+            "corrected_name": "1道路橋りょう費",
+            "reason": "原典の画像で「橋りょう」と印字されている。Paddle は小さい「ょ」を「よ」と読んだ。字形の対応表は1字ずつで、よ→ょ は置けないので、この行だけを宣言する。"
+          },
+          {
+            "id": "general-kana-p50-r49",
+            "page": 50,
+            "observation_id": "p50:full-page:a0:result0:r49",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原典の画像で「入」（字間を空けた「繰入金」「雑入」）と印字されている。Paddle は「入」を「人」と読んだ。"
+          },
+          {
+            "id": "general-p48-r28",
+            "page": 48,
+            "observation_id": "p48:full-page:a0:result0:r28",
+            "observed_name": "2財産壳払収入",
+            "corrected_name": "2財産売払収入",
+            "reason": "原典の画像では日本の字形で「売」と印字されている。Paddle は中国語の字形（壳）で読んだ"
+          },
+          {
+            "id": "general-p48-r61",
+            "page": 48,
+            "observation_id": "p48:full-page:a0:result1:r61",
+            "observed_name": "1 物品壳払収入",
+            "corrected_name": "1 物品売払収入",
+            "reason": "原典の画像では日本の字形で「売」と印字されている。Paddle は中国語の字形（壳）で読んだ"
+          },
+          {
+            "id": "general-p34-r34",
+            "page": 34,
+            "observation_id": "p34:full-page:a0:result0:r34",
+            "observed_name": "2国有资产等",
+            "corrected_name": "2国有資産等",
+            "reason": "原典の画像では日本の字形で「資産」と印字されている。Paddle は中国語の字形（资产）で読んだ"
+          }
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額に含む還付未済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "revenue-general-ocr-1",
+          "origin_sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215,
+            "config": {
+              "page_strips": 3
+            }
+          },
+          "sha256": "28e66db14a663321b0fa34987d206013f1dbe9e5783617acd3eb7ff00706427d",
+          "bytes": 4426748
+        },
+        {
+          "id": "revenue-general-ocr-2",
+          "origin_sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215,
+            "config": {
+              "page_strips": 3
+            }
+          },
+          "sha256": "00354d7afcf1701ea3e62c87daff036ccba9f01ef93939bb3316ae58c507bb0f",
+          "bytes": 3467112
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "nhi-revenue",
+        "pages": [
+          [
+            118,
+            121
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "nhi-seam-p118-1",
+            "page": 118,
+            "observation_id": "p118:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "nhi-seam-p119-1",
+            "page": 119,
+            "observation_id": "p119:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "nhi-seam-p120-1",
+            "page": 120,
+            "observation_id": "p120:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "nhi-seam-p121-1",
+            "page": 121,
+            "observation_id": "p121:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "nhi-kana-p119-r34",
+            "page": 119,
+            "observation_id": "p119:full-page:a0:result0:r34",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原典の画像で「入」（字間を空けた「繰入金」「雑入」）と印字されている。Paddle は「入」を「人」と読んだ。"
+          }
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額に含む還付未済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "revenue-nhi-ocr-1",
+          "origin_sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              118,
+              119,
+              120,
+              121
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215,
+            "config": {
+              "page_strips": 3
+            }
+          },
+          "sha256": "34e23ceb252c2701614e05a86e53999bae65ca2883d8ad28f399987b3a2fcc3f",
+          "bytes": 1631174
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-revenue",
+        "pages": [
+          [
+            134,
+            136
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "kouki-seam-p134-1",
+            "page": 134,
+            "observation_id": "p134:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "kouki-seam-p135-1",
+            "page": 135,
+            "observation_id": "p135:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "kouki-seam-p136-1",
+            "page": 136,
+            "observation_id": "p136:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          }
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額に含む還付未済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "revenue-kouki-ocr-1",
+          "origin_sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              134,
+              135,
+              136
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215,
+            "config": {
+              "page_strips": 3
+            }
+          },
+          "sha256": "96c8532afe066cf697c539f601dabb2324be387ea0c5e54ef9b32b064fb1f605",
+          "bytes": 1189187
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-revenue",
+        "pages": [
+          [
+            144,
+            152
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "kaigo-seam-p144-1",
+            "page": 144,
+            "observation_id": "p144:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "kaigo-seam-p145-1",
+            "page": 145,
+            "observation_id": "p145:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "kaigo-seam-p146-1",
+            "page": 146,
+            "observation_id": "p146:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "kaigo-seam-p147-1",
+            "page": 147,
+            "observation_id": "p147:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "kaigo-seam-p148-1",
+            "page": 148,
+            "observation_id": "p148:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "kaigo-seam-p149-1",
+            "page": 149,
+            "observation_id": "p149:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "kaigo-seam-p150-1",
+            "page": 150,
+            "observation_id": "p150:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "kaigo-seam-p151-1",
+            "page": 151,
+            "observation_id": "p151:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "kaigo-seam-p152-1",
+            "page": 152,
+            "observation_id": "p152:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          }
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額に含む還付未済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "revenue-kaigo-ocr-1",
+          "origin_sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              144,
+              145,
+              146,
+              147,
+              148,
+              149,
+              150,
+              151,
+              152
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215,
+            "config": {
+              "page_strips": 3
+            }
+          },
+          "sha256": "417a0f841d37e218c35d1f4e1bd5a8d5fb5c7eeefa0af797dfc85797d6e6487e",
+          "bytes": 2898895
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-revenue"
+        }
+      ]
+    },
+    {
+      "id": "parking",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe"
+        }
+      ],
+      "options": {
+        "account": "駐車場事業特別会計",
+        "table_id": "parking-revenue",
+        "pages": [
+          [
+            162,
+            163
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "parking-seam-p162-1",
+            "page": 162,
+            "observation_id": "p162:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "parking-seam-p163-1",
+            "page": 163,
+            "observation_id": "p163:full-page:a0:result1:r0",
+            "observed": "章",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（章）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          }
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額に含む還付未済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "revenue-parking-ocr-1",
+          "origin_sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              162,
+              163
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215,
+            "config": {
+              "page_strips": 3
+            }
+          },
+          "sha256": "f7f1feb5b471ac6373ea54b7162a38f6087bd273410733cdb50f152b96e31e91",
+          "bytes": 564671
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "parking-revenue"
+        }
+      ]
+    }
+  ]
+}
