@@ -1,0 +1,717 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132209",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 200
+              },
+              "header": {
+                "staircase": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            12,
+            53
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "general-header-assessed",
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53
+            ],
+            "box": [
+              650.0,
+              90.0,
+              712.0,
+              108.0
+            ],
+            "text": "調定額",
+            "reason": "見出しの升の「収入」を OCR が「収人」と読み（調定額と1語に読んだ頁もある）、金額の段階の見出しに当たらない。原画の見出しは 調定額・収入済額・収入未済額。"
+          },
+          {
+            "id": "general-header-received",
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53
+            ],
+            "box": [
+              712.0,
+              90.0,
+              795.0,
+              108.0
+            ],
+            "text": "収入済額",
+            "reason": "見出しの升の「収入」を OCR が「収人」と読み（調定額と1語に読んだ頁もある）、金額の段階の見出しに当たらない。原画の見出しは 調定額・収入済額・収入未済額。"
+          },
+          {
+            "id": "general-header-unreceived",
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53
+            ],
+            "box": [
+              860.0,
+              90.0,
+              920.0,
+              108.0
+            ],
+            "text": "収入未済額",
+            "reason": "見出しの升の「収入」を OCR が「収人」と読み（調定額と1語に読んだ頁もある）、金額の段階の見出しに当たらない。原画の見出しは 調定額・収入済額・収入未済額。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "general-p22-r79",
+            "page": 22,
+            "observation_id": "p22:full-page:a0:result0:r79",
+            "observed_name": "口",
+            "corrected_name": "ロ",
+            "reason": "原画の科目の名称は「新型コロナウイルス感染症対策地方税減収補塡特別交付金」。OCR がロを口と読んだ。"
+          },
+          {
+            "id": "general-p25-r97",
+            "page": 25,
+            "observation_id": "p25:full-page:a0:result0:r97",
+            "observed_name": "十",
+            "corrected_name": "土",
+            "reason": "原画の科目の名称は「土木費負担金」。OCR が土を十と読んだ。"
+          },
+          {
+            "id": "general-p27-r57",
+            "page": 27,
+            "observation_id": "p27:full-page:a0:result0:r57",
+            "observed_name": "十",
+            "corrected_name": "土",
+            "reason": "原画の科目の名称は「土木使用料」。OCR が土を十と読んだ。"
+          },
+          {
+            "id": "general-p28-r130",
+            "page": 28,
+            "observation_id": "p28:full-page:a0:result0:r130",
+            "observed_name": "于",
+            "corrected_name": "手",
+            "reason": "原画の科目の名称は「保健衛生手数料」。OCR が手を于と読んだ。"
+          },
+          {
+            "id": "general-p28-r143",
+            "page": 28,
+            "observation_id": "p28:full-page:a0:result0:r143",
+            "observed_name": "于",
+            "corrected_name": "手",
+            "reason": "原画の科目の名称は「清掃手数料」。OCR が手を于と読んだ。"
+          },
+          {
+            "id": "general-p42-r27",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r27",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原画の科目の名称は「財産収入」。OCR が入を人と読んだ。"
+          },
+          {
+            "id": "general-p42-r36",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r36",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原画の科目の名称は「財産運用収入」。OCR が入を人と読んだ。"
+          },
+          {
+            "id": "general-p42-r115",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r115",
+            "observed_name": "壳",
+            "corrected_name": "売",
+            "reason": "原画の科目の名称は「不動産売払収入」。OCR が売を壳と読んだ。"
+          },
+          {
+            "id": "general-p42-r125",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r125",
+            "observed_name": "壳",
+            "corrected_name": "売",
+            "reason": "原画の科目の名称は「土地売払収入」。OCR が売を壳と読んだ。"
+          },
+          {
+            "id": "general-p42-r134",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r134",
+            "observed_name": "壳",
+            "corrected_name": "売",
+            "reason": "原画の科目の名称は「物品売払収入」。OCR が売を壳と読んだ。"
+          },
+          {
+            "id": "general-p42-r144",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r144",
+            "observed_name": "壳",
+            "corrected_name": "売",
+            "reason": "原画の科目の名称は「物品売払収入」。OCR が売を壳と読んだ。"
+          },
+          {
+            "id": "general-p43-r30",
+            "page": 43,
+            "observation_id": "p43:full-page:a0:result0:r30",
+            "observed_name": "壳",
+            "corrected_name": "売",
+            "reason": "原画の科目の名称は「物品売払収入」。OCR が売を壳と読んだ。"
+          },
+          {
+            "id": "general-p45-r27",
+            "page": 45,
+            "observation_id": "p45:full-page:a0:result0:r27",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原画の科目の名称は「繰入金」。OCR が入を人と読んだ。"
+          },
+          {
+            "id": "general-p45-r36",
+            "page": 45,
+            "observation_id": "p45:full-page:a0:result0:r36",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原画の科目の名称は「基金繰入金」。OCR が入を人と読んだ。"
+          },
+          {
+            "id": "general-p47-r27",
+            "page": 47,
+            "observation_id": "p47:full-page:a0:result0:r27",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原画の科目の名称は「諸収入」。OCR が入を人と読んだ。"
+          },
+          {
+            "id": "general-p48-r28",
+            "page": 48,
+            "observation_id": "p48:full-page:a0:result0:r28",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原画の科目の名称は「受託事業収入」。OCR が入を人と読んだ。"
+          },
+          {
+            "id": "general-p48-r66",
+            "page": 48,
+            "observation_id": "p48:full-page:a0:result0:r66",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原画の科目の名称は「民生費受託事業収入」。OCR が入を人と読んだ。"
+          },
+          {
+            "id": "general-p49-r28",
+            "page": 49,
+            "observation_id": "p49:full-page:a0:result0:r28",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原画の科目の名称は「雑入」。OCR が入を人と読んだ。"
+          },
+          {
+            "id": "general-p50-r28",
+            "page": 50,
+            "observation_id": "p50:full-page:a0:result0:r28",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原画の科目の名称は「雑入」。OCR が入を人と読んだ。"
+          },
+          {
+            "id": "general-p51-r29",
+            "page": 51,
+            "observation_id": "p51:full-page:a0:result0:r29",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原画の科目の名称は「雑入」。OCR が入を人と読んだ。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-settlement-ocr-1",
+          "origin_sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ]
+          },
+          "sha256": "3eaa89bdd933865e43558f089fc8aaddd485c13e4553a2b1076b33411f495a97",
+          "bytes": 2622094
+        },
+        {
+          "id": "general-settlement-ocr-2",
+          "origin_sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31
+            ]
+          },
+          "sha256": "ab1683f5a69e112c25a7cde6a8188e08928a817e5444d2264d1e58e9b59e00cd",
+          "bytes": 3738481
+        },
+        {
+          "id": "general-settlement-ocr-3",
+          "origin_sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41
+            ]
+          },
+          "sha256": "d2e1f9527171c3c9a85bcd04d6927669624c05d5222f3b1e14b595ca814bc30b",
+          "bytes": 4707417
+        },
+        {
+          "id": "general-settlement-ocr-4",
+          "origin_sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51
+            ]
+          },
+          "sha256": "cb8e8ae8679e5b34af1e0252117517c3c585044fad128b55ce02758738aabe0c",
+          "bytes": 3568659
+        },
+        {
+          "id": "general-settlement-ocr-5",
+          "origin_sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              52,
+              53
+            ]
+          },
+          "sha256": "7b8384fc3e0643502322fc8b7e483aef8bac3337ed3a85720b81f1266ec7467d",
+          "bytes": 642855
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 200
+              },
+              "header": {
+                "staircase": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            151,
+            159
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "national-health-insurance-header-assessed",
+            "pages": [
+              151,
+              152,
+              153,
+              154,
+              155,
+              156,
+              157,
+              158,
+              159
+            ],
+            "box": [
+              650.0,
+              90.0,
+              712.0,
+              108.0
+            ],
+            "text": "調定額",
+            "reason": "見出しの升の「収入」を OCR が「収人」と読み（調定額と1語に読んだ頁もある）、金額の段階の見出しに当たらない。原画の見出しは 調定額・収入済額・収入未済額。"
+          },
+          {
+            "id": "national-health-insurance-header-received",
+            "pages": [
+              151,
+              152,
+              153,
+              154,
+              155,
+              156,
+              157,
+              158,
+              159
+            ],
+            "box": [
+              712.0,
+              90.0,
+              795.0,
+              108.0
+            ],
+            "text": "収入済額",
+            "reason": "見出しの升の「収入」を OCR が「収人」と読み（調定額と1語に読んだ頁もある）、金額の段階の見出しに当たらない。原画の見出しは 調定額・収入済額・収入未済額。"
+          },
+          {
+            "id": "national-health-insurance-header-unreceived",
+            "pages": [
+              151,
+              152,
+              153,
+              154,
+              155,
+              156,
+              157,
+              158,
+              159
+            ],
+            "box": [
+              860.0,
+              90.0,
+              920.0,
+              108.0
+            ],
+            "text": "収入未済額",
+            "reason": "見出しの升の「収入」を OCR が「収人」と読み（調定額と1語に読んだ頁もある）、金額の段階の見出しに当たらない。原画の見出しは 調定額・収入済額・収入未済額。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "national-health-insurance-p155-r27",
+            "page": 155,
+            "observation_id": "p155:full-page:a0:result0:r27",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原画の科目の名称は「財産収入」。OCR が入を人と読んだ。"
+          },
+          {
+            "id": "national-health-insurance-p155-r36",
+            "page": 155,
+            "observation_id": "p155:full-page:a0:result0:r36",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原画の科目の名称は「財産運用収入」。OCR が入を人と読んだ。"
+          },
+          {
+            "id": "national-health-insurance-p156-r27",
+            "page": 156,
+            "observation_id": "p156:full-page:a0:result0:r27",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原画の科目の名称は「繰入金」。OCR が入を人と読んだ。"
+          },
+          {
+            "id": "national-health-insurance-p156-r36",
+            "page": 156,
+            "observation_id": "p156:full-page:a0:result0:r36",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原画の科目の名称は「一般会計繰入金」。OCR が入を人と読んだ。"
+          },
+          {
+            "id": "national-health-insurance-p158-r27",
+            "page": 158,
+            "observation_id": "p158:full-page:a0:result0:r27",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原画の科目の名称は「諸収入」。OCR が入を人と読んだ。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-settlement-ocr-1",
+          "origin_sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              151,
+              152,
+              153,
+              154,
+              155,
+              156,
+              157,
+              158,
+              159
+            ]
+          },
+          "sha256": "538f97380b8202f1322e03c3d748488134c6f91ef08343b9f4ee35a54ee908f1",
+          "bytes": 2849887
+        }
+      ]
+    }
+  ]
+}
