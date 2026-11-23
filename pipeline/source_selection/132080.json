@@ -31,6 +31,16 @@
                       "end": 153
                     }
                   ]
+                },
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 20,
+                      "end": 93
+                    }
+                  ]
                 }
               ]
             },
@@ -67,6 +77,16 @@
                       "end": 53
                     }
                   ]
+                },
+                {
+                  "account": "国民健康保険事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 15
+                    }
+                  ]
                 }
               ]
             },
@@ -83,6 +103,16 @@
                     {
                       "start": 12,
                       "end": 15
+                    }
+                  ]
+                },
+                {
+                  "account": "用地特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 11
                     }
                   ]
                 }
@@ -103,6 +133,16 @@
                       "end": 51
                     }
                   ]
+                },
+                {
+                  "account": "介護保険事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 17
+                    }
+                  ]
                 }
               ]
             },
@@ -119,6 +159,16 @@
                     {
                       "start": 14,
                       "end": 29
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 13
                     }
                   ]
                 }
@@ -318,6 +368,46 @@
                       "end": 77
                     }
                   ]
+                },
+                {
+                  "account": "国民健康保険事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 430,
+                      "end": 439
+                    }
+                  ]
+                },
+                {
+                  "account": "用地特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 482,
+                      "end": 483
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 492,
+                      "end": 501
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 542,
+                      "end": 547
+                    }
+                  ]
                 }
               ]
             }
@@ -367,6 +457,16 @@
                       "end": 153
                     }
                   ]
+                },
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 20,
+                      "end": 91
+                    }
+                  ]
                 }
               ]
             },
@@ -403,6 +503,16 @@
                       "end": 51
                     }
                   ]
+                },
+                {
+                  "account": "国民健康保険事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 15
+                    }
+                  ]
                 }
               ]
             },
@@ -419,6 +529,16 @@
                     {
                       "start": 12,
                       "end": 15
+                    }
+                  ]
+                },
+                {
+                  "account": "用地特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 11
                     }
                   ]
                 }
@@ -439,6 +559,16 @@
                       "end": 51
                     }
                   ]
+                },
+                {
+                  "account": "介護保険事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 17
+                    }
+                  ]
                 }
               ]
             },
@@ -455,6 +585,16 @@
                     {
                       "start": 14,
                       "end": 29
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 13
                     }
                   ]
                 }
@@ -572,6 +712,16 @@
                       "end": 281
                     }
                   ]
+                },
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 20,
+                      "end": 91
+                    }
+                  ]
                 }
               ]
             },
@@ -588,6 +738,16 @@
                     {
                       "start": 18,
                       "end": 53
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 17
                     }
                   ]
                 }
@@ -608,6 +768,16 @@
                       "end": 17
                     }
                   ]
+                },
+                {
+                  "account": "用地特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 11
+                    }
+                  ]
                 }
               ]
             },
@@ -626,6 +796,16 @@
                       "end": 51
                     }
                   ]
+                },
+                {
+                  "account": "介護保険事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 17
+                    }
+                  ]
                 }
               ]
             },
@@ -642,6 +822,16 @@
                     {
                       "start": 14,
                       "end": 29
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 13
                     }
                   ]
                 }
@@ -752,6 +942,16 @@
                     {
                       "start": 86,
                       "end": 275
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 18,
+                      "end": 85
                     }
                   ]
                 }
@@ -998,6 +1198,56 @@
                     {
                       "start": 670,
                       "end": 670
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 11,
+                      "end": 74
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 429,
+                      "end": 438
+                    }
+                  ]
+                },
+                {
+                  "account": "用地特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 481,
+                      "end": 482
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 493,
+                      "end": 502
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 543,
+                      "end": 548
                     }
                   ]
                 }

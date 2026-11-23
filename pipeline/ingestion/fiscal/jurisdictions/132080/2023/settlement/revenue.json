@@ -1,0 +1,1307 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132080",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 230
+              },
+              "header": {
+                "staircase": "款項目名"
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "dotted_column_rules": true,
+            "rule_ink": true,
+            "scaled_spread_pages": true,
+            "unread_marks": true,
+            "bracketed_repeats": true
+          }
+        },
+        "pages": [
+          [
+            11,
+            74
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p17-code-5",
+            "page": 17,
+            "observation_id": "p17:ink-5:a5:result0:r0",
+            "observed": "5ゴルフ1利用",
+            "reason": "物理17頁の目「5 ゴルフ場利用税交付金」の1行目。見落とした墨の読み直しが番号と名前を1つに読み、「場」を数字の「1」と読んだ。名前の訂正は数字を変えられないので、この読みを除き、番号と名前を code_readings で1行に読む。"
+          },
+          {
+            "id": "p17-name-5",
+            "page": 17,
+            "observation_id": "p17:full-page:a0:result0:r66",
+            "observed": "ゴルフ場利用",
+            "reason": "物理17頁の目5 の名前の1行目。頁の読みは正しいが、同じ行の番号の読み（見落とした墨の読み直し）を除くと番号と組まれない。番号と名前を code_readings で1行に読むため、この読みも除く。"
+          },
+          {
+            "id": "p25-code-35",
+            "page": 25,
+            "observation_id": "p25:full-page:a0:result0:r25",
+            "observed": "535土木使用料",
+            "reason": "物理25頁の頭の行「5 35 土木使用料」。OCR は項の番号「5」と目の番号「35」と名前を1語に読み、目の番号が「5」になった。この読みを除き、目の番号と名前を code_readings で読む。"
+          },
+          {
+            "id": "p39-code-5",
+            "page": 39,
+            "observation_id": "p39:ink-2:a2:result0:r0",
+            "observed": "5務费都補助",
+            "reason": "物理39頁の目「5 総務費都補助金」の行。見落とした墨の読み直しが番号と名前を1つに読み、「総」を読み落とし、「費」を簡体字の「费」と読んだ。字を足す訂正では番号の位置がずれて段が変わるので、この読みを除き、番号と名前を code_readings で1行に読む。"
+          },
+          {
+            "id": "p39-name-5",
+            "page": 39,
+            "observation_id": "p39:full-page:a0:result0:r56",
+            "observed": "総務費都補助",
+            "reason": "物理39頁の目5 の名前。頁の読みは正しいが、同じ行の番号の読み（見落とした墨の読み直し）を除くと番号と組まれない。番号と名前を code_readings で1行に読むため、この読みも除く。"
+          },
+          {
+            "id": "p49-code-35",
+            "page": 49,
+            "observation_id": "p49:ink-0:a0:result0:r0",
+            "observed": "35上木都補助",
+            "reason": "物理49頁の目「35 土木費都補助金」の行。見落とした墨の読み直しが番号と名前を1つに読み、「土」を「上」と読み、「費」を読み落とした。字を足す訂正では番号の位置がずれて段が変わるので、この読みを除き、番号と名前を code_readings で1行に読む。"
+          },
+          {
+            "id": "p49-name-35",
+            "page": 49,
+            "observation_id": "p49:full-page:a0:result0:r41",
+            "observed": "土木費都補助",
+            "reason": "物理49頁の目35 の名前。頁の読みは正しいが、同じ行の番号の読み（見落とした墨の読み直し）を除くと番号と組まれない。番号と名前を code_readings で1行に読むため、この読みも除く。"
+          },
+          {
+            "id": "p55-code-10",
+            "page": 55,
+            "observation_id": "p55:ink-0:a0:result0:r0",
+            "observed": "10民生託金",
+            "reason": "物理55頁の目「10 民生費委託金」の行。見落とした墨の読み直しが番号と名前を1つに読み、「費委」を読み落とした。字を足す訂正では番号の位置がずれて段が変わるので、この読みを除き、番号と名前を code_readings で1行に読む。"
+          },
+          {
+            "id": "p55-name-10",
+            "page": 55,
+            "observation_id": "p55:full-page:a0:result0:r29",
+            "observed": "民生費委託金",
+            "reason": "物理55頁の目10 の名前。頁の読みは正しいが、同じ行の番号の読み（見落とした墨の読み直し）を除くと番号と組まれない。番号と名前を code_readings で1行に読むため、この読みも除く。"
+          },
+          {
+            "id": "p55-code-35",
+            "page": 55,
+            "observation_id": "p55:ink-1:a1:result0:r0",
+            "observed": "35土木托金",
+            "reason": "物理55頁の目「35 土木費委託金」の行。見落とした墨の読み直しが番号と名前を1つに読み、「費委」を読み落とし、「託」を「托」と読んだ。字を足す訂正では番号の位置がずれて段が変わるので、この読みを除き、番号と名前を code_readings で1行に読む。"
+          },
+          {
+            "id": "p55-name-35",
+            "page": 55,
+            "observation_id": "p55:full-page:a0:result0:r55",
+            "observed": "土木費委託金",
+            "reason": "物理55頁の目35 の名前。頁の読みは正しいが、同じ行の番号の読み（見落とした墨の読み直し）を除くと番号と組まれない。番号と名前を code_readings で1行に読むため、この読みも除く。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "p17-code-5",
+            "page": 17,
+            "box": [
+              73.0,
+              355.0,
+              79.5,
+              363.5
+            ],
+            "code": "5",
+            "reason": "原典の描画で、物理17頁の目の欄に「5」、名前の欄の1行目に「ゴルフ場利用」と印字されている（款20 ゴルフ場利用税交付金 項5 の目5 ゴルフ場利用税交付金）。",
+            "name": "ゴルフ場利用",
+            "name_box": [
+              80.9,
+              353.7,
+              133.4,
+              364.0
+            ]
+          },
+          {
+            "id": "p25-code-35",
+            "page": 25,
+            "box": [
+              67.5,
+              133.0,
+              78.5,
+              141.5
+            ],
+            "code": "35",
+            "reason": "原典の描画で、物理25頁の頭の行の目の欄に「35」、名前の欄に「土木使用料」と印字されている（款50 使用料及び手数料 項5 使用料の目35）。",
+            "name": "土木使用料",
+            "name_box": [
+              80.0,
+              132.2,
+              122.8,
+              142.1
+            ]
+          },
+          {
+            "id": "p39-code-5",
+            "page": 39,
+            "box": [
+              72.5,
+              437.0,
+              79.0,
+              445.0
+            ],
+            "code": "5",
+            "reason": "原典の描画で、物理39頁の目の欄に「5」、名前の欄に「総務費都補助」と印字されている（款60 都支出金 項10 都補助金の目5）。",
+            "name": "総務費都補助",
+            "name_box": [
+              79.4,
+              436.2,
+              132.2,
+              445.4
+            ]
+          },
+          {
+            "id": "p49-code-35",
+            "page": 49,
+            "box": [
+              65.5,
+              354.5,
+              76.5,
+              363.5
+            ],
+            "code": "35",
+            "reason": "原典の描画で、物理49頁の目の欄に「35」、名前の欄に「土木費都補助」と印字されている（款60 都支出金 項10 都補助金の目35）。",
+            "name": "土木費都補助",
+            "name_box": [
+              77.5,
+              353.7,
+              130.0,
+              364.3
+            ]
+          },
+          {
+            "id": "p55-code-10",
+            "page": 55,
+            "box": [
+              66.5,
+              215.0,
+              78.5,
+              223.5
+            ],
+            "code": "10",
+            "reason": "原典の描画で、物理55頁の目の欄に「10」、名前の欄に「民生費委託金」と印字されている（款60 都支出金 項15 委託金の目10）。",
+            "name": "民生費委託金",
+            "name_box": [
+              79.0,
+              214.5,
+              130.0,
+              223.6
+            ]
+          },
+          {
+            "id": "p55-code-35",
+            "page": 55,
+            "box": [
+              66.0,
+              611.5,
+              77.0,
+              620.0
+            ],
+            "code": "35",
+            "reason": "原典の描画で、物理55頁の目の欄に「35」、名前の欄に「土木費委託金」と印字されている（款60 都支出金 項15 委託金の目35）。",
+            "name": "土木費委託金",
+            "name_box": [
+              78.5,
+              611.2,
+              129.8,
+              620.3
+            ]
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p13-kihatsu",
+            "page": 13,
+            "observation_id": "p13:ink-3:a3:result0:r0",
+            "observed_name": "排発",
+            "corrected_name": "揮発",
+            "reason": "原典の描画で、物理13頁の名前は「地方揮発油譲与税」と印字されている。見落とした墨の読み直しは「揮」を「排」と読んだ。"
+          },
+          {
+            "id": "p13-joyo",
+            "page": 13,
+            "observation_id": "p13:full-page:a0:result0:r98",
+            "observed_name": "与税",
+            "corrected_name": "譲与税",
+            "reason": "原典の描画で、物理13頁の名前は「地方揮発油譲与税」と印字されている。OCR は2行目の頭の「譲」を読み落とした。"
+          },
+          {
+            "id": "p17-hojin",
+            "page": 17,
+            "observation_id": "p17:ink-1:a1:result0:r0",
+            "observed_name": "法人税",
+            "corrected_name": "法人事業税",
+            "reason": "原典の描画で、物理17頁の名前は「法人事業税交付金」と印字されている。見落とした墨の読み直しは「事業」を読み落とした。"
+          },
+          {
+            "id": "p17-shohi",
+            "page": 17,
+            "observation_id": "p17:ink-3:a3:result0:r0",
+            "observed_name": "消税",
+            "corrected_name": "消費税",
+            "reason": "原典の描画で、物理17頁の名前は「地方消費税交付金」と印字されている。見落とした墨の読み直しは「費」を読み落とした。"
+          },
+          {
+            "id": "p19-kotsu-1",
+            "page": 19,
+            "observation_id": "p19:ink-4:a4:result0:r0",
+            "observed_name": "封",
+            "corrected_name": "対",
+            "reason": "原典の描画で、物理19頁の名前は「交通安全対策特別交付金」と印字されている。見落とした墨の読み直しは「交通安」を読み落とし、「対」を「封」と読んだ。"
+          },
+          {
+            "id": "p19-kotsu-2",
+            "page": 19,
+            "observation_id": "p19:ink-4:a4:result0:r0",
+            "observed_name": "全対策",
+            "corrected_name": "交通安全対策",
+            "reason": "原典の描画で、物理19頁の名前は「交通安全対策特別交付金」と印字されている。見落とした墨の読み直しは「交通安」を読み落とし、「対」を「封」と読んだ。"
+          },
+          {
+            "id": "p31-somu-1",
+            "page": 31,
+            "observation_id": "p31:ink-1:a1:result0:r0",
+            "observed_name": "涂国川",
+            "corrected_name": "総国庫",
+            "reason": "原典の描画で、物理31頁の名前は「総務費国庫補助金」と印字されている。見落とした墨の読み直しは「総」を「涂」、「庫」を「川」と読み、「務費」を読み落とした。"
+          },
+          {
+            "id": "p31-somu-2",
+            "page": 31,
+            "observation_id": "p31:ink-1:a1:result0:r0",
+            "observed_name": "総国",
+            "corrected_name": "総務費国",
+            "reason": "原典の描画で、物理31頁の名前は「総務費国庫補助金」と印字されている。見落とした墨の読み直しは「総」を「涂」、「庫」を「川」と読み、「務費」を読み落とした。"
+          },
+          {
+            "id": "p33-ryo",
+            "page": 33,
+            "observation_id": "p33:full-page:a0:result0:r64",
+            "observed_name": "りよう",
+            "corrected_name": "りょう",
+            "reason": "原典の描画で、物理33頁の名前は「道路橋りょう費補助金」と印字されている。OCR は小さい「ょ」を「よ」と読んだ。"
+          },
+          {
+            "id": "p35-itaku-1",
+            "page": 35,
+            "observation_id": "p35:ink-1:a1:result0:r0",
+            "observed_name": "托",
+            "corrected_name": "託",
+            "reason": "原典の描画で、物理35頁の名前は「総務費委託金」と印字されている。見落とした墨の読み直しは「託」を「托」と読み、「費委」を読み落とした。"
+          },
+          {
+            "id": "p35-itaku-2",
+            "page": 35,
+            "observation_id": "p35:ink-1:a1:result0:r0",
+            "observed_name": "総務託",
+            "corrected_name": "総務費委託",
+            "reason": "原典の描画で、物理35頁の名前は「総務費委託金」と印字されている。見落とした墨の読み直しは「託」を「托」と読み、「費委」を読み落とした。"
+          },
+          {
+            "id": "p49-ryo",
+            "page": 49,
+            "observation_id": "p49:full-page:a0:result0:r48",
+            "observed_name": "りよう",
+            "corrected_name": "りょう",
+            "reason": "原典の描画で、物理49頁の名前は「道路橋りょう費補助金」と印字されている。OCR は小さい「ょ」を「よ」と読んだ。"
+          },
+          {
+            "id": "p53-itaku-1",
+            "page": 53,
+            "observation_id": "p53:ink-2:a2:result0:r0",
+            "observed_name": "托",
+            "corrected_name": "託",
+            "reason": "原典の描画で、物理53頁の名前は「総務費委託金」と印字されている。見落とした墨の読み直しは「託」を「托」と読み、「費委」を読み落とした。"
+          },
+          {
+            "id": "p53-itaku-2",
+            "page": 53,
+            "observation_id": "p53:ink-2:a2:result0:r0",
+            "observed_name": "総務託",
+            "corrected_name": "総務費委託",
+            "reason": "原典の描画で、物理53頁の名前は「総務費委託金」と印字されている。見落とした墨の読み直しは「託」を「托」と読み、「費委」を読み落とした。"
+          },
+          {
+            "id": "p59-fudosan-1",
+            "page": 59,
+            "observation_id": "p59:ink-1:a1:result0:r0",
+            "observed_name": "加",
+            "corrected_name": "動",
+            "reason": "原典の描画で、物理59頁の名前は「不動産売払収入」と印字されている。見落とした墨の読み直しは「動産」を「加」と読んだ。"
+          },
+          {
+            "id": "p59-fudosan-2",
+            "page": 59,
+            "observation_id": "p59:ink-1:a1:result0:r0",
+            "observed_name": "不動",
+            "corrected_name": "不動産",
+            "reason": "原典の描画で、物理59頁の名前は「不動産売払収入」と印字されている。見落とした墨の読み直しは「動産」を「加」と読んだ。"
+          },
+          {
+            "id": "p59-shunyu",
+            "page": 59,
+            "observation_id": "p59:full-page:a0:result0:r50",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原典の描画で、物理59頁の名前は「不動産売払収入」と印字されている。OCR は2行目の「入」を「人」と読んだ。"
+          },
+          {
+            "id": "p59-ippan",
+            "page": 59,
+            "observation_id": "p59:ink-4:a4:result0:r0",
+            "observed_name": "股",
+            "corrected_name": "般",
+            "reason": "原典の描画で、物理59頁の名前は「一般寄附金」と印字されている。見落とした墨の読み直しは「般」を「股」と読んだ。"
+          },
+          {
+            "id": "p65-jutaku-1",
+            "page": 65,
+            "observation_id": "p65:ink-1:a1:result0:r0",
+            "observed_name": "取",
+            "corrected_name": "収",
+            "reason": "原典の描画で、物理65頁の名前は「受託事業収入」と印字されている。見落とした墨の読み直しは「業」を読み落とし、「収」を「取」と読んだ。"
+          },
+          {
+            "id": "p65-jutaku-2",
+            "page": 65,
+            "observation_id": "p65:ink-1:a1:result0:r0",
+            "observed_name": "事収",
+            "corrected_name": "事業収",
+            "reason": "原典の描画で、物理65頁の名前は「受託事業収入」と印字されている。見落とした墨の読み直しは「業」を読み落とし、「収」を「取」と読んだ。"
+          },
+          {
+            "id": "p65-keirin-1",
+            "page": 65,
+            "observation_id": "p65:ink-2:a2:result0:r0",
+            "observed_name": "挺",
+            "corrected_name": "艇",
+            "reason": "原典の描画で、物理65頁の名前は「競輪競艇事業収入」と印字されている。見落とした墨の読み直しは1行目の頭の「競」と「事業」を読み落とし、「艇」を「挺」と読んだ。"
+          },
+          {
+            "id": "p65-keirin-2",
+            "page": 65,
+            "observation_id": "p65:ink-2:a2:result0:r0",
+            "observed_name": "輪競艇",
+            "corrected_name": "競輪競艇事業",
+            "reason": "原典の描画で、物理65頁の名前は「競輪競艇事業収入」と印字されている。見落とした墨の読み直しは1行目の頭の「競」と「事業」を読み落とし、「艇」を「挺」と読んだ。"
+          },
+          {
+            "id": "p65-taino",
+            "page": 65,
+            "observation_id": "p65:ink-4:a4:result0:r0",
+            "observed_name": "滞納処分",
+            "corrected_name": "滞納処分費",
+            "reason": "原典の描画で、物理65頁の名前は「滞納処分費」と印字されている。見落とした墨の読み直しは「費」を読み落とした。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-ocr-1",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "3a8271b2d550fde9aa323963ad0f915183022b0c296bb7333523600e20e31053",
+          "bytes": 3264609
+        },
+        {
+          "id": "general-revenue-ocr-2",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "6c035bd79b4b0c934fe828121e56d0dbb52f361f6608b91d89f2abe9d7783fbf",
+          "bytes": 2441427
+        },
+        {
+          "id": "general-revenue-ocr-3",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "dbf842a7eda1ff37a9ce42f46f8fead319b48b5a004336326980383de7538393",
+          "bytes": 2824872
+        },
+        {
+          "id": "general-revenue-ocr-4",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "5a90bc8356db1ae7751fd3230bce74d6568edc48b31244f065ce3cef1125fd60",
+          "bytes": 2193768
+        },
+        {
+          "id": "general-revenue-ocr-5",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "775b8766be84a3f4056b3313f73c5d7a7ddb0559c9b0c0f846042a511a1de209",
+          "bytes": 2631389
+        },
+        {
+          "id": "general-revenue-ocr-6",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "cc25a176c5c943300f8f7e23913a1dc896c9aea470b7c6d3e43907ba1c0a6720",
+          "bytes": 2771948
+        },
+        {
+          "id": "general-revenue-ocr-7",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              71,
+              72,
+              73,
+              74
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "6cbd0edb1bdbf3dba344d88ecf20e17ddf0ef22f037cfecc0a7575fc92558064",
+          "bytes": 793678
+        }
+      ]
+    },
+    {
+      "id": "nhi-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "nhi-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 230
+              },
+              "header": {
+                "staircase": "款項目名"
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "dotted_column_rules": true,
+            "rule_ink": true,
+            "scaled_spread_pages": true,
+            "unread_marks": true,
+            "bracketed_repeats": true
+          }
+        },
+        "pages": [
+          [
+            429,
+            438
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p435-code-15",
+            "page": 435,
+            "observation_id": "p435:ink-2:a2:result0:r0",
+            "observed": "15一变保険者",
+            "reason": "物理435頁の目「15 一般被保険者加算金」の1行目。見落とした墨の読み直しが番号と名前を1つに読み、「般被」を「变」と読んだ。名前の字を足すと番号の位置がずれて段が変わるので、この読みを除き、番号と名前を code_readings で1行に読む。"
+          },
+          {
+            "id": "p435-name-15",
+            "page": 435,
+            "observation_id": "p435:full-page:a0:result0:r44",
+            "observed": "一般被保険者",
+            "reason": "物理435頁の目15 の名前の1行目。頁の読みは正しいが、同じ行の番号の読み（見落とした墨の読み直し）を除くと番号と組まれない。番号と名前を code_readings で1行に読むため、この読みも除く。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "p435-code-15",
+            "page": 435,
+            "box": [
+              70.5,
+              229.0,
+              79.5,
+              238.0
+            ],
+            "code": "15",
+            "reason": "原典の描画で、物理435頁の目の欄に「15」、名前の欄の1行目に「一般被保険者」と印字されている（款50 諸収入 項5 延滞金，加算金及び過料の目15 一般被保険者加算金）。",
+            "name": "一般被保険者",
+            "name_box": [
+              81.8,
+              228.4,
+              132.7,
+              238.3
+            ]
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p429-kouki-1",
+            "page": 429,
+            "observation_id": "p429:ink-4:a4:result0:r0",
+            "observed_name": "後斯年龍金",
+            "corrected_name": "後期高齢金",
+            "reason": "原典の描画で、物理429頁の名前は「後期高齢者支援金分現年課税分」と印字されている。見落とした墨の読み直しは「期高齢者支援」を読み違えた。"
+          },
+          {
+            "id": "p429-kouki-2",
+            "page": 429,
+            "observation_id": "p429:ink-4:a4:result0:r0",
+            "observed_name": "高齢金",
+            "corrected_name": "高齢者支援金",
+            "reason": "原典の描画で、物理429頁の名前は「後期高齢者支援金分現年課税分」と印字されている。見落とした墨の読み直しは「期高齢者支援」を読み違えた。"
+          },
+          {
+            "id": "p433-keigen",
+            "page": 433,
+            "observation_id": "p433:full-page:a0:result0:r48",
+            "observed_name": "軽減分",
+            "corrected_name": "軽減分)",
+            "reason": "原典の描画で、物理433頁の名前は「保険基盤安定繰入金（保険税軽減分）」と印字されている。名前は3行に折り返し、OCR は3行目の「）」だけの行を読まなかった。"
+          },
+          {
+            "id": "p433-kiban",
+            "page": 433,
+            "observation_id": "p433:ink-2:a2:result0:r0",
+            "observed_name": "保険入",
+            "corrected_name": "保険基盤安定繰入",
+            "reason": "原典の描画で、物理433頁の名前は「保険基盤安定繰入金（保険者支援分）」と印字されている。見落とした墨の読み直しは「基盤安定繰」を読み落とした。"
+          },
+          {
+            "id": "p433-shien",
+            "page": 433,
+            "observation_id": "p433:full-page:a0:result0:r51",
+            "observed_name": "支援分",
+            "corrected_name": "支援分)",
+            "reason": "原典の描画で、物理433頁の名前は「保険基盤安定繰入金（保険者支援分）」と印字されている。名前は3行に折り返し、OCR は3行目の「）」だけの行を読まなかった。"
+          },
+          {
+            "id": "p435-entai",
+            "page": 435,
+            "observation_id": "p435:ink-1:a1:result0:r0",
+            "observed_name": "一股",
+            "corrected_name": "一般",
+            "reason": "原典の描画で、物理435頁の名前は「一般被保険者延滞金」と印字されている。見落とした墨の読み直しは「般」を「股」と読んだ。"
+          },
+          {
+            "id": "p435-yokin",
+            "page": 435,
+            "observation_id": "p435:ink-4:a4:result0:r0",
+            "observed_name": "预",
+            "corrected_name": "預",
+            "reason": "原典の描画で、物理435頁の名前は「市預金利子」と印字されている。見落とした墨の読み直しは「預」を簡体字の「预」と読んだ。"
+          },
+          {
+            "id": "p435-daisan-1",
+            "page": 435,
+            "observation_id": "p435:ink-6:a6:result0:r0",
+            "observed_name": "剣",
+            "corrected_name": "険",
+            "reason": "原典の描画で、物理435頁の名前は「一般被保険者第三者納付金」と印字されている。見落とした墨の読み直しは「般被」「者」を読み落とし、「険」を「剣」と読んだ。"
+          },
+          {
+            "id": "p435-daisan-2",
+            "page": 435,
+            "observation_id": "p435:ink-6:a6:result0:r0",
+            "observed_name": "一保険",
+            "corrected_name": "一般被保険者",
+            "reason": "原典の描画で、物理435頁の名前は「一般被保険者第三者納付金」と印字されている。見落とした墨の読み直しは「般被」「者」を読み落とし、「険」を「剣」と読んだ。"
+          },
+          {
+            "id": "p435-henno",
+            "page": 435,
+            "observation_id": "p435:ink-8:a8:result0:r0",
+            "observed_name": "保険行",
+            "corrected_name": "保険者",
+            "reason": "原典の描画で、物理435頁の名前は「一般被保険者返納金」と印字されている。見落とした墨の読み直しは「者」を「行」と読んだ。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "nhi-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "nhi-revenue-ocr-1",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              429,
+              430,
+              431,
+              432,
+              433,
+              434,
+              435,
+              436,
+              437,
+              438
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "a321b7f7cb871f2950aec6e3984377bd155962d7b973359a6a8cd17eb6bf8344",
+          "bytes": 2567669
+        }
+      ]
+    },
+    {
+      "id": "land-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401"
+        }
+      ],
+      "options": {
+        "account": "用地特別会計",
+        "table_id": "land-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 230
+              },
+              "header": {
+                "staircase": "款項目名"
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "dotted_column_rules": true,
+            "rule_ink": true,
+            "scaled_spread_pages": true,
+            "unread_marks": true,
+            "bracketed_repeats": true
+          }
+        },
+        "pages": [
+          [
+            481,
+            482
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "p481-kikin",
+            "page": 481,
+            "observation_id": "p481:ink-1:a1:result0:r0",
+            "observed_name": "土地発金",
+            "corrected_name": "土地開発基金",
+            "reason": "原典の描画で、物理481頁の名前は「土地開発基金利子収入」と印字されている。見落とした墨の読み直しは「開」「基」を読み落とした。"
+          },
+          {
+            "id": "p481-fudosan-1",
+            "page": 481,
+            "observation_id": "p481:ink-3:a3:result0:r0",
+            "observed_name": "加",
+            "corrected_name": "動",
+            "reason": "原典の描画で、物理481頁の名前は「不動産売払収入」と印字されている。見落とした墨の読み直しは「動産」を「加」と読んだ。"
+          },
+          {
+            "id": "p481-fudosan-2",
+            "page": 481,
+            "observation_id": "p481:ink-3:a3:result0:r0",
+            "observed_name": "不動",
+            "corrected_name": "不動産",
+            "reason": "原典の描画で、物理481頁の名前は「不動産売払収入」と印字されている。見落とした墨の読み直しは「動産」を「加」と読んだ。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "land-revenue-ocr-1",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              481,
+              482
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "4a20c3bfad0294abfe21f1eb4eda78d9777f76b017cf5a518f0d7c03d4351d39",
+          "bytes": 565481
+        }
+      ]
+    },
+    {
+      "id": "kaigo-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "kaigo-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 230
+              },
+              "header": {
+                "staircase": "款項目名"
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "dotted_column_rules": true,
+            "rule_ink": true,
+            "scaled_spread_pages": true,
+            "unread_marks": true,
+            "bracketed_repeats": true
+          }
+        },
+        "pages": [
+          [
+            493,
+            502
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "p493-dai1go",
+            "page": 493,
+            "observation_id": "p493:ink-2:a2:result0:r0",
+            "observed_name": "一被",
+            "corrected_name": "第一号被",
+            "reason": "原典の描画で、物理493頁の名前は「第一号被保険者保険料」と印字されている。見落とした墨の読み直しは「第」「号」を読み落とした。"
+          },
+          {
+            "id": "p493-kaigo-futan",
+            "page": 493,
+            "observation_id": "p493:ink-4:a4:result0:r0",
+            "observed_name": "介給付",
+            "corrected_name": "介護給付費負",
+            "reason": "原典の描画で、物理493頁の名前は「介護給付費負担金」と印字されている。見落とした墨の読み直しは「護」「費」「負」を読み落とした。"
+          },
+          {
+            "id": "p493-chosei-1",
+            "page": 493,
+            "observation_id": "p493:ink-6:a6:result0:r0",
+            "observed_name": "周",
+            "corrected_name": "調",
+            "reason": "原典の描画で、物理493頁の名前は「調整交付金」と印字されている。見落とした墨の読み直しは「調整」を「周」と読んだ。"
+          },
+          {
+            "id": "p493-chosei-2",
+            "page": 493,
+            "observation_id": "p493:ink-6:a6:result0:r0",
+            "observed_name": "調",
+            "corrected_name": "調整",
+            "reason": "原典の描画で、物理493頁の名前は「調整交付金」と印字されている。見落とした墨の読み直しは「調整」を「周」と読んだ。"
+          },
+          {
+            "id": "p493-chiiki-1",
+            "page": 493,
+            "observation_id": "p493:ink-7:a7:result0:r0",
+            "observed_name": "地城支捷事",
+            "corrected_name": "地域支援事",
+            "reason": "原典の描画で、物理493頁の名前は「地域支援事業交付金（介護予防・総合事業）」と印字されている。見落とした墨の読み直しは「域」「援」を読み違え、「業」を読み落とした。"
+          },
+          {
+            "id": "p493-chiiki-2",
+            "page": 493,
+            "observation_id": "p493:ink-7:a7:result0:r0",
+            "observed_name": "支援事",
+            "corrected_name": "支援事業",
+            "reason": "原典の描画で、物理493頁の名前は「地域支援事業交付金（介護予防・総合事業）」と印字されている。見落とした墨の読み直しは「域」「援」を読み違え、「業」を読み落とした。"
+          },
+          {
+            "id": "p493-nini",
+            "page": 493,
+            "observation_id": "p493:full-page:a0:result0:r107",
+            "observed_name": "任意",
+            "corrected_name": "任意)",
+            "reason": "原典の描画で、物理493頁の名前は「地域支援事業交付金（包括的支援・任意）」と印字されている。名前は4行に折り返し、OCR は4行目の「）」だけの行を読まなかった。"
+          },
+          {
+            "id": "p495-chiiki",
+            "page": 495,
+            "observation_id": "p495:ink-1:a1:result0:r0",
+            "observed_name": "地",
+            "corrected_name": "地域支援事業",
+            "reason": "原典の描画で、物理495頁の名前は「地域支援事業支援交付金」と印字されている。見落とした墨の読み直しは1行目の「域支援事業」を読み落とした。"
+          },
+          {
+            "id": "p497-nini",
+            "page": 497,
+            "observation_id": "p497:full-page:a0:result0:r40",
+            "observed_name": "任意",
+            "corrected_name": "任意)",
+            "reason": "原典の描画で、物理497頁の名前は「地域支援事業交付金（包括的支援・任意）」と印字されている。名前は4行に折り返し、OCR は4行目の「）」だけの行を読まなかった。"
+          },
+          {
+            "id": "p497-kaigo-kuri",
+            "page": 497,
+            "observation_id": "p497:ink-5:a5:result0:r0",
+            "observed_name": "介給付",
+            "corrected_name": "介護給付費",
+            "reason": "原典の描画で、物理497頁の名前は「介護給付費繰入金」と印字されている。見落とした墨の読み直しは「護」「費」を読み落とした。"
+          },
+          {
+            "id": "p497-shokuin-1",
+            "page": 497,
+            "observation_id": "p497:ink-6:a6:result0:r0",
+            "observed_name": "月給",
+            "corrected_name": "職給",
+            "reason": "原典の描画で、物理497頁の名前は「職員給与費等繰入金」と印字されている。見落とした墨の読み直しは「職員」を「月」、「費等」を「集」と読んだ。"
+          },
+          {
+            "id": "p497-shokuin-2",
+            "page": 497,
+            "observation_id": "p497:ink-6:a6:result0:r0",
+            "observed_name": "職給",
+            "corrected_name": "職員給",
+            "reason": "原典の描画で、物理497頁の名前は「職員給与費等繰入金」と印字されている。見落とした墨の読み直しは「職員」を「月」、「費等」を「集」と読んだ。"
+          },
+          {
+            "id": "p497-shokuin-3",
+            "page": 497,
+            "observation_id": "p497:ink-6:a6:result0:r0",
+            "observed_name": "与集",
+            "corrected_name": "与費",
+            "reason": "原典の描画で、物理497頁の名前は「職員給与費等繰入金」と印字されている。見落とした墨の読み直しは「職員」を「月」、「費等」を「集」と読んだ。"
+          },
+          {
+            "id": "p497-shokuin-4",
+            "page": 497,
+            "observation_id": "p497:ink-6:a6:result0:r0",
+            "observed_name": "与費",
+            "corrected_name": "与費等",
+            "reason": "原典の描画で、物理497頁の名前は「職員給与費等繰入金」と印字されている。見落とした墨の読み直しは「職員」を「月」、「費等」を「集」と読んだ。"
+          },
+          {
+            "id": "p499-nini",
+            "page": 499,
+            "observation_id": "p499:full-page:a0:result0:r35",
+            "observed_name": "任意",
+            "corrected_name": "任意)",
+            "reason": "原典の描画で、物理499頁の名前は「地域支援事業繰入金（包括的支援・任意）」と印字されている。名前は4行に折り返し、OCR は4行目の「）」だけの行を読まなかった。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kaigo-revenue-ocr-1",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              493,
+              494,
+              495,
+              496,
+              497,
+              498,
+              499,
+              500,
+              501,
+              502
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "d6ea6ac4ea05ff503ad923e7dbe05fb582d6dc740894778439457c5261571543",
+          "bytes": 2921371
+        }
+      ]
+    },
+    {
+      "id": "kouki-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 230
+              },
+              "header": {
+                "staircase": "款項目名"
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "dotted_column_rules": true,
+            "rule_ink": true,
+            "scaled_spread_pages": true,
+            "unread_marks": true,
+            "bracketed_repeats": true
+          }
+        },
+        "pages": [
+          [
+            543,
+            548
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "p543-kaikei",
+            "page": 543,
+            "observation_id": "p543:ink-3:a3:result0:r0",
+            "observed_name": "会汁",
+            "corrected_name": "会計",
+            "reason": "原典の描画で、物理543頁の名前は「一般会計繰入金」と印字されている。見落とした墨の読み直しは「計」を「汁」と読んだ。"
+          },
+          {
+            "id": "p547-yokin",
+            "page": 547,
+            "observation_id": "p547:ink-1:a1:result0:r0",
+            "observed_name": "预",
+            "corrected_name": "預",
+            "reason": "原典の描画で、物理547頁の名前は「預金利子」と印字されている。見落とした墨の読み直しは「預」を簡体字の「预」と読んだ。"
+          },
+          {
+            "id": "p547-jutaku-1",
+            "page": 547,
+            "observation_id": "p547:ink-4:a4:result0:r0",
+            "observed_name": "取入",
+            "corrected_name": "収入",
+            "reason": "原典の描画で、物理547頁の名前は「受託事業収入」と印字されている。見落とした墨の読み直しは「事業」を読み落とし、「収」を「取」と読んだ。"
+          },
+          {
+            "id": "p547-jutaku-2",
+            "page": 547,
+            "observation_id": "p547:ink-4:a4:result0:r0",
+            "observed_name": "受託収",
+            "corrected_name": "受託事業収",
+            "reason": "原典の描画で、物理547頁の名前は「受託事業収入」と印字されている。見落とした墨の読み直しは「事業」を読み落とし、「収」を「取」と読んだ。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kouki-revenue-ocr-1",
+          "origin_sha256": "945cd73f418b0f9b72ec9d5dc538f6cc9a44d18c92d3bf178cc24a23a4efd401",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              543,
+              544,
+              545,
+              546,
+              547,
+              548
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "401684908e746b267830e42819397d3696acaf17f717cdad8962fbb7504296f8",
+          "bytes": 1547372
+        }
+      ]
+    }
+  ]
+}
