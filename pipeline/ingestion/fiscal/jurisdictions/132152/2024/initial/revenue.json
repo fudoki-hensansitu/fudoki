@@ -74,6 +74,271 @@
           "table_id": "general-revenue"
         }
       ]
+    },
+    {
+      "id": "kokuho-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "118504bb6591880a621b44e0fe02b69bf76056724298b28320105c5c5024ba4c"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "kokuho-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "marked_subjects": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "rule_ink": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kokuho-revenue-ocr-1",
+          "origin_sha256": "118504bb6591880a621b44e0fe02b69bf76056724298b28320105c5c5024ba4c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              16,
+              17,
+              18,
+              19
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "8dfebf98c7a37c519ebdf3378e9066c1772922308620396da319d699cf70a0fd",
+          "bytes": 1194255
+        }
+      ]
+    },
+    {
+      "id": "kaigo-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "c405dcd036706a66441548318bae9fd97009eb0c543f81824f698f7fe6425f06"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "marked_subjects": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "rule_ink": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kaigo-revenue-ocr-1",
+          "origin_sha256": "c405dcd036706a66441548318bae9fd97009eb0c543f81824f698f7fe6425f06",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              16,
+              17,
+              18,
+              19
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c679681750a06d526d228bf90707d2ec9e7c48bd51b1868570b9b38d4c600046",
+          "bytes": 1287037
+        }
+      ]
+    },
+    {
+      "id": "kouki-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "2d299096f642b1c5828272c577d310fc9afad93be79fdaca68a120667baa6d20"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "marked_subjects": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "rule_ink": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kouki-revenue-ocr-1",
+          "origin_sha256": "2d299096f642b1c5828272c577d310fc9afad93be79fdaca68a120667baa6d20",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              14,
+              15
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9713dfcea1d0bc4ee38310370b6b268215a78f21cbf158b8b38efe8e45078b46",
+          "bytes": 558958
+        }
+      ]
     }
   ]
 }
