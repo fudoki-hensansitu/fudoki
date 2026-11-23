@@ -68,6 +68,246 @@
           "table_id": "general"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5bce3e83b45e012ea8b61a8f7b9c317b436f513319352685b590e6d358b9ad49"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収入率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "細節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "spread_stacked_tables": true,
+            "unopened_brackets": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p3-kan-2-wrapped",
+            "page": 3,
+            "code": "2",
+            "observed_name": "使用料及び",
+            "corrected_name": "使用料及び手数料",
+            "reason": "総括（物理3頁）は款の名前を2行に折り返し、2行目（「手数料」）を金額の行の下、項の行の上に刷る。折り返しの2行目が次の項の名前の頭に付いて読まれるので、款と項の名前を明細の頁と同じ印字に直す。"
+          },
+          {
+            "id": "p3-kan-2-kou-1-wrapped",
+            "page": 3,
+            "code": "1",
+            "observed_name": "手数料手数料",
+            "corrected_name": "手数料",
+            "reason": "総括（物理3頁）は款の名前を2行に折り返し、2行目（「手数料」）を金額の行の下、項の行の上に刷る。折り返しの2行目が次の項の名前の頭に付いて読まれるので、款と項の名前を明細の頁と同じ印字に直す。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d7f44cd3006d7182ca9820b50e3c0f91dcea67a90ffc982660d694eec197d0f2"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収入率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "細節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "spread_stacked_tables": true,
+            "unopened_brackets": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p3-kan-2-wrapped",
+            "page": 3,
+            "code": "2",
+            "observed_name": "使用料及び",
+            "corrected_name": "使用料及び手数料",
+            "reason": "総括（物理3頁）は款の名前を2行に折り返し、2行目（「手数料」）を金額の行の下、項の行の上に刷る。折り返しの2行目が次の項の名前の頭に付いて読まれるので、款と項の名前を明細の頁と同じ印字に直す。"
+          },
+          {
+            "id": "p3-kan-2-kou-1-wrapped",
+            "page": 3,
+            "code": "1",
+            "observed_name": "手数料手数料",
+            "corrected_name": "手数料",
+            "reason": "総括（物理3頁）は款の名前を2行に折り返し、2行目（「手数料」）を金額の行の下、項の行の上に刷る。折り返しの2行目が次の項の名前の頭に付いて読まれるので、款と項の名前を明細の頁と同じ印字に直す。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e68cf2e6ccc2e4f613f89d3aef99eec264eb3b89b601fed055f920fd3d6ef832"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収入率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "細節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "spread_stacked_tables": true,
+            "unopened_brackets": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p3-kan-1-wrapped",
+            "page": 3,
+            "code": "1",
+            "observed_name": "後期高齢者医療",
+            "corrected_name": "後期高齢者医療保険料",
+            "reason": "総括（物理3頁）は款の名前を2行に折り返し、2行目（「保険料」）を金額の行の下、項の行の上に刷る。折り返しの2行目が次の項の名前の頭に付いて読まれるので、款と項の名前を明細の頁と同じ印字に直す。"
+          },
+          {
+            "id": "p3-kan-1-kou-1-wrapped",
+            "page": 3,
+            "code": "1",
+            "observed_name": "保険料後期高齢者医療保険料",
+            "corrected_name": "後期高齢者医療保険料",
+            "reason": "総括（物理3頁）は款の名前を2行に折り返し、2行目（「保険料」）を金額の行の下、項の行の上に刷る。折り返しの2行目が次の項の名前の頭に付いて読まれるので、款と項の名前を明細の頁と同じ印字に直す。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
     }
   ]
 }

@@ -42,6 +42,20 @@
               "scope": [
                 {
                   "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 3
+                    },
+                    {
+                      "start": 5,
+                      "end": 9
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険特別会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -60,6 +74,20 @@
               "scope": [
                 {
                   "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 3
+                    },
+                    {
+                      "start": 6,
+                      "end": 11
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険特別会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -76,6 +104,20 @@
               "format": "pdf",
               "pdf_type": "scan",
               "scope": [
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 3
+                    },
+                    {
+                      "start": 5,
+                      "end": 7
+                    }
+                  ]
+                },
                 {
                   "account": "後期高齢者医療特別会計",
                   "direction": "expenditure",
@@ -1726,6 +1768,20 @@
               "scope": [
                 {
                   "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 3
+                    },
+                    {
+                      "start": 5,
+                      "end": 9
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険特別会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -1744,6 +1800,20 @@
               "scope": [
                 {
                   "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 3
+                    },
+                    {
+                      "start": 6,
+                      "end": 11
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険特別会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -1760,6 +1830,20 @@
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 3
+                    },
+                    {
+                      "start": 5,
+                      "end": 7
+                    }
+                  ]
+                },
                 {
                   "account": "後期高齢者医療特別会計",
                   "direction": "expenditure",
@@ -1912,6 +1996,20 @@
               "scope": [
                 {
                   "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 3
+                    },
+                    {
+                      "start": 5,
+                      "end": 9
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険特別会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -1930,6 +2028,20 @@
               "scope": [
                 {
                   "account": "介護保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 3
+                    },
+                    {
+                      "start": 6,
+                      "end": 11
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険特別会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -1946,6 +2058,20 @@
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 3
+                    },
+                    {
+                      "start": 5,
+                      "end": 7
+                    }
+                  ]
+                },
                 {
                   "account": "後期高齢者医療特別会計",
                   "direction": "expenditure",
