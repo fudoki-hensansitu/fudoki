@@ -80,6 +80,16 @@
               "scope": [
                 {
                   "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 11
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -923,6 +933,16 @@
               "scope": [
                 {
                   "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 7,
+                      "end": 12
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -939,6 +959,16 @@
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 9,
+                      "end": 18
+                    }
+                  ]
+                },
                 {
                   "account": "国民健康保険特別会計",
                   "direction": "expenditure",
@@ -1151,6 +1181,16 @@
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 11
+                    }
+                  ]
+                },
                 {
                   "account": "後期高齢者医療特別会計",
                   "direction": "expenditure",
@@ -1391,6 +1431,16 @@
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 8,
+                      "end": 11
+                    }
+                  ]
+                },
                 {
                   "account": "後期高齢者医療特別会計",
                   "direction": "expenditure",
