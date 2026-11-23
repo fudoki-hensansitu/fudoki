@@ -1,0 +1,899 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132071",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6582446f059bbede346865edad275ff2fb90b21a1998bdf3ed00a41b16b128f6"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-ocr-1",
+          "origin_sha256": "6582446f059bbede346865edad275ff2fb90b21a1998bdf3ed00a41b16b128f6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "ce6268b6139d6ed7631ecfe2149f4c4a8e78b88876fd35e66f31eba673a4f652",
+          "bytes": 1712609
+        },
+        {
+          "id": "general-revenue-ocr-2",
+          "origin_sha256": "6582446f059bbede346865edad275ff2fb90b21a1998bdf3ed00a41b16b128f6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "478ca8bcd5c75b99fab3be4c5cc3a28cb72508d1b18adb14de61b8693236e707",
+          "bytes": 1973341
+        },
+        {
+          "id": "general-revenue-ocr-3",
+          "origin_sha256": "6582446f059bbede346865edad275ff2fb90b21a1998bdf3ed00a41b16b128f6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "71a68fa4da14222df9af7813f2a3ead22abec7dd407009abab9c020dfa10e60a",
+          "bytes": 2182891
+        },
+        {
+          "id": "general-revenue-ocr-4",
+          "origin_sha256": "6582446f059bbede346865edad275ff2fb90b21a1998bdf3ed00a41b16b128f6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "ca703da28b03099277c227b3c71d6c494801097a0b286e26858be3b35c93741c",
+          "bytes": 2159592
+        },
+        {
+          "id": "general-revenue-ocr-5",
+          "origin_sha256": "6582446f059bbede346865edad275ff2fb90b21a1998bdf3ed00a41b16b128f6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              60,
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "2392f3ee5bb5e93cc6cbfec5e6f8484ff3d858c307baff1ab1798ac3bd9fac3b",
+          "bytes": 1916376
+        },
+        {
+          "id": "general-revenue-ocr-6",
+          "origin_sha256": "6582446f059bbede346865edad275ff2fb90b21a1998bdf3ed00a41b16b128f6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              70,
+              71,
+              72,
+              73,
+              74,
+              75,
+              76,
+              77,
+              78,
+              79
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "190eff3f827ab5541dfcb348ab6a7b3e8ea7c5ef6f92d20e25888cf97c667875",
+          "bytes": 1743152
+        },
+        {
+          "id": "general-revenue-ocr-7",
+          "origin_sha256": "6582446f059bbede346865edad275ff2fb90b21a1998bdf3ed00a41b16b128f6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              80,
+              81,
+              82,
+              83,
+              84,
+              85,
+              86,
+              87,
+              88,
+              89
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6baef9f025e98a279b704ddcaad4246641d17a0cad4fa6ad05382ea0de8d9a44",
+          "bytes": 1866665
+        },
+        {
+          "id": "general-revenue-ocr-8",
+          "origin_sha256": "6582446f059bbede346865edad275ff2fb90b21a1998bdf3ed00a41b16b128f6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              90,
+              91,
+              92,
+              93,
+              94,
+              95,
+              96,
+              97,
+              98,
+              99
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "1efd94bec91e277055c696500a5a7546dbb78de978dcdd354b7fb54b9c5b6c05",
+          "bytes": 1582360
+        },
+        {
+          "id": "general-revenue-ocr-9",
+          "origin_sha256": "6582446f059bbede346865edad275ff2fb90b21a1998bdf3ed00a41b16b128f6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              100,
+              101,
+              102,
+              103,
+              104,
+              105,
+              106,
+              107,
+              108,
+              109
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "10701ce9a660027f4ae179904e544f62daf38b559d20b07477981d435611bb87",
+          "bytes": 1666610
+        },
+        {
+          "id": "general-revenue-ocr-summary",
+          "origin_sha256": "6582446f059bbede346865edad275ff2fb90b21a1998bdf3ed00a41b16b128f6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              17
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "f913ee994ac96ae90db28af8611cf0889d3edc87cfb0666b5ac053cfaa8edb2b",
+          "bytes": 337784
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 230
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "padded_number_boxes": true
+          }
+        },
+        "pages": [
+          [
+            17,
+            17
+          ],
+          [
+            20,
+            109
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kokuho-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6582446f059bbede346865edad275ff2fb90b21a1998bdf3ed00a41b16b128f6"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kokuho-revenue-ocr-1",
+          "origin_sha256": "6582446f059bbede346865edad275ff2fb90b21a1998bdf3ed00a41b16b128f6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              483,
+              484,
+              485,
+              486,
+              487,
+              488,
+              489,
+              490,
+              491,
+              492
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "79698e98593e78deb54d5e2b78dc10e0fece17cdddcf0033b3ea01dc0e075574",
+          "bytes": 1374428
+        },
+        {
+          "id": "kokuho-revenue-ocr-summary",
+          "origin_sha256": "6582446f059bbede346865edad275ff2fb90b21a1998bdf3ed00a41b16b128f6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              480
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "69a3e3fb74527fefd374a19683d0a6bdfc36e77453cb419f5155e0cec3963e6a",
+          "bytes": 123750
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "kokuho-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 230
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            480,
+            480
+          ],
+          [
+            483,
+            492
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6582446f059bbede346865edad275ff2fb90b21a1998bdf3ed00a41b16b128f6"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kaigo-revenue-ocr-1",
+          "origin_sha256": "6582446f059bbede346865edad275ff2fb90b21a1998bdf3ed00a41b16b128f6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              531,
+              532,
+              533,
+              534,
+              535,
+              536,
+              537,
+              538
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "947f50514586d8d50a212ae38bb29106a4c8777a992d76d86c0e6f07fbe0410d",
+          "bytes": 1601805
+        },
+        {
+          "id": "kaigo-revenue-ocr-summary",
+          "origin_sha256": "6582446f059bbede346865edad275ff2fb90b21a1998bdf3ed00a41b16b128f6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              528
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "b4ef9a9175a05edd2b6b7a86f5b1c6c15b5163e52c3b556ee937d0784d5a4b5e",
+          "bytes": 135598
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 230
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            528,
+            528
+          ],
+          [
+            531,
+            538
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kouki-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6582446f059bbede346865edad275ff2fb90b21a1998bdf3ed00a41b16b128f6"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kouki-revenue-ocr-1",
+          "origin_sha256": "6582446f059bbede346865edad275ff2fb90b21a1998bdf3ed00a41b16b128f6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              578,
+              579,
+              580,
+              581,
+              582,
+              583
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "90ef7f77fc4cc0a406cff3d0cf81174ae02682eab69470a099ddd091157c5f41",
+          "bytes": 696628
+        },
+        {
+          "id": "kouki-revenue-ocr-summary",
+          "origin_sha256": "6582446f059bbede346865edad275ff2fb90b21a1998bdf3ed00a41b16b128f6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              575
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a0d3388df90f528aeba317cb6d66ff8477891a32ed899a295e802ea3b365e354",
+          "bytes": 104221
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 230
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "codeless_titles": true
+          }
+        },
+        "pages": [
+          [
+            575,
+            575
+          ],
+          [
+            578,
+            583
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kukaku-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "8842d76dc1338560cde199365f597052a6caf3afe0c85d5be0afc8d09b6c5027"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kukaku-revenue-ocr-1",
+          "origin_sha256": "8842d76dc1338560cde199365f597052a6caf3afe0c85d5be0afc8d09b6c5027",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              12,
+              13,
+              14,
+              15
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "dc4c08f169f8325efabef66c2d8df8ae1fb87c4e4e5ae321504871ec31bf48bf",
+          "bytes": 408434
+        },
+        {
+          "id": "kukaku-revenue-ocr-summary",
+          "origin_sha256": "8842d76dc1338560cde199365f597052a6caf3afe0c85d5be0afc8d09b6c5027",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              9
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e04bb85173910c4e8e92d4cddd0773d46ae90025a8a3f4f01e501602e8ce2781",
+          "bytes": 105168
+        }
+      ],
+      "options": {
+        "account": "中神土地区画整理事業特別会計",
+        "table_id": "kukaku-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 230
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            9,
+            9
+          ],
+          [
+            12,
+            15
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kukaku-revenue"
+        }
+      ]
+    },
+    {
+      "id": "kitagawa-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "d3fbc4734a8c70611d4fd9898c879b1982f3789781067cbaf4bb48f7cabff663"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kitagawa-revenue-ocr-1",
+          "origin_sha256": "d3fbc4734a8c70611d4fd9898c879b1982f3789781067cbaf4bb48f7cabff663",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              12,
+              13,
+              14,
+              15
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "48646069ebde8523bb219347f2471443f27d3a46f46953db6b2d1caf9bc560ad",
+          "bytes": 591809
+        },
+        {
+          "id": "kitagawa-revenue-ocr-summary",
+          "origin_sha256": "d3fbc4734a8c70611d4fd9898c879b1982f3789781067cbaf4bb48f7cabff663",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              9
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c6b12fa8f0412156df5e31f641d4e82b46e7e140b795d8844918b8e468a28fdb",
+          "bytes": 109113
+        }
+      ],
+      "options": {
+        "account": "中神駅北側地域整備事業特別会計",
+        "table_id": "kitagawa-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 230
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            9,
+            9
+          ],
+          [
+            12,
+            15
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kitagawa-revenue"
+        }
+      ]
+    }
+  ]
+}
