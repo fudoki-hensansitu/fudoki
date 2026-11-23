@@ -1,0 +1,83 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "092011",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "be1f3e3e21adf062506562a28631fd5be829518cd5804ff10342528becd337c2"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "区分": {
+                  "heading": "款"
+                },
+                "令和5年度／当初予算": {
+                  "heading": "当初予算額"
+                },
+                "令和4年度／当初予算": {
+                  "heading": "前年度予算額"
+                },
+                "令和5年度／構成比": {
+                  "kind": "ignore"
+                },
+                "令和4年度／構成比": {
+                  "kind": "ignore"
+                },
+                "比較／増減": {
+                  "heading": "比較"
+                },
+                "比較／増減比": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {}
+          },
+          "quirks": {
+            "uncounted_subject_lines": [
+              {
+                "name": "自主財源",
+                "kind": "総括",
+                "reason": "款を自主財源・依存財源に分けて印字した自主財源の行。下の款の額の和で、款ではない。"
+              },
+              {
+                "name": "依存財源",
+                "kind": "総括",
+                "reason": "款を自主財源・依存財源に分けて印字した依存財源の行。下の款の額の和で、款ではない。"
+              }
+            ]
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    }
+  ]
+}
