@@ -39,7 +39,7 @@
 
 風土記のデータを一つの問いに絞って見せる小さなサンプル。サンプルを足すたびに repo を作らず（2026-11-22 yuito）、Worker も分けない（2026-11-23 yuito）。全サンプルで1つの Void アプリ（package `@fudoki/samples`、Worker `fudoki-samples`）にし、配信はドメインを分けず `fudoki.dev/<name>`（2026-11-22 yuito）。
 
-- サンプルの頁は `pages/<name>/`（その頁だけの layout も置く）、それ以外のコード（部品・lib・CSS）は `<name>/` に置く。サンプルどうしで共有するのは本体を読む口（`server/fudoki.ts`）と middleware（本体への中継・CSP）だけ
+- サンプルの頁は `pages/<name>/` に置き、`pages/<name>/layout.tsx` でそのサンプルの CSS を読む（root の layout は置かないので、layout の無いサンプルは CSS が当たらない）。それ以外のコード（部品・lib・CSS）は `<name>/` に置く。サンプルどうしで共有するのは本体を読む口（`server/fudoki.ts`）と middleware（本体への中継・CSP）だけ
 - 自分の入口（custom domain・workers.dev）を持たない。web の `middleware/00.samples.ts` が `/<name>` と `/samples` の下を Service Binding（`void.config.ts` の services の `SAMPLES`）でそのまま渡す。Vite の資産は `build.assetsDir` で `/samples/assets` に置く。サンプルを足したら web の middleware の `PREFIXES` に path を足す
 - web に畳まず Worker を分けているのは、web の ISR のキャッシュ（KV）が deploy のたびに空になるため。サンプルの deploy で本体の頁のキャッシュを捨てない（2026-11-23）
 - データ（D1・KV・R2）の binding を持たず、本体の Worker（`fudoki`、web）を Service Binding で読むだけにする。手元の `vite dev` は Service Binding の先が無いので公開の fudoki.dev を読む

@@ -6,7 +6,7 @@
     "dev": "vite dev",
     "build": "vite build && bun scripts/static-assets.ts",
     "deploy": "bun run build && cf deploy --prebuilt",
-    "test": "bun test spending/lib",
+    "test": "bun test",
     "typecheck": "void prepare && tsc --noEmit"
   },
   "dependencies": {
