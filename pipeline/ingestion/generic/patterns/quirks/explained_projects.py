@@ -62,6 +62,24 @@ OPTIONS = {
             "type": "string",
             "minLength": 1,
             "description": "A title printed over the name and budget columns (予算説明): it heads no amount column."
+        },
+        "items": {
+            "enum": [
+                "axis",
+                "excluded"
+            ],
+            "description": "What the explanation's items become: nodes on `items_axis` (axis, the default), or nothing (excluded: a 歳入節別決算説明書's items explain the 節, they are no breakdown of it; their codes and amounts are taken out like the facing page)."
+        },
+        "remainder": {
+            "enum": [
+                "unused",
+                "surplus"
+            ],
+            "description": "What the bare amount under a row is: its 不用額, the 予算現額 less the 決算額 (unused, the default, a note), or, in a 歳入節別決算説明書, the 決算額 less the 予算現額 (surplus, the 予算現額に比し増減 the facing page explains: taken out, part of no sum)."
+        },
+        "spaced_header_codes": {
+            "const": True,
+            "description": "The running header sets a code's digits apart (`１ ５ 国庫支出金`, 131211 R6 歳入節別決算説明書 2冊目): OCR reads each digit as a word of its own, and the digits before the name are one code (`continued_rows`). Without it a bare number with no name is dropped and the code is its last digit."
         }
     }
 }
@@ -391,8 +409,13 @@ def arrange(pages: list[Page], setting: dict, continued: list[dict] | None = Non
                 result.append(page)
             continue
         inner, left, middle, right, header_bottom = edges
-        body = _unstacked([w for w in page.words if w.y0 > header_bottom + 2], middle, right)
-        keep = [w for w in page.words if w.y0 <= header_bottom + 2]
+        if setting.get('remainder') == 'surplus':
+            # a 歳入節別決算説明書 prints its first line right under the heads (its top within 2pt of their bottom)
+            heads = [w for w in page.words if (w.y0 + w.y1) / 2 <= header_bottom]
+        else:
+            heads = [w for w in page.words if w.y0 <= header_bottom + 2]
+        body = _unstacked([w for w in page.words if w not in heads], middle, right)
+        keep = heads
         title = _heading(page, setting['title']) if setting.get('title') else None
         if title is not None:  # a title over the name and budget columns (`予 算 説 明`) heads no amount
             keep = [w for w in keep if not (abs(w.y1 - title[2]) < 3 and title[0] - 1 <= w.x0 and w.x1 <= title[1] + 1)]
@@ -460,6 +483,10 @@ def arrange(pages: list[Page], setting: dict, continued: list[dict] | None = Non
             # An item's イ OCR reads as 1, and (イ) as (1) (a row's code copy is never on a line without its name).
             item_code = _code(codes[0].text) if codes else ''
             item_code = {'1': 'イ', '(1)': '(イ)'}.get(item_code, item_code)
+            if codes and amounts and last_named is not None and setting.get('items') == 'excluded':
+                moved += [Moved(page.number, w, 'explanation') for w in codes + amounts]
+                keep += budget + outside
+                continue
             if codes and amounts and last_named is not None and ITEM.match(item_code):
                 code = item_code
                 if code != _code(codes[0].text):
@@ -476,9 +503,19 @@ def arrange(pages: list[Page], setting: dict, continued: list[dict] | None = Non
                                   _box(amounts), owner))
                 keep += budget + outside
                 continue
+            if setting.get('remainder') == 'surplus' and amounts and not codes and not budget and settled_value is None:
+                # a 歳入's shortfall prints with a minus sign (`-21,866,000円`), not △
+                text = normalize(''.join(w.text for w in amounts))
+                settled_value = _value('△' + text[1:]) if text[:1] in '-－' else None
             if amounts and not codes and not budget and last_budget is not None and settled_value is not None:
                 number, y, planned, spent = last_budget
-                if spent is not None and planned - spent == settled_value:
+                if setting.get('remainder') == 'surplus':
+                    if spent is not None and spent - planned == settled_value:
+                        moved += [Moved(page.number, w, 'explanation') for w in amounts]
+                        keep += outside
+                        last_budget = None
+                        continue
+                elif spent is not None and planned - spent == settled_value:
                     moved += [Moved(page.number, w, 'unused', (number, y), settled_value) for w in amounts]
                     keep += outside
                     last_budget = None
@@ -573,16 +610,20 @@ def attach(built, items: list[Item], setting: dict, unit: str = '円', declared:
     return problems
 
 
-def _running_header(page: Page) -> list[tuple[str, str, tuple[float, float, float, float]]]:
+def _running_header(page: Page, spaced: bool = False) -> list[tuple[str, str, tuple[float, float, float, float]]]:
     """The 款・項・目 a left page prints above its frame (`2 総務費 4 戸籍及び住民基本台帳費 2 戸籍事務費`): code, name
-    and box of each, the last line above the column heads (`款項目 事 務 事 業 …`) that starts with a code."""
+    and box of each, the last line above the column heads (`款項目 事 務 事 業 …`) that starts with a code. With
+    `spaced` (the option `spaced_header_codes`), digits that follow a code with no name yet go on with it (`1` `5`)."""
     lines = _lines(page.words)
     heads = next((i for i, line in enumerate(lines) if normalize(line[0].text).startswith('款項目')), None)
     for words in reversed(lines[:heads or 0]):  # a title (`予 算 説 明`) may stand between
         found = []
         for word in words:
             text = normalize(word.text)
-            if re.fullmatch(r'[0-9]+', text):
+            if spaced and re.fullmatch(r'[0-9]+', text) and found and not found[-1][1]:
+                found[-1][0] += text
+                found[-1][2].append(word)
+            elif re.fullmatch(r'[0-9]+', text):
                 found.append([text, '', [word]])
             elif found:
                 found[-1][1] += text
@@ -604,10 +645,11 @@ def continue_rows(built, pages: list[Page], continued: list[dict], levels: dict[
     volume before, the department in `department`): rows with no amount, at the running header, which identify
     with the volume before's rows. The rows read with no parent are put under them by their depth. The problems
     found are returned."""
-    first = min((p for p in pages if _running_header(p)), key=lambda p: p.number, default=None)
+    spaced = bool(setting.get('spaced_header_codes'))
+    first = min((p for p in pages if _running_header(p, spaced)), key=lambda p: p.number, default=None)
     if first is None:
         return ['続きの冊の頁に款・項・目の見出しが無い']
-    header = _running_header(first)
+    header = _running_header(first, spaced)
     if len(header) != 3:
         return [f'続きの冊の見出しが款・項・目の3つでない: {[c + n for c, n, _ in header]}']
     from ingestion.generic.patterns.quirks.inner_tables import node_key

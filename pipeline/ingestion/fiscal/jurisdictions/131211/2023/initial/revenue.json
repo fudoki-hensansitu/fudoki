@@ -1,0 +1,745 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131211",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial-1",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ff0ad9093c2e4489706aa95b64b1d71759993e40db9f648dd7df728069474886"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-1-revenue-ocr-1",
+          "origin_sha256": "ff0ad9093c2e4489706aa95b64b1d71759993e40db9f648dd7df728069474886",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "424101f28dd72ca0ac8e99469ecff0d7f19475e1f1ab6ce81b14d52874803926",
+          "bytes": 2843790
+        },
+        {
+          "id": "general-initial-1-revenue-ocr-2",
+          "origin_sha256": "ff0ad9093c2e4489706aa95b64b1d71759993e40db9f648dd7df728069474886",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              58,
+              59,
+              60,
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "eb1d800a779602e06e804c9f64b8c1d1166315cd5d68a9e62784972ab987c603",
+          "bytes": 3128578
+        },
+        {
+          "id": "general-initial-1-revenue-ocr-3",
+          "origin_sha256": "ff0ad9093c2e4489706aa95b64b1d71759993e40db9f648dd7df728069474886",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              68,
+              69,
+              70,
+              71,
+              72,
+              73,
+              74,
+              75,
+              76,
+              77
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "14a09d8aae65b6b2950922ab8e9c986d5cd4ad99dae3238d1da7491104f42f57",
+          "bytes": 2983362
+        },
+        {
+          "id": "general-initial-1-revenue-ocr-4",
+          "origin_sha256": "ff0ad9093c2e4489706aa95b64b1d71759993e40db9f648dd7df728069474886",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              78,
+              79,
+              80,
+              81,
+              82,
+              83,
+              84
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "4bf555cd52f3714f4fa90a776a8aafcb6953fd4df36f99af705144fc701e2c82",
+          "bytes": 2072264
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-1-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "framed_blocks",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "節／区分": {
+                  "heading": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・見込額など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true,
+                "frame_sides": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "centered_codes": {
+                    "blank": 0.5
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "codeless_name_levels": true,
+            "stacked_characters": true
+          }
+        },
+        "pages": [
+          [
+            48,
+            84
+          ]
+        ],
+        "partial": true,
+        "dropped_readings": [
+          {
+            "id": "p74-r79",
+            "page": 74,
+            "observation_id": "p74:full-page:a0:result0:r79",
+            "observed": "29世帯負担軽減事業",
+            "reason": "物理74頁の節「29 保育所等利用多子世帯負担軽減事業補助金」は名前を3行に折り返し、番号を2行目の左に刷る。OCR は番号と2行目を1つの読み（29世帯負担軽減事業）にし、番号を節の番号として読めず、上の節「28 介護人材対策事業補助金」に金額が2つ付いた。この読みは使わず、番号と2行目の名前をそれぞれの位置で読む。"
+          },
+          {
+            "id": "p84-r99",
+            "page": 84,
+            "observation_id": "p84:full-page:a0:result0:r99",
+            "observed": "62·2·2住宅",
+            "reason": "物理84頁の目「1 財産貸付収入」の節「6 2・2・2住宅」。OCR が番号「6」と名前の頭の「2」を1つの語（62）に読み、番号を62、名前を「・2・2住宅」にした。この読みは使わず、番号と名前をそれぞれの位置で読む。"
+          },
+          {
+            "id": "p53-golf-first-line",
+            "page": 53,
+            "observation_id": "p53:full-page:a0:result0:r95",
+            "observed": "ゴルフ場利用税",
+            "reason": "物理53頁の目「1 ゴルフ場利用税交付金」は名前を2行（「ゴルフ場利用税」／「交付金」）に折り返し、番号を2行の間に刷る。OCR は番号を2行目の高さに読み、1行目が番号の無い別の目になった。この読みは使わず、名前の1行目は目の名前の訂正で補う。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "p74-29",
+            "page": 74,
+            "box": [
+              47.8,
+              720.0,
+              59.0,
+              729.0
+            ],
+            "code": "29",
+            "name": "世帯負担軽減事業",
+            "name_box": [
+              61.0,
+              720.0,
+              159.8,
+              729.0
+            ],
+            "reason": "物理74頁の節「29 保育所等利用多子世帯負担軽減事業補助金」は名前を3行に折り返し、番号を2行目の左に刷る。OCR は番号と2行目を1つの読み（29世帯負担軽減事業）にし、番号を節の番号として読めず、上の節「28 介護人材対策事業補助金」に金額が2つ付いた。この読みは使わず、番号と2行目の名前をそれぞれの位置で読む。"
+          },
+          {
+            "id": "p84-6",
+            "page": 84,
+            "box": [
+              55.7,
+              754.8,
+              62.0,
+              766.1
+            ],
+            "code": "6",
+            "name": "2・2・2住宅",
+            "name_box": [
+              94.0,
+              754.8,
+              160.0,
+              766.1
+            ],
+            "reason": "物理84頁の目「1 財産貸付収入」の節「6 2・2・2住宅」。OCR が番号「6」と名前の頭の「2」を1つの語（62）に読み、番号を62、名前を「・2・2住宅」にした。この読みは使わず、番号と名前をそれぞれの位置で読む。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "auto-p56-r53",
+            "page": 56,
+            "observation_id": "p56:full-page:a0:result0:r53",
+            "observed_name": "舎ホ一ル",
+            "corrected_name": "舎ホール",
+            "reason": "物理56頁の「2庁舎ホール」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p57-r62",
+            "page": 57,
+            "observation_id": "p57:full-page:a0:result0:r62",
+            "observed_name": "興ホ一ル",
+            "corrected_name": "興ホール",
+            "reason": "物理57頁の「4産業振興ホール」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p59-r7",
+            "page": 59,
+            "observation_id": "p59:full-page:a0:result0:r7",
+            "observed_name": "化ホ一ル",
+            "corrected_name": "化ホール",
+            "reason": "物理59頁の「4西新井文化ホール」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p61-r73",
+            "page": 61,
+            "observation_id": "p61:full-page:a0:result0:r73",
+            "observed_name": "9省工ネ建",
+            "corrected_name": "9省エネ建",
+            "reason": "物理61頁の「19省エネ建築物認定」。OCR が片仮名「エ」を漢字の「工」と読んだ。"
+          },
+          {
+            "id": "auto-p68-r67",
+            "page": 68,
+            "observation_id": "p68:full-page:a0:result0:r67",
+            "observed_name": "番号力ード",
+            "corrected_name": "番号カード",
+            "reason": "物理68頁の「個人番号カード」。OCR が片仮名「カ」を漢字の「力」と読んだ。"
+          },
+          {
+            "id": "auto-p75-r52",
+            "page": 75,
+            "observation_id": "p75:full-page:a0:result0:r52",
+            "observed_name": "8タ一地域",
+            "corrected_name": "8ター地域",
+            "reason": "物理75頁の「38ター地域支援体制」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "node-p55-2",
+            "page": 55,
+            "code": "2",
+            "observed_name": "害償費",
+            "corrected_name": "公害健康被害補償費",
+            "reason": "物理55頁の節「2 公害健康被害補償費」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が字間の広い字を読み落とした。"
+          },
+          {
+            "id": "node-p56-3",
+            "page": 56,
+            "code": "3",
+            "observed_name": "務施設的外使用",
+            "corrected_name": "総務施設目的外使用",
+            "reason": "物理56頁の節「3 総務施設目的外使用」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が字間の広い字を読み落とした。"
+          },
+          {
+            "id": "node-p57-6",
+            "page": 57,
+            "code": "6",
+            "observed_name": "ども支援センターげんき",
+            "corrected_name": "こども支援センターげんき",
+            "reason": "物理57頁の節「6 こども支援センターげんき」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が字間の広い字を読み落とした。"
+          },
+          {
+            "id": "node-p57-8",
+            "page": 57,
+            "code": "8",
+            "observed_name": "子育てサロンー時預かり料",
+            "corrected_name": "子育てサロン一時預かり料",
+            "reason": "物理57頁の節「8 子育てサロン一時預かり料」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が漢数字の「一」を長音「ー」と読んだ。"
+          },
+          {
+            "id": "node-p60-5",
+            "page": 60,
+            "code": "5",
+            "observed_name": "事業系ご臨時収集",
+            "corrected_name": "事業系ごみ臨時収集",
+            "reason": "物理60頁の節「5 事業系ごみ臨時収集」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が字間の広い字を読み落とした。"
+          },
+          {
+            "id": "node-p60-6",
+            "page": 60,
+            "code": "6",
+            "observed_name": "事業系ご継続収集",
+            "corrected_name": "事業系ごみ継続収集",
+            "reason": "物理60頁の節「6 事業系ごみ継続収集」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が字間の広い字を読み落とした。"
+          },
+          {
+            "id": "node-p63-14",
+            "page": 63,
+            "code": "14",
+            "observed_name": "担金",
+            "corrected_name": "介護保険料軽減負担金",
+            "reason": "物理63頁の節「14 介護保険料軽減負担金」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が字間の広い字を読み落とした。"
+          },
+          {
+            "id": "node-p63-4",
+            "page": 63,
+            "code": "4",
+            "observed_name": "国民健康栄養調査費",
+            "corrected_name": "国民健康・栄養調査費",
+            "reason": "物理63頁の節「4 国民健康・栄養調査費」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が字間の広い字を読み落とした。"
+          },
+          {
+            "id": "node-p66-3",
+            "page": 66,
+            "code": "3",
+            "observed_name": "ん検診推進事業費",
+            "corrected_name": "がん検診推進事業費",
+            "reason": "物理66頁の節「3 がん検診推進事業費」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が字間の広い字を読み落とした。"
+          },
+          {
+            "id": "node-p69-3",
+            "page": 69,
+            "code": "3",
+            "observed_name": "学校における療的ケア実施体充実事業費",
+            "corrected_name": "学校における医療的ケア実施体制充実事業費",
+            "reason": "物理69頁の節「3 学校における医療的ケア実施体制充実事業費」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が字間の広い字を読み落とした。"
+          },
+          {
+            "id": "node-p70-2",
+            "page": 70,
+            "code": "2",
+            "observed_name": "行旅死亡人等扱費",
+            "corrected_name": "行旅死亡人等取扱費",
+            "reason": "物理70頁の節「2 行旅死亡人等取扱費」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が字間の広い字を読み落とした。"
+          },
+          {
+            "id": "node-p70-5",
+            "page": 70,
+            "code": "5",
+            "observed_name": "子生活援施設費",
+            "corrected_name": "母子生活支援施設費",
+            "reason": "物理70頁の節「5 母子生活支援施設費」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が字間の広い字を読み落とした。"
+          },
+          {
+            "id": "node-p70-11",
+            "page": 70,
+            "code": "11",
+            "observed_name": "自立支援給付費",
+            "corrected_name": "障がい者自立支援給付費",
+            "reason": "物理70頁の節「11 障がい者自立支援給付費」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が字間の広い字を読み落とした。"
+          },
+          {
+            "id": "node-p71-15",
+            "page": 71,
+            "code": "15",
+            "observed_name": "護保険料軽減担金",
+            "corrected_name": "介護保険料軽減負担金",
+            "reason": "物理71頁の節「15 介護保険料軽減負担金」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が字間の広い字を読み落とした。"
+          },
+          {
+            "id": "node-p72-1",
+            "page": 72,
+            "code": "1",
+            "observed_name": "時・特定保育事業費",
+            "corrected_name": "一時・特定保育事業費",
+            "reason": "物理72頁の節「1 一時・特定保育事業費」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が字間の広い字を読み落とした。"
+          },
+          {
+            "id": "node-p73-14",
+            "page": 73,
+            "code": "14",
+            "observed_name": "スクールソーシヤルワーカー活用事業補助金",
+            "corrected_name": "スクールソーシャルワーカー活用事業補助金",
+            "reason": "物理73頁の節「14 スクールソーシャルワーカー活用事業補助金」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が小書きの「ャ」を「ヤ」と読んだ。"
+          },
+          {
+            "id": "node-p75-32",
+            "page": 75,
+            "code": "32",
+            "observed_name": "東京都保育士等キャリアアップ補助金",
+            "corrected_name": "東京都保育士等キャリアアップ研修支援事業費補助金",
+            "reason": "物理75頁の節「32 東京都保育士等キャリアアップ研修支援事業費補助金」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が4行に折り返した名前の3行目「研修支援事業費」を読み落とした。"
+          },
+          {
+            "id": "node-p75-33",
+            "page": 75,
+            "code": "33",
+            "observed_name": "保育所等の質の確巡回支援指導事業費補助金",
+            "corrected_name": "保育所等の質の確保・向上のための巡回支援指導事業費補助金",
+            "reason": "物理75頁の節「33 保育所等の質の確保・向上のための巡回支援指導事業費補助金」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が4行に折り返した名前の2行目「保・向上のための」を読み落とした。"
+          },
+          {
+            "id": "node-p75-34",
+            "page": 75,
+            "code": "34",
+            "observed_name": "育力強化事業補助金",
+            "corrected_name": "保育力強化事業補助金",
+            "reason": "物理75頁の節「34 保育力強化事業補助金」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が字間の広い字を読み落とした。"
+          },
+          {
+            "id": "node-p75-36",
+            "page": 75,
+            "code": "36",
+            "observed_name": "とうきようママパ八応援事業補助金",
+            "corrected_name": "とうきようママパパ応援事業補助金",
+            "reason": "物理75頁の節「36 とうきようママパパ応援事業補助金」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が「パ」を漢数字の「八」と読んだ。"
+          },
+          {
+            "id": "node-p77-3",
+            "page": 77,
+            "code": "3",
+            "observed_name": "シルバー人材セン夕一管理運営費",
+            "corrected_name": "シルバー人材センター管理運営費",
+            "reason": "物理77頁の節「3 シルバー人材センター管理運営費」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が片仮名「タ」を「夕」、長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "node-p77-6",
+            "page": 77,
+            "code": "6",
+            "observed_name": "市農業",
+            "corrected_name": "都市農業経営支援費",
+            "reason": "物理77頁の節「6 都市農業経営支援費」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が字間の広い1行目の「都」と2行目「経営支援費」を読み落とした。"
+          },
+          {
+            "id": "node-p78-9",
+            "page": 78,
+            "code": "9",
+            "observed_name": "都市農地保全支援プロジエクト補助金【投資】",
+            "corrected_name": "都市農地保全支援プロジェクト補助金【投資】",
+            "reason": "物理78頁の節「9 都市農地保全支援プロジェクト補助金【投資】」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が小書きの「ェ」を「エ」と読んだ。"
+          },
+          {
+            "id": "node-p80-7",
+            "page": 80,
+            "code": "7",
+            "observed_name": "連事業費",
+            "corrected_name": "連続立体交差事業費",
+            "reason": "物理80頁の節「7 連続立体交差事業費」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が字間の広い字を読み落とした。"
+          },
+          {
+            "id": "node-p80-9",
+            "page": 80,
+            "code": "9",
+            "observed_name": "対策補助",
+            "corrected_name": "公営住宅家賃対策補助",
+            "reason": "物理80頁の節「9 公営住宅家賃対策補助」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が字間の広い字を読み落とした。"
+          },
+          {
+            "id": "node-p80-14",
+            "page": 80,
+            "code": "14",
+            "observed_name": "営住宅",
+            "corrected_name": "公営住宅整備事業費",
+            "reason": "物理80頁の節「14 公営住宅整備事業費」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が字間の広い1行目の「公」と2行目「整備事業費」を読み落とした。"
+          },
+          {
+            "id": "node-p83-4",
+            "page": 83,
+            "code": "4",
+            "observed_name": "査事務費",
+            "corrected_name": "人口動態調査事務費",
+            "reason": "物理83頁の節「4 人口動態調査事務費」（原画と、同じ行の説明の頭の名前で確かめた）。OCR が字間の広い字を読み落とした。"
+          },
+          {
+            "id": "node-p53-golf",
+            "page": 53,
+            "code": "1",
+            "observed_name": "交付金",
+            "corrected_name": "ゴルフ場利用税交付金",
+            "reason": "物理53頁の目「1 ゴルフ場利用税交付金」は名前を2行（「ゴルフ場利用税」／「交付金」）に折り返し、番号を2行の間に刷る。OCR は番号を2行目の高さに読み、1行目が番号の無い別の目になった。1行目の読みを除いたので、原画の名前に直す。"
+          },
+          {
+            "id": "node-p54-kan11",
+            "page": 54,
+            "code": "11",
+            "observed_name": "交通安全対策",
+            "corrected_name": "交通安全対策特別交付金",
+            "reason": "物理54頁の款「11 交通安全対策特別交付金」は名前を2行（「交通安全対策」／「特別交付金」）に折り返す。OCR は2行目を別の行に読み、款の名前が1行目だけになった。原画の名前に直す。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-1-revenue"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-2",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "898293d5200f042694ba7e4b6d91324f2962eb887627fe7e8fc229a5df647c3e"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-2-revenue-ocr-1",
+          "origin_sha256": "898293d5200f042694ba7e4b6d91324f2962eb887627fe7e8fc229a5df647c3e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c7bb4e3ee18ba71d54ee94ba28e464d8618f4cec2dff34df0c7df1c655000f75",
+          "bytes": 2869383
+        },
+        {
+          "id": "general-initial-2-revenue-ocr-2",
+          "origin_sha256": "898293d5200f042694ba7e4b6d91324f2962eb887627fe7e8fc229a5df647c3e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "28a5636153ee127ac58c70f00b9c34c4688cb6ce93efcf37b81903e2f3be8c89",
+          "bytes": 844944
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-2-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "framed_blocks",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "節／区分": {
+                  "heading": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（税率・人数・見込額など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true,
+                "continues": "setsu"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "centered_codes": {
+                    "blank": 0.5
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "codeless_name_levels": true,
+            "stacked_characters": true,
+            "amounts_between_name_lines": true
+          }
+        },
+        "pages": [
+          [
+            1,
+            13
+          ]
+        ],
+        "partial": true,
+        "continued_rows": {
+          "subjects": [
+            {
+              "code": "17",
+              "name": "財産収入"
+            },
+            {
+              "code": "1",
+              "name": "財産運用収入"
+            },
+            {
+              "code": "1",
+              "name": "財産貸付収入"
+            }
+          ],
+          "rows": []
+        },
+        "name_corrections": [
+          {
+            "id": "auto-p2-r51",
+            "page": 2,
+            "observation_id": "p2:full-page:a0:result0:r51",
+            "observed_name": "用品壳払収",
+            "corrected_name": "用品売払収",
+            "reason": "物理2頁の「1不用品売払収入」。OCR が「売」を簡体字の形「壳」と読んだ。"
+          },
+          {
+            "id": "auto-p2-r75",
+            "page": 2,
+            "observation_id": "p2:full-page:a0:result0:r75",
+            "observed_name": "土地壳払収",
+            "corrected_name": "土地売払収",
+            "reason": "物理2頁の「1土地売払収入」。OCR が「売」を簡体字の形「壳」と読んだ。"
+          },
+          {
+            "id": "auto-p4-r37",
+            "page": 4,
+            "observation_id": "p4:full-page:a0:result0:r37",
+            "observed_name": "トナ一基金",
+            "corrected_name": "トナー基金",
+            "reason": "物理4頁の「4パートナー基金」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p7-r0",
+            "page": 7,
+            "observation_id": "p7:ink-1:a1:result0:r0",
+            "observed_name": "0ホ一ム整",
+            "corrected_name": "0ホーム整",
+            "reason": "物理7頁の「10ホーム整備費」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p7-r0",
+            "page": 7,
+            "observation_id": "p7:ink-4:a4:result0:r0",
+            "observed_name": "1ホ一ム整",
+            "corrected_name": "1ホーム整",
+            "reason": "物理7頁の「11ホーム整備費」。OCR が長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p10-r108",
+            "page": 10,
+            "observation_id": "p10:full-page:a0:result0:r108",
+            "observed_name": "行物壳払代",
+            "corrected_name": "行物売払代",
+            "reason": "物理10頁の「2刊行物売払代金」。OCR が「売」を簡体字の形「壳」と読んだ。"
+          },
+          {
+            "id": "auto-p11-r74",
+            "page": 11,
+            "observation_id": "p11:full-page:a0:result0:r74",
+            "observed_name": "用者力一ド",
+            "corrected_name": "用者カード",
+            "reason": "物理11頁の「16利用者カード」。OCR が片仮名「カ」を漢字の「力」と読んだ、長音「ー」を漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "node-p9-moku2",
+            "page": 9,
+            "code": "2",
+            "observed_name": "援給付費等受入金",
+            "corrected_name": "障がい者自立支援給付費等受入金",
+            "reason": "物理9頁の目「2 障がい者自立支援給付費等受入金」は名前を3行（「障がい者自立支」／「援給付費等受入」／「金」）に折り返し、番号を2行目の頭に刷る。OCR の行の組み立てで1行目が番号の無い別の目になった。1行目の読みを除いたので、原画の名前に直す。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "p9-moku2-first-line",
+            "page": 9,
+            "observation_id": "p9:full-page:a0:result0:r64",
+            "observed": "障がい者自立支",
+            "reason": "物理9頁の目「2 障がい者自立支援給付費等受入金」は名前を3行（「障がい者自立支」／「援給付費等受入」／「金」）に折り返し、番号を2行目の頭に刷る。OCR の行の組み立てで1行目が番号の無い別の目になった。この読みは使わず、名前の1行目は目の名前の訂正で補う。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-2-revenue"
+        }
+      ]
+    }
+  ]
+}
