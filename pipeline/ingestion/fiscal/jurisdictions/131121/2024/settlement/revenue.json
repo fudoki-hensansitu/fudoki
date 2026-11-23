@@ -1,0 +1,319 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131121",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3758063ece55a0b6be6a67912bc446a4d881fdec654a8f71ce471c5ebdfb2c7b"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の内訳の説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_number_wraps": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-settlement"
+        }
+      ]
+    },
+    {
+      "id": "national-health-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5446798e49e83ac53fd76f368ecb9299433f8eea59491d3d17b3538d51e16915"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の内訳の説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-settlement"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5446798e49e83ac53fd76f368ecb9299433f8eea59491d3d17b3538d51e16915"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "elderly-medical-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の内訳の説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-settlement"
+        }
+      ]
+    },
+    {
+      "id": "care-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5446798e49e83ac53fd76f368ecb9299433f8eea59491d3d17b3538d51e16915"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "care-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の内訳の説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-settlement"
+        }
+      ]
+    },
+    {
+      "id": "school-lunch-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5446798e49e83ac53fd76f368ecb9299433f8eea59491d3d17b3538d51e16915"
+        }
+      ],
+      "options": {
+        "account": "学校給食費会計",
+        "table_id": "school-lunch-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの収入の内訳の説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "school-lunch-settlement"
+        }
+      ]
+    }
+  ]
+}
