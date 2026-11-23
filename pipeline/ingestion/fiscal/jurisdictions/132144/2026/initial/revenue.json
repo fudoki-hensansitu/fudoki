@@ -1,0 +1,820 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132144",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ded0d4b1ebcb24c5ef66f28fe40e8677e5afa5279bd7859a28bbb3e4b752f2e7"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-ocr-1",
+          "origin_sha256": "ded0d4b1ebcb24c5ef66f28fe40e8677e5afa5279bd7859a28bbb3e4b752f2e7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "48fcbb991bb877f936c12d43d00b3d9caac842e553f1cc13f5c4fa6a6659c734",
+          "bytes": 2138220
+        },
+        {
+          "id": "general-revenue-ocr-2",
+          "origin_sha256": "ded0d4b1ebcb24c5ef66f28fe40e8677e5afa5279bd7859a28bbb3e4b752f2e7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "fc95cd0a04fb0db8c7b2c02cc07cdd04aedc4d8b5c4660e0dab4fd8451e6a22d",
+          "bytes": 2600451
+        },
+        {
+          "id": "general-revenue-ocr-3",
+          "origin_sha256": "ded0d4b1ebcb24c5ef66f28fe40e8677e5afa5279bd7859a28bbb3e4b752f2e7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "6a9eee1b5efe01b36b7b9eedb8cc3e44879512ed0e8fbbb6f9a0b2cc05f10508",
+          "bytes": 3268114
+        },
+        {
+          "id": "general-revenue-ocr-4",
+          "origin_sha256": "ded0d4b1ebcb24c5ef66f28fe40e8677e5afa5279bd7859a28bbb3e4b752f2e7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              58,
+              59,
+              60,
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "0ba6d2d942b004c81d189d0239c988a6a97dcb141eb75c1718880279600fa6ad",
+          "bytes": 3313686
+        },
+        {
+          "id": "general-revenue-ocr-5",
+          "origin_sha256": "ded0d4b1ebcb24c5ef66f28fe40e8677e5afa5279bd7859a28bbb3e4b752f2e7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              68,
+              69,
+              70,
+              71,
+              72,
+              73,
+              74,
+              75,
+              76,
+              77
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "3b8a9f4ae86b3bf4d51aa7b5b51de3b83a8cd242c9be643779711cc0a45300dc",
+          "bytes": 2661285
+        },
+        {
+          "id": "general-revenue-ocr-6",
+          "origin_sha256": "ded0d4b1ebcb24c5ef66f28fe40e8677e5afa5279bd7859a28bbb3e4b752f2e7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              78,
+              79,
+              80,
+              81,
+              82,
+              83,
+              84,
+              85,
+              86,
+              87
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "2e7706dee782a4799d8b0f7b780d9d2e72b7453dca1c425efdd0e3283693951b",
+          "bytes": 2285582
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "pages": [
+          [
+            28,
+            87
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true,
+                "agree_all_frames": true
+              },
+              "columns": {
+                "本年度(前年度)(比較)": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ]
+                },
+                "本年度(前年度)／(比較)": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ]
+                },
+                "節／区分": {
+                  "axis_header": "節"
+                },
+                "節／金額": {
+                  "axis_header": "節"
+                },
+                "金額": {
+                  "axis_header": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・税率・補助率・件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "説／明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・税率・補助率・件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "明／説": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・税率・補助率・件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 180,
+                "skewed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "bracket_marks": true,
+            "letter_spaced_lines": true,
+            "partial_headings": true,
+            "rule_ink": true,
+            "specks": true,
+            "stacked_digits": true,
+            "stacked_tables_apart": true,
+            "unopened_brackets": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p74-r40",
+            "page": 74,
+            "observation_id": "p74:full-page:a0:result0:r40",
+            "observed_name": "1 物品壳払収入",
+            "corrected_name": "1 物品売払収入",
+            "reason": "原画は「売払」。Paddle が「売」を中国語の字形「壳」で読んだ。"
+          },
+          {
+            "id": "p86-r44",
+            "page": 86,
+            "observation_id": "p86:full-page:a0:result0:r44",
+            "observed_name": "16 障害者センタ一施設改修事業",
+            "corrected_name": "16 障害者センター施設改修事業",
+            "reason": "原画は「センター」。Paddle が長音符を漢字の「一」と読んだ。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "1e46b63e66ebe84d19ee9c5cffff4d9a12f38784218995eecb4e7957af3e8932"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-revenue-ocr-1",
+          "origin_sha256": "1e46b63e66ebe84d19ee9c5cffff4d9a12f38784218995eecb4e7957af3e8932",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "8ccc322382213f47592aaca973bca66b6856d1f526dfab447babba855ddb5c8e",
+          "bytes": 1068400
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-revenue",
+        "pages": [
+          [
+            12,
+            17
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true,
+                "agree_all_frames": true
+              },
+              "columns": {
+                "本年度(前年度)(比較)": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ]
+                },
+                "本年度(前年度)／(比較)": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ]
+                },
+                "節／区分": {
+                  "axis_header": "節"
+                },
+                "節／金額": {
+                  "axis_header": "節"
+                },
+                "金額": {
+                  "axis_header": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・税率・補助率・件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "説／明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・税率・補助率・件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "明／説": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・税率・補助率・件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 180,
+                "skewed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "bracket_marks": true,
+            "letter_spaced_lines": true,
+            "partial_headings": true,
+            "rule_ink": true,
+            "skewed_cell_rows": true,
+            "skewed_frames": true,
+            "specks": true,
+            "stacked_digits": true,
+            "stacked_tables_apart": true,
+            "unopened_brackets": true
+          }
+        },
+        "amount_readings": [
+          {
+            "id": "p12-r25",
+            "page": 12,
+            "boxes": [
+              [
+                272.0,
+                391.5,
+                298.0,
+                401.0
+              ]
+            ],
+            "amount": "△1",
+            "reason": "原画で確かめた退職被保険者等国民健康保険税の比較「(▲1)」（▲を△として読む）。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "p12-r25",
+            "page": 12,
+            "observation_id": "p12:full-page:a0:result0:r25",
+            "observed": "1)",
+            "reason": "原画は退職被保険者等国民健康保険税の比較「(▲1)」。OCR が▲を読み残して「1)」と読んだので除き、amount_readings で読む。"
+          },
+          {
+            "id": "p14-ink-10-r0",
+            "page": 14,
+            "observation_id": "p14:ink-10:a10:result0:r0",
+            "observed": "3",
+            "reason": "原画は前年度・比較の金額の前に上下に並べた開き括弧「(」2つ。読み直したインクが2つの括弧を1つの数字と読み、金額の欄の行になるので、この読みを除く。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7c4ee3a9336d0a55c01d164ec93b2920728c0846b501f443b775bf191f662f67"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-revenue-ocr-1",
+          "origin_sha256": "7c4ee3a9336d0a55c01d164ec93b2920728c0846b501f443b775bf191f662f67",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "bb0ff731fb7ed4e7425b62742deeea6564f3e4ad9b38d9340fb72a5f4206c381",
+          "bytes": 2247682
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-revenue",
+        "pages": [
+          [
+            12,
+            21
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true,
+                "agree_all_frames": true
+              },
+              "columns": {
+                "本年度(前年度)(比較)": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ]
+                },
+                "本年度(前年度)／(比較)": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ]
+                },
+                "節／区分": {
+                  "axis_header": "節"
+                },
+                "節／金額": {
+                  "axis_header": "節"
+                },
+                "金額": {
+                  "axis_header": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・税率・補助率・件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "説／明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・税率・補助率・件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "明／説": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・税率・補助率・件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 180,
+                "skewed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "bracket_marks": true,
+            "letter_spaced_lines": true,
+            "one_row_header": true,
+            "partial_headings": true,
+            "rule_ink": true,
+            "skewed_cell_rows": true,
+            "skewed_frames": true,
+            "specks": true,
+            "stacked_digits": true,
+            "stacked_tables_apart": true,
+            "unopened_brackets": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ae4a75c4d992f9ddf19d178a67f38ca500b9063a749c8130b324e84d6bceb38f"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-revenue-ocr-1",
+          "origin_sha256": "ae4a75c4d992f9ddf19d178a67f38ca500b9063a749c8130b324e84d6bceb38f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "8ef63c3fc219698b571d8993899122609541ae4557d1af27151aaa7c51638255",
+          "bytes": 728539
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-revenue",
+        "pages": [
+          [
+            12,
+            17
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true,
+                "agree_all_frames": true
+              },
+              "columns": {
+                "本年度(前年度)(比較)": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ]
+                },
+                "本年度(前年度)／(比較)": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ]
+                },
+                "節／区分": {
+                  "axis_header": "節"
+                },
+                "節／金額": {
+                  "axis_header": "節"
+                },
+                "金額": {
+                  "axis_header": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・税率・補助率・件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "説／明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・税率・補助率・件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "明／説": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・税率・補助率・件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 240,
+                "skewed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "bracket_marks": true,
+            "letter_spaced_lines": true,
+            "partial_headings": true,
+            "rule_ink": true,
+            "short_frame_headers": true,
+            "skewed_cell_rows": true,
+            "skewed_frames": true,
+            "specks": true,
+            "stacked_digits": true,
+            "stacked_tables_apart": true,
+            "unopened_brackets": true
+          }
+        },
+        "amount_readings": [
+          {
+            "id": "p16-ink-1-2",
+            "page": 16,
+            "boxes": [
+              [
+                205.0,
+                141.0,
+                292.0,
+                150.0
+              ]
+            ],
+            "amount": "2",
+            "reason": "原画で確かめた雑入の前年度予算額「(2)」。開き括弧ごと読む。"
+          },
+          {
+            "id": "p16-ink-1-3",
+            "page": 16,
+            "boxes": [
+              [
+                205.0,
+                150.1,
+                292.0,
+                161.5
+              ]
+            ],
+            "amount": "0",
+            "reason": "原画で確かめた雑入の比較「(0)」。開き括弧ごと読む。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "p12-r52",
+            "page": 12,
+            "observation_id": "p12:full-page:a0:result0:r52",
+            "observed": "目",
+            "reason": "原画では重ねて刷った表の見出し「目」。この読みが名前だけの目の行になるので除く（見出しは他の欄の語で読める）。"
+          },
+          {
+            "id": "p12-ink-17-r0",
+            "page": 12,
+            "observation_id": "p12:ink-17:a17:result0:r0",
+            "observed": "目",
+            "reason": "原画では重ねて刷った表の見出し「目」。この読みが名前だけの目の行になるので除く（見出しは他の欄の語で読める）。"
+          },
+          {
+            "id": "p12-ink-44-r0",
+            "page": 12,
+            "observation_id": "p12:ink-44:a44:result0:r0",
+            "observed": "目",
+            "reason": "原画では重ねて刷った表の見出し「目」。この読みが名前だけの目の行になるので除く（見出しは他の欄の語で読める）。"
+          },
+          {
+            "id": "p14-r55",
+            "page": 14,
+            "observation_id": "p14:full-page:a0:result0:r55",
+            "observed": "目",
+            "reason": "原画では重ねて刷った表の見出し「目」。この読みが名前だけの目の行になるので除く（見出しは他の欄の語で読める）。"
+          },
+          {
+            "id": "p16-ink-2-r0",
+            "page": 16,
+            "observation_id": "p16:ink-2:a2:result0:r0",
+            "observed": "2",
+            "reason": "原画は雑入の本年度 2・(前年度 2)・(比較 0)。OCR が括弧を読まず、2・3行目を読み直しが重ねて読んだので、その読みを除き行ごとに amount_readings で読む。"
+          },
+          {
+            "id": "p16-ink-4-r0",
+            "page": 16,
+            "observation_id": "p16:ink-4:a4:result0:r0",
+            "observed": "2",
+            "reason": "原画は雑入の本年度 2・(前年度 2)・(比較 0)。OCR が括弧を読まず、2・3行目を読み直しが重ねて読んだので、その読みを除き行ごとに amount_readings で読む。"
+          },
+          {
+            "id": "p16-ink-4-r1",
+            "page": 16,
+            "observation_id": "p16:ink-4:a4:result0:r1",
+            "observed": "0",
+            "reason": "原画は雑入の本年度 2・(前年度 2)・(比較 0)。OCR が括弧を読まず、2・3行目を読み直しが重ねて読んだので、その読みを除き行ごとに amount_readings で読む。"
+          },
+          {
+            "id": "p16-ink-5-r0",
+            "page": 16,
+            "observation_id": "p16:ink-5:a5:result0:r0",
+            "observed": "0",
+            "reason": "原画は雑入の本年度 2・(前年度 2)・(比較 0)。OCR が括弧を読まず、2・3行目を読み直しが重ねて読んだので、その読みを除き行ごとに amount_readings で読む。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-revenue"
+        }
+      ]
+    }
+  ]
+}

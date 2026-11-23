@@ -6,7 +6,8 @@ its left end). It loses an end of the
 opening rule and of the closing rule of a short frame (R8 p55: two stacked tables, the top rule 54–486 of a frame
 54–552): the rule drawn where the frame's sides start across most of its columns opens the frame, and a closing rule
 44pt under the last full rule closes it, if no rule across the whole frame lies between. A slanted closing rule read
-as pieces stepping a point or so down (R8 後期 p18) closes the frame when the pieces together cross most of its columns."""
+as pieces stepping a point or so down (R8 後期 p18) closes the frame when the pieces together cross most of its columns.
+A frame whose header is shorter than SHORT is opened from the quirk `short_frame_headers`'s height."""
 
 
 SCOPE = 'document'
@@ -45,7 +46,9 @@ def top(page, frame: list, middle: list, horizontals: list, top: float) -> float
     sides = max(min((r.y0 for r in page.rules if r.vertical and abs(r.x0 - x) <= 3), default=top)
                 for x in (frame[0], frame[-1]))
     opening = [h for h in horizontals if abs(h.y0 - sides) <= 4 and most(h)]
-    if top - sides > SHORT and opening and not any(sides + 4 < h.y0 < top and all(_covers(h, m) for m in middle)
+    from ingestion.generic.patterns import document_quirk
+    short = (headers := document_quirk('short_frame_headers')) is not None and headers.module.HEADER or SHORT
+    if top - sides > short and opening and not any(sides + 4 < h.y0 < top and all(_covers(h, m) for m in middle)
                                                    for h in horizontals):
         return min(h.y0 for h in opening)
     return top

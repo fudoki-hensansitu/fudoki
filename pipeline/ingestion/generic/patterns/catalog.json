@@ -245,6 +245,7 @@
     "shifted_hidden_copies": "ingestion.generic.patterns.quirks.shifted_hidden_copies",
     "shifted_pages": "ingestion.generic.patterns.quirks.shifted_pages",
     "skewed_frames": "ingestion.generic.patterns.quirks.skewed_frames",
+    "short_frame_headers": "ingestion.generic.patterns.quirks.short_frame_headers",
     "unruled_frame_top": "ingestion.generic.patterns.quirks.unruled_frame_top",
     "short_staircase_rules": "ingestion.generic.patterns.quirks.short_staircase_rules",
     "broken_column_rules": "ingestion.generic.patterns.quirks.broken_column_rules",
