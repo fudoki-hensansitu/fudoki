@@ -10,6 +10,33 @@ from ingestion.lib.parquet import ParquetColumn
 from ingestion.generic.reading import Reading
 
 
+def assign_slots(cells: list, slots: list) -> dict | None:
+    """Each amount cell (right edge first) to the nearest slot; None when two cells fall in one slot."""
+    taken = {}
+    for cell in cells:
+        slot = min(range(len(slots)), key=lambda n: abs(slots[n] - cell[0]))
+        if slot in taken:
+            return None
+        taken[slot] = cell
+    return taken
+
+
+def label_edges(line: list, keys: list) -> list | None:
+    """The right edge of each label of the 款集計's label line (`決算額 市債 一般会計繰入金 その他 執行率`, printed
+    letter-spaced), or None when the line does not read as the labels in order."""
+    words = sorted(line, key=lambda w: w['xMin'])
+    if ''.join(w['text'] for w in words).replace(' ', '') != ''.join(keys):
+        return None
+    ends, edges, taken = [], [], 0
+    for word in words:
+        taken += len(word['text'].replace(' ', ''))
+        ends.append((taken, word['xMax']))
+    for index in range(len(keys)):
+        total = sum(len(key) for key in keys[:index + 1])
+        edges.append(next(x for count, x in ends if count >= total))
+    return edges
+
+
 class Reader(Reading):
     REQUIRED_RULES = ['kan_name_fragment', 'parse_jigyo_continuation', 'parse_jigyo_heading', 'parse_kan_heading_fragment', 'parse_kou_heading', 'parse_moku_amounts', 'parse_moku_heading', 'parse_moku_pending']
 
@@ -845,6 +872,7 @@ class Reader(Reading):
                     continue
                 if label_state == 'kan' and '執行率' in flat:
                     label_state = 'kan_amounts'
+                    b.kan_label_edges = label_edges(line, kan_keys)
                     b.emit_annex(page, line)
                     continue
                 if label_state == 'kan_amounts' and b.kan_amount_cells and not all(
@@ -858,12 +886,14 @@ class Reader(Reading):
                     if len(cells) < width and rate(cells[-1][1]) and not rate(cells[0][1]):
                         left, right = cells[0][0], cells[-1][0]
                         slots = [left + (right - left) * n / (width - 1) for n in range(width)]
-                        taken = {}
-                        for cell in cells:
-                            slot = min(range(width), key=lambda n: abs(slots[n] - cell[0]))
-                            if slot in taken:
-                                raise ValueError(f'款集計の金額セルが同じ升に入る（{page}頁）: {[t for _, t, _, _ in cells]}')
-                            taken[slot] = cell
+                        taken = assign_slots(cells, slots)
+                        if taken is None and getattr(b, 'kan_label_edges', None):
+                            # The columns are not evenly spaced (母子・父子福祉資金: 市債 empty between 決算額 and
+                            # 一般会計繰入金): an amount is right-aligned under the right edge of its label.
+                            slots = b.kan_label_edges
+                            taken = assign_slots(cells, slots)
+                        if taken is None:
+                            raise ValueError(f'款集計の金額セルが同じ升に入る（{page}頁）: {[t for _, t, _, _ in cells]}')
                         b.kan_amount_cells = [taken.get(n, (slots[n], '', page, None)) for n in range(width)]
                     else:
                         raise ValueError(f'款集計の金額セルが{width}に満たない（{page}頁）: {[t for _, t, _, _ in cells]}')

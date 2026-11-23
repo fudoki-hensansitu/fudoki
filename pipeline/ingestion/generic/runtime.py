@@ -82,7 +82,9 @@ def run_pages(pdf: Path, pages: list[int], cache: Path | None = None, judge=None
     # The direction a page prints is read before the repair, which drops what is outside the frame.
     titles = page_titles(sorted([*unrepaired, *read], key=lambda page: page.number)) if direction else {}
     observed = sorted([*observed, *read], key=lambda page: page.number)
-    if direction:
+    # A layout that names its table by a title (`header.section`, `titled_table`) has picked the table itself: a page
+    # that prints the other direction's table above it (歳入 over 歳出 in a 款別一覧表) is read.
+    if direction and not (header or {}).get('section'):
         report.skipped_pages = [number for number, title in titles.items() if title not in (None, direction)]
         observed = [page for page in observed if page.number not in report.skipped_pages]
     logicals = read_layout(observed, columns=columns, spread=spread, header=header,

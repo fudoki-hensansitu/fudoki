@@ -265,6 +265,186 @@
           "table_id": "parking-detail"
         }
       ]
+    },
+    {
+      "id": "kariire-expenditure",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4fce3f1c0fa18d24c537870bbf1abf37a9e954fc7efddb83254a5c6addf0ad02"
+        }
+      ],
+      "options": {
+        "account": "借入金管理特別会計",
+        "table_id": "kariire-expenditure",
+        "pages": [
+          [
+            544,
+            545
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "titled_table",
+            "options": {
+              "header": {
+                "section": {
+                  "title": "歳出",
+                  "continued": [
+                    545
+                  ],
+                  "table": 2
+                }
+              },
+              "columns": {
+                "区分款別": {
+                  "heading": "款"
+                },
+                "予算現額／当初予算額／金額": {
+                  "heading": "当初予算額"
+                },
+                "予算現額／当初予算額／構成比": {
+                  "kind": "ignore"
+                },
+                "予算現額／補正予算額": {
+                  "heading": "補正予算額"
+                },
+                "予算現額／繰越事業費繰越額": {
+                  "heading": "繰越事業費繰越額"
+                },
+                "計／金額": {
+                  "heading": "予算現額"
+                },
+                "計／構成比": {
+                  "kind": "ignore"
+                },
+                "決算額／支出済額": {
+                  "heading": "支出済額"
+                },
+                "決算額／構成比": {
+                  "kind": "ignore"
+                },
+                "決算額／予算現額対比": {
+                  "kind": "ignore"
+                },
+                "翌年度繰越額": {
+                  "heading": "翌年度繰越額"
+                },
+                "不用額／不用額": {
+                  "heading": "不用額"
+                },
+                "不用額／構成比": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kariire-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "kyuyo-expenditure",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4fce3f1c0fa18d24c537870bbf1abf37a9e954fc7efddb83254a5c6addf0ad02"
+        }
+      ],
+      "options": {
+        "account": "給与及び公共料金特別会計",
+        "table_id": "kyuyo-expenditure",
+        "pages": [
+          [
+            550,
+            551
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "titled_table",
+            "options": {
+              "header": {
+                "section": {
+                  "title": "歳出",
+                  "continued": [
+                    551
+                  ],
+                  "table": 2
+                }
+              },
+              "columns": {
+                "区分款別": {
+                  "heading": "款"
+                },
+                "予算現額／当初予算額／金額": {
+                  "heading": "当初予算額"
+                },
+                "予算現額／当初予算額／構成比": {
+                  "kind": "ignore"
+                },
+                "予算現額／補正予算額": {
+                  "heading": "補正予算額"
+                },
+                "予算現額／繰越事業費繰越額": {
+                  "heading": "繰越事業費繰越額"
+                },
+                "計／金額": {
+                  "heading": "予算現額"
+                },
+                "計／構成比": {
+                  "kind": "ignore"
+                },
+                "決算額／支出済額": {
+                  "heading": "支出済額"
+                },
+                "決算額／構成比": {
+                  "kind": "ignore"
+                },
+                "決算額／予算現額対比": {
+                  "kind": "ignore"
+                },
+                "翌年度繰越額": {
+                  "heading": "翌年度繰越額"
+                },
+                "不用額／不用額": {
+                  "heading": "不用額"
+                },
+                "不用額／構成比": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kyuyo-expenditure"
+        }
+      ]
     }
   ]
 }
