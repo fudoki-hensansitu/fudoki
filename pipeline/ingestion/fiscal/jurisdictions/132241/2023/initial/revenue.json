@@ -1,0 +1,51 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132241",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "csv-9df4468f195127eb",
+      "converter": "fiscal/layouts/csv/convert.py",
+      "inputs": [
+        {
+          "sha256": "9df4468f195127ebb5f578b90e0cc1606d277ad6fad03cc5f677f806156be219"
+        }
+      ],
+      "options": {
+        "encoding": "cp932",
+        "table_id": "csv-9df4468f195127eb",
+        "amount_column": "予算額",
+        "amount_unit": "千円"
+      },
+      "expected_tables": [
+        {
+          "table_id": "csv-9df4468f195127eb"
+        }
+      ]
+    },
+    {
+      "id": "csv-60b60504fb0297c2",
+      "converter": "fiscal/layouts/csv/convert.py",
+      "inputs": [
+        {
+          "sha256": "60b60504fb0297c2b50f4b12b4b0e9bfb6d289ab0abf2724a51ec3a254c6d098"
+        }
+      ],
+      "options": {
+        "encoding": "cp932",
+        "table_id": "csv-60b60504fb0297c2",
+        "amount_column": "予算額",
+        "amount_unit": "千円"
+      },
+      "expected_tables": [
+        {
+          "table_id": "csv-60b60504fb0297c2"
+        }
+      ]
+    }
+  ]
+}

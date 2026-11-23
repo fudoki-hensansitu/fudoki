@@ -1,0 +1,597 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132241",
+    "fiscal_year": 2020,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-revenue-1",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "8e7e99bee0b3c174bf1d5fb8e6f37faef74e532806675054f45f0263603ffccd"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-1",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 220,
+                "skewed": true,
+                "short_columns": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position",
+                "quirks": {
+                  "column_edge": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "names_in_own_column": true,
+            "rule_ink": true,
+            "gapped_column_rules": true
+          }
+        },
+        "pages": [
+          [
+            20,
+            31
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "rule-p20-ink-55",
+            "page": 20,
+            "observation_id": "p20:ink-55:a55:result0:r0",
+            "observed": "01",
+            "reason": "原典の画像では、頁20の都市計画税の継続費及び繰越事業費繰越財源充当額の欄は「0」だけで、その右は計の欄との間の縦の罫である。見落とした墨の読み直しが罫を含めて「01」と読み、計の「1,748,259,000」の頭に1を足した。0 は頁の読み（r82）にあるので、この読みは使わない。"
+          },
+          {
+            "id": "dust-p30-r43",
+            "page": 30,
+            "observation_id": "p30:full-page:a0:result0:r43",
+            "observed": "3",
+            "reason": "原典の画像では補正予算額の欄の罫の上の空白に小さな墨の点があるだけで、数字は印字されていない。OCR はこの点を「3」と読んだ。この読みは使わない。"
+          }
+        ],
+        "header_readings": [
+          {
+            "id": "p30-yosan-genngaku",
+            "pages": [
+              30
+            ],
+            "box": [
+              300.0,
+              112.0,
+              530.0,
+              129.0
+            ],
+            "text": "予算現額",
+            "reason": "原典の画像では、頁30の見出しの上の段は「予算現額」の1つの枠で、下の4つの欄（当初予算額・補正予算額・継続費及び繰越事業費繰越財源充当額・計）にかかる。この頁は枠の上下の横の罫が傾いて2本ずつに読まれ、均等割付の4字が別々の枠に入って見出しが重なるので、4字を1つの見出しとして読む。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-1-ocr-1",
+          "origin_sha256": "8e7e99bee0b3c174bf1d5fb8e6f37faef74e532806675054f45f0263603ffccd",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "f6e5577b32ca9bbea7d85e47bfff43cf1b78f52b3ccdda231eb89eda6e8c89fe",
+          "bytes": 3683367
+        },
+        {
+          "id": "general-revenue-1-ocr-2",
+          "origin_sha256": "8e7e99bee0b3c174bf1d5fb8e6f37faef74e532806675054f45f0263603ffccd",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              30,
+              31
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9a482dbb78a80fbb4a5a557b1f66915ca62369f3f53123f972d3e07505048ab2",
+          "bytes": 623925
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-1"
+        }
+      ]
+    },
+    {
+      "id": "general-revenue-2",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ea42677037479113ca3e18dfd25b9744895e408b739bbf8114e7f78d6cc8725d"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-2",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 220,
+                "skewed": true,
+                "short_columns": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position",
+                "quirks": {
+                  "column_edge": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "names_in_own_column": true,
+            "rule_ink": true,
+            "gapped_column_rules": true
+          }
+        },
+        "pages": [
+          [
+            1,
+            16
+          ]
+        ],
+        "continued_rows": {
+          "subjects": [
+            {
+              "code": "16",
+              "name": "国庫支出金"
+            },
+            {
+              "code": "2",
+              "name": "国庫補助金"
+            },
+            {
+              "code": "3",
+              "name": "土木費国庫補助金"
+            }
+          ],
+          "rows": []
+        },
+        "dropped_readings": [
+          {
+            "id": "rule-p16-digit-2",
+            "page": 16,
+            "observation_id": "p16:digit-2:r0",
+            "observed": "1",
+            "reason": "原典の画像では収入済額と不納欠損額の欄の間の縦の罫で、数字は印字されていない。見落とした墨の読み直しが罫の切れ端を「1」と読んだ。この読みは使わない。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-2-ocr-1",
+          "origin_sha256": "ea42677037479113ca3e18dfd25b9744895e408b739bbf8114e7f78d6cc8725d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "1ad1f5e780c9fe110776c2dec451c6c65c23fddf41440b8a8d436ba8f6d281d5",
+          "bytes": 2731417
+        },
+        {
+          "id": "general-revenue-2-ocr-2",
+          "origin_sha256": "ea42677037479113ca3e18dfd25b9744895e408b739bbf8114e7f78d6cc8725d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6ae1c2f0078410a4537f832438f7ca691c3e8d671fe51e6b1308b3c77bc82582",
+          "bytes": 1787729
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-2"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "994f105855c4bbe57ca6fdd07c14b1e49b2f29772a40d57974460a71afc0ca3e"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 220,
+                "skewed": true,
+                "short_columns": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position",
+                "quirks": {
+                  "column_edge": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "names_in_own_column": true,
+            "rule_ink": true,
+            "gapped_column_rules": true
+          }
+        },
+        "pages": [
+          [
+            11,
+            19
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "rule-p18-ink-43",
+            "page": 18,
+            "observation_id": "p18:ink-43:a43:result0:r0",
+            "observed": "1",
+            "reason": "原典の画像では、頁18の最後の款の下の空白の行に項の番号は無く、款と項の欄の間の縦の罫があるだけである。見落とした墨の読み直しが罫の切れ端を「1」と読み、名前の無い項になった。この読みは使わない。"
+          },
+          {
+            "id": "rule-p17-digit-0",
+            "page": 17,
+            "observation_id": "p17:digit-0:r0",
+            "observed": "1",
+            "reason": "原典の画像では節の区分と金額の欄の間の縦の罫で、数字は印字されていない。見落とした墨の読み直しが罫の切れ端を「1」と読んだ。この読みは使わない。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-revenue-ocr-1",
+          "origin_sha256": "994f105855c4bbe57ca6fdd07c14b1e49b2f29772a40d57974460a71afc0ca3e",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "2713d7349ef45efc9f2e2abf8752b91aef3ac8772a2c4a0012b4572f4e0c1457",
+          "bytes": 2196820
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "2ccc7571acb6d5310ad2ed814e58e45fec8ceaa322f1e36389b74ac24ba53a1b"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 220,
+                "skewed": true,
+                "short_columns": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position",
+                "quirks": {
+                  "column_edge": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "names_in_own_column": true,
+            "rule_ink": true,
+            "gapped_column_rules": true
+          }
+        },
+        "pages": [
+          [
+            11,
+            19
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-revenue-ocr-1",
+          "origin_sha256": "2ccc7571acb6d5310ad2ed814e58e45fec8ceaa322f1e36389b74ac24ba53a1b",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e5333897ede9b4110a40707881ad68f7336a8890db3293da04d5bb87cc93f638",
+          "bytes": 2360131
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "d2b80d66ed9f720741a1c9bc5a9f75f0c74b47d8e8208867277403b8bbd7c98f"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 220,
+                "skewed": true,
+                "short_columns": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position",
+                "quirks": {
+                  "column_edge": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "names_in_own_column": true,
+            "rule_ink": true,
+            "gapped_column_rules": true
+          }
+        },
+        "pages": [
+          [
+            12,
+            15
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "p13-header-setsu-dot",
+            "page": 13,
+            "observation_id": "p13:full-page:a0:result0:r1",
+            "observed_name": "節.",
+            "corrected_name": "節",
+            "reason": "原典の画像では、この見出しは「節」の1字だけが印字されている。Paddle は字の右下の罫の切れ端を「.」と読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-revenue-ocr-1",
+          "origin_sha256": "d2b80d66ed9f720741a1c9bc5a9f75f0c74b47d8e8208867277403b8bbd7c98f",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              12,
+              13,
+              14,
+              15
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c4433be58658a978ece97ce8127be29192f2ff69748dd22a0fdb6d73b8d238ae",
+          "bytes": 1303763
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-revenue"
+        }
+      ]
+    }
+  ]
+}
