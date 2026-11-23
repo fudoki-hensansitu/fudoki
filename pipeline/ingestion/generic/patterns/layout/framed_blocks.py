@@ -83,7 +83,7 @@ def segments(page: Page, frame) -> list[tuple[str | None, float, float]]:
     return found
 
 
-def block_page(page: Page, frame, top: float, bottom: float) -> Page:
+def block_page(page: Page, frame, top: float, bottom: float, sides: bool = False) -> Page:
     """The block alone, as a page of its own: its words, and its rules cut to its height.
 
     A column of the block is drawn down its first row. A rule through a header word on its line is a step of the
@@ -119,6 +119,12 @@ def block_page(page: Page, frame, top: float, bottom: float) -> Page:
             if any(a + 1 < rule.x0 < b - 1 and rule.y0 - 1 <= y <= rule.y1 + 1 for a, b, y in levels):
                 continue
         kept.append(rule)
+    if sides:  # (the header option `frame_sides`) the side the frame draws lower down the page, where none was found
+        for side in (x0, x1):
+            if not any(r.vertical and abs(r.x0 - side) <= SIDE for r in kept):
+                drawn = [r.x0 for r in page.rules if r.vertical and abs(r.x0 - side) <= SIDE]
+                x = sorted(drawn)[len(drawn) // 2] if drawn else side
+                kept.append(Rule(x, top, x, bottom))
     return Page(page.number, page.width, page.height, words, kept)
 
 
@@ -166,6 +172,18 @@ def read(pages, *, columns: dict | None = None, header: dict | None = None, **_o
     per_page = []  # (page, bands, outside) of each printed page
     templates: dict[str, list[Band]] = {}
     kind = None
+    opening = (header or {}).get('continues')
+    if opening:
+        # The block the volume opens inside is read in the columns of the first block of its kind printed later.
+        templates[opening] = next(
+            ([replace(b, x0=b.x0 - frame[0], x1=b.x1 - frame[0], words=[],
+                      spans=[(a - frame[0], c - frame[0], t) for a, c, t in b.spans]) for b in bands]
+             for page in pages for frame in sorted(frames(page), key=lambda f: f[0])
+             for found, top, bottom in segments(page, frame) if found == opening
+             for bands in [layout.page_bands(block_page(page, frame, top, bottom, found == 'subject' and bool((header or {}).get('frame_sides'))), header=header)[0]]), None)
+        if templates[opening] is None:
+            raise ValueError(f'framed_blocks: no block of the kind the volume continues ({opening})')
+        kind = opening
     for page in pages:
         sheet = frames(page)
         for frame in sorted(sheet, key=lambda f: f[0]):
@@ -179,7 +197,7 @@ def read(pages, *, columns: dict | None = None, header: dict | None = None, **_o
                     bands = continued(page, frame, top, bottom, templates[kind])
                 else:
                     kind = found
-                    bands, _ = layout.page_bands(block_page(page, frame, top, bottom), header=header)
+                    bands, _ = layout.page_bands(block_page(page, frame, top, bottom, found == 'subject' and bool((header or {}).get('frame_sides'))), header=header)
                     templates[kind] = [replace(b, x0=b.x0 - x0, x1=b.x1 - x0, words=[],
                                                spans=[(a - x0, c - x0, t) for a, c, t in b.spans]) for b in bands]
                 for band in bands:

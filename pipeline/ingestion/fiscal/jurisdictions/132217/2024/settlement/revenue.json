@@ -58,6 +58,214 @@
           "table_id": "general-revenue"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8a10209708f57295a1bc8b9bf59b4f450e887958787d59eecefef34d39cc1843"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "還付未済額": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "還付未済額は収入済額のうち還付が済んでいない額の注記で、収入の段階の金額ではない。備考の還付未済額と同じく取り込まない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "parking-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8a10209708f57295a1bc8b9bf59b4f450e887958787d59eecefef34d39cc1843"
+        }
+      ],
+      "options": {
+        "account": "駐車場事業特別会計",
+        "table_id": "parking-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "還付未済額": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "還付未済額は収入済額のうち還付が済んでいない額の注記で、収入の段階の金額ではない。備考の還付未済額と同じく取り込まない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "parking-revenue"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8a10209708f57295a1bc8b9bf59b4f450e887958787d59eecefef34d39cc1843"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "還付未済額": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "還付未済額は収入済額のうち還付が済んでいない額の注記で、収入の段階の金額ではない。備考の還付未済額と同じく取り込まない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8a10209708f57295a1bc8b9bf59b4f450e887958787d59eecefef34d39cc1843"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "還付未済額": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "還付未済額は収入済額のうち還付が済んでいない額の注記で、収入の段階の金額ではない。備考の還付未済額と同じく取り込まない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-revenue"
+        }
+      ]
     }
   ]
 }

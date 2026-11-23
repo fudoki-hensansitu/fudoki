@@ -59,6 +59,236 @@
           "table_id": "general-initial"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "b5bbced26c5221f81186a9356f1d245bf3366734c9117a9d7d2103d1baa2813e"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・税率・収納率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spaced_ocr_codes": true,
+            "code_after_amount": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-revenue-ocr-1",
+          "origin_sha256": "b5bbced26c5221f81186a9356f1d245bf3366734c9117a9d7d2103d1baa2813e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a204a301898d898b1398014f2058976cb29f33a2eb2c8d074b7337fe9b3e3173",
+          "bytes": 1361635
+        }
+      ]
+    },
+    {
+      "id": "parking-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "bdbc124eedc7b047a71a19ba1b9bd8c3e97556473c1651fd8395b22af6a26989"
+        }
+      ],
+      "options": {
+        "account": "駐車場事業特別会計",
+        "table_id": "parking-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・税率・収納率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spaced_ocr_codes": true,
+            "code_after_amount": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "parking-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "parking-revenue-ocr-1",
+          "origin_sha256": "bdbc124eedc7b047a71a19ba1b9bd8c3e97556473c1651fd8395b22af6a26989",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c0d2ecaa82db6d6dff34b7fdf8f39963b00c47a106d3337cb2be9c27fe399336",
+          "bytes": 105570
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "f14e1017ad175031cb6b8656a8dc3b56a2ea9809f407cb1c266c45e60c3553c9"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・税率・収納率など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spaced_ocr_codes": true,
+            "code_after_amount": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-revenue-ocr-1",
+          "origin_sha256": "f14e1017ad175031cb6b8656a8dc3b56a2ea9809f407cb1c266c45e60c3553c9",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "529d2d910c6b1043f7900cd49bbcf1df55ead3ede02dbc0b46501f431c275d31",
+          "bytes": 1103401
+        }
+      ]
     }
   ]
 }
