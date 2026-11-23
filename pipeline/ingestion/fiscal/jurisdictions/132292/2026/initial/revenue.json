@@ -1475,6 +1475,156 @@
           "table_id": "elderly-medical-revenue"
         }
       ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "3a540d4a2e29be7f8f2e5cad8ef77da6ad17d6063ae1b3abc0cee3f2c6d7f972"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-revenue-ocr-1",
+          "origin_sha256": "3a540d4a2e29be7f8f2e5cad8ef77da6ad17d6063ae1b3abc0cee3f2c6d7f972",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "99f85a1989821131e461fb2f8a9ab36ee4c831718ee7b639b20c0abd5b304171",
+          "bytes": 1713327
+        },
+        {
+          "id": "long-term-care-revenue-ocr-2",
+          "origin_sha256": "3a540d4a2e29be7f8f2e5cad8ef77da6ad17d6063ae1b3abc0cee3f2c6d7f972",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "83c4e7786287047f9d0a5150061a0a04070ec59143af58132ea4eef4de3bf0ec",
+          "bytes": 149524
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "節区分金額": {
+                  "axis_header": "節",
+                  "heading": "節／金額"
+                },
+                "科目項目": {
+                  "kind": "label",
+                  "heading": "目"
+                },
+                "構成比(%)": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "物理1頁の歳入総括の構成比(%)は款の本年度予算額を歳入合計で割った割合で、金額ではない。款の金額は本年度予算額で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 180
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "code_between_name_lines": true,
+            "merged_subject_heading": true,
+            "rule_ink": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p1-property-income",
+            "page": 1,
+            "observation_id": "p1:full-page:a0:result1:r43",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "物理1頁の歳入総括は款5の名前「財産収入」を1字ずつ字間を空けて刷り、OCR は「入」を「人」と読む。「財産収人」のままでは3頁以降の款の見出し「財産収入」と別の款になり、歳入合計との突き合わせで款が二重に数えられる。原典の印字に直す。"
+          }
+        ],
+        "parent_corrections": [
+          {
+            "id": "p11-first-insured-late-fee-setsu",
+            "page": 11,
+            "code": "1",
+            "name": "第1号被保険者延滞金加算金",
+            "axis": "節",
+            "parent_page": 11,
+            "parent_code": "1",
+            "parent_name": "第1号被保険者延滞金加算金",
+            "parent_axis": "科目",
+            "reason": "物理11頁は項の下の2つの目（第1号被保険者延滞金加算金・過料）の間に横の罫を引かず、2つの目が1つの升に入る。読みでは升の上端で目を並べるため、1つ目の目と同じ行に刷った節が2つ目の目の下に入る。原画では節は1つ目の目の行に刷られ、目の金額（1千円）とも一致する。"
+          },
+          {
+            "id": "p11-third-party-payment-setsu",
+            "page": 11,
+            "code": "1",
+            "name": "第三者納付金",
+            "axis": "節",
+            "parent_page": 11,
+            "parent_code": "1",
+            "parent_name": "第三者納付金",
+            "parent_axis": "科目",
+            "reason": "物理11頁は項の下の2つの目（第三者納付金・返納金）の間に横の罫を引かず、2つの目が1つの升に入る。読みでは升の上端で目を並べるため、1つ目の目と同じ行に刷った節が2つ目の目の下に入る。原画では節は1つ目の目の行に刷られ、目の金額（1千円）とも一致する。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-revenue"
+        }
+      ]
     }
   ]
 }
