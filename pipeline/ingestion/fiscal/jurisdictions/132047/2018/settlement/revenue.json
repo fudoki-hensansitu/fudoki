@@ -1,0 +1,31 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132047",
+    "fiscal_year": 2018,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "csv-fbc0b963bba349ec",
+      "converter": "fiscal/layouts/csv/convert.py",
+      "inputs": [
+        {
+          "sha256": "fbc0b963bba349ec735af87949a77506bd1e5ab45669df84e595f8974b456462"
+        }
+      ],
+      "options": {
+        "encoding": "cp932",
+        "table_id": "csv-fbc0b963bba349ec",
+        "amount_column": "08決算額",
+        "amount_unit": "円"
+      },
+      "expected_tables": [
+        {
+          "table_id": "csv-fbc0b963bba349ec"
+        }
+      ]
+    }
+  ]
+}
