@@ -2781,6 +2781,14 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     item.key, item.role = again.key, 'repeat'
                     repeated_codes.extend(g for g in item.glyphs if re.search(r'[0-9０-９]', g.text))
                     continue
+                if (item.role == 'node' and item.code is not None and not normalize(item.name or '')
+                        and not item.amounts and stack and normalize(stack[-1].code or '') == '0'
+                        and quirk((layout or {}).get(item.group.axis), 'bare_code_under_dropped') is not None):
+                    # The quirk `bare_code_under_dropped`: a bare number on the row of a subject numbered 0 (dropped
+                    # this year) is no item (a coverage exclusion).
+                    item.role = 'repeat'
+                    repeated_codes.extend(g for g in item.glyphs if re.search(r'[0-9０-９]', g.text))
+                    continue
                 ranks = levels[item.group.axis]
                 depth = 1 + min(range(len(ranks)), key=lambda i: abs(ranks[i] - item.indent)) if ranks else 1
                 mode = detail if isinstance(detail, str) else detail.get(item.group.axis)

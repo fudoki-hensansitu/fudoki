@@ -165,6 +165,7 @@
     "repeated_at_top": "ingestion.generic.patterns.quirks.repeated_at_top",
     "joined_repeated_codes": "ingestion.generic.patterns.quirks.joined_repeated_codes",
     "repeated_code_at_top": "ingestion.generic.patterns.quirks.repeated_code_at_top",
+    "bare_code_under_dropped": "ingestion.generic.patterns.quirks.bare_code_under_dropped",
     "glued_numbers": "ingestion.generic.patterns.quirks.glued_numbers",
     "glued_subject_codes": "ingestion.generic.patterns.quirks.glued_subject_codes",
     "group_heads": "ingestion.generic.patterns.quirks.group_heads",
