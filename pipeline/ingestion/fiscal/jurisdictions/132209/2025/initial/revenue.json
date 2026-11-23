@@ -76,6 +76,500 @@
           "table_id": "general-initial"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "f0c5dc5bb7cf261b61e025e6f6cad8be5ba40555a2cf43b82b7d5b63d35c9512"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-insurance-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "節／区分": {
+                  "heading": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "code_after_amount": true,
+            "codeless_beside_repeated_code": true,
+            "unnumbered_abolished_names": true
+          }
+        },
+        "pages": [
+          [
+            14,
+            29
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "national-health-insurance-p14-header-compare",
+            "pages": [
+              14
+            ],
+            "box": [
+              318.6,
+              94.5,
+              366.9,
+              110.7
+            ],
+            "text": "比較",
+            "reason": "見出しの升「比較」を OCR が「比，較」と読んだ（原画は 比較／増(△)減 の2行）。"
+          },
+          {
+            "id": "national-health-insurance-p20-header-compare",
+            "pages": [
+              20
+            ],
+            "box": [
+              318.6,
+              94.5,
+              366.9,
+              110.7
+            ],
+            "text": "比較",
+            "reason": "見出しの升「比較」を OCR が「比，較」と読んだ（原画は 比較／増(△)減 の2行）。"
+          },
+          {
+            "id": "national-health-insurance-p24-header-compare",
+            "pages": [
+              24
+            ],
+            "box": [
+              318.6,
+              94.5,
+              366.9,
+              110.7
+            ],
+            "text": "比較",
+            "reason": "見出しの升「比較」を OCR が「比，較」と読んだ（原画は 比較／増(△)減 の2行）。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-initial-ocr-1",
+          "origin_sha256": "f0c5dc5bb7cf261b61e025e6f6cad8be5ba40555a2cf43b82b7d5b63d35c9512",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22
+            ]
+          },
+          "sha256": "1cf6b9ecec66d0997a5e82edc0458d416f05a5fe6d0a63c74986a837c4580b3b",
+          "bytes": 1055805
+        },
+        {
+          "id": "national-health-insurance-initial-ocr-2",
+          "origin_sha256": "f0c5dc5bb7cf261b61e025e6f6cad8be5ba40555a2cf43b82b7d5b63d35c9512",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29
+            ]
+          },
+          "sha256": "8c09bd7170a14a010eb68aec3322fca4e27a71aba2b5b3d443c8f610d7c00aff",
+          "bytes": 647984
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "06ae9db253fbf832ac76e261935b3dde186c198469d4cd8180bb0fe8fa108c64"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "節／区分": {
+                  "heading": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "code_after_amount": true,
+            "codeless_beside_repeated_code": true,
+            "unnumbered_abolished_names": true,
+            "framed_spread_pages": true
+          }
+        },
+        "pages": [
+          [
+            14,
+            35
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "long-term-care-p20-header-compare",
+            "pages": [
+              20
+            ],
+            "box": [
+              318.6,
+              94.5,
+              367.1,
+              110.7
+            ],
+            "text": "比較",
+            "reason": "見出しの升「比較」を OCR が「比，較」と読んだ（原画は 比較／増(△)減 の2行）。"
+          },
+          {
+            "id": "long-term-care-p24-header-compare",
+            "pages": [
+              24
+            ],
+            "box": [
+              318.6,
+              94.5,
+              366.9,
+              110.7
+            ],
+            "text": "比較",
+            "reason": "見出しの升「比較」を OCR が「比，較」と読んだ（原画は 比較／増(△)減 の2行）。"
+          },
+          {
+            "id": "long-term-care-p30-header-compare",
+            "pages": [
+              30
+            ],
+            "box": [
+              318.6,
+              94.5,
+              367.1,
+              110.7
+            ],
+            "text": "比較",
+            "reason": "見出しの升「比較」を OCR が「比，較」と読んだ（原画は 比較／増(△)減 の2行）。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "long-term-care-p20-r54",
+            "page": 20,
+            "observation_id": "p20:full-page:a0:result0:r54",
+            "observed_name": "金介",
+            "corrected_name": "金（介",
+            "reason": "原画の目の名称は「地域支援事業交付金（介護予防・日常生活支援総合事業以外の地域支援事業）」。OCR が括弧の開きを落とした。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-initial-ocr-1",
+          "origin_sha256": "06ae9db253fbf832ac76e261935b3dde186c198469d4cd8180bb0fe8fa108c64",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22
+            ]
+          },
+          "sha256": "0c27e8f8d6d8b333cc8db9a81638f2e53f7ada4cef663bb22006d12ff4cecc45",
+          "bytes": 1159427
+        },
+        {
+          "id": "long-term-care-initial-ocr-2",
+          "origin_sha256": "06ae9db253fbf832ac76e261935b3dde186c198469d4cd8180bb0fe8fa108c64",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32
+            ]
+          },
+          "sha256": "d5311c2e6c172d4f5a168835a2e6bb15ce9c281f8c00a82db18847e0a2e2d188",
+          "bytes": 818199
+        },
+        {
+          "id": "long-term-care-initial-ocr-3",
+          "origin_sha256": "06ae9db253fbf832ac76e261935b3dde186c198469d4cd8180bb0fe8fa108c64",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              33,
+              34,
+              35
+            ]
+          },
+          "sha256": "7544a7c9a1ee8e139ee30f92e24ff4493f999f5adf2a448d815b019dbad98c96",
+          "bytes": 212792
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6e10145174ffa46751cd59dd0a5ed5315555ace69d7011a82660629d0fc99ec3"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "節／区分": {
+                  "heading": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "code_after_amount": true,
+            "codeless_beside_repeated_code": true,
+            "unnumbered_abolished_names": true,
+            "framed_spread_pages": true
+          }
+        },
+        "pages": [
+          [
+            14,
+            21
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "elderly-medical-p16-header-compare",
+            "pages": [
+              16
+            ],
+            "box": [
+              318.6,
+              94.5,
+              367.1,
+              110.9
+            ],
+            "text": "比較",
+            "reason": "見出しの升「比較」を OCR が「比，較」と読んだ（原画は 比較／増(△)減 の2行）。"
+          },
+          {
+            "id": "elderly-medical-p20-header-compare",
+            "pages": [
+              20
+            ],
+            "box": [
+              318.6,
+              94.5,
+              366.9,
+              110.7
+            ],
+            "text": "比較",
+            "reason": "見出しの升「比較」を OCR が「比，較」と読んだ（原画は 比較／増(△)減 の2行）。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-initial-ocr-1",
+          "origin_sha256": "6e10145174ffa46751cd59dd0a5ed5315555ace69d7011a82660629d0fc99ec3",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ]
+          },
+          "sha256": "f60bfd39152d9a1134434a3c0b3cd5ef4d85ec8cccf50ee57f9b497fa20f97e6",
+          "bytes": 972315
+        }
+      ]
     }
   ]
 }
