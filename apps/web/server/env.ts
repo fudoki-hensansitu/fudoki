@@ -25,8 +25,8 @@ export interface Env {
   WEB?: import('./fudoki-api').WebRpc
   /** apps/api の内部の RPC（entrypoint SourcePages）。出典の頁の文字を読む（server/source-pages.ts）。無ければ tool を出さない */
   SOURCES?: import('./source-pages').SourcePagesRpc
-  /** 小さなサブサイト（apps/samples）の Worker。/spending の下をそのまま渡す（middleware/00.samples.ts）。無ければ（手元の開発）404 */
-  SPENDING?: Fetcher
+  /** 小さなサンプル（apps/samples）をまとめた Worker。/spending と /samples の下をそのまま渡す（middleware/00.samples.ts）。無ければ（手元の開発）404 */
+  SAMPLES?: Fetcher
   CHAT_RATE_LIMIT?: RateLimiter
   VIEW_RATE_LIMIT?: RateLimiter
   /** 利用状況（会話の本文・IP は書かない） */

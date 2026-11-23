@@ -184,7 +184,7 @@ _Avoid_: 団体マスタ
 .
 ├── pipeline/         # source_selection、ingestion/fiscal、dbt（マスタと正規化macro）
 ├── packages/         # fiscal の純粋な型・名称、jurisdictions、ui
-├── apps/             # web（ホーム・紹介・自治体の頁・AI との会話）、api、docs、samples（spending など小さなサブサイト）
+├── apps/             # web（ホーム・紹介・自治体の頁・AI との会話）、api、docs、samples（spending など小さなサンプルを1つの Worker で）
 ├── docs/
 │   ├── prd/<topic>/{prd,dd}.md   # 要件と設計書。同じ topic に併置する
 │   ├── adr/                      # 決定の記録

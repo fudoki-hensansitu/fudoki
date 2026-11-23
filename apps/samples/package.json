@@ -1,12 +1,12 @@
 {
-  "name": "@fudoki/spending",
+  "name": "@fudoki/samples",
   "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build && bun scripts/static-assets.ts",
     "deploy": "bun run build && cf deploy --prebuilt",
-    "test": "bun test lib",
+    "test": "bun test",
     "typecheck": "void prepare && tsc --noEmit"
   },
   "dependencies": {

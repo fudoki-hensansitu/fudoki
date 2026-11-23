@@ -1,0 +1,9 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "types": ["void/env", "bun", "vite/client"]
+  },
+  "include": ["middleware", "pages", "server", "scripts", "spending", "void.config.ts", "vite.config.ts", ".void/*.d.ts"],
+  "exclude": []
+}

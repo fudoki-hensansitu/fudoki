@@ -1,7 +1,7 @@
 // トップ（/spending）。まちを選ぶ札だけ。データは読まない
 import { defineHead } from 'void'
-import { BASE, SITE_ORIGIN } from '../../lib/fudoki'
-import { DESCRIPTION } from '../../lib/copy'
+import { BASE, SITE_ORIGIN } from '../../spending/lib/fudoki'
+import { DESCRIPTION } from '../../spending/lib/copy'
 
 const TITLE = '私のお金はどこへ行った？｜風土記'
 

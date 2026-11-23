@@ -1,6 +1,6 @@
 /* 全頁の CSS。Tailwind と、色・字・角の token（fudoki の DESIGN.md・apps/web/styles/tokens.css が正本で、ここはその写し） */
 @import "tailwindcss" source(none);
-@source "../pages";
+@source "../../pages/spending";
 @source "../components";
 @source "../receipt";
 
