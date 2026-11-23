@@ -1334,8 +1334,10 @@ def read_ink(observation: dict, readings: list[dict] | None) -> dict:
     boxes = [(r['page'], box) for r in readings or () for box in r['boxes']]
     if not boxes:
         return observation
-    inside = lambda number, ink: any(page == number and box[0] <= (ink[0] + ink[2]) / 2 <= box[2]
-                                     and box[1] <= (ink[1] + ink[3]) / 2 <= box[3] for page, box in boxes)
+
+    def inside(number: int, ink: list[float]) -> bool:  # the whole ink, not only its centre: ink running past is unread
+        return any(page == number and box[0] <= ink[0] and ink[2] <= box[2] and box[1] <= ink[1] and ink[3] <= box[3]
+                   for page, box in boxes)
     pages_ = [{**page_, 'unread_ink': [ink for ink in page_['unread_ink'] if not inside(page_['page_number'], ink)]}
               if page_.get('unread_ink') else page_ for page_ in observation.get('pages', [])]
     return {**observation, 'pages': pages_}

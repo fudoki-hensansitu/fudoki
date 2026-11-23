@@ -366,8 +366,8 @@ def _split_code(line_text: str) -> tuple[str | None, str]:
         return None, line_text
     if found and AGE.match(line_text, found.end()):  # `1歳6箇月児健康診査…`: an age in a name
         return None, line_text
-    if found and line_text.startswith('世紀', found.end()):  # `21世紀林業創造の森使用料`: a century in a name
-        return None, line_text
+    if found and found.group(0) == found.group(1) and line_text.startswith('世紀', found.end()):
+        return None, line_text  # `21世紀林業創造の森使用料`: a century in a name (not `1.世紀…`, a code set apart)
     if found and READING.match(line_text, found.end()):  # `73（ナナサン）歯科健診事業`: the number's reading, a name
         return None, line_text
     if found and int(unicodedata.normalize('NFKC', found.group(1))) == 0 and document_quirk('zero_codes') is not None:
@@ -922,6 +922,10 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         ordered = sorted(ix)
         slack = 3 + (name_column.module.slack(label) if name_column is not None else 0)
         for position, i in enumerate(ordered):
+            before = entries[ordered[position - 1]][0] if position else None
+            if ending is not None and before and entries[i][0] \
+                    and ending.module.ends(column_amounts, Item(group, before[0].page, [before], None, '', 0), entries[i][0], limit):
+                return False  # the quirk `amount_ends_name`: the name ended on the line before, this line is the next item
             if entries[i][2] is not None or not entries[i][0]:
                 continue
             if not start - 3 <= entries[i][0][0].x0 <= name_start + slack:
