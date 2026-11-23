@@ -1705,6 +1705,10 @@
                   "direction": "expenditure",
                   "pages": [
                     {
+                      "start": 560,
+                      "end": 561
+                    },
+                    {
                       "start": 566,
                       "end": 566
                     }
@@ -1714,6 +1718,10 @@
                   "account": "給与及び公共料金特別会計",
                   "direction": "expenditure",
                   "pages": [
+                    {
+                      "start": 568,
+                      "end": 569
+                    },
                     {
                       "start": 576,
                       "end": 577
