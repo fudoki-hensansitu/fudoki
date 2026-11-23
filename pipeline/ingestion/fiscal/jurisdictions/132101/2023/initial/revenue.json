@@ -1,0 +1,279 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132101",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "2b4f20ef3d51a52eec5412fa51a2f64615194a13a13c6f74ec1a5605b6296c5d"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-ocr-1",
+          "origin_sha256": "2b4f20ef3d51a52eec5412fa51a2f64615194a13a13c6f74ec1a5605b6296c5d",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "cc510781eef6f769213566609b44032c16eda47327529c2c5aa5b73a5e5a0de2",
+          "bytes": 3508523
+        },
+        {
+          "id": "general-initial-ocr-2",
+          "origin_sha256": "2b4f20ef3d51a52eec5412fa51a2f64615194a13a13c6f74ec1a5605b6296c5d",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "b946a98f2d2550968748254c4526e205c391698a28cd1eb4001a7131f630923f",
+          "bytes": 4443938
+        },
+        {
+          "id": "general-initial-ocr-3",
+          "origin_sha256": "2b4f20ef3d51a52eec5412fa51a2f64615194a13a13c6f74ec1a5605b6296c5d",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "1b2176f27688a53b9c1aca7395832753e3444d4251ed7d22add9669a9e04dc9f",
+          "bytes": 4004096
+        },
+        {
+          "id": "general-initial-ocr-4",
+          "origin_sha256": "2b4f20ef3d51a52eec5412fa51a2f64615194a13a13c6f74ec1a5605b6296c5d",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              39,
+              40,
+              41,
+              42
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "15036057f82715d8deb0135a8d8647bde56280c359dd81af01e94aab98d4b3d6",
+          "bytes": 1482005
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "pages": [
+          [
+            9,
+            42
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p37-delta-r123",
+            "page": 37,
+            "observation_id": "p37:full-page:a0:result0:r123",
+            "observed": "5,000",
+            "reason": "原画は比較の欄の「△ 5,000」（延滞金の減）。OCR が離れて印字した「△」を読まず、数字だけを読んだので、この読みを除き、符号を含めて amount_readings で読む。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p37-delta-r123",
+            "page": 37,
+            "boxes": [
+              [
+                178.0,
+                490.9,
+                228.0,
+                498.6
+              ]
+            ],
+            "amount": "△5,000",
+            "reason": "原画で確かめた延滞金の比較の金額 △5,000（本年度 25,001 − 前年度 30,001）。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p12-kou-title",
+            "page": 12,
+            "observation_id": "p12:full-page:a0:result0:r33",
+            "observed_name": "頃",
+            "corrected_name": "項",
+            "reason": "物理12頁の題「項 1 株式等譲渡所得割交付金」。OCR が「項」を「頃」と読み、項の題として読めず、目が款の直下に付いた。原典の描画で確かめた。"
+          },
+          {
+            "id": "p13-r97",
+            "page": 13,
+            "observation_id": "p13:full-page:a0:result0:r97",
+            "observed_name": "コ口ナ",
+            "corrected_name": "コロナ",
+            "reason": "物理13頁の項の題「2 新型コロナウイルス感染症対策地方税減収補填特別交付金」。OCR が片仮名の「ロ」を漢字の「口」と読んだ。原典の描画で確かめた。"
+          },
+          {
+            "id": "p18-r28",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r28",
+            "observed_name": "閱覧",
+            "corrected_name": "閲覧",
+            "reason": "物理18頁の節「4 境界図閲覧等手数料」。OCR が「閲」を異体の「閱」と読んだ。原典の描画で確かめた。"
+          },
+          {
+            "id": "p35-r30",
+            "page": 35,
+            "observation_id": "p35:full-page:a0:result0:r30",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "物理35頁の目「3 基金運用収入」の折り返しの2行目「入」。OCR が「入」を「人」と読んだ。原典の描画で確かめた。"
+          },
+          {
+            "id": "p35-r69",
+            "page": 35,
+            "observation_id": "p35:full-page:a0:result0:r69",
+            "observed_name": "壳払",
+            "corrected_name": "売払",
+            "reason": "物理35頁の節「1 土地売払収入」。OCR が「売」を簡体の「壳」と読んだ。原典の描画で確かめた。"
+          },
+          {
+            "id": "p35-r80",
+            "page": 35,
+            "observation_id": "p35:full-page:a0:result0:r80",
+            "observed_name": "壳払",
+            "corrected_name": "売払",
+            "reason": "物理35頁の節「1 物品売払収入」。OCR が「売」を簡体の「壳」と読んだ。原典の描画で確かめた。"
+          },
+          {
+            "id": "p36-r4",
+            "page": 36,
+            "observation_id": "p36:full-page:a0:result0:r4",
+            "observed_name": "壳払",
+            "corrected_name": "売払",
+            "reason": "物理36頁の頁の頭の項の題「2 財産売払収入」。OCR が「売」を簡体の「壳」と読んだ。原典の描画で確かめた。"
+          },
+          {
+            "id": "p40-r4",
+            "page": 40,
+            "observation_id": "p40:full-page:a0:result0:r4",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "物理40頁の頁の頭の項の題「4 雑入」の「入」。OCR が「入」を「人」と読んだ。原典の描画で確かめた。"
+          }
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収入率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "説明／説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収入率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。 見開きの右頁の説明の欄の見出しを2段に読む頁があるので、その見出しにも同じ除外を書く。"
+                  }
+                },
+                "日": {
+                  "heading": "目"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "細節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "spread_stacked_tables": true,
+            "unopened_brackets": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    }
+  ]
+}
