@@ -1,0 +1,308 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131016",
+    "fiscal_year": 2021,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8477b068a4d5a998da2614391a1e932fa7d1d5d1693cbcfed3723cb7e6f9dc6e"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-ocr-p45",
+          "origin_sha256": "8477b068a4d5a998da2614391a1e932fa7d1d5d1693cbcfed3723cb7e6f9dc6e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              45
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "1894756e11aa989255eed6316ad2f4349e86565a98f512780e30115da54839d2",
+          "bytes": 102525
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "drifting_spread_rows": true
+          }
+        },
+        "pages": [
+          [
+            8,
+            55
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "general-p45-調定額",
+            "pages": [
+              45
+            ],
+            "box": [
+              57.0,
+              52.0,
+              118.0,
+              80.0
+            ],
+            "text": "調定額",
+            "reason": "物理45頁（寄附金の右頁）は欄の見出しを2行重ねて印字し（調定額・収入済額・不納欠損額・収入未済額を上下に2回）、文字層の読みでは見出しが「調定額調定額」のようにつながり、単位の確かめで款17 寄附金の収入済額が数えられなかった。原典の描画で2回の印字を確かめ、この頁を OCR で読んで升の見出しを1つに宣言する。箱は升の左右の罫の内側、見出しの2行（上端 56pt・下端 77pt）を覆う。"
+          },
+          {
+            "id": "general-p45-収入済額",
+            "pages": [
+              45
+            ],
+            "box": [
+              122.0,
+              52.0,
+              186.0,
+              80.0
+            ],
+            "text": "収入済額",
+            "reason": "物理45頁（寄附金の右頁）は欄の見出しを2行重ねて印字し（調定額・収入済額・不納欠損額・収入未済額を上下に2回）、文字層の読みでは見出しが「調定額調定額」のようにつながり、単位の確かめで款17 寄附金の収入済額が数えられなかった。原典の描画で2回の印字を確かめ、この頁を OCR で読んで升の見出しを1つに宣言する。箱は升の左右の罫の内側、見出しの2行（上端 56pt・下端 77pt）を覆う。"
+          },
+          {
+            "id": "general-p45-不納欠損額",
+            "pages": [
+              45
+            ],
+            "box": [
+              190.0,
+              52.0,
+              252.0,
+              80.0
+            ],
+            "text": "不納欠損額",
+            "reason": "物理45頁（寄附金の右頁）は欄の見出しを2行重ねて印字し（調定額・収入済額・不納欠損額・収入未済額を上下に2回）、文字層の読みでは見出しが「調定額調定額」のようにつながり、単位の確かめで款17 寄附金の収入済額が数えられなかった。原典の描画で2回の印字を確かめ、この頁を OCR で読んで升の見出しを1つに宣言する。箱は升の左右の罫の内側、見出しの2行（上端 56pt・下端 77pt）を覆う。"
+          },
+          {
+            "id": "general-p45-収入未済額",
+            "pages": [
+              45
+            ],
+            "box": [
+              257.0,
+              52.0,
+              320.0,
+              80.0
+            ],
+            "text": "収入未済額",
+            "reason": "物理45頁（寄附金の右頁）は欄の見出しを2行重ねて印字し（調定額・収入済額・不納欠損額・収入未済額を上下に2回）、文字層の読みでは見出しが「調定額調定額」のようにつながり、単位の確かめで款17 寄附金の収入済額が数えられなかった。原典の描画で2回の印字を確かめ、この頁を OCR で読んで升の見出しを1つに宣言する。箱は升の左右の罫の内側、見出しの2行（上端 56pt・下端 77pt）を覆う。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "208ee071672d00d790ed7fa2325f35b1c6ccef51a480b31c86b35f014103ae44"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "drifting_spread_rows": true
+          }
+        },
+        "pages": [
+          [
+            6,
+            21
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a07b565e9646532e43251b1ad17f3b1ee2630787eee61390ab5b6b885f63fecb"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "drifting_spread_rows": true
+          }
+        },
+        "pages": [
+          [
+            6,
+            23
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "acb62c97b2f97eb46f5d0356a2444d0c8ca1578407301cdb9305705e71e6190f"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "drifting_spread_rows": true
+          }
+        },
+        "pages": [
+          [
+            6,
+            17
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-revenue"
+        }
+      ]
+    }
+  ]
+}
