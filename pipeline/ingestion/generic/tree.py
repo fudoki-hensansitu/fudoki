@@ -366,6 +366,8 @@ def _split_code(line_text: str) -> tuple[str | None, str]:
         return None, line_text
     if found and AGE.match(line_text, found.end()):  # `1歳6箇月児健康診査…`: an age in a name
         return None, line_text
+    if found and found.group(0) == found.group(1) and line_text.startswith('世紀', found.end()):
+        return None, line_text  # `21世紀林業創造の森使用料`: a century in a name (not `1.世紀…`, a code set apart)
     if found and READING.match(line_text, found.end()):  # `73（ナナサン）歯科健診事業`: the number's reading, a name
         return None, line_text
     if found and int(unicodedata.normalize('NFKC', found.group(1))) == 0 and document_quirk('zero_codes') is not None:
@@ -886,6 +888,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             last_at[slot] = int(code)
     # The amounts beside a line in the axis's own amount column, where they part the items (the quirk).
     parting = quirk(settings, 'amounts_beside_names')
+    ending = quirk(settings, 'amount_ends_name')  # an amount in the axis's column ends the name beside it
     beside = (lambda line: parting.module.beside(column_amounts, line)) if parting is not None else (lambda line: frozenset())
     result: list[Item] = []
     # A rule-bounded cell with exactly one code is one item.
@@ -922,6 +925,10 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         ordered = sorted(ix)
         slack = 3 + (name_column.module.slack(label) if name_column is not None else 0)
         for position, i in enumerate(ordered):
+            before = entries[ordered[position - 1]][0] if position else None
+            if ending is not None and before and entries[i][0] \
+                    and ending.module.ends(column_amounts, Item(group, before[0].page, [before], None, '', 0), entries[i][0], limit):
+                return False  # the quirk `amount_ends_name`: the name ended on the line before, this line is the next item
             if entries[i][2] is not None or not entries[i][0]:
                 continue
             if not start - 3 <= entries[i][0][0].x0 <= name_start + slack:
@@ -1053,6 +1060,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         left_slack = remainder.module.slack(label) if label and remainder is not None else 3
         wrapped = (previous is not None and code is None and label and not previous.amounts and not marked
                    and not ABOLISHED.fullmatch(label_text)
+                   and not (ending is not None and ending.module.ends(column_amounts, previous, label, limit))
                    and not (beside(label) and any(beside(line) and not beside(line) & beside(label) for line in previous.lines))
                    and label[0].x0 >= previous.lines[0][0].x0 - left_slack
                    and not (headings is not None and headings.module.indented_under(label, previous))
@@ -2168,6 +2176,12 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             if not group.subject:
                 column = [w for band in logical.bands if band.kind == 'amount' and band.header[:1] == (group.axis,)
                           and group.x1 - 1 <= band.x0 for w in band.words if is_amount(w.text)]
+                if not column and group.axis in group.bands[0].header[1:]:
+                    # The axis printed under a heading of its own (`予算現額／節／区分` and `予算現額／節／金額`,
+                    # 栃木県の決算の歳入): its amount column is the band under the same headings.
+                    prefix = group.bands[0].header[:group.bands[0].header.index(group.axis) + 1]
+                    column = [w for band in logical.bands if band.kind == 'amount' and band.header[:len(prefix)] == prefix
+                              and group.x1 - 1 <= band.x0 for w in band.words if is_amount(w.text)]
                 group_items = items(group, header, margins.get(group.axis), roles, limits.get(group.axis), logical.ocr,
                                     bool(layout and layout.get(group.axis, {}).get('amount_brackets')),
                                     (layout or {}).get(group.axis), column_amounts=column)
