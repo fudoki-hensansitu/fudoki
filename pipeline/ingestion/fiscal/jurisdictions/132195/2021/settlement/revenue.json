@@ -1,0 +1,369 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132195",
+    "fiscal_year": 2021,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7df1b95a31143171a52607365f4d2acf5e490cb555852d92ea724e0a4ddd88b7"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "dropped_readings": [
+          {
+            "id": "general-settlement-seam-p1-1",
+            "page": 1,
+            "observation_id": "p1:full-page:a0:result1:r2",
+            "observed": "耳",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（耳）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-settlement-seam-p5-1",
+            "page": 5,
+            "observation_id": "p5:full-page:a0:result1:r0",
+            "observed": "一",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（一）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-settlement-seam-p6-1",
+            "page": 6,
+            "observation_id": "p6:full-page:a0:result1:r0",
+            "observed": "一",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（一）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-settlement-seam-p7-1",
+            "page": 7,
+            "observation_id": "p7:full-page:a0:result1:r0",
+            "observed": "十",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（十）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-settlement-seam-p9-1",
+            "page": 9,
+            "observation_id": "p9:full-page:a0:result1:r0",
+            "observed": "十",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（十）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-settlement-seam-p13-1",
+            "page": 13,
+            "observation_id": "p13:full-page:a0:result1:r0",
+            "observed": "十",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（十）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-settlement-seam-p14-1",
+            "page": 14,
+            "observation_id": "p14:full-page:a0:result1:r0",
+            "observed": "一",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（一）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-settlement-seam-p15-1",
+            "page": 15,
+            "observation_id": "p15:full-page:a0:result1:r0",
+            "observed": "一",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（一）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-settlement-seam-p16-1",
+            "page": 16,
+            "observation_id": "p16:full-page:a0:result1:r0",
+            "observed": "一",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（一）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-settlement-seam-p17-1",
+            "page": 17,
+            "observation_id": "p17:full-page:a0:result1:r0",
+            "observed": "一",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（一）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-settlement-seam-p18-1",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result1:r0",
+            "observed": "一",
+            "reason": "見出しの「算」は頁の縦分割の継ぎ目にかかり、隣の帯が字の一部だけを別の字（一）と読んだ。もう一方の帯が同じ位置を「算」と読んでいるので、この読みは使わない。"
+          },
+          {
+            "id": "general-p19-total-charged-seam",
+            "page": 19,
+            "observation_id": "p19:full-page:a0:result1:r35",
+            "observed": "36,041,503,6183",
+            "reason": "歳入合計の行の調定額は頁の縦分割の継ぎ目にかかり、Paddle は末尾の 3 を二度読んで 36,041,503,6183 とし、二度目の 3 の箱は収入済額の欄に入る。原典の画像で調定額は 36,041,503,618 と印字されている。継ぎ目の読みは使わず、金額を印字の位置で読む。"
+          },
+          {
+            "id": "general-p19-total-digit-0",
+            "page": 19,
+            "observation_id": "p19:digit-0:r0",
+            "observed": "4",
+            "reason": "歳入合計の行の継続費及び繰越事業費繰越財源充当額と予算現額の計は頁の縦分割の継ぎ目にかかり、Paddle は2つの帯で切れた読みを捨て、見落とした墨の読み直しは数字を1つずつ（4、7、4、4）しか読まなかった。原典の画像で繰越財源充当額は 474,260,415、予算現額の計は 36,580,297,415 と印字されている（当初 30,320,000,000＋補正 5,786,037,000＋474,260,415 に合う）。切れた数字の読みは使わず、金額を印字の位置で読む。"
+          },
+          {
+            "id": "general-p19-total-digit-1",
+            "page": 19,
+            "observation_id": "p19:digit-1:r0",
+            "observed": "7",
+            "reason": "歳入合計の行の継続費及び繰越事業費繰越財源充当額と予算現額の計は頁の縦分割の継ぎ目にかかり、Paddle は2つの帯で切れた読みを捨て、見落とした墨の読み直しは数字を1つずつ（4、7、4、4）しか読まなかった。原典の画像で繰越財源充当額は 474,260,415、予算現額の計は 36,580,297,415 と印字されている（当初 30,320,000,000＋補正 5,786,037,000＋474,260,415 に合う）。切れた数字の読みは使わず、金額を印字の位置で読む。"
+          },
+          {
+            "id": "general-p19-total-digit-3",
+            "page": 19,
+            "observation_id": "p19:digit-3:r0",
+            "observed": "4",
+            "reason": "歳入合計の行の継続費及び繰越事業費繰越財源充当額と予算現額の計は頁の縦分割の継ぎ目にかかり、Paddle は2つの帯で切れた読みを捨て、見落とした墨の読み直しは数字を1つずつ（4、7、4、4）しか読まなかった。原典の画像で繰越財源充当額は 474,260,415、予算現額の計は 36,580,297,415 と印字されている（当初 30,320,000,000＋補正 5,786,037,000＋474,260,415 に合う）。切れた数字の読みは使わず、金額を印字の位置で読む。"
+          },
+          {
+            "id": "general-p19-total-digit-4",
+            "page": 19,
+            "observation_id": "p19:digit-4:r0",
+            "observed": "4",
+            "reason": "歳入合計の行の継続費及び繰越事業費繰越財源充当額と予算現額の計は頁の縦分割の継ぎ目にかかり、Paddle は2つの帯で切れた読みを捨て、見落とした墨の読み直しは数字を1つずつ（4、7、4、4）しか読まなかった。原典の画像で繰越財源充当額は 474,260,415、予算現額の計は 36,580,297,415 と印字されている（当初 30,320,000,000＋補正 5,786,037,000＋474,260,415 に合う）。切れた数字の読みは使わず、金額を印字の位置で読む。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "general-settlement-kana-p5-r30",
+            "page": 5,
+            "observation_id": "p5:full-page:a0:result0:r30",
+            "observed_name": "2新型コ口ナ",
+            "corrected_name": "2新型コロナ",
+            "reason": "原典の画像で「コロナ」と印字されている。Paddle はカタカナの「ロ」を漢字の「口」と読んだ。"
+          },
+          {
+            "id": "general-settlement-kana-p5-r37",
+            "page": 5,
+            "observation_id": "p5:full-page:a0:result0:r37",
+            "observed_name": "1 新型コ口ナ",
+            "corrected_name": "1 新型コロナ",
+            "reason": "原典の画像で「コロナ」と印字されている。Paddle はカタカナの「ロ」を漢字の「口」と読んだ。"
+          },
+          {
+            "id": "general-settlement-kana-p5-r42",
+            "page": 5,
+            "observation_id": "p5:full-page:a0:result1:r42",
+            "observed_name": "1新型コ口ナ",
+            "corrected_name": "1新型コロナ",
+            "reason": "原典の画像で「コロナ」と印字されている。Paddle はカタカナの「ロ」を漢字の「口」と読んだ。"
+          },
+          {
+            "id": "general-settlement-kana-p6-r65",
+            "page": 6,
+            "observation_id": "p6:full-page:a0:result1:r65",
+            "observed_name": "1道路橋りよう費",
+            "corrected_name": "1道路橋りょう費",
+            "reason": "原典の画像で「橋りょう」と印字されている。Paddle は小さい「ょ」を「よ」と読んだ。字形の対応表は1字ずつで、よ→ょ は置けないので、この行だけを宣言する。"
+          },
+          {
+            "id": "general-settlement-kana-p8-r28",
+            "page": 8,
+            "observation_id": "p8:full-page:a0:result1:r28",
+            "observed_name": "5市民ホ一ル",
+            "corrected_name": "5市民ホール",
+            "reason": "原典の画像でカタカナの長音「ー」と印字されている。Paddle は漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "general-settlement-kana-p10-r80",
+            "page": 10,
+            "observation_id": "p10:full-page:a0:result1:r80",
+            "observed_name": "1道路橋りよう費",
+            "corrected_name": "1道路橋りょう費",
+            "reason": "原典の画像で「橋りょう」と印字されている。Paddle は小さい「ょ」を「よ」と読んだ。字形の対応表は1字ずつで、よ→ょ は置けないので、この行だけを宣言する。"
+          },
+          {
+            "id": "general-settlement-kana-p14-r16",
+            "page": 14,
+            "observation_id": "p14:full-page:a0:result1:r16",
+            "observed_name": "1道路橋りよう費",
+            "corrected_name": "1道路橋りょう費",
+            "reason": "原典の画像で「橋りょう」と印字されている。Paddle は小さい「ょ」を「よ」と読んだ。字形の対応表は1字ずつで、よ→ょ は置けないので、この行だけを宣言する。"
+          },
+          {
+            "id": "general-settlement-kana-p15-r34",
+            "page": 15,
+            "observation_id": "p15:full-page:a0:result1:r34",
+            "observed_name": "1道路橋りよう費",
+            "corrected_name": "1道路橋りょう費",
+            "reason": "原典の画像で「橋りょう」と印字されている。Paddle は小さい「ょ」を「よ」と読んだ。字形の対応表は1字ずつで、よ→ょ は置けないので、この行だけを宣言する。"
+          },
+          {
+            "id": "general-settlement-kana-p16-r62",
+            "page": 16,
+            "observation_id": "p16:full-page:a0:result1:r62",
+            "observed_name": "5新型コ口ナ",
+            "corrected_name": "5新型コロナ",
+            "reason": "原典の画像で「コロナ」と印字されている。Paddle はカタカナの「ロ」を漢字の「口」と読んだ。"
+          },
+          {
+            "id": "general-settlement-kana-p18-r31",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r31",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原典の画像で「入」（字間を空けた「繰入金」「雑入」）と印字されている。Paddle は「入」を「人」と読んだ。"
+          },
+          {
+            "id": "general-settlement-p17-r33",
+            "page": 17,
+            "observation_id": "p17:full-page:a0:result0:r33",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "原典の画像で款の名前は「諸収入」と印字されている。字の間が空いた款の名前で、Paddle は入を人と読んだ"
+          },
+          {
+            "id": "general-settlement-p16-r22",
+            "page": 16,
+            "observation_id": "p16:full-page:a0:result1:r22",
+            "observed_name": "1 物品壳払収入",
+            "corrected_name": "1 物品売払収入",
+            "reason": "原典の画像では日本の字形で「売」と印字されている。Paddle は中国語の字形（壳）で読んだ"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "general-p19-total-charged",
+            "page": 19,
+            "boxes": [
+              [
+                507.0,
+                533.0,
+                568.0,
+                541.0
+              ]
+            ],
+            "amount": "36,041,503,618",
+            "reason": "歳入合計の行の調定額は頁の縦分割の継ぎ目にかかり、Paddle は末尾の 3 を二度読んで 36,041,503,6183 とし、二度目の 3 の箱は収入済額の欄に入る。原典の画像で調定額は 36,041,503,618 と印字されている。継ぎ目の読みは使わず、金額を印字の位置で読む。"
+          },
+          {
+            "id": "general-p19-total-carried",
+            "page": 19,
+            "boxes": [
+              [
+                250.0,
+                533.0,
+                296.0,
+                541.0
+              ]
+            ],
+            "amount": "474,260,415",
+            "reason": "歳入合計の行の継続費及び繰越事業費繰越財源充当額と予算現額の計は頁の縦分割の継ぎ目にかかり、Paddle は2つの帯で切れた読みを捨て、見落とした墨の読み直しは数字を1つずつ（4、7、4、4）しか読まなかった。原典の画像で繰越財源充当額は 474,260,415、予算現額の計は 36,580,297,415 と印字されている（当初 30,320,000,000＋補正 5,786,037,000＋474,260,415 に合う）。切れた数字の読みは使わず、金額を印字の位置で読む。"
+          },
+          {
+            "id": "general-p19-total-budget",
+            "page": 19,
+            "boxes": [
+              [
+                300.0,
+                533.0,
+                364.0,
+                541.0
+              ]
+            ],
+            "amount": "36,580,297,415",
+            "reason": "歳入合計の行の継続費及び繰越事業費繰越財源充当額と予算現額の計は頁の縦分割の継ぎ目にかかり、Paddle は2つの帯で切れた読みを捨て、見落とした墨の読み直しは数字を1つずつ（4、7、4、4）しか読まなかった。原典の画像で繰越財源充当額は 474,260,415、予算現額の計は 36,580,297,415 と印字されている（当初 30,320,000,000＋補正 5,786,037,000＋474,260,415 に合う）。切れた数字の読みは使わず、金額を印字の位置で読む。"
+          }
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額に含む還付未済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "revenue-general-ocr-1",
+          "origin_sha256": "7df1b95a31143171a52607365f4d2acf5e490cb555852d92ea724e0a4ddd88b7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215,
+            "config": {
+              "page_strips": 3
+            }
+          },
+          "sha256": "757cd4826a35498cb19ff2a06abc261a2929263291adcd646a3b051cacf06ff5",
+          "bytes": 4360255
+        },
+        {
+          "id": "revenue-general-ocr-2",
+          "origin_sha256": "7df1b95a31143171a52607365f4d2acf5e490cb555852d92ea724e0a4ddd88b7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215,
+            "config": {
+              "page_strips": 3
+            }
+          },
+          "sha256": "4daa2965bb39a5aea8ce658bb90f6815c4a4503d6da2e1495011e64c39a40efa",
+          "bytes": 3668372
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    }
+  ]
+}

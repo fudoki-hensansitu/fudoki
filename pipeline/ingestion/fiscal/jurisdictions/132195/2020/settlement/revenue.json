@@ -1,0 +1,230 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132195",
+    "fiscal_year": 2020,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ee019afcb9bfa23c8ba50f016ed54affc8a60e34c9d2d41d6a36bbfdaac72bb8"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "name_corrections": [
+          {
+            "id": "general-settlement-kana-p6-r43",
+            "page": 6,
+            "observation_id": "p6:full-page:a0:result1:r43",
+            "observed_name": "1道路橋りよう費",
+            "corrected_name": "1道路橋りょう費",
+            "reason": "原典の画像で「橋りょう」と印字されている。Paddle は小さい「ょ」を「よ」と読んだ。字形の対応表は1字ずつで、よ→ょ は置けないので、この行だけを宣言する。"
+          },
+          {
+            "id": "general-settlement-kana-p7-r64",
+            "page": 7,
+            "observation_id": "p7:full-page:a0:result1:r64",
+            "observed_name": "5市民ホ一ル",
+            "corrected_name": "5市民ホール",
+            "reason": "原典の画像でカタカナの長音「ー」と印字されている。Paddle は漢数字の「一」と読んだ。"
+          },
+          {
+            "id": "general-settlement-kana-p10-r51",
+            "page": 10,
+            "observation_id": "p10:full-page:a0:result1:r51",
+            "observed_name": "1道路橋りよう費",
+            "corrected_name": "1道路橋りょう費",
+            "reason": "原典の画像で「橋りょう」と印字されている。Paddle は小さい「ょ」を「よ」と読んだ。字形の対応表は1字ずつで、よ→ょ は置けないので、この行だけを宣言する。"
+          },
+          {
+            "id": "general-settlement-kana-p13-r56",
+            "page": 13,
+            "observation_id": "p13:full-page:a0:result1:r56",
+            "observed_name": "1道路橋りよう費",
+            "corrected_name": "1道路橋りょう費",
+            "reason": "原典の画像で「橋りょう」と印字されている。Paddle は小さい「ょ」を「よ」と読んだ。字形の対応表は1字ずつで、よ→ょ は置けないので、この行だけを宣言する。"
+          },
+          {
+            "id": "general-settlement-kana-p14-r77",
+            "page": 14,
+            "observation_id": "p14:full-page:a0:result1:r77",
+            "observed_name": "1道路橋りよう費",
+            "corrected_name": "1道路橋りょう費",
+            "reason": "原典の画像で「橋りょう」と印字されている。Paddle は小さい「ょ」を「よ」と読んだ。字形の対応表は1字ずつで、よ→ょ は置けないので、この行だけを宣言する。"
+          }
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額に含む還付未済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "strip_rereads": true
+          }
+        },
+        "amount_readings": [
+          {
+            "id": "general-p19-total-charged",
+            "page": 19,
+            "boxes": [
+              [
+                507.0,
+                531.0,
+                570.0,
+                540.0
+              ]
+            ],
+            "amount": "40,834,618,594",
+            "reason": "歳入合計の行の調定額と収入済額は頁の縦分割の継ぎ目にかかり、Paddle は2つの帯で切れた読みを捨てて読まなかった。原典の画像で調定額は 40,834,618,594、収入済額は 40,631,900,151 と印字されている。金額を印字の位置で読む。"
+          },
+          {
+            "id": "general-p19-total-received",
+            "page": 19,
+            "boxes": [
+              [
+                572.0,
+                531.0,
+                633.0,
+                540.0
+              ]
+            ],
+            "amount": "40,631,900,151",
+            "reason": "歳入合計の行の調定額と収入済額は頁の縦分割の継ぎ目にかかり、Paddle は2つの帯で切れた読みを捨てて読まなかった。原典の画像で調定額は 40,834,618,594、収入済額は 40,631,900,151 と印字されている。金額を印字の位置で読む。"
+          }
+        ],
+        "amount_corrections": [
+          {
+            "id": "general-p8-carried-r31",
+            "page": 8,
+            "observation_id": "p8:full-page:a0:result0:r31",
+            "observed_amount": "27, 783,00",
+            "corrected_amount": "27,783,000",
+            "reason": "継続費及び繰越事業費繰越財源充当額の欄は頁の縦分割の継ぎ目にかかり、左の帯は末尾の 0 を1つ欠いて読んだ（右の帯の読みは quirk strip_rereads が捨てる）。原典の画像で 27,783,000 と印字されている。"
+          },
+          {
+            "id": "general-p9-carried-r24",
+            "page": 9,
+            "observation_id": "p9:full-page:a0:result0:r24",
+            "observed_amount": "74, 899, 00",
+            "corrected_amount": "74,899,000",
+            "reason": "継続費及び繰越事業費繰越財源充当額の欄は頁の縦分割の継ぎ目にかかり、左の帯は末尾の 0 を1つ欠いて読んだ（右の帯の読みは quirk strip_rereads が捨てる）。原典の画像で 74,899,000 と印字されている。"
+          },
+          {
+            "id": "general-p11-carried-r23",
+            "page": 11,
+            "observation_id": "p11:full-page:a0:result0:r23",
+            "observed_amount": "4, 785,00",
+            "corrected_amount": "4,785,000",
+            "reason": "継続費及び繰越事業費繰越財源充当額の欄は頁の縦分割の継ぎ目にかかり、左の帯は末尾の 0 を1つ欠いて読んだ（右の帯の読みは quirk strip_rereads が捨てる）。原典の画像で 4,785,000 と印字されている。"
+          },
+          {
+            "id": "general-p11-carried-r27",
+            "page": 11,
+            "observation_id": "p11:full-page:a0:result0:r27",
+            "observed_amount": "4, 785,00",
+            "corrected_amount": "4,785,000",
+            "reason": "継続費及び繰越事業費繰越財源充当額の欄は頁の縦分割の継ぎ目にかかり、左の帯は末尾の 0 を1つ欠いて読んだ（右の帯の読みは quirk strip_rereads が捨てる）。原典の画像で 4,785,000 と印字されている。"
+          },
+          {
+            "id": "general-p18-carried-r28",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r28",
+            "observed_amount": "406, 600, 00",
+            "corrected_amount": "406,600,000",
+            "reason": "継続費及び繰越事業費繰越財源充当額の欄は頁の縦分割の継ぎ目にかかり、左の帯は末尾の 0 を1つ欠いて読んだ（右の帯の読みは quirk strip_rereads が捨てる）。原典の画像で 406,600,000 と印字されている。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "revenue-general-ocr-1",
+          "origin_sha256": "ee019afcb9bfa23c8ba50f016ed54affc8a60e34c9d2d41d6a36bbfdaac72bb8",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215,
+            "config": {
+              "page_strips": 3
+            }
+          },
+          "sha256": "4f8ff02578f5460f11cd8b91eb7dcfba6ec798baf2f99d3d3b7b1dab381c0c06",
+          "bytes": 4502838
+        },
+        {
+          "id": "revenue-general-ocr-2",
+          "origin_sha256": "ee019afcb9bfa23c8ba50f016ed54affc8a60e34c9d2d41d6a36bbfdaac72bb8",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215,
+            "config": {
+              "page_strips": 3
+            }
+          },
+          "sha256": "12c9885f9dc56272a643ad62232820fd305c930af533497814a01059e93a979b",
+          "bytes": 3649857
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    }
+  ]
+}
