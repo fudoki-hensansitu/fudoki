@@ -2139,6 +2139,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     skipped: list[Logical] = []
     gaps = document_quirk('code_gap_wraps')
     labelled = document_quirk('labelled_amount_cells')
+    uncounted = document_quirk('uncounted_subject_lines')
     open_headings: dict[str, tuple[int, float]] = {}  # per axis: the depth and line start of the open department heading
     summing: dict[str, list] = {}  # per axis: the depth, amount and items' sum so far of the open declared heading
     for logical in logicals:
@@ -2189,6 +2190,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     group_items = centered.module.regroup(group_items)
                 if (digit_set := quirk(document, 'digit_set_codes')) is not None:
                     digit_set.module.measure(group_items, digit_set.value)
+            if group.subject and uncounted is not None:
+                group_items = uncounted.module.split(uncounted.value, group_items)
             for position, item in enumerate(group_items):
                 # 01.01.01.01から流用 starts with digits. A parenthesised remark joined to an item's
                 # name (`需用費（同事業、委託料へ流用 △1,815,000）`) does not make the item a note.
@@ -2197,6 +2200,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     item.role = 'annotation'  # a transfer note annotates the subject row
                 elif item.code is None and TOTAL.search(item.name):
                     item.role = 'total'
+                elif (group.subject and item.code is None and uncounted is not None
+                      and uncounted.module.declared(uncounted.value, item.name) is not None):
+                    item.role = 'total'  # a group of 款 or a part of one printed again: the quirk `uncounted_subject_lines`
                 elif item.code is None and not item.amounts and not group.subject:
                     item.heading = heads_items(layout, group_items, position)
                     item.role = 'node' if item.heading else 'note'

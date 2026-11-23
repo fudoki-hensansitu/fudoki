@@ -1,0 +1,81 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "092011",
+    "fiscal_year": 2020,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "f8640496c40bcba2eba3b9c6012b87d79c18b80b601292bb9e4a378c271d3548"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "区分": {
+                  "heading": "款"
+                },
+                "令和2年度／決算額": {
+                  "heading": "決算額"
+                },
+                "令和元年度／決算額": {
+                  "heading": "前年度決算額"
+                },
+                "令和2年度／構成比": {
+                  "kind": "ignore"
+                },
+                "令和元年度／構成比": {
+                  "kind": "ignore"
+                },
+                "増減／増減額": {
+                  "heading": "比較"
+                },
+                "増減／増減率": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {}
+          },
+          "quirks": {
+            "code_between_name_lines": true,
+            "glued_subject_codes": true,
+            "rounded_items": true,
+            "uncounted_subject_lines": [
+              {
+                "name": "うち臨時財政対策債",
+                "kind": "経費内訳",
+                "reason": "市債の下に「うち」と印字した臨時財政対策債の額。市債の額の一部を再掲したもので、款の和には入れない。"
+              }
+            ]
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,149 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "092011",
+    "fiscal_year": 2021,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "a0c80ed5ae2ce99169a6be9199c080b3d783dc3dade524d2b0b4338a686d1ef3"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "pages": [
+          [
+            2,
+            2
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "general-revenue-p2-kan7",
+            "page": 2,
+            "code": "7",
+            "observed_name": "地方消費税交付金ゴルフ場利用税",
+            "corrected_name": "地方消費税交付金",
+            "reason": "原画は番号7の枠に「地方消費税」「交付金」の2行。OCR の行の組み立てが次の款8の1行目「ゴルフ場利用税」をこの款の名前に付けた。"
+          },
+          {
+            "id": "general-revenue-p2-kan8",
+            "page": 2,
+            "code": "8",
+            "observed_name": "交付金",
+            "corrected_name": "ゴルフ場利用税交付金",
+            "reason": "原画は番号8の枠に「ゴルフ場利用税」「交付金」の2行。1行目が上の款7の名前に付き、2行目だけが残った。"
+          },
+          {
+            "id": "general-revenue-p2-kan21",
+            "page": 2,
+            "code": "21",
+            "observed_name": "繰人金",
+            "corrected_name": "繰入金",
+            "reason": "原画は「繰入金」。OCR が「入」を「人」と読んだ。"
+          }
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "区分": {
+                  "heading": "款"
+                },
+                "令和3年度／決算額": {
+                  "heading": "決算額"
+                },
+                "令和2年度／決算額": {
+                  "heading": "前年度決算額"
+                },
+                "令和3年度／構成比": {
+                  "kind": "ignore"
+                },
+                "令和2年度／構成比": {
+                  "kind": "ignore"
+                },
+                "増減／増減額": {
+                  "heading": "比較"
+                },
+                "増減／増減率": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {}
+          },
+          "quirks": {
+            "code_between_name_lines": true,
+            "glued_subject_codes": true,
+            "rounded_items": true,
+            "uncounted_subject_lines": [
+              {
+                "name": "うち臨時財政対策債",
+                "kind": "経費内訳",
+                "reason": "市債の下に「うち」と印字した臨時財政対策債の額。市債の額の一部を再掲したもので、款の和には入れない。"
+              }
+            ]
+          }
+        },
+        "rule_ink": [
+          {
+            "id": "p2-dotted-rule",
+            "page": 2,
+            "boxes": [
+              [
+                162.5,
+                685.0,
+                278.5,
+                699.0
+              ],
+              [
+                283.5,
+                685.0,
+                531.5,
+                699.0
+              ]
+            ],
+            "reason": "市債の行と「うち臨時財政対策債」の行の間の点線の罫。原画で数字の無い点線と確かめた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-settlement-ocr-1",
+          "origin_sha256": "a0c80ed5ae2ce99169a6be9199c080b3d783dc3dade524d2b0b4338a686d1ef3",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              2
+            ]
+          },
+          "sha256": "977c57e86bb8543bb1074409ed6f4bc859f068daec1a8a24f1bca89245abb559",
+          "bytes": 495366
+        }
+      ]
+    }
+  ]
+}
