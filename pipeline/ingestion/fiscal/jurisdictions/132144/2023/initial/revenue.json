@@ -1,0 +1,310 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132144",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "4a6ac9bd14285d6c2164b6bdb8ccfbe06c0004c8603d284a7682a56904ed78e6"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-ocr-1",
+          "origin_sha256": "4a6ac9bd14285d6c2164b6bdb8ccfbe06c0004c8603d284a7682a56904ed78e6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "d70f4d99b46a378e4244ff01411071aadfabfab8be43fb809d66b272579d4197",
+          "bytes": 2110944
+        },
+        {
+          "id": "general-revenue-ocr-2",
+          "origin_sha256": "4a6ac9bd14285d6c2164b6bdb8ccfbe06c0004c8603d284a7682a56904ed78e6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "89fc82f8b56fe2636e273e4fc776a3149d83884a18429896a6bb58b8005e5b12",
+          "bytes": 2647165
+        },
+        {
+          "id": "general-revenue-ocr-3",
+          "origin_sha256": "4a6ac9bd14285d6c2164b6bdb8ccfbe06c0004c8603d284a7682a56904ed78e6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "f41d95d1c3abe39a3fce6c8cf535f614fae2ad34e2ad36ba7de67cb18c63e894",
+          "bytes": 3232048
+        },
+        {
+          "id": "general-revenue-ocr-4",
+          "origin_sha256": "4a6ac9bd14285d6c2164b6bdb8ccfbe06c0004c8603d284a7682a56904ed78e6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              60,
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "58ed8a02a9c70d9b7cd26323f0d46a67882fc3952b7ea1744bb30d052f45f097",
+          "bytes": 3267976
+        },
+        {
+          "id": "general-revenue-ocr-5",
+          "origin_sha256": "4a6ac9bd14285d6c2164b6bdb8ccfbe06c0004c8603d284a7682a56904ed78e6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              70,
+              71,
+              72,
+              73,
+              74,
+              75,
+              76,
+              77,
+              78,
+              79
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "f35c3926e5821defc6393043f154009563d2b68a1dc74cb0fc958a37f8e60b78",
+          "bytes": 2848862
+        },
+        {
+          "id": "general-revenue-ocr-6",
+          "origin_sha256": "4a6ac9bd14285d6c2164b6bdb8ccfbe06c0004c8603d284a7682a56904ed78e6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              80,
+              81,
+              82,
+              83,
+              84,
+              85,
+              86,
+              87,
+              88,
+              89
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "b60615df7a831380d69e51517aa8c5adad13411d1eb8800c556d728d4fcab0d7",
+          "bytes": 2122628
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "pages": [
+          [
+            30,
+            89
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true,
+                "agree_all_frames": true
+              },
+              "columns": {
+                "本年度(前年度)(比較)": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ]
+                },
+                "本年度(前年度)／(比較)": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ]
+                },
+                "節／区分": {
+                  "axis_header": "節"
+                },
+                "節／金額": {
+                  "axis_header": "節"
+                },
+                "金額": {
+                  "axis_header": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・税率・補助率・件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "説／明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・税率・補助率・件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "明／説": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・税率・補助率・件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 180,
+                "skewed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "bracket_marks": true,
+            "letter_spaced_lines": true,
+            "partial_headings": true,
+            "rule_ink": true,
+            "specks": true,
+            "stacked_digits": true,
+            "stacked_tables_apart": true,
+            "unopened_brackets": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p32-r42",
+            "page": 32,
+            "observation_id": "p32:full-page:a0:result0:r42",
+            "observed": "目",
+            "reason": "原画では重ねて刷った表の見出し「目」。この読みが名前だけの目の行になるので除く（見出しは他の欄の語で読める）。"
+          },
+          {
+            "id": "p36-ink-4-r0",
+            "page": 36,
+            "observation_id": "p36:ink-4:a4:result0:r0",
+            "observed": "一0",
+            "reason": "原画は前年度・比較の金額の前に上下に並べた開き括弧「(」2つ。読み直したインクが2つの括弧を1つの数字と読み、金額の欄の行になるので、この読みを除く。"
+          },
+          {
+            "id": "p48-ink-2-r0",
+            "page": 48,
+            "observation_id": "p48:ink-2:a2:result0:r0",
+            "observed": "C0",
+            "reason": "原画は前年度・比較の金額の前に上下に並べた開き括弧「(」2つ。読み直したインクが2つの括弧を1つの数字と読み、金額の欄の行になるので、この読みを除く。"
+          },
+          {
+            "id": "p68-ink-2-r0",
+            "page": 68,
+            "observation_id": "p68:ink-2:a2:result0:r0",
+            "observed": "一0",
+            "reason": "原画は前年度・比較の金額の前に上下に並べた開き括弧「(」2つ。読み直したインクが2つの括弧を1つの数字と読み、金額の欄の行になるので、この読みを除く。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    }
+  ]
+}
