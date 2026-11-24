@@ -150,6 +150,649 @@
           "table_id": "general-initial"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6551f930b026041f636e23fa9b76a6c019fe7b08bf0c3d8a83923e8709729eae"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "facing_pages",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "name_tails_over_pages": true
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "amount_brackets": true,
+                  "yen_marked": true,
+                  "yen_notes": true
+                },
+                "quirks": {
+                  "headings": true,
+                  "column_edge": true,
+                  "line_starts": [
+                    {
+                      "page": 23,
+                      "y": 423.0,
+                      "shift": -3.0,
+                      "reason": "原画で番号の後にカタカナで始まる名前を、OCR が最初の字の墨の位置（約4pt右）から測り、同じ段の兄弟の名前より右の段に読む。番号の位置に合わせて3pt 左に戻す。"
+                    },
+                    {
+                      "page": 23,
+                      "y": 568.9,
+                      "shift": -3.0,
+                      "reason": "原画で番号の後にカタカナで始まる名前を、OCR が最初の字の墨の位置（約4pt右）から測り、同じ段の兄弟の名前より右の段に読む。番号の位置に合わせて3pt 左に戻す。"
+                    },
+                    {
+                      "page": 23,
+                      "y": 745.5,
+                      "shift": -3.0,
+                      "reason": "原画で番号の後にカタカナで始まる名前を、OCR が最初の字の墨の位置（約4pt右）から測り、同じ段の兄弟の名前より右の段に読む。番号の位置に合わせて3pt 左に戻す。"
+                    },
+                    {
+                      "page": 35,
+                      "y": 213.6,
+                      "shift": 4.5,
+                      "reason": "OCR の箱では番号が4〜5pt 手前から始まり、1段浅く読まれる。同じ事業の他の頁と同じ段（番号の位置）に戻す。"
+                    },
+                    {
+                      "page": 47,
+                      "y": 224.8,
+                      "shift": 3.0,
+                      "reason": "原画の「その他共同事業事務費拠出金（保険年金課）」は、事業の1段下に印字される。この頁は事業の行が約4.5pt 右に読まれ、差が小さく同じ段に読まれるので、3pt 右に寄せて印字の段に戻す。"
+                    },
+                    {
+                      "page": 47,
+                      "y": 213.6,
+                      "shift": -4.5,
+                      "reason": "この頁の事業の行「その他共同事業事務費拠出金」は、OCR の箱が約4.5pt 右に読まれ、1段目と2段目の間に入る。ほかの事業と同じ段（番号の位置）に戻す。"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "repairs": [
+            "em_boxes",
+            "line_clips",
+            "spaced_codes"
+          ],
+          "quirks": {
+            "spaced_ocr_codes": true
+          }
+        },
+        "pages": [
+          [
+            22,
+            59
+          ]
+        ],
+        "excluded_boxes": [
+          {
+            "id": "p56-reserve-amount",
+            "page": 56,
+            "bbox": [
+              178,
+              212,
+              216,
+              228
+            ],
+            "kind": "親の繰り返し",
+            "reason": "予備費の節の欄の金額。予備費は節の区分を印字せず金額だけを印字し、その額は目（予備費）の額と同じ。"
+          },
+          {
+            "id": "p59-reserve-amount",
+            "page": 59,
+            "bbox": [
+              172.0,
+              211.0,
+              205.0,
+              227.0
+            ],
+            "kind": "親の繰り返し",
+            "reason": "予備費の節の欄の金額。予備費は節の区分を印字せず金額だけを印字し、その額は目（予備費）の額と同じ。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-initial-ocr-1",
+          "origin_sha256": "6551f930b026041f636e23fa9b76a6c019fe7b08bf0c3d8a83923e8709729eae",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "326dd3919a0e0903f4f31aa1f9890b93a88707ab35a5f154327b627522444749",
+          "bytes": 3751717
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6551f930b026041f636e23fa9b76a6c019fe7b08bf0c3d8a83923e8709729eae"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "facing_pages",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "name_tails_over_pages": true
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "amount_brackets": true,
+                  "yen_marked": true,
+                  "yen_notes": true
+                },
+                "quirks": {
+                  "headings": true,
+                  "column_edge": true
+                }
+              }
+            }
+          },
+          "repairs": [
+            "em_boxes",
+            "line_clips",
+            "spaced_codes"
+          ],
+          "quirks": {
+            "spaced_ocr_codes": true
+          }
+        },
+        "pages": [
+          [
+            92,
+            123
+          ]
+        ],
+        "excluded_boxes": [
+          {
+            "id": "p122-reserve-amount",
+            "page": 122,
+            "bbox": [
+              178,
+              212,
+              216,
+              228
+            ],
+            "kind": "親の繰り返し",
+            "reason": "予備費の節の欄の金額。予備費は節の区分を印字せず金額だけを印字し、その額は目（予備費）の額と同じ。"
+          },
+          {
+            "id": "p123-reserve-amount",
+            "page": 123,
+            "bbox": [
+              172.0,
+              211.0,
+              205.0,
+              227.0
+            ],
+            "kind": "親の繰り返し",
+            "reason": "予備費の節の欄の金額。予備費は節の区分を印字せず金額だけを印字し、その額は目（予備費）の額と同じ。"
+          },
+          {
+            "id": "p97-unit-price-note",
+            "page": 97,
+            "bbox": [
+              260.0,
+              400.0,
+              302.0,
+              415.0
+            ],
+            "kind": "本文",
+            "reason": "積算の注記（主任調査員報酬 193,400円×2人×12月）の金額。節の金額の列ではない。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p102-service",
+            "page": 102,
+            "code": "1",
+            "y": 183.1,
+            "observed_name": "高額医療合算介護サ一ビス費",
+            "corrected_name": "高額医療合算介護サービス費",
+            "reason": "OCR は長音符「ー」を漢数字の「一」と読んだ。原画の印字は「高額医療合算介護サービス費」。"
+          },
+          {
+            "id": "p109-leader",
+            "page": 109,
+            "code": "12",
+            "y": 350.1,
+            "observed_name": "介護予防リーダ一養成講座委託料",
+            "corrected_name": "介護予防リーダー養成講座委託料",
+            "reason": "OCR は長音符「ー」を漢数字の「一」と読んだ。原画の印字は「介護予防リーダー養成講座委託料」。"
+          },
+          {
+            "id": "p111-center-1",
+            "page": 111,
+            "code": "1",
+            "y": 464.3,
+            "observed_name": "地域包括支援センタ一事業費",
+            "corrected_name": "地域包括支援センター事業費",
+            "reason": "OCR は長音符「ー」を漢数字の「一」と読んだ。原画の印字は「地域包括支援センター事業費」。"
+          },
+          {
+            "id": "p111-center-2",
+            "page": 111,
+            "code": "1",
+            "y": 475.1,
+            "observed_name": "地域包括支援センタ一事業(介護福祉課)",
+            "corrected_name": "地域包括支援センター事業(介護福祉課)",
+            "reason": "OCR は長音符「ー」を漢数字の「一」と読んだ。原画の印字は「地域包括支援センター事業（介護福祉課）」。"
+          },
+          {
+            "id": "p111-center-3",
+            "page": 111,
+            "code": "1",
+            "y": 485.4,
+            "observed_name": "地域包括支援センタ一運営協議会委員報酬",
+            "corrected_name": "地域包括支援センター運営協議会委員報酬",
+            "reason": "OCR は長音符「ー」を漢数字の「一」と読んだ。原画の印字は「地域包括支援センター運営協議会委員報酬」。"
+          },
+          {
+            "id": "p111-center-4",
+            "page": 111,
+            "code": "12",
+            "y": 537.3,
+            "observed_name": "委託型地域包括支援センタ一委託料",
+            "corrected_name": "委託型地域包括支援センター委託料",
+            "reason": "OCR は長音符「ー」を漢数字の「一」と読んだ。原画の印字は「委託型地域包括支援センター委託料」。"
+          },
+          {
+            "id": "p113-cafe",
+            "page": 113,
+            "code": "18",
+            "y": 298.3,
+            "observed_name": "認知症力フェ運営補助金",
+            "corrected_name": "認知症カフェ運営補助金",
+            "reason": "OCR は片仮名の「カ」を漢字の「力」と読んだ。原画の印字は「認知症カフェ運営補助金」。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-initial-ocr-1",
+          "origin_sha256": "6551f930b026041f636e23fa9b76a6c019fe7b08bf0c3d8a83923e8709729eae",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              92,
+              93,
+              94,
+              95,
+              96,
+              97,
+              98,
+              99,
+              100,
+              101,
+              102,
+              103,
+              104,
+              105,
+              106,
+              107,
+              108,
+              109,
+              110,
+              111,
+              112,
+              113,
+              114,
+              115,
+              116,
+              117,
+              118,
+              119,
+              120,
+              121,
+              122,
+              123
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "01950b362250cdaec98f8b63f6f64fe36426ed227516ec8b2f2c685657c39cb6",
+          "bytes": 4127759
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6551f930b026041f636e23fa9b76a6c019fe7b08bf0c3d8a83923e8709729eae"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "facing_pages",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "name_tails_over_pages": true
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "amount_brackets": true,
+                  "yen_marked": true,
+                  "yen_notes": true
+                },
+                "quirks": {
+                  "headings": true,
+                  "column_edge": true,
+                  "line_starts": [
+                    {
+                      "page": 155,
+                      "y": 391.8,
+                      "shift": -3.0,
+                      "reason": "原画で番号の後にカタカナで始まる名前を、OCR が最初の字の墨の位置（約4pt右）から測り、同じ段の兄弟の名前より右の段に読む。番号の位置に合わせて3pt 左に戻す。"
+                    },
+                    {
+                      "page": 155,
+                      "y": 402.2,
+                      "shift": -3.0,
+                      "reason": "原画で番号の後にカタカナで始まる名前を、OCR が最初の字の墨の位置（約4pt右）から測り、同じ段の兄弟の名前より右の段に読む。番号の位置に合わせて3pt 左に戻す。"
+                    },
+                    {
+                      "page": 157,
+                      "y": 349.9,
+                      "shift": -3.0,
+                      "reason": "原画で番号の後にカタカナで始まる名前を、OCR が最初の字の墨の位置（約4pt右）から測り、同じ段の兄弟の名前より右の段に読む。番号の位置に合わせて3pt 左に戻す。"
+                    },
+                    {
+                      "page": 159,
+                      "y": 287.5,
+                      "shift": 2.0,
+                      "reason": "原画で保険料軽減措置負担金の内訳（審査支払手数料分ほか4行）は、1段深く（約5pt右に）印字される。OCR の箱の差は約4.5pt で同じ段に読まれるので、2pt 右に寄せて印字の段に戻す。"
+                    },
+                    {
+                      "page": 159,
+                      "y": 297.8,
+                      "shift": 2.0,
+                      "reason": "原画で保険料軽減措置負担金の内訳（審査支払手数料分ほか4行）は、1段深く（約5pt右に）印字される。OCR の箱の差は約4.5pt で同じ段に読まれるので、2pt 右に寄せて印字の段に戻す。"
+                    },
+                    {
+                      "page": 159,
+                      "y": 308.1,
+                      "shift": 2.0,
+                      "reason": "原画で保険料軽減措置負担金の内訳（審査支払手数料分ほか4行）は、1段深く（約5pt右に）印字される。OCR の箱の差は約4.5pt で同じ段に読まれるので、2pt 右に寄せて印字の段に戻す。"
+                    },
+                    {
+                      "page": 159,
+                      "y": 318.4,
+                      "shift": 2.0,
+                      "reason": "原画で保険料軽減措置負担金の内訳（審査支払手数料分ほか4行）は、1段深く（約5pt右に）印字される。OCR の箱の差は約4.5pt で同じ段に読まれるので、2pt 右に寄せて印字の段に戻す。"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "repairs": [
+            "em_boxes",
+            "line_clips",
+            "spaced_codes"
+          ],
+          "quirks": {
+            "spaced_ocr_codes": true
+          }
+        },
+        "pages": [
+          [
+            154,
+            169
+          ]
+        ],
+        "excluded_boxes": [
+          {
+            "id": "p168-reserve-amount",
+            "page": 168,
+            "bbox": [
+              178,
+              212,
+              216,
+              228
+            ],
+            "kind": "親の繰り返し",
+            "reason": "予備費の節の欄の金額。予備費は節の区分を印字せず金額だけを印字し、その額は目（予備費）の額と同じ。"
+          },
+          {
+            "id": "p169-reserve-amount",
+            "page": 169,
+            "bbox": [
+              172.0,
+              211.0,
+              205.0,
+              227.0
+            ],
+            "kind": "親の繰り返し",
+            "reason": "予備費の節の欄の金額。予備費は節の区分を印字せず金額だけを印字し、その額は目（予備費）の額と同じ。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p157-account",
+            "page": 157,
+            "code": null,
+            "y": 339.8,
+            "observed_name": "ロ座振替データ伝送委託料",
+            "corrected_name": "口座振替データ伝送委託料",
+            "reason": "OCR は漢字の「口」を片仮名の「ロ」と読んだ。原画の印字は「口座振替データ伝送委託料」（同じ事業の国民健康保険・介護保険の行と同じ）。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-initial-ocr-1",
+          "origin_sha256": "6551f930b026041f636e23fa9b76a6c019fe7b08bf0c3d8a83923e8709729eae",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              154,
+              155,
+              156,
+              157,
+              158,
+              159,
+              160,
+              161,
+              162,
+              163,
+              164,
+              165,
+              166,
+              167,
+              168,
+              169
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "97db84d68cc705d45a6451b4906b95abcbf75740009beb59e3c144121ff063f6",
+          "bytes": 1445629
+        }
+      ]
     }
   ]
 }
