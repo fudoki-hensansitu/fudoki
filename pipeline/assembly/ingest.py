@@ -124,7 +124,7 @@ def to_lines(page: str) -> list[str]:
     parts = page.split('ここから本文です')
     t = parts[1] if len(parts) > 1 else page
     # 本文の後ろは問い合わせ先の枠（<p class="add">）と script。発言に「お問い合わせ先」と出ても切らないよう、文字ではなく枠で切る
-    t = re.split(r'<p class="add">|<script', t, maxsplit=1)[0]
+    t = re.split(r'<p class="add">|<script\b', t, maxsplit=1, flags=re.I)[0]
     t = re.sub(r'<br\s*/?>', '\n', t, flags=re.I)
     t = re.sub(r'</(p|div|li|h\d|tr)>', '\n', t, flags=re.I)
     # 入れ子の崩れた印も残さないよう、タグが無くなるまで外す。ここで作るのは表示用の HTML ではなく本文の文字
