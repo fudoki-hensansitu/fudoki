@@ -490,7 +490,10 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
                     merged.append([left, right])
             bands.extend(merged)
     else:
-        for left, right in sorted((a['x0'], a['x1']) for a in positioned):
+        # A dash (`－`, an empty cell) holds no digit to drop: a column that only prints dashes is no amount territory.
+        # Pooled across the pages of one original, its glyph box would otherwise make a band over a digit of another
+        # page (a rate on page 339 under the dash column of page 562).
+        for left, right in sorted((a['x0'], a['x1']) for a in positioned if re.search(r'\d', a['amount_text'] or '')):
             if bands and left <= bands[-1][1] + 10:
                 bands[-1][1] = max(bands[-1][1], right)
             else:

@@ -280,6 +280,16 @@ class NodeTablesTests(unittest.TestCase):
                          {'款_金額_物理頁': None, '款_金額_左端': None, '款_金額_上端': None,
                           '款_金額_右端': None, '款_金額_下端': None})
 
+    def test_dash_amounts_make_no_band_for_a_digit_on_another_page(self):
+        nodes=[{**node('a'), 'x0': 1., 'y0': 10., 'x1': 40., 'y1': 18.}]
+        amounts=[{**amount('a','12,000'), 'x0': 60., 'y0': 10., 'x1': 100., 'y1': 18.},
+                 {**amount('a','－'), 'physical_page': 2, 'x0': 200., 'y0': 10., 'x1': 210., 'y1': 18.}]
+        words=[{'page': 1, 'bbox': [60., 10., 100., 18.], 'text': '12,000'},
+               {'page': 1, 'bbox': [201., 30., 209., 38.], 'text': '85.1'}]
+        result = check_digit_coverage(words, NodeTables(nodes, amounts))
+        self.assertTrue(result['passed'])
+        self.assertEqual(result['counts'], {'amount': 1, 'reported': 1})
+
     def test_digit_coverage_covers_box_contents_and_blocks_band_misses(self):
         nodes=[{**node('p'), 'x0': 1., 'y0': 1., 'x1': 40., 'y1': 9.},
                {**node('a','p'), 'code_text': '12', 'name_text': '事業',
