@@ -906,6 +906,278 @@
           "table_id": "general-expenditure-13"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e99250d9722f488130882497b74e8c7e8ccbbfb0977e2167e25118b2751ff433"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "plain_names": [
+                    "補充用備品",
+                    "拡充用"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                },
+                "quirks": {
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  }
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-settlement"
+        }
+      ]
+    },
+    {
+      "id": "land-readjustment-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4ef4432d99d6d454527d633464d6234af3a7d7ab466489a40509fa8fac1d07ff"
+        }
+      ],
+      "options": {
+        "account": "土地区画整理事業特別会計",
+        "table_id": "land-readjustment-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "plain_names": [
+                    "補充用備品",
+                    "拡充用"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                },
+                "quirks": {
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  }
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-readjustment-settlement"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7b8fb1ca886b601cb29f6e8a1d7d271c88a808e041777af0d81c411bef4843eb"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "plain_names": [
+                    "補充用備品",
+                    "拡充用"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                },
+                "quirks": {
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  }
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-settlement"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "35e09fb86f73bb40f63eed21504099baf96e13157c7fe29a051d976b372fd24b"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "plain_names": [
+                    "補充用備品",
+                    "拡充用"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                },
+                "quirks": {
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  }
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-settlement"
+        }
+      ]
     }
   ]
 }
