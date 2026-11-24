@@ -5,6 +5,7 @@ import hashlib
 from http.client import IncompleteRead
 import html as html_lib
 import re
+import ssl
 import time
 import urllib.parse
 import urllib.error
@@ -12,9 +13,13 @@ import urllib.request
 from dataclasses import dataclass, field
 from datetime import date
 
+import certifi
+
 FETCH_INTERVAL_SECONDS = 3.0  # 議会のサイトに負荷をかけないよう、1本ずつ3秒空けて取る
 USER_AGENT = 'fudoki-assembly-ingest'
 RETRIES = 4
+# macOS の /etc/ssl/cert.pem には GlobalSign Root R46（gijiroku.com の証明書の根）が無いので、certifi の根を使う
+SSL_CONTEXT = ssl.create_default_context(cafile=certifi.where())
 
 
 @dataclass
@@ -62,7 +67,7 @@ def http(url: str, data: dict | None = None, encoding: str = 'utf-8') -> str:
     request = urllib.request.Request(url, data=body, headers={'User-Agent': USER_AGENT})
     for attempt in range(1, RETRIES + 1):
         try:
-            with urllib.request.urlopen(request, timeout=60) as response:
+            with urllib.request.urlopen(request, timeout=60, context=SSL_CONTEXT) as response:
                 raw = response.read()
             break
         except urllib.error.HTTPError as error:
