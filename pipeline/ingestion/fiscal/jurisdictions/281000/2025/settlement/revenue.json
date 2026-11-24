@@ -1151,6 +1151,596 @@
           "bytes": 820828
         }
       ]
+    },
+    {
+      "id": "housing-kenchikujyutaku",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "df7626015f5eb254b94af7b4ec13a7fe185fb3a7b547c60968a6b804ae0d1602"
+        }
+      ],
+      "options": {
+        "account": "市営住宅事業費",
+        "table_id": "housing-kenchikujyutaku",
+        "partial": true,
+        "division": "建築住宅局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              },
+              "rules": {
+                "dark": 180
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
+                }
+              }
+            }
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "housing-rev-p12-0",
+            "page": 12,
+            "observation_id": "p12:ink-3:a3:result0:r0",
+            "observed": "市事",
+            "reason": "建築住宅局の冊 物理12頁の款「1 市営住宅建設事業収入」は、名前を字の間を空けて2行（「市営住宅建設」/「事業収入」）に印字する。OCR は字を2行の字を縦に重ねて読み、字を落とした。この読みは使わず、原典の描画で確かめた名前を補う。"
+          },
+          {
+            "id": "housing-rev-p12-1",
+            "page": 12,
+            "observation_id": "p12:ink-3:a3:result0:r1",
+            "observed": "営",
+            "reason": "建築住宅局の冊 物理12頁の款「1 市営住宅建設事業収入」は、名前を字の間を空けて2行（「市営住宅建設」/「事業収入」）に印字する。OCR は字を2行の字を縦に重ねて読み、字を落とした。この読みは使わず、原典の描画で確かめた名前を補う。"
+          },
+          {
+            "id": "housing-rev-p12-2",
+            "page": 12,
+            "observation_id": "p12:ink-3:a3:result0:r2",
+            "observed": "住",
+            "reason": "建築住宅局の冊 物理12頁の款「1 市営住宅建設事業収入」は、名前を字の間を空けて2行（「市営住宅建設」/「事業収入」）に印字する。OCR は字を2行の字を縦に重ねて読み、字を落とした。この読みは使わず、原典の描画で確かめた名前を補う。"
+          },
+          {
+            "id": "housing-rev-p12-3",
+            "page": 12,
+            "observation_id": "p12:ink-3:a3:result0:r3",
+            "observed": "宅",
+            "reason": "建築住宅局の冊 物理12頁の款「1 市営住宅建設事業収入」は、名前を字の間を空けて2行（「市営住宅建設」/「事業収入」）に印字する。OCR は字を2行の字を縦に重ねて読み、字を落とした。この読みは使わず、原典の描画で確かめた名前を補う。"
+          },
+          {
+            "id": "housing-rev-p12-4",
+            "page": 12,
+            "observation_id": "p12:ink-3:a3:result0:r4",
+            "observed": "建",
+            "reason": "建築住宅局の冊 物理12頁の款「1 市営住宅建設事業収入」は、名前を字の間を空けて2行（「市営住宅建設」/「事業収入」）に印字する。OCR は字を2行の字を縦に重ねて読み、字を落とした。この読みは使わず、原典の描画で確かめた名前を補う。"
+          },
+          {
+            "id": "housing-rev-p12-5",
+            "page": 12,
+            "observation_id": "p12:full-page:a0:result0:r19",
+            "observed": "設入",
+            "reason": "建築住宅局の冊 物理12頁の款「1 市営住宅建設事業収入」は、名前を字の間を空けて2行（「市営住宅建設」/「事業収入」）に印字する。OCR は字を2行の字を縦に重ねて読み、字を落とした。この読みは使わず、原典の描画で確かめた名前を補う。"
+          },
+          {
+            "id": "housing-rev-p12-6",
+            "page": 12,
+            "observation_id": "p12:full-page:a0:result0:r20",
+            "observed": "業",
+            "reason": "建築住宅局の冊 物理12頁の款「1 市営住宅建設事業収入」は、名前を字の間を空けて2行（「市営住宅建設」/「事業収入」）に印字する。OCR は字を2行の字を縦に重ねて読み、字を落とした。この読みは使わず、原典の描画で確かめた名前を補う。"
+          },
+          {
+            "id": "housing-rev-p12-7",
+            "page": 12,
+            "observation_id": "p12:full-page:a0:result0:r21",
+            "observed": "収",
+            "reason": "建築住宅局の冊 物理12頁の款「1 市営住宅建設事業収入」は、名前を字の間を空けて2行（「市営住宅建設」/「事業収入」）に印字する。OCR は字を2行の字を縦に重ねて読み、字を落とした。この読みは使わず、原典の描画で確かめた名前を補う。"
+          }
+        ],
+        "name_readings": [
+          {
+            "id": "housing-rev-p12-kan-1",
+            "page": 12,
+            "box": [
+              58.0,
+              116.0,
+              115.0,
+              123.9
+            ],
+            "name": "市営住宅建設",
+            "reason": "建築住宅局の冊 物理12頁の款「1 市営住宅建設事業収入」は、名前を字の間を空けて2行（「市営住宅建設」/「事業収入」）に印字する。OCR は字を2行の字を縦に重ねて読み、字を落とした。この読みは使わず、原典の描画で確かめた名前を補う。"
+          },
+          {
+            "id": "housing-rev-p12-kan-2",
+            "page": 12,
+            "box": [
+              58.0,
+              123.9,
+              115.0,
+              130.5
+            ],
+            "name": "事業収入",
+            "reason": "建築住宅局の冊 物理12頁の款「1 市営住宅建設事業収入」は、名前を字の間を空けて2行（「市営住宅建設」/「事業収入」）に印字する。OCR は字を2行の字を縦に重ねて読み、字を落とした。この読みは使わず、原典の描画で確かめた名前を補う。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "housing-rev-p12-kan-code",
+            "page": 12,
+            "box": [
+              53.4,
+              117.6,
+              57.4,
+              122.6
+            ],
+            "code": "1",
+            "reason": "建築住宅局の冊 物理12頁の款「1 市営住宅建設事業収入」の番号。款の細い欄に小さく印字され、OCR が読まなかった。原典の描画の墨の位置で番号1を確認した。"
+          }
+        ],
+        "header_readings": [
+          {
+            "id": "housing-rev-p12-継続費",
+            "pages": [
+              12
+            ],
+            "box": [
+              221.5,
+              92.5,
+              276.0,
+              113.8
+            ],
+            "text": "継続費及び繰越事業費繰越財源充当額",
+            "reason": "建築住宅局の冊の市営住宅事業費の歳入の頁（物理12〜14頁）で、OCR が見出しの升「継続費及び繰越事業費繰越財源充当額」の字を1字ずつ・断片に読み（「継越財」「事業費繰」「繰越額」）、見出しが「予算現額」になった。原典の描画で升の印字を確認した。"
+          },
+          {
+            "id": "housing-rev-p13-継続費",
+            "pages": [
+              13
+            ],
+            "box": [
+              221.5,
+              61.5,
+              276.0,
+              82.5
+            ],
+            "text": "継続費及び繰越事業費繰越財源充当額",
+            "reason": "建築住宅局の冊の市営住宅事業費の歳入の頁（物理12〜14頁）で、OCR が見出しの升「継続費及び繰越事業費繰越財源充当額」の字を1字ずつ・断片に読み（「継越財」「事業費繰」「繰越額」）、見出しが「予算現額」になった。原典の描画で升の印字を確認した。"
+          },
+          {
+            "id": "housing-rev-p14-継続費",
+            "pages": [
+              14
+            ],
+            "box": [
+              221.5,
+              61.5,
+              276.0,
+              82.5
+            ],
+            "text": "継続費及び繰越事業費繰越財源充当額",
+            "reason": "建築住宅局の冊の市営住宅事業費の歳入の頁（物理12〜14頁）で、OCR が見出しの升「継続費及び繰越事業費繰越財源充当額」の字を1字ずつ・断片に読み（「継越財」「事業費繰」「繰越額」）、見出しが「予算現額」になった。原典の描画で升の印字を確認した。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "housing-rev-12-1-0",
+            "page": 12,
+            "code": "1",
+            "observed_name": "般会計入金",
+            "corrected_name": "一般会計繰入金",
+            "reason": "目・項・節の名前の欄が狭く、名前を2〜3行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理12頁）で印字を確認した。"
+          },
+          {
+            "id": "housing-rev-12-1-1",
+            "page": 12,
+            "code": "1",
+            "observed_name": "市営住宅敷金等積立基金繰人金",
+            "corrected_name": "市営住宅敷金等積立基金繰入金",
+            "reason": "目・項・節の名前の欄が狭く、名前を2〜3行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理12頁）で印字を確認した。"
+          },
+          {
+            "id": "housing-rev-12-1-2",
+            "page": 12,
+            "code": "1",
+            "observed_name": "市営宅建設住業事公債",
+            "corrected_name": "市営住宅建設事業公債",
+            "reason": "目・項・節の名前の欄が狭く、名前を2〜3行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理12頁）で印字を確認した。"
+          },
+          {
+            "id": "housing-rev-13-2-3",
+            "page": 13,
+            "code": "2",
+            "observed_name": "営住宅管理市事業収入",
+            "corrected_name": "市営住宅管理事業収入",
+            "reason": "目・項・節の名前の欄が狭く、名前を2〜3行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理13頁）で印字を確認した。"
+          },
+          {
+            "id": "housing-rev-13-4-4",
+            "page": 13,
+            "code": "4",
+            "observed_name": "繰人金",
+            "corrected_name": "繰入金",
+            "reason": "目・項・節の名前の欄が狭く、名前を2〜3行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理13頁）で印字を確認した。"
+          },
+          {
+            "id": "housing-rev-13-1-5",
+            "page": 13,
+            "code": "1",
+            "observed_name": "家賃低減助対策費補",
+            "corrected_name": "家賃低減対策費補助",
+            "reason": "目・項・節の名前の欄が狭く、名前を2〜3行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理13頁）で印字を確認した。"
+          },
+          {
+            "id": "housing-rev-13-1-6",
+            "page": 13,
+            "code": "1",
+            "observed_name": "市宅金営積敷基等金",
+            "corrected_name": "市営住宅敷金等積立基金",
+            "reason": "目・項・節の名前の欄が狭く、名前を2〜3行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理13頁）で印字を確認した。"
+          },
+          {
+            "id": "housing-rev-13-1-7",
+            "page": 13,
+            "code": "1",
+            "observed_name": "物品壳却代",
+            "corrected_name": "物品売却代",
+            "reason": "目・項・節の名前の欄が狭く、名前を2〜3行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理13頁）で印字を確認した。"
+          },
+          {
+            "id": "housing-rev-13-2-8",
+            "page": 13,
+            "code": "2",
+            "observed_name": "土地壳却代",
+            "corrected_name": "土地売却代",
+            "reason": "目・項・節の名前の欄が狭く、名前を2〜3行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理13頁）で印字を確認した。"
+          },
+          {
+            "id": "housing-rev-14-70-9",
+            "page": 14,
+            "code": "70",
+            "observed_name": "分担金及负担金",
+            "corrected_name": "分担金及負担金",
+            "reason": "目・項・節の名前の欄が狭く、名前を2〜3行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理14頁）で印字を確認した。"
+          },
+          {
+            "id": "housing-rev-14-1-10",
+            "page": 14,
+            "code": "1",
+            "observed_name": "市営管理住業宅公事債",
+            "corrected_name": "市営住宅管理事業公債",
+            "reason": "目・項・節の名前の欄が狭く、名前を2〜3行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理14頁）で印字を確認した。"
+          },
+          {
+            "id": "housing-rev-14-1-11",
+            "page": 14,
+            "code": "1",
+            "observed_name": "市営管理事業公債",
+            "corrected_name": "市営住宅管理事業公債",
+            "reason": "目・項・節の名前の欄が狭く、名前を2〜3行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理14頁）で印字を確認した。"
+          },
+          {
+            "id": "housing-rev-14-1-12",
+            "page": 14,
+            "code": "1",
+            "observed_name": "地域活性化價事業",
+            "corrected_name": "地域活性化事業債",
+            "reason": "目・項・節の名前の欄が狭く、名前を2〜3行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理14頁）で印字を確認した。"
+          },
+          {
+            "id": "housing-rev-14-1-13",
+            "page": 14,
+            "code": "1",
+            "observed_name": "画修繕事業費計負担金",
+            "corrected_name": "計画修繕事業費負担金",
+            "reason": "目・項・節の名前の欄が狭く、名前を2〜3行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理14頁）で印字を確認した。"
+          },
+          {
+            "id": "housing-rev-14-1-14",
+            "page": 14,
+            "code": "1",
+            "observed_name": "延滞金加算金及過料",
+            "corrected_name": "延滞金加算金及び過料",
+            "reason": "目・項・節の名前の欄が狭く、名前を2〜3行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理14頁）で印字を確認した。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "housing-kenchikujyutaku"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "housing-kenchikujyutaku-revenue-ocr-1",
+          "origin_sha256": "df7626015f5eb254b94af7b4ec13a7fe185fb3a7b547c60968a6b804ae0d1602",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              12,
+              13,
+              14
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "ink_dark": 192,
+            "unit_marks": true,
+            "merged_lines": true
+          },
+          "sha256": "ab8a0428ef9eb2b2eba7550bcc2f7e52010994689c4903f774d669ae4b4006cd",
+          "bytes": 1932732
+        }
+      ]
+    },
+    {
+      "id": "single-parent-kodomo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "1e2bf3f6ae3cf61c23f5a499425ff953722dc88c18c3a9ade213ca4dd2e92fd7"
+        }
+      ],
+      "options": {
+        "account": "母子父子寡婦福祉資金貸付事業費",
+        "table_id": "single-parent-kodomo",
+        "partial": true,
+        "division": "こども家庭局",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／区分／節": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／分": {
+                  "axis_header": "節"
+                },
+                "予算現額／区分": {
+                  "axis_header": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考・説明の欄。節ごとの収入の内容・充当先（「一般会計からの財源補填のための繰入」など）で、節の内訳ではないため取り込まない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "agree_all_frames": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
+                }
+              }
+            }
+          }
+        },
+        "header_readings": [
+          {
+            "id": "single-parent-rev-p30-継続費",
+            "pages": [
+              30
+            ],
+            "box": [
+              227.0,
+              150.0,
+              289.5,
+              176.0
+            ],
+            "text": "継続費及び繰越事業費繰越財源充当額",
+            "reason": "こども家庭局の冊の母子父子寡婦福祉資金貸付事業費の歳入の頁（物理30・31頁）で、OCR が見出しの升を字ごと・断片に読み（「継繰」「続」「費事」「予比」「算」「現」「に減」）、升の見出しが解決できなかった。原典の描画で升の印字を確認した。"
+          },
+          {
+            "id": "single-parent-rev-p30-増減",
+            "pages": [
+              30
+            ],
+            "box": [
+              653.0,
+              143.0,
+              706.0,
+              162.0
+            ],
+            "text": "予算現額に比し増減",
+            "reason": "こども家庭局の冊の母子父子寡婦福祉資金貸付事業費の歳入の頁（物理30・31頁）で、OCR が見出しの升を字ごと・断片に読み（「継繰」「続」「費事」「予比」「算」「現」「に減」）、升の見出しが解決できなかった。原典の描画で升の印字を確認した。"
+          },
+          {
+            "id": "single-parent-rev-p31-継続費",
+            "pages": [
+              31
+            ],
+            "box": [
+              227.0,
+              107.5,
+              289.5,
+              133.5
+            ],
+            "text": "継続費及び繰越事業費繰越財源充当額",
+            "reason": "こども家庭局の冊の母子父子寡婦福祉資金貸付事業費の歳入の頁（物理30・31頁）で、OCR が見出しの升を字ごと・断片に読み（「継繰」「続」「費事」「予比」「算」「現」「に減」）、升の見出しが解決できなかった。原典の描画で升の印字を確認した。"
+          },
+          {
+            "id": "single-parent-rev-p31-増減",
+            "pages": [
+              31
+            ],
+            "box": [
+              653.0,
+              100.5,
+              706.0,
+              119.5
+            ],
+            "text": "予算現額に比し増減",
+            "reason": "こども家庭局の冊の母子父子寡婦福祉資金貸付事業費の歳入の頁（物理30・31頁）で、OCR が見出しの升を字ごと・断片に読み（「継繰」「続」「費事」「予比」「算」「現」「に減」）、升の見出しが解決できなかった。原典の描画で升の印字を確認した。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "single-parent-rev-30-1-0",
+            "page": 30,
+            "code": "1",
+            "observed_name": "母福祉資金般会計繰入金",
+            "corrected_name": "母子福祉資金一般会計繰入金",
+            "reason": "目・節の名前の欄が狭く、名前を2行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理30頁）で印字を確認した。"
+          },
+          {
+            "id": "single-parent-rev-30-1-1",
+            "page": 30,
+            "code": "1",
+            "observed_name": "寡婦福祉資金般会計繰入金",
+            "corrected_name": "寡婦福祉資金一般会計繰入金",
+            "reason": "目・節の名前の欄が狭く、名前を2行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理30頁）で印字を確認した。"
+          },
+          {
+            "id": "single-parent-rev-30-1-2",
+            "page": 30,
+            "code": "1",
+            "observed_name": "子福祉資金般会計繰入金",
+            "corrected_name": "父子福祉資金一般会計繰入金",
+            "reason": "目・節の名前の欄が狭く、名前を2行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理30頁）で印字を確認した。"
+          },
+          {
+            "id": "single-parent-rev-30-2-3",
+            "page": 30,
+            "code": "2",
+            "observed_name": "寡婦福祉資金",
+            "corrected_name": "寡婦福祉資金一般会計繰入金",
+            "reason": "目・節の名前の欄が狭く、名前を2行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理30頁）で印字を確認した。"
+          },
+          {
+            "id": "single-parent-rev-31-1-4",
+            "page": 31,
+            "code": "1",
+            "observed_name": "寡福祉資金貸付金元利収入",
+            "corrected_name": "寡婦福祉資金貸付金元利収入",
+            "reason": "目・節の名前の欄が狭く、名前を2行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理31頁）で印字を確認した。"
+          },
+          {
+            "id": "single-parent-rev-31-1-5",
+            "page": 31,
+            "code": "1",
+            "observed_name": "父代福祉資金入",
+            "corrected_name": "父子福祉資金貸付金元利収入",
+            "reason": "目・節の名前の欄が狭く、名前を2行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理31頁）で印字を確認した。"
+          },
+          {
+            "id": "single-parent-rev-31-1-6",
+            "page": 31,
+            "code": "1",
+            "observed_name": "母代福資金貸付金元利収入",
+            "corrected_name": "母子福祉資金貸付金元利収入",
+            "reason": "目・節の名前の欄が狭く、名前を2行に組んで字間を空けるため、OCR が行と字を取り違えた。原典の描画（物理31頁）で印字を確認した。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "single-parent-kodomo"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "single-parent-kodomo-revenue-ocr-1",
+          "origin_sha256": "1e2bf3f6ae3cf61c23f5a499425ff953722dc88c18c3a9ade213ca4dd2e92fd7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              30,
+              31
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "detection_limit_side_len": 2560
+            },
+            "ink_dark": 192,
+            "unit_marks": true,
+            "merged_lines": true
+          },
+          "sha256": "7c33c2a26309d704f1b4de2f8837cbc98385381c0e505e4b9ff3c892dd4b20d4",
+          "bytes": 786860
+        }
+      ]
     }
   ]
 }
