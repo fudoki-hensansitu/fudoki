@@ -139,9 +139,13 @@ class Voices:
             label = re.sub(r'[\s　]', '', ''.join(fields[:take]))
             rest = '　'.join(fields[take:])
             speaker_kind, member_name = classify(label, attendance)
-            if speaker_kind == 'other' and mark in self.marks:
+            # 印字が名前だけ（「◆藤本なおや」）なら印の決まりで区分を決める。名前に「長」「課」などを含むと
+            # classify は理事者と読むので、出席者の欄にそのまま載る名前も印を先に見る
+            name_only = (len(label) >= 2 and label in attendance and member_name is None
+                         and not re.search(r'(長|委員|議員|理事|官|監|参事|主幹|書記|者|幹)$', label))
+            if mark in self.marks and (speaker_kind == 'other' or (name_only and self.marks[mark] in ('member', 'chair'))):
                 speaker_kind = self.marks[mark]
-                if speaker_kind in ('member', 'chair') and len(label) >= 2 and label in attendance:
+                if speaker_kind in ('member', 'chair') and name_only:
                     member_name = label
             body: list[str] = []
             for line in ([rest] if rest.strip() else []) + lines[1:]:
