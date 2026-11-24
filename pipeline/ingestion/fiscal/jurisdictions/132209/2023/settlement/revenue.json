@@ -712,6 +712,400 @@
           "bytes": 2849887
         }
       ]
+    },
+    {
+      "id": "long-term-care-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "long-term-care-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 200
+              },
+              "header": {
+                "staircase": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            175,
+            187
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "long-term-care-settlement-header-assessed",
+            "pages": [
+              175,
+              176,
+              177,
+              178,
+              179,
+              180,
+              181,
+              182,
+              183,
+              184,
+              185,
+              186,
+              187
+            ],
+            "box": [
+              650.0,
+              90.0,
+              712.0,
+              108.0
+            ],
+            "text": "調定額",
+            "reason": "見出しの升の「収入」を OCR が「収人」と読み（調定額と1語に読んだ頁もある）、金額の段階の見出しに当たらない。原画の見出しは 調定額・収入済額・収入未済額。"
+          },
+          {
+            "id": "long-term-care-settlement-header-received",
+            "pages": [
+              175,
+              176,
+              177,
+              178,
+              179,
+              180,
+              181,
+              182,
+              183,
+              184,
+              185,
+              186,
+              187
+            ],
+            "box": [
+              712.0,
+              90.0,
+              795.0,
+              108.0
+            ],
+            "text": "収入済額",
+            "reason": "見出しの升の「収入」を OCR が「収人」と読み（調定額と1語に読んだ頁もある）、金額の段階の見出しに当たらない。原画の見出しは 調定額・収入済額・収入未済額。"
+          },
+          {
+            "id": "long-term-care-settlement-header-unreceived",
+            "pages": [
+              175,
+              176,
+              177,
+              178,
+              179,
+              180,
+              181,
+              182,
+              183,
+              184,
+              185,
+              186,
+              187
+            ],
+            "box": [
+              860.0,
+              90.0,
+              920.0,
+              108.0
+            ],
+            "text": "収入未済額",
+            "reason": "見出しの升の「収入」を OCR が「収人」と読み（調定額と1語に読んだ頁もある）、金額の段階の見出しに当たらない。原画の見出しは 調定額・収入済額・収入未済額。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p182-r27-nyu",
+            "page": 182,
+            "observation_id": "p182:full-page:a0:result0:r27",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "物理182頁、「7 財産収人」の「入」を OCR が「人」と読んだ。原画で確かめた。"
+          },
+          {
+            "id": "p182-r36-nyu",
+            "page": 182,
+            "observation_id": "p182:full-page:a0:result0:r36",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "物理182頁、「1 財産運用収人」の「入」を OCR が「人」と読んだ。原画で確かめた。"
+          },
+          {
+            "id": "p184-r27-nyu",
+            "page": 184,
+            "observation_id": "p184:full-page:a0:result0:r27",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "物理184頁、「9 繰人金」の「入」を OCR が「人」と読んだ。原画で確かめた。"
+          },
+          {
+            "id": "p184-r36-nyu",
+            "page": 184,
+            "observation_id": "p184:full-page:a0:result0:r36",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "物理184頁、「1 一般会計繰人」の「入」を OCR が「人」と読んだ。原画で確かめた。"
+          },
+          {
+            "id": "p185-r27-nyu",
+            "page": 185,
+            "observation_id": "p185:full-page:a0:result0:r27",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "物理185頁、「2基金繰人金」の「入」を OCR が「人」と読んだ。原画で確かめた。"
+          },
+          {
+            "id": "p187-r27-nyu",
+            "page": 187,
+            "observation_id": "p187:full-page:a0:result0:r27",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "物理187頁、「11 諸収人」の「入」を OCR が「人」と読んだ。原画で確かめた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-settlement-ocr-1",
+          "origin_sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              175,
+              176,
+              177,
+              178,
+              179,
+              180,
+              181,
+              182,
+              183,
+              184
+            ]
+          },
+          "sha256": "ee65cb336101a9e4222aea5b9b80e2b57b609feb39926c63667dd63df349e2d8",
+          "bytes": 2663699
+        },
+        {
+          "id": "long-term-care-settlement-ocr-2",
+          "origin_sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              185,
+              186,
+              187
+            ]
+          },
+          "sha256": "8131d94406d9b81f5edf410741a48acd151b0049d988cb117d0749d675212519",
+          "bytes": 669331
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 200
+              },
+              "header": {
+                "staircase": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            210,
+            213
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "elderly-medical-settlement-header-assessed",
+            "pages": [
+              210,
+              211,
+              212,
+              213
+            ],
+            "box": [
+              650.0,
+              90.0,
+              712.0,
+              108.0
+            ],
+            "text": "調定額",
+            "reason": "見出しの升の「収入」を OCR が「収人」と読み（調定額と1語に読んだ頁もある）、金額の段階の見出しに当たらない。原画の見出しは 調定額・収入済額・収入未済額。"
+          },
+          {
+            "id": "elderly-medical-settlement-header-received",
+            "pages": [
+              210,
+              211,
+              212,
+              213
+            ],
+            "box": [
+              712.0,
+              90.0,
+              795.0,
+              108.0
+            ],
+            "text": "収入済額",
+            "reason": "見出しの升の「収入」を OCR が「収人」と読み（調定額と1語に読んだ頁もある）、金額の段階の見出しに当たらない。原画の見出しは 調定額・収入済額・収入未済額。"
+          },
+          {
+            "id": "elderly-medical-settlement-header-unreceived",
+            "pages": [
+              210,
+              211,
+              212,
+              213
+            ],
+            "box": [
+              860.0,
+              90.0,
+              920.0,
+              108.0
+            ],
+            "text": "収入未済額",
+            "reason": "見出しの升の「収入」を OCR が「収人」と読み（調定額と1語に読んだ頁もある）、金額の段階の見出しに当たらない。原画の見出しは 調定額・収入済額・収入未済額。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p211-r27-nyu",
+            "page": 211,
+            "observation_id": "p211:full-page:a0:result0:r27",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "物理211頁、「2 繰人金」の「入」を OCR が「人」と読んだ。原画で確かめた。"
+          },
+          {
+            "id": "p211-r36-nyu",
+            "page": 211,
+            "observation_id": "p211:full-page:a0:result0:r36",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "物理211頁、「1 一般会計繰人」の「入」を OCR が「人」と読んだ。原画で確かめた。"
+          },
+          {
+            "id": "p213-r27-nyu",
+            "page": 213,
+            "observation_id": "p213:full-page:a0:result0:r27",
+            "observed_name": "人",
+            "corrected_name": "入",
+            "reason": "物理213頁、「4諸収人」の「入」を OCR が「人」と読んだ。原画で確かめた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-settlement-ocr-1",
+          "origin_sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              210,
+              211,
+              212,
+              213
+            ]
+          },
+          "sha256": "899c9b6691ffe86a68f9fe067f4e09fcee1592d4c06c595f1df2cd5a1b5f859c",
+          "bytes": 1289168
+        }
+      ]
     }
   ]
 }

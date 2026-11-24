@@ -76,6 +76,410 @@
           "table_id": "general-initial"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "b7f525f29ec7db15eb725c3087d915d920382005dfb3b6d31a2904bdbe11d5f9"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-insurance-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "節／区分": {
+                  "heading": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "code_after_amount": true,
+            "codeless_beside_repeated_code": true,
+            "unnumbered_abolished_names": true,
+            "unnumbered_names_at_rule": true
+          }
+        },
+        "pages": [
+          [
+            14,
+            31
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-initial-ocr-1",
+          "origin_sha256": "b7f525f29ec7db15eb725c3087d915d920382005dfb3b6d31a2904bdbe11d5f9",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22
+            ]
+          },
+          "sha256": "381997940cf7fa37fa0fcfda4028cedbc279c05dfa1443a1657113477777cd66",
+          "bytes": 1142356
+        },
+        {
+          "id": "national-health-insurance-initial-ocr-2",
+          "origin_sha256": "b7f525f29ec7db15eb725c3087d915d920382005dfb3b6d31a2904bdbe11d5f9",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31
+            ]
+          },
+          "sha256": "23fa9aeb1c4f582de0e00a8e11be49b06ae6381d06b5a90b52ffcbccb4fb8e41",
+          "bytes": 782807
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "dc557a5e1be58cf9c764056af36b8daef24ec8f31ec7f446ee8be13985b336c5"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "節／区分": {
+                  "heading": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "code_after_amount": true,
+            "codeless_beside_repeated_code": true,
+            "unnumbered_abolished_names": true,
+            "framed_spread_pages": true
+          }
+        },
+        "pages": [
+          [
+            14,
+            35
+          ]
+        ],
+        "parent_corrections": [
+          {
+            "id": "p26-sale-kou-parent",
+            "page": 26,
+            "code": null,
+            "name": "財産売払収入",
+            "parent_page": 26,
+            "parent_code": "7",
+            "parent_name": "財産収入",
+            "axis": "科目",
+            "parent_axis": "科目",
+            "reason": "物理26頁、款7 財産収入の項「財産売払収入」は番号を印字せず（項1 財産運用収入の次の項）、読みでは項1 財産運用収入の下に入っていた。原画で款7 の項と確かめ、親を款7 に付け直す。"
+          },
+          {
+            "id": "p26-sale-moku-parent",
+            "page": 26,
+            "code": null,
+            "name": "物品売払収入",
+            "parent_page": 26,
+            "parent_code": null,
+            "parent_name": "財産売払収入",
+            "axis": "科目",
+            "parent_axis": "科目",
+            "reason": "物理26頁、項「財産売払収入」の目「物品売払収入」は番号を印字しない。原画で項「財産売払収入」の目と確かめ、親を付け直す。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-initial-ocr-1",
+          "origin_sha256": "dc557a5e1be58cf9c764056af36b8daef24ec8f31ec7f446ee8be13985b336c5",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22
+            ]
+          },
+          "sha256": "7a1a9ed2a638fdcecbba76cc51821312bed61e443e4c25d323072d84a840e35c",
+          "bytes": 1144659
+        },
+        {
+          "id": "long-term-care-initial-ocr-2",
+          "origin_sha256": "dc557a5e1be58cf9c764056af36b8daef24ec8f31ec7f446ee8be13985b336c5",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32
+            ]
+          },
+          "sha256": "98c5a58a1e1d2cbe7de580f5c1594fef005e21ce6ac5d29da03b014a70c9ccbd",
+          "bytes": 808692
+        },
+        {
+          "id": "long-term-care-initial-ocr-3",
+          "origin_sha256": "dc557a5e1be58cf9c764056af36b8daef24ec8f31ec7f446ee8be13985b336c5",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              33,
+              34,
+              35
+            ]
+          },
+          "sha256": "1d018bab34ddcd4d603b3e70f0fb1af14a6d2911e09b685a7628d7f0388fe6a9",
+          "bytes": 210123
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "968b9c2ce9ff43a006be277baf2502ff362dd94fd59622e693fec8cb83a51e64"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "節／区分": {
+                  "heading": "節"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "code_after_amount": true,
+            "codeless_beside_repeated_code": true,
+            "unnumbered_abolished_names": true,
+            "framed_spread_pages": true
+          }
+        },
+        "pages": [
+          [
+            14,
+            21
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-initial-ocr-1",
+          "origin_sha256": "968b9c2ce9ff43a006be277baf2502ff362dd94fd59622e693fec8cb83a51e64",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ]
+          },
+          "sha256": "5ff43f473e4f0fc2c0dee9d2783792570586190c1d307f05ab5dbe446e82ac28",
+          "bytes": 934820
+        }
+      ]
     }
   ]
 }
