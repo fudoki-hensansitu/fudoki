@@ -4,13 +4,14 @@
 1つの会議録は ACT=203 に HATSUGENMODE=1 を渡して全文を1枚で受け取る。発言の頭には HUID の錨があり、
 その後ろが「◆４１番（おおつき城一議員）」「◎区長（岸本聡子）」のような印字、全角の空白の後ろが本文。
 委員会では印字が名前だけ（「◆藤本なおや」）なので、話し手の区分は発言の印（自治体ごとの決まり）で決める。
-名前は冒頭の出席者の欄で確かめる。閉じた時刻（「午後３時２７分散会」）の後ろの議案説明資料などは発言に含めない。
+印字の形は自治体ごとに違い、世田谷は「◆中山みずほ　委員　本文」「◎山戸　保健福祉政策部長　本文」と名前と役職を全角の空白で分ける
+（議員はどの会議でもフルネーム、姓だけなのは理事者）。この違いは自治体ごとの設定（印の決まり・印字に役職の欄があるか・発言でない印）で吸収する。
+名前は冒頭の出席者の欄で確かめる。一覧は100件ずつの頁に分かれるので、ヒットした件数を読み終えるまで頁を送る。閉じた時刻（「午後３時２７分散会」）の後ろの議案説明資料などは発言に含めない。
 
 業者の置く VOICES の多くは robots.txt で CGI（/voices/cgi/ など）を禁じているので、
 robots.txt が CGI を禁じていない自治体だけを載せる（2026-11-25 確認）。
 - 杉並区（suginami.gijiroku.com）: robots.txt が無い（404）。CGI は /voices/voices/cgi/
-- 世田谷区（kugi.city.setagaya.tokyo.jp）: robots.txt が無く CGI も同じだが、委員会の印字が「◎山戸」のように姓だけで、
-  印の決まりも杉並と違う。名簿で姓から1人に決める読み方が要るので、まだ載せない
+- 世田谷区（kugi.city.setagaya.tokyo.jp）: robots.txt が無い（404）。CGI は /voices/CGI/
 - 港・台東・大田・板橋・足立・江戸川・調布・町田は User-agent: * に Disallow: /voices/cgi/ があるので載せない
 """
 from __future__ import annotations
@@ -25,8 +26,9 @@ from assembly.kensaku import classify
 ENCODING = 'cp932'
 KGTP_SESSIONS = ('1', '2', '3')  # 定例会・臨時会・委員会
 MARKS = '○◆◎△◇□■●▲'
-# 発言の印が表す話し手。印字が名前だけ（委員会の「◆藤本なおや」）のときに使う。印の決まりは自治体ごとの設定なので、会議録で確かめた自治体だけ持つ
-SUGINAMI_MARKS = {'○': 'chair', '◆': 'member', '◎': 'official'}
+# 発言の印が表す話し手。印字が名前だけ（委員会の「◆藤本なおや」）のときに使う。印の決まりは自治体ごとの設定なので、会議録で確かめた自治体だけ持つ。
+# 杉並・世田谷の会議録で確かめた決まり
+CHAIR_MEMBER_OFFICIAL = {'○': 'chair', '◆': 'member', '◎': 'official'}
 # 閉じた時刻の後ろは議案説明資料などの添付で、発言ではない
 CLOSING = re.compile(r'^午[前後].+(散会|閉会)$')
 
@@ -36,27 +38,39 @@ class Voices:
     code: str
     cgi: str  # voiweb.exe の URL
     marks: dict[str, str] = field(default_factory=dict)  # 発言の印 -> 話し手の区分
+    role_field: bool = False  # 印字が「名前　役職」で、名前の後ろの全角の空白の次の欄が役職（世田谷）
+    headings: str = ''  # 発言でない印（世田谷の「△日程第一を上程いたします。」）
     _titles: dict[str, str] = field(default_factory=dict)  # FINO -> 「令和　７年第４回定例会｜11月19日-26号」
 
-    def list_page(self, year: int, kgtp: str) -> str:
+    def list_page(self, year: int, kgtp: str, page: int = 1, hit: int = 0) -> str:
         query = {'ACT': '100', 'KTYP': '0,1,2,3', 'SORT': '0', 'FYY': str(year), 'FMM': '', 'FDD': '',
                  'TYY': str(year), 'TMM': '', 'TDD': '', 'KGTP': kgtp}
+        if page > 1:
+            query |= {'KENSAKU': '0', 'PAGE': str(page), 'HIT': str(hit), 'AHIT': '-1'}
         return http(f'{self.cgi}?{urllib.parse.urlencode(query, safe=",")}', encoding=ENCODING)
 
     def list_ids(self, from_reiwa: int) -> list[str]:
         """目次（「11月19日-目次」）は発言を持たないので外す。"""
         for n in range(from_reiwa, current_reiwa() + 1):
             for kgtp in KGTP_SESSIONS:
-                page = self.list_page(2018 + n, kgtp)
-                found = 0
-                for m in re.finditer(r"winopen\('voiweb\.exe\?ACT=200&[^']*?TITL_SUBT=([^&']+)&[^']*?FINO=(\d+)&", page):
-                    found += 1
-                    title = urllib.parse.unquote(m.group(1), encoding=ENCODING)
-                    if not title.endswith('-目次'):
-                        self._titles[m.group(2)] = title
-                hit = re.search(r'(\d+)件の日程がヒット', page)
-                if hit and int(hit.group(1)) != found:
-                    raise RuntimeError(f'{self.code} {2018 + n} KGTP={kgtp}: 一覧の {hit.group(1)} 件のうち {found} 件しか読めない（頁送り？）')
+                found = hit = 0
+                number = 1
+                while number == 1 or found < hit:
+                    page = self.list_page(2018 + n, kgtp, number, hit)
+                    read = 0
+                    for m in re.finditer(r"winopen\('voiweb\.exe\?ACT=200&[^']*?TITL_SUBT=([^&']+)&[^']*?FINO=(\d+)&", page):
+                        read += 1
+                        title = urllib.parse.unquote(m.group(1), encoding=ENCODING)
+                        if not title.endswith('-目次'):
+                            self._titles[m.group(2)] = title
+                    found += read
+                    if m := re.search(r'(\d+)件の日程がヒット', page):
+                        hit = int(m.group(1))
+                    if read == 0:
+                        break
+                    number += 1
+                if found != hit and hit:
+                    raise RuntimeError(f'{self.code} {2018 + n} KGTP={kgtp}: 一覧の {hit} 件のうち {found} 件しか読めない')
         return sorted(self._titles, key=int)
 
     def url(self, local_id: str) -> str:
@@ -87,8 +101,9 @@ class Voices:
         if not year or not md:
             raise ValueError(f'{local_id}: 日付が読めない: {m.group(1)}')
         held_on = f'{2018 + int(year.group(1))}-{int(md.group(1)):02d}-{int(md.group(2)):02d}'
-        body_name = re.sub(r'^令和\s*(\S+?)年\s*(\S+?月\s*\S+?日)?\s*', '', name).strip()
-        if re.match(r'^第\s*\S+\s*回\s*(定例会|臨時会)', body_name):
+        # 世田谷は「令和 ８年 ９月 定例会」「令和 ８年 ９月 文教常任委員会」と月だけを挟み、回を書かない
+        body_name = re.sub(r'^令和\s*(\S+?)年\s*([０-９\d]+月(\s*[０-９\d]+日)?)?\s*', '', name).strip()
+        if re.match(r'^(第\s*\S+\s*回\s*)?(定例会|臨時会)', body_name):
             body_name = '本会議'
         title = f'{name} {sub.strip()}'
         meeting_id = f'{self.code}:{local_id}'
@@ -111,8 +126,18 @@ class Voices:
                 attendance += re.sub(r'\s', '', ''.join(lines))
                 continue
             mark = lines[0][0]
-            label, _, rest = lines[0][1:].partition('　')
-            label = re.sub(r'[\s　]', '', label)
+            if mark in self.headings:
+                continue
+            # 印字は最初の全角の空白まで。「四十九番（岡本のぶ子　議員）」のように括弧の中にも空白があるので括弧を閉じるまで、
+            # 役職の欄がある自治体は括弧で役職を閉じていなければ次の欄まで（「中山みずほ　委員」）
+            fields = lines[0][1:].split('　')
+            take = 1
+            while take < len(fields) and ''.join(fields[:take]).count('（') > ''.join(fields[:take]).count('）'):
+                take += 1
+            if self.role_field and take < len(fields) and not ''.join(fields[:take]).endswith('）'):
+                take += 1
+            label = re.sub(r'[\s　]', '', ''.join(fields[:take]))
+            rest = '　'.join(fields[take:])
             speaker_kind, member_name = classify(label, attendance)
             if speaker_kind == 'other' and mark in self.marks:
                 speaker_kind = self.marks[mark]
@@ -131,5 +156,6 @@ class Voices:
 
 
 VOICES = [
-    Voices('131156', 'https://suginami.gijiroku.com/voices/voices/cgi/voiweb.exe', SUGINAMI_MARKS),
+    Voices('131156', 'https://suginami.gijiroku.com/voices/voices/cgi/voiweb.exe', CHAIR_MEMBER_OFFICIAL),
+    Voices('131121', 'https://kugi.city.setagaya.tokyo.jp/voices/CGI/voiweb.exe', CHAIR_MEMBER_OFFICIAL, role_field=True, headings='△'),
 ]

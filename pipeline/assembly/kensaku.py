@@ -134,11 +134,16 @@ def classify(label: str, attendance: str) -> tuple[str, str | None]:
     # 本会議: ２４番（吉野正人議員）・議長（鈴木まさし議員）
     if m := re.match(r'^(.+?)（(.+?)議員）$', label):
         return ('chair' if m.group(1).endswith('議長') else 'member'), known(m.group(2))
-    # 委員会: 岩崎ふみひろ委員長・佐藤ゆたか年長委員・鈴木まさし前議長
-    m = re.match(rf'^(.+?)(年長|前|臨時)?{ROLE}$', label)
+    # 委員会: 岩崎ふみひろ委員長・佐藤ゆたか年長委員・鈴木まさし前議長・そのべせいや委員外議員
+    m = re.match(rf'^(.+?)(年長|前|臨時|委員外)?{ROLE}$', label)
     if m and not re.search(r'監査|教育|選挙|農業', m.group(1)):
-        kind = 'chair' if m.group(3) in ('議長', '副議長', '委員長') and not m.group(2) else 'member'
-        return kind, known(m.group(1))
+        # 「宍戸三郎議会広報小委員会委員長」は別の会議体の長で、この会議の進行ではない。名前は出席者の欄に載る一番長い頭の部分
+        head = m.group(1)
+        other_body = '委員会' in head
+        kind = 'chair' if m.group(3) in ('議長', '副議長', '委員長') and not m.group(2) and not other_body else 'member'
+        if other_body:
+            return kind, next((head[:n] for n in range(len(head), 1, -1) if head[:n] in attendance), None)
+        return kind, known(head)
     return ('official' if re.search(r'長|参事|管理者|監|理事|課|官|主幹|委員', label) else 'other'), None
 
 
