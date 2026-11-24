@@ -12,7 +12,8 @@
   表はこの script が自分で作る（create table if not exists）。
 - 推定でしか決まらない項目（問いと答えの対応・款・理事者の役職）は持たない。議員のフルネームは名簿や出席者の欄で1人に決まるときだけ入れる。
 - 同じ D1 に同時に2本流さない（差分は流し始めの D1 の中身から決めるので、並ぶと同じ会議を二重に書く）。
-- 会議録のシステムは自治体ごとに違うので、読み方はシステムごとの module に置く（中央区は `chuo.py`、kensakusystem.jp は `kensaku.py`）。
+- 会議録のシステムは自治体ごとに違うので、読み方はシステムごとの module に置く（中央区は `chuo.py`、kensakusystem.jp は `kensaku.py`、VOICES は `voices.py`）。
+- DiscussNet（ssp.kaigiroku.net）は robots.txt が /tenant/ 以外を禁じ、会議録を返す API（/dnp/search/）も禁止に入るので取らない（新宿・墨田・渋谷・北・荒川・練馬・立川・青梅・昭島・小平・東大和・清瀬・武蔵村山・瑞穂・小笠原、2026-11-25 確認）。
 """
 from __future__ import annotations
 
@@ -25,6 +26,7 @@ from typing import Iterator
 from assembly.chuo import Chuo
 from assembly.common import Meeting, Member, Speech, State
 from assembly.kensaku import KENSAKU
+from assembly.voices import VOICES
 from serving.sync_d1 import D1, LOCAL_DATABASE_ID, LOCAL_PERSIST_TO, literal, pack
 
 PIPELINE = Path(__file__).resolve().parents[1]
@@ -68,7 +70,7 @@ SCHEMA = [
 ]
 
 
-SOURCES = {s.code: s for s in [Chuo(), *KENSAKU]}
+SOURCES = {s.code: s for s in [Chuo(), *KENSAKU, *VOICES]}
 
 
 # ---- D1 ----
