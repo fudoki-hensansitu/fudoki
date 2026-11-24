@@ -555,6 +555,55 @@
           "bytes": 2212332
         }
       ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e86344ff9199f4828eeced24d6e236916ed9e152fe215d541e829cea00914a1d"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "unnumbered_abolished_names": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-expenditure"
+        }
+      ]
     }
   ]
 }
