@@ -4,7 +4,7 @@
     bun run --cwd pipeline assembly:ingest -- --database-id <id>              # 本番の D1 に、まだ無い会議を足す
     bun run --cwd pipeline assembly:ingest -- --local --dry-run               # 何を取り何を書くかだけ出す（取得も書き込みもしない）
     bun run --cwd pipeline assembly:ingest -- --local --from 6                # 令和6年から今年まで（既定）
-    bun run --cwd pipeline assembly:ingest -- --local --refetch r08_yosan20260305   # 入れ済みの会議を取り直し、変わっていれば入れ替える
+    bun run --cwd pipeline assembly:ingest -- --local --refetch r08_yosan20260319   # 入れ済みの会議を取り直し、変わっていれば入れ替える
 
 - 入れる先の D1 にまだ無い会議だけを議会のサイトから取り、その分だけ書く。差分が無ければ一覧を見るだけで書き込みは0。
 - 取った HTML は `pipeline/.cache/assembly/<自治体コード>/raw/` に置き、取り直すとき以外はサイトへ行かない。
@@ -123,7 +123,8 @@ def http(url: str, data: dict | None = None) -> str:
 def to_lines(page: str) -> list[str]:
     parts = page.split('ここから本文です')
     t = parts[1] if len(parts) > 1 else page
-    t = t.split('お問い合わせ先')[0].split('<script')[0]
+    # 本文の後ろは問い合わせ先の枠（<p class="add">）と script。発言に「お問い合わせ先」と出ても切らないよう、文字ではなく枠で切る
+    t = re.split(r'<p class="add">|<script', t, maxsplit=1)[0]
     t = re.sub(r'<br\s*/?>', '\n', t, flags=re.I)
     t = re.sub(r'</(p|div|li|h\d|tr)>', '\n', t, flags=re.I)
     # 入れ子の崩れた印も残さないよう、タグが無くなるまで外す。ここで作るのは表示用の HTML ではなく本文の文字
@@ -271,8 +272,16 @@ SOURCES = {Chuo.code: Chuo()}
 
 # ---- D1 ----
 
-def read_state(d1: D1, code: str) -> State:
-    results = d1.batch([{'sql': sql} for sql in SCHEMA] + [
+def read_state(d1: D1, code: str, create: bool) -> State:
+    """create が偽（--dry-run）のときは表を作らず、まだ表が無ければ空の状態として扱う。"""
+    if create:
+        d1.batch([{'sql': sql} for sql in SCHEMA])
+    else:
+        tables = d1.batch([{'sql': "select \"name\" from sqlite_master where \"type\" = 'table'"}])
+        names = {r[0] for r in tables[0]['results']['rows']}
+        if not {MEETING, MEMBER} <= names:
+            return State()
+    results = d1.batch([
         {'sql': f'select "meeting_id", "content_hash" from "{MEETING}" where "jurisdiction_code" = {literal(code)}'},
         {'sql': f'select "name", "surname", "given" from "{MEMBER}" where "jurisdiction_code" = {literal(code)}'},
     ])
@@ -330,11 +339,12 @@ def main() -> int:
     d1 = D1(LOCAL_DATABASE_ID if args.local else args.database_id, args.local, args.persist_to)
     target_name = 'ローカルの D1' if args.local else '本番の D1'
 
-    state = read_state(d1, source.code)
+    state = read_state(d1, source.code, create=not args.dry_run)
     listed = source.list_paths(args.from_reiwa)
     for local_id in args.refetch:
         if local_id not in state.meetings:
-            parser.error(f'--refetch {local_id} は {target_name} にまだ無い')
+            parser.error(f'--refetch {local_id} は {target_name} にまだ入っていない。'
+                         '新しい会議は --refetch を外して流す（--from がその会議の年を含むこと）')
     added = [p for p in listed if source.local_id(p) not in state.meetings]
     refetch = [source.path_of(i) for i in args.refetch]
     print(f'{target_name}: 入れ済み {len(state.meetings)} 会議。サイトの一覧 {len(listed)} 会議のうち、'
