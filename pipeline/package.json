@@ -24,7 +24,7 @@
     "source-text:preview": "uv run python -m source_text.layout",
     "serving:sync": "uv run python -m serving.sync_d1",
     "publish": "uv run python -m serving.publish",
-    "gikai:ingest": "uv run python -m gikai.ingest",
+    "assembly:ingest": "uv run python -m assembly.ingest",
     "serving:queria": "uv run python -m serving.queria",
     "test:dbt": "uv run python -m unittest discover -s dbt/scripts -p '*_test.py'"
   },

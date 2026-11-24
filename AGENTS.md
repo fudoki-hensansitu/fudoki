@@ -186,7 +186,7 @@ _Avoid_: 議事録（利用者向けの表記として）
 
 ```
 .
-├── pipeline/         # source_selection、ingestion/fiscal、dbt（マスタと正規化macro）、gikai（会議録）
+├── pipeline/         # source_selection、ingestion/fiscal、dbt（マスタと正規化macro）、assembly（議会の会議録）
 ├── packages/         # fiscal の純粋な型・名称、jurisdictions、ui
 ├── apps/             # web（ホーム・紹介・自治体の頁・AI との会話）、api、docs、samples（spending など小さなサンプルを1つの Worker で）
 ├── docs/

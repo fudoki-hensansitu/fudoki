@@ -1,13 +1,13 @@
 """議会の会議録を発言単位に切って、D1 に差分で書く（手元で人が流す。CI・Actions では回さない）。
 
-    bun run --cwd pipeline gikai:ingest -- --local                         # ローカルの D1 に、まだ無い会議を足す
-    bun run --cwd pipeline gikai:ingest -- --database-id <id>              # 本番の D1 に、まだ無い会議を足す
-    bun run --cwd pipeline gikai:ingest -- --local --dry-run               # 何を取り何を書くかだけ出す（取得も書き込みもしない）
-    bun run --cwd pipeline gikai:ingest -- --local --from 6                # 令和6年から今年まで（既定）
-    bun run --cwd pipeline gikai:ingest -- --local --refetch r08_yosan20260305   # 入れ済みの会議を取り直し、変わっていれば入れ替える
+    bun run --cwd pipeline assembly:ingest -- --local                         # ローカルの D1 に、まだ無い会議を足す
+    bun run --cwd pipeline assembly:ingest -- --database-id <id>              # 本番の D1 に、まだ無い会議を足す
+    bun run --cwd pipeline assembly:ingest -- --local --dry-run               # 何を取り何を書くかだけ出す（取得も書き込みもしない）
+    bun run --cwd pipeline assembly:ingest -- --local --from 6                # 令和6年から今年まで（既定）
+    bun run --cwd pipeline assembly:ingest -- --local --refetch r08_yosan20260305   # 入れ済みの会議を取り直し、変わっていれば入れ替える
 
 - 入れる先の D1 にまだ無い会議だけを議会のサイトから取り、その分だけ書く。差分が無ければ一覧を見るだけで書き込みは0。
-- 取った HTML は `pipeline/.cache/gikai/<自治体コード>/raw/` に置き、取り直すとき以外はサイトへ行かない。
+- 取った HTML は `pipeline/.cache/assembly/<自治体コード>/raw/` に置き、取り直すとき以外はサイトへ行かない。
 - 表は D1 にだけ置き、dbt・marts・serving/sync_d1.py を通さない（議会の表は sync_d1.py の対象外なので、同期は触らない）。
   表はこの script が自分で作る（create table if not exists）。
 - 推定でしか決まらない項目（問いと答えの対応・款・理事者の役職）は持たない。議員のフルネームは名簿で1人に決まるときだけ入れる。
@@ -31,13 +31,13 @@ from typing import Iterator
 from serving.sync_d1 import D1, LOCAL_DATABASE_ID, LOCAL_PERSIST_TO, literal, pack
 
 PIPELINE = Path(__file__).resolve().parents[1]
-CACHE = PIPELINE / '.cache/gikai'
+CACHE = PIPELINE / '.cache/assembly'
 FETCH_INTERVAL_SECONDS = 1.0
-USER_AGENT = 'fudoki-gikai-ingest'
+USER_AGENT = 'fudoki-assembly-ingest'
 
-MEETING = 'gikai_meeting'
-SPEECH = 'gikai_speech'
-MEMBER = 'gikai_member'
+MEETING = 'assembly_meeting'
+SPEECH = 'assembly_speech'
+MEMBER = 'assembly_member'
 
 SCHEMA = [
     f'''create table if not exists "{MEETING}" (
