@@ -1459,11 +1459,12 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
     built.unowned = [u for u in built.unowned if not (u['kind'] == 'unread ink in amount column'
                                                       and inner_tables is not None and inner_tables.in_prose(blocks, u['page'], u['box'], 'excluded' in inner))]
     # Ink a declared reading covers (`amount_readings`, `code_readings`: what OCR left unread, read from the rendered
-    # page) is read: the reading stands for it.
+    # page) is read: the reading stands for it. A line the strip seam cut is the same ink (`settle_seams` records it
+    # in `unread_ink` too), so the reading stands for that as well.
     declared = [(r['page'], box) for r in options.get('amount_readings', ()) for box in r['boxes']]
     declared += [(r['page'], r['box']) for r in options.get('code_readings', ())]
     built.unowned = [u for u in built.unowned if not (
-        u['kind'] == 'unread ink in amount column'
+        u['kind'] in ('unread ink in amount column', 'unread strip seam')
         and any(page == u['page'] and box[0] <= (u['box'][0] + u['box'][2]) / 2 <= box[2]
                 and box[1] <= (u['box'][1] + u['box'][3]) / 2 <= box[3] for page, box in declared))]
     # Ink the rendered page shows to be only pieces of the column rules (`rule_pieces`: 多摩市 R2 決算 p1, a cell
