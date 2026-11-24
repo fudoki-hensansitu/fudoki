@@ -204,6 +204,84 @@
           "table_id": "elderly-medical-expenditure"
         }
       ]
+    },
+    {
+      "id": "water-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a4da9a38819a6052ed59428e485bb261ab21b5066544a6ee908337f5d2f2e25a"
+        }
+      ],
+      "options": {
+        "account": "簡易水道事業特別会計",
+        "table_id": "water-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "position"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "water-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "septic-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a4da9a38819a6052ed59428e485bb261ab21b5066544a6ee908337f5d2f2e25a"
+        }
+      ],
+      "options": {
+        "account": "合併処理浄化槽事業特別会計",
+        "table_id": "septic-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "position"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "septic-expenditure"
+        }
+      ]
     }
   ]
 }
