@@ -2,7 +2,7 @@
 
     bun run --cwd pipeline assembly:ingest -- --local                         # ローカルの D1 に、まだ無い会議を足す
     bun run --cwd pipeline assembly:ingest -- --database-id <id>              # 本番の D1 に、まだ無い会議を足す
-    bun run --cwd pipeline assembly:ingest -- --local --dry-run               # 何を取り何を書くかだけ出す（取得も書き込みもしない）
+    bun run --cwd pipeline assembly:ingest -- --local --dry-run               # 差分だけ出す（会議の一覧は取りに行くが、会議録の取得と書き込みはしない）
     bun run --cwd pipeline assembly:ingest -- --local --from 6                # 令和6年から今年まで（既定）
     bun run --cwd pipeline assembly:ingest -- --local --refetch r08_yosan20260319   # 入れ済みの会議を取り直し、変わっていれば入れ替える
 
@@ -11,6 +11,7 @@
 - 表は D1 にだけ置き、dbt・marts・serving/sync_d1.py を通さない（議会の表は sync_d1.py の対象外なので、同期は触らない）。
   表はこの script が自分で作る（create table if not exists）。
 - 推定でしか決まらない項目（問いと答えの対応・款・理事者の役職）は持たない。議員のフルネームは名簿で1人に決まるときだけ入れる。
+- 同じ D1 に同時に2本流さない（差分は流し始めの D1 の中身から決めるので、並ぶと同じ会議を二重に書く）。
 - 今は中央区（131024）だけ。会議録のシステムは自治体ごとに違うので、自治体を足すときは SOURCES に読み方を足す。
 """
 from __future__ import annotations
@@ -332,7 +333,7 @@ def main() -> int:
     parser.add_argument('--jurisdiction', default=Chuo.code, choices=sorted(SOURCES), help='自治体コード')
     parser.add_argument('--from', dest='from_reiwa', type=int, default=6, help='令和の何年から見るか')
     parser.add_argument('--refetch', action='append', default=[], help='入れ済みの会議を取り直す（例 r08_yosan20260305）')
-    parser.add_argument('--dry-run', action='store_true', help='取得も書き込みもせず、差分だけ出す')
+    parser.add_argument('--dry-run', action='store_true', help='会議の一覧だけ取り、会議録の取得と書き込みはせず、差分だけ出す')
     args = parser.parse_args()
 
     source = SOURCES[args.jurisdiction]
