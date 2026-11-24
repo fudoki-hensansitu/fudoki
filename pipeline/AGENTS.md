@@ -14,6 +14,7 @@
 | `shared/` | 取り込みと dbt を横断する辞書。取り込みは直接読み、dbt は seed として読む |
 | `dbt/` | 入力準備（`scripts/`）、staging・intermediate・marts、seeds、検査（`tests/`） |
 | `serving/` | marts を D1 へ写す同期（`sync_d1.py`）、列の契約（`columns.py`）、配信の入口（`publish.py`）、Queria への配布 |
+| `assembly/` | 議会の会議録の取り込み（`ingest.py`）。議会のサイトから手元で取り、発言に切って D1 の `assembly_*` に差分で書く（[ADR 0054](../docs/adr/0054-assembly-minutes-direct-to-d1.md)） |
 | `source_text/` | アシスタントが読む出典の頁の文字の組み方 |
 | `verify/` | repo の決まりの検査（`bun run lint`） |
 
@@ -73,6 +74,6 @@ script はこの package の `package.json` が持つ。使い方は各 script �
 ### 配信
 
 - marts の表を同名・同列のまま D1 に写す（[ADR 0022](../docs/adr/0022-serve-marts-via-worker-d1-rest-and-mcp.md)・[ADR 0038](../docs/adr/0038-split-serving-tables-by-grain.md)）。表名は集約の名前で始める
-- 同期は変わった行だけを書く（[ADR 0040](../docs/adr/0040-sync-d1-by-row-diff.md)）。D1 に書くのは `serving/sync_d1.py` だけで、同時に2つ流さない。D1 には control 以外の表を migration で作らない。同期の写しの印を置く `sync_state` は `sync_d1.py` が自分で作る
+- 同期は変わった行だけを書く（[ADR 0040](../docs/adr/0040-sync-d1-by-row-diff.md)）。D1 に書くのは `serving/sync_d1.py` だけで、同時に2つ流さない。例外は会議録の `assembly/ingest.py` で、`assembly_*` の表だけを手元から書く（[ADR 0054](../docs/adr/0054-assembly-minutes-direct-to-d1.md)）。D1 には control 以外の表を migration で作らない。同期の写しの印を置く `sync_state` は `sync_d1.py` が自分で作る
 - main への merge で `sync-d1.yml` が変わった範囲を build し、本番 D1 へ写す（入口は `publish`）。取り込みの PR では R2 にも本番にも手で書かない
 - Queria の公開データセットには、Queria 用の marts（`marts/queria/`）を同名・同列のまま写す。Queria の規約に合わせた形はこの marts で作り、写す側では変えない。手順は `.agents/skills/pipeline/references/queria.md`
