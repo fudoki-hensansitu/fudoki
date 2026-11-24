@@ -759,6 +759,506 @@
           "table_id": "general-initial-6"
         }
       ]
+    },
+    {
+      "id": "kokuho-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "046f8f55c1fc3515ade4aa94e28a22aa06669150093ed0bc19efbb504aa63ff0"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "kokuho-initial",
+        "pages": [
+          [
+            18,
+            53
+          ]
+        ],
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内／特定財源／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "marks": {
+                    "◎": 1
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "padded_runs": true,
+            "titles_on_one_line": true
+          }
+        },
+        "excluded_boxes": [
+          {
+            "id": "p22-joined-compare-fund",
+            "page": 22,
+            "bbox": [
+              325,
+              176,
+              381,
+              186
+            ],
+            "kind": "財源内訳",
+            "reason": "目「一般被保険者療養給付費」の比較の欄の 0 と、本年度の財源内訳（国・都支出金）の 12,000,000 が罫をまたいで1語（012,000,000）に印字されている。本年度予算額・前年度予算額は別の語で読めている。この語の2つの金額は読み分けられないので取り込まない。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-initial"
+        }
+      ]
+    },
+    {
+      "id": "yochi-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "1056f784935244c74da81606b631a2d895c64194de817ff76663f19e7dd441cd"
+        }
+      ],
+      "options": {
+        "account": "用地特別会計",
+        "table_id": "yochi-initial",
+        "pages": [
+          [
+            12,
+            17
+          ]
+        ],
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内／特定財源／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "marks": {
+                    "◎": 1
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "padded_runs": true,
+            "titles_on_one_line": true,
+            "codes_across_level_rules": 5
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "yochi-initial"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6a5287bb531d89f1c934c36982d5987b99b15f4974f371a109e558c3caad208e"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "kaigo-initial",
+        "pages": [
+          [
+            18,
+            53
+          ]
+        ],
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内／特定財源／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "marks": {
+                    "◎": 1
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "padded_runs": true,
+            "titles_on_one_line": true,
+            "codes_before_marks": 4.5
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-initial"
+        }
+      ]
+    },
+    {
+      "id": "kouki-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "649b6756b658e94e343710658921538d2366838d307e5541d642e47a23a52dc2"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-initial",
+        "pages": [
+          [
+            14,
+            29
+          ]
+        ],
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内／特定財源／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "marks": {
+                    "◎": 1
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "padded_runs": true,
+            "titles_on_one_line": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-initial"
+        }
+      ]
     }
   ]
 }
