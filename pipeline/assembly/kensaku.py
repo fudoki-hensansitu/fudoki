@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from assembly.common import Meeting, Member, Speech, current_reiwa, http, kind_of_body, reiwa_date, sha, strip_tags
 
 ENCODING = 'cp932'
-ROLE = r'(副?議長|副?委員長|委員|議員)'
+ROLE = r'(副?議長|副?委員長|副?会長|委員|議員|理事)'  # 会長は分科会、理事は理事会
 # ○ で始まっても発言ではない冒頭の見出し
 HEADINGS = re.compile(r'^(議事日程|本日の会議に付した事件|会議に付した事件|出席(議員|委員|説明員|者)|欠席(議員|委員)|'
                       r'説明のため出席した者|職務のため出席した.*|議会事務局.*|署名議員|議題|付議事件|案件)$')
@@ -127,10 +127,21 @@ def split_label(line: str) -> tuple[str, str]:
 
 
 def classify(label: str, attendance: str) -> tuple[str, str | None]:
-    """印字の役職で話し手の区分を決め、議員の名前は出席者の欄にそのまま載っているときだけ入れる。"""
-    def known(name: str) -> str | None:
-        return name if len(name) >= 2 and name in attendance else None
+    """印字の役職で話し手の区分を決め、議員の名前は出席者の欄で確かめられるときだけ入れる。"""
+    # 委員会の出席者の欄が姓だけの議会がある（豊島「高橋委員長　芳賀副委員長　小林（弘）委員」）
+    surnames = set(re.findall(r'([^│├┤┼┬┴（）〈〉、。\d]+?)(?:（.）)?(?:副?委員長|委員|副?議長)', attendance))
 
+    def known(name: str) -> str | None:
+        if len(name) < 2:
+            return None
+        if name in attendance:
+            return name
+        # 印字のフルネームが、欄に載る姓で始まるときも入れる。名前そのものは印字から取る
+        return name if any(len(s) < len(name) and name.startswith(s) for s in surnames) else None
+
+    # 葛飾は印字を括弧で囲む（「（伊藤よしのり委員長）」「（区長）」）
+    if m := re.fullmatch(r'（(.+)）', label):
+        label = m.group(1)
     # 本会議: ２４番（吉野正人議員）・議長（鈴木まさし議員）
     if m := re.match(r'^(.+?)（(.+?)議員）$', label):
         return ('chair' if m.group(1).endswith('議長') else 'member'), known(m.group(2))
@@ -139,12 +150,15 @@ def classify(label: str, attendance: str) -> tuple[str, str | None]:
     if m and not re.search(r'監査|教育|選挙|農業', m.group(1)):
         # 「宍戸三郎議会広報小委員会委員長」は別の会議体の長で、この会議の進行ではない。名前は出席者の欄に載る一番長い頭の部分
         head = m.group(1)
-        other_body = '委員会' in head
-        kind = 'chair' if m.group(3) in ('議長', '副議長', '委員長') and not m.group(2) and not other_body else 'member'
+        other_body = bool(re.search(r'委員会|分科会', head))
+        kind = 'chair' if m.group(3) in ('議長', '副議長', '委員長', '会長') and not m.group(2) and not other_body else 'member'
+        # 「理事」は区の役職にもある。名前が出席者の欄で確かめられるときだけ議員にする
+        if m.group(3) == '理事' and not known(head):
+            return 'official', None
         if other_body:
             return kind, next((head[:n] for n in range(len(head), 1, -1) if head[:n] in attendance), None)
         return kind, known(head)
-    return ('official' if re.search(r'長|参事|管理者|監|理事|課|官|主幹|委員', label) else 'other'), None
+    return ('official' if re.search(r'長|参事|管理者|監|理事|課|官|主幹|委員|書記', label) else 'other'), None
 
 
 KENSAKU = [Kensaku('131105', 'meguro'), Kensaku('131164', 'toshima'), Kensaku('131229', 'katsushika')]
