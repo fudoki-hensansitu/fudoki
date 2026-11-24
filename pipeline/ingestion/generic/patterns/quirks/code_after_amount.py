@@ -12,7 +12,7 @@ amount `70` and the 事業 `131317 一般…`): the digits before the last `code
 The option `cut_after_group` cuts a grouped amount's number run (`23,` `9500900400`: the amount `23,950`, the 事業 code
 `0900400`, 132276 R5 当初) after its group of three whenever a rule crosses the run. The cut by a share of the whole
 line's box counts the comma as a digit and lands a digit late (`239,500`). It also counts a rule that a page of stacked
-tables draws once per table as one rule, so the cut by `code_digits` applies there too."""
+tables draws once per table as one rule, so the cut by `code_digits` applies there too. A grouped amount that reaches a rule is never trimmed by `read_twice`."""
 import re
 
 SCOPE = 'document'
@@ -40,15 +40,19 @@ def overrun(text: str, sliver: float, width: float) -> bool:
     return re.fullmatch(r'[0-9]{2}', text) is not None and sliver < width
 
 
-def read_twice(readings: list[dict], cuts: list[float]) -> dict[str, tuple[str, list[float]]]:
+def read_twice(readings: list[dict], cuts: list[float], keep_grouped: bool = False) -> dict[str, tuple[str, list[float]]]:
     """Amount lines that end with the first digits of the number past the rule, which OCR also read on that number's own
     line (`11` over the rule, then `133443一般会計繰出金` from the rule: the amount `1`, 132136). The digits past the rule
-    are the number's: each such line gets its text without them and a box that ends at the rule (id → text, box)."""
+    are the number's: each such line gets its text without them and a box that ends at the rule (id → text, box).
+    `keep_grouped` (`cut_after_group`): an amount already grouped by threes to its end (`6,791,191` over a rule, then the
+    `1介護予防…` of the next number) is whole; its last digit is its own, not a digit read twice."""
     trimmed = {}
     for o in readings:
         raw, (x0, y0, x1, y1) = o['raw_text'].strip(), o['bbox_pdf_pt']
         inside = [x for x in cuts if x0 + 1 < x < x1 - 1]
         if len(inside) != 1 or not re.fullmatch(r'△?[0-9][0-9,]*', raw):
+            continue
+        if keep_grouped and re.fullmatch(r'△?[0-9]{1,3}(,[0-9]{3})+', raw):
             continue
         rule, width = inside[0], (x1 - x0) / len(raw)
         past = round((x1 - rule) / width)
