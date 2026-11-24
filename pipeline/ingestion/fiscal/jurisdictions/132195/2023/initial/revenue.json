@@ -105,6 +105,442 @@
           "table_id": "general-initial"
         }
       ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5484b7e2e38116d84e324c1f09af5006148c9d9981f7f2f6a5dc8101887a41cf"
+        }
+      ],
+      "options": {
+        "pages": [
+          [
+            63,
+            63
+          ],
+          [
+            65,
+            72
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "continued_pages",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度増減比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "構成比／本年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "構成比／前年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "区分": {
+                  "kind": "label",
+                  "axis_header": "節"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_code_at_top": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        },
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-initial"
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5484b7e2e38116d84e324c1f09af5006148c9d9981f7f2f6a5dc8101887a41cf"
+        }
+      ],
+      "options": {
+        "pages": [
+          [
+            10,
+            10
+          ],
+          [
+            12,
+            15
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "continued_pages",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度増減比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "構成比／本年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "構成比／前年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "区分": {
+                  "kind": "label",
+                  "axis_header": "節"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_code_at_top": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true,
+            "zero_codes": true,
+            "zero_coded_drops": true
+          }
+        },
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-initial"
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5484b7e2e38116d84e324c1f09af5006148c9d9981f7f2f6a5dc8101887a41cf"
+        }
+      ],
+      "options": {
+        "pages": [
+          [
+            43,
+            43
+          ],
+          [
+            45,
+            48
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "continued_pages",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度増減比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "構成比／本年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "構成比／前年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "区分": {
+                  "kind": "label",
+                  "axis_header": "節"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_code_at_top": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        },
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial"
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    },
+    {
+      "id": "parking-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5484b7e2e38116d84e324c1f09af5006148c9d9981f7f2f6a5dc8101887a41cf"
+        }
+      ],
+      "options": {
+        "pages": [
+          [
+            98,
+            98
+          ],
+          [
+            100,
+            101
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "continued_pages",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度増減比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "構成比／本年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "構成比／前年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "区分": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_code_at_top": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true,
+            "zero_codes": true,
+            "zero_coded_drops": true
+          }
+        },
+        "account": "駐車場事業特別会計",
+        "table_id": "parking-initial",
+        "excluded_boxes": [
+          {
+            "id": "p101-title-city-bond",
+            "page": 101,
+            "bbox": [
+              130,
+              253,
+              137,
+              264
+            ],
+            "kind": "親の繰り返し",
+            "reason": "物理101頁の款「０. 市債」の題字の金額（0 千円）。その年に無くなった款で、唯一の項・目と同じ金額（0）を繰り返す。款の題字は最初の項が 1 でないので金額を読まず、項・目の金額（0）は別に読めている。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "parking-initial"
+        }
+      ]
     }
   ]
 }
