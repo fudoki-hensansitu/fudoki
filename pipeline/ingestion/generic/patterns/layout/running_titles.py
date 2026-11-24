@@ -664,6 +664,12 @@ def carried_names(logical: layout.Logical) -> list[Glyph]:
         wrapped = len(rows) > 1 and normalize(''.join(g.text for g in rows[1]))
         if priced_row:
             continue
+        if not CARRIED.match(shown) and (across := document_quirk('carried_names_across_rules')) is not None:
+            # (a name that runs over the rule into the next column: `(1 特定健康診` | `査等事業費)`)
+            rest = across.module.tail(first, logical.bands, page)
+            if rest and CARRIED.match(shown + normalize(''.join(g.text for g in rest))):
+                found.extend(first + rest)
+                continue
         if CARRIED.match(shown):
             found.extend(first)
         elif wrapped and CARRIED.match(shown + wrapped) and not re.search(r'[)）]', shown):

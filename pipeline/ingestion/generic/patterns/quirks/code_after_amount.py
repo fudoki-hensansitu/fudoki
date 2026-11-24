@@ -7,13 +7,18 @@ width cuts the padding, not a digit.
 
 The option `code_digits` gives the number's digit count where every 説明 number has the same count (132136 R5 当初予算: a
 six-digit 事業 code after the 節 amount). A short amount has no groups to say where it ends (`70131317一般…` for the
-amount `70` and the 事業 `131317 一般…`): the digits before the last `code_digits` of the run are the amount's."""
+amount `70` and the 事業 `131317 一般…`): the digits before the last `code_digits` of the run are the amount's.
+
+The option `cut_after_group` cuts a grouped amount's number run (`23,` `9500900400`: the amount `23,950`, the 事業 code
+`0900400`, 132276 R5 当初) after its group of three whenever a rule crosses the run. The cut by a share of the whole
+line's box counts the comma as a digit and lands a digit late (`239,500`). It also counts a rule that a page of stacked
+tables draws once per table as one rule, so the cut by `code_digits` applies there too."""
 import re
 
 SCOPE = 'document'
 OPTIONS = {'oneOf': [{'const': True}, {
-    'type': 'object', 'additionalProperties': False, 'required': ['code_digits'],
-    'properties': {'code_digits': {'type': 'integer', 'minimum': 1}}}]}
+    'type': 'object', 'additionalProperties': False,
+    'properties': {'code_digits': {'type': 'integer', 'minimum': 1}, 'cut_after_group': {'const': True}}}]}
 
 AMOUNT_THEN_CODE = re.compile(r'(△?[0-9]{1,3}(?:,[0-9]{3})+)([0-9]{1,3})')
 
@@ -54,3 +59,8 @@ def read_twice(readings: list[dict], cuts: list[float]) -> dict[str, tuple[str, 
                and min(y1, n['bbox_pdf_pt'][3]) - max(y0, n['bbox_pdf_pt'][1]) >= .6 * (y1 - y0) for n in readings):
             trimmed[o['id']] = (raw[:-past], [x0, y0, rule, y1])
     return trimmed
+
+
+def cuts_after_group(value: object) -> bool:
+    """Whether the document declares `cut_after_group`: a run a rule crosses is cut after its group of three."""
+    return isinstance(value, dict) and bool(value.get('cut_after_group'))
