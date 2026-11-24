@@ -10,7 +10,7 @@
 - 取った HTML は `pipeline/.cache/assembly/<自治体コード>/raw/` に置き、取り直すとき以外はサイトへ行かない。
 - 表は D1 にだけ置き、dbt・marts・serving/sync_d1.py を通さない（議会の表は sync_d1.py の対象外なので、同期は触らない）。
   表はこの script が自分で作る（create table if not exists）。
-- 推定でしか決まらない項目（問いと答えの対応・款・理事者の役職）は持たない。議員のフルネームは名簿や出席者の欄で1人に決まるときだけ入れる。
+- 推定でしか決まらない項目（問いと答えの対応・款・理事者の役職）は持たない。議員のフルネームは印字・名簿・出席者の欄で1人に決まるときだけ入れる（ADR 0054）。
 - 同じ D1 に同時に2本流さない（差分は流し始めの D1 の中身から決めるので、並ぶと同じ会議を二重に書く）。
 - 会議録のシステムは自治体ごとに違うので、読み方はシステムごとの module に置く（中央区は `chuo.py`、kensakusystem.jp は `kensaku.py`）。
 """
@@ -53,7 +53,7 @@ SCHEMA = [
         "seq" integer not null,                 -- 会議の中での発言の順番（1から）
         "speaker_label" text not null,          -- 会議録の「○」の後ろの印字のまま
         "speaker_kind" text not null,           -- member・chair・official・other
-        "member_name" text,                     -- 議員の名簿で1人に決まったときだけ。決まらなければ NULL
+        "member_name" text,                     -- 印字・名簿・出席者の欄で1人に決まったときだけ。決まらなければ NULL
         "body" text not null,
         primary key ("meeting_id", "seq")
     )''',

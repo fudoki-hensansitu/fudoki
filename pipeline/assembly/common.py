@@ -62,8 +62,14 @@ def http(url: str, data: dict | None = None, encoding: str = 'utf-8') -> str:
     for attempt in range(1, RETRIES + 1):
         try:
             with urllib.request.urlopen(request, timeout=60) as response:
-                text = response.read().decode(encoding, errors='replace')
+                raw = response.read()
             break
+        except urllib.error.HTTPError as error:
+            # 4xx は取り直しても変わらない（tenant や Code の取り違え）。すぐ止める
+            if error.code < 500 or attempt == RETRIES:
+                raise
+            print(f'  取得に失敗（{attempt} 回目、{error}）。{attempt * 10} 秒後に取り直す', flush=True)
+            time.sleep(attempt * 10)
         except (urllib.error.URLError, ConnectionError, TimeoutError) as error:
             # 議会のサイトは時々接続を切る。間を空けて取り直し、続けて落ちたら止める
             if attempt == RETRIES:
@@ -71,7 +77,8 @@ def http(url: str, data: dict | None = None, encoding: str = 'utf-8') -> str:
             print(f'  取得に失敗（{attempt} 回目、{error}）。{attempt * 10} 秒後に取り直す', flush=True)
             time.sleep(attempt * 10)
     time.sleep(FETCH_INTERVAL_SECONDS)
-    return text
+    # 文字コードを取り違えたら化けた本文を D1 に入れず、ここで止める
+    return raw.decode(encoding)
 
 
 def strip_tags(t: str) -> list[str]:
@@ -96,10 +103,11 @@ def current_reiwa() -> int:
 def reiwa_date(text: str) -> str:
     """「令和 8年 2月24日」「令和８年２月２４日」「令和元年」を ISO の日付にする。"""
     z = to_ascii_digits(text).replace('元年', '1年')
-    m = re.search(r'令和\s*(\d+)年\s*(\d+)月\s*(\d+)日', z)
-    if not m:
+    y = re.search(r'令和\s*(\d+)年', z)
+    md = re.search(r'(\d+)月\s*(\d+)日', z)
+    if not y or not md:
         raise ValueError(f'日付が読めない: {text}')
-    return f'{2018 + int(m.group(1))}-{int(m.group(2)):02d}-{int(m.group(3)):02d}'
+    return f'{2018 + int(y.group(1))}-{int(md.group(1)):02d}-{int(md.group(2)):02d}'
 
 
 def kind_of_body(body_name: str) -> str:

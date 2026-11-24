@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from datetime import date
 
-from assembly.common import Meeting, Member, Speech, http, sha, strip_tags
+from assembly.common import Meeting, Member, Speech, http, reiwa_date, sha, strip_tags
 
 
 def to_lines(page: str) -> list[str]:
@@ -48,12 +48,7 @@ class Chuo:
         m = re.search(r'(20\d{2})(\d{2})(\d{2})', path)
         if m:
             return f'{m.group(1)}-{m.group(2)}-{m.group(3)}'
-        z = title.translate(str.maketrans('０１２３４５６７８９', '0123456789'))
-        y = re.search(r'令和(\d+)年', z)
-        md = re.search(r'(\d+)月\s*(\d+)日', z)
-        if not y or not md:
-            raise ValueError(f'日付が読めない: {title}')
-        return f'{2018 + int(y.group(1))}-{int(md.group(1)):02d}-{int(md.group(2)):02d}'
+        return reiwa_date(title)
 
     def kind_of(self, path: str, title: str) -> tuple[str, str]:
         name = re.sub(r'[\d-]+$', '', path.split('/')[1])
