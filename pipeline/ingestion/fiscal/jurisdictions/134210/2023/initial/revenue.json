@@ -818,6 +818,356 @@
           "bytes": 524120
         }
       ]
+    },
+    {
+      "id": "water-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "3dd4f53d78e2c9e8ba0ebd04744a7bccc1e719dcdfbe2fbd2a31e78c88f4b4c1"
+        }
+      ],
+      "options": {
+        "account": "簡易水道事業特別会計",
+        "table_id": "water-revenue",
+        "pages": [
+          [
+            9,
+            12
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount"
+                },
+                "款／項目": {
+                  "kind": "label",
+                  "heading": "目"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "carried": true
+              },
+              "rules": {
+                "dark": 200,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true,
+            "nested_subject_boxes": true,
+            "stepped_amount_lines": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p11-total-char-1",
+            "page": 11,
+            "observation_id": "p11:full-page:a0:result0:r33",
+            "observed": "入",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が読みを分けたので合計の行と分からない。 2字目以降の読みは使わず、1字目の読みを名前の訂正で「歳入合計」にする。"
+          },
+          {
+            "id": "p11-total-char-2",
+            "page": 11,
+            "observation_id": "p11:full-page:a0:result0:r34",
+            "observed": "合",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が読みを分けたので合計の行と分からない。 2字目以降の読みは使わず、1字目の読みを名前の訂正で「歳入合計」にする。"
+          },
+          {
+            "id": "p11-total-char-3",
+            "page": 11,
+            "observation_id": "p11:full-page:a0:result0:r35",
+            "observed": "計",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が読みを分けたので合計の行と分からない。 2字目以降の読みは使わず、1字目の読みを名前の訂正で「歳入合計」にする。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p11-total-name",
+            "page": 11,
+            "observation_id": "p11:ink-1:a1:result0:r0",
+            "observed_name": "歳",
+            "corrected_name": "歳入合計",
+            "reason": "物理11頁の「歳 入 合 計」の行。1字ずつ離して印字した字を1つの名前に戻す（2字目以降は dropped_readings）。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "water-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "water-initial-revenue-ocr-1",
+          "origin_sha256": "3dd4f53d78e2c9e8ba0ebd04744a7bccc1e719dcdfbe2fbd2a31e78c88f4b4c1",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              9,
+              10,
+              11,
+              12
+            ]
+          },
+          "sha256": "d6bc562cf9572b60400a9a23b6e6a853deaf31c07b84655f560123e976fe455c",
+          "bytes": 466832
+        }
+      ]
+    },
+    {
+      "id": "sewer-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6bf5c9c2f70b3389a9078ab347491a1b5a9721ccf6707c34574f46cf6493946a"
+        }
+      ],
+      "options": {
+        "account": "下水道事業特別会計",
+        "table_id": "sewer-revenue",
+        "pages": [
+          [
+            9,
+            12
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount"
+                },
+                "款／項目": {
+                  "kind": "label",
+                  "heading": "目"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "carried": true
+              },
+              "rules": {
+                "dark": 200,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true,
+            "nested_subject_boxes": true,
+            "stepped_amount_lines": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p11-total-char",
+            "page": 11,
+            "observation_id": "p11:full-page:a0:result0:r15",
+            "observed": "計",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が読みを分けたので合計の行と分からない。 2字目以降の読みは使わず、先頭の読みを名前の訂正で「歳入合計」にする。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p11-total-name",
+            "page": 11,
+            "observation_id": "p11:full-page:a0:result0:r14",
+            "observed_name": "歳入合",
+            "corrected_name": "歳入合計",
+            "reason": "物理11頁の「歳 入 合 計」の行。OCR が「歳入合」と「計」に分けたので1つの名前に戻す（「計」は dropped_readings）。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "sewer-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "sewer-initial-revenue-ocr-1",
+          "origin_sha256": "6bf5c9c2f70b3389a9078ab347491a1b5a9721ccf6707c34574f46cf6493946a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              9,
+              10,
+              11,
+              12
+            ]
+          },
+          "sha256": "dc6a1e8649dd2bbfe57a7cf88605227f5a55f4afec5d6ca24583de10f45cb473",
+          "bytes": 425005
+        }
+      ]
+    },
+    {
+      "id": "septic-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "04bf784c6b66b7cfcdc7f96cdd517b0533e225783499ff787bea2eb7a1c35feb"
+        }
+      ],
+      "options": {
+        "account": "浄化槽事業特別会計",
+        "table_id": "septic-revenue",
+        "pages": [
+          [
+            9,
+            12
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount"
+                },
+                "款／項目": {
+                  "kind": "label",
+                  "heading": "目"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "carried": true
+              },
+              "rules": {
+                "dark": 200,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true,
+            "nested_subject_boxes": true,
+            "stepped_amount_lines": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p11-total-char",
+            "page": 11,
+            "observation_id": "p11:full-page:a0:result0:r15",
+            "observed": "計",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が読みを分けたので合計の行と分からない。 2字目以降の読みは使わず、先頭の読みを名前の訂正で「歳入合計」にする。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p11-total-name",
+            "page": 11,
+            "observation_id": "p11:full-page:a0:result0:r14",
+            "observed_name": "歳入合",
+            "corrected_name": "歳入合計",
+            "reason": "物理11頁の「歳 入 合 計」の行。OCR が「歳入合」と「計」に分けたので1つの名前に戻す（「計」は dropped_readings）。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "septic-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "septic-initial-revenue-ocr-1",
+          "origin_sha256": "04bf784c6b66b7cfcdc7f96cdd517b0533e225783499ff787bea2eb7a1c35feb",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              9,
+              10,
+              11,
+              12
+            ]
+          },
+          "sha256": "fa133092c3204136075dfcba7843fdc9f4bc44e15858baa49b1b9b1de536d20d",
+          "bytes": 446059
+        }
+      ]
     }
   ]
 }
