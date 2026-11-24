@@ -295,6 +295,225 @@
           "table_id": "general-revenue"
         }
       ]
+    },
+    {
+      "id": "forest-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "75bd73da1cf70aefea88fb7f37357a0ebdf2d8f4cbba2a792036baf037944926"
+        }
+      ],
+      "options": {
+        "account": "都民の森管理運営事業特別会計",
+        "table_id": "forest-revenue",
+        "pages": [
+          [
+            8,
+            8
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "事業": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                },
+                "予算現額／区分／節": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "row_gaps": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "amounts": "next_row",
+              "fourth_level_axis": "事業"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "traced_glyphs": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "forest-revenue"
+        }
+      ]
+    },
+    {
+      "id": "furusato-village-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "06a8b04b8fd4319c31b3c08ecfff47945218df2a19443646bcd57cd3f5853729"
+        }
+      ],
+      "options": {
+        "account": "山のふるさと村管理運営事業特別会計",
+        "table_id": "furusato-village-revenue",
+        "pages": [
+          [
+            8,
+            8
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "事業": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                },
+                "予算現額／区分／節": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "row_gaps": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "amounts": "next_row",
+              "fourth_level_axis": "事業"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "traced_glyphs": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "furusato-village-revenue"
+        }
+      ]
+    },
+    {
+      "id": "sewer-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "04b6d0f1435e41469a0d78feeda1714a34ba78f0a1474825d6e38aae4c0eed62"
+        }
+      ],
+      "options": {
+        "account": "下水道事業特別会計",
+        "table_id": "sewer-revenue",
+        "pages": [
+          [
+            8,
+            10
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "事業": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                },
+                "予算現額／区分／節": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "row_gaps": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "amounts": "next_row",
+              "fourth_level_axis": "事業"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "traced_glyphs": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "sewer-revenue"
+        }
+      ]
     }
   ]
 }
