@@ -843,6 +843,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
     kind_names = quirk(settings, 'names_end_with_kind_words')
     remainder = quirk(settings, 'bracketed_remainder')
     department = quirk(settings, 'department_line')
+    short_wrapped = quirk(settings, 'short_wrapped_names')
     bracket_heading = quirk(settings, 'bracket_heading_amount_below')
     headings = quirk(settings, 'headings')
     glued = quirk(settings, 'glued_numbers')
@@ -1076,6 +1077,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             previous, label, money, code, bracketed, limit, left_slack))
         wrapped = wrapped or (department is not None and department.module.continues(
             previous, label, money, code, left_slack))
+        wrapped = wrapped or (short_wrapped is not None and short_wrapped.module.continues(previous, label, money, code))
         if wrapped:  # a wrapped name; its amount may be printed on the last line
             previous.lines.append(label)
             previous.name += normalize(text(label))

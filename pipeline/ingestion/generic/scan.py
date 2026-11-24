@@ -432,7 +432,8 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
     gone |= fragments
     if (after := document_quirk('code_after_amount')) is not None:
         trimmed = after.module.read_twice([o for _, o in readings if o['id'] not in gone],
-                                          sorted(set(cuts)) if after.module.cuts_after_group(after.value) else cuts)
+                                          sorted(set(cuts)) if after.module.cuts_after_group(after.value) else cuts,
+                                          after.module.cuts_after_group(after.value))
         gone |= {o['id'] for region in observation_page['regions'] for o in region['observations']
                  if o.get('parent_id') in trimmed}
     else:
