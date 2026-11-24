@@ -1369,7 +1369,10 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
     from ingestion.generic.repair import Report
     from ingestion.generic.units import check as check_units
     from ingestion.lib.node_tables import coverage_regions
-    if source.get('format') != 'pdf' or source.get('pdf_type') != 'scan':
+    # A text PDF whose text layer lacks the digits (a font without a ToUnicode map) is read from its pinned OCR
+    # observations too; the declaration carries them (`ocr_inputs`), so a text PDF without any is still refused.
+    if source.get('format') != 'pdf' or not (
+            source.get('pdf_type') == 'scan' or (source.get('pdf_type') == 'text' and source.get('ocr'))):
         raise ValueError('The scan builder requires a scan PDF')
     selected = scope_pages(source, options['account'], options.get('pages'))
     settings = effective_settings(source, options, text_pdf=False)
