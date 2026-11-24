@@ -64,6 +64,263 @@
           "table_id": "general-expenditure"
         }
       ]
+    },
+    {
+      "id": "nakagami-kukaku-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7a0c44d3dd45e5d4b502567f5a497adabcdcb046a87f9541963f4480055e4413"
+        }
+      ],
+      "options": {
+        "account": "中神土地区画整理事業特別会計",
+        "table_id": "nakagami-kukaku-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "執行率(%)": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true,
+                  "plain_names": [
+                    "繰越明許費分",
+                    "継続費逓次繰越分",
+                    "事故繰越し分"
+                  ],
+                  "bare_amounts": true
+                },
+                "quirks": {
+                  "bracketed_remainder": true,
+                  "headings": true
+                }
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            578,
+            586
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "nakagami-kukaku-settlement"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7a0c44d3dd45e5d4b502567f5a497adabcdcb046a87f9541963f4480055e4413"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "執行率(%)": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true,
+                  "plain_names": [
+                    "繰越明許費分",
+                    "継続費逓次繰越分"
+                  ],
+                  "bare_amounts": true
+                },
+                "quirks": {
+                  "bracketed_remainder": true,
+                  "headings": true
+                }
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            508,
+            526
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-settlement"
+        }
+      ]
+    },
+    {
+      "id": "kokuho-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7a0c44d3dd45e5d4b502567f5a497adabcdcb046a87f9541963f4480055e4413"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "kokuho-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "執行率(%)": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true,
+                  "plain_names": [
+                    "繰越明許費分",
+                    "継続費逓次繰越分"
+                  ],
+                  "bare_amounts": true
+                },
+                "quirks": {
+                  "bracketed_remainder": true,
+                  "headings": true
+                }
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            464,
+            480
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-settlement"
+        }
+      ]
+    },
+    {
+      "id": "kouki-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7a0c44d3dd45e5d4b502567f5a497adabcdcb046a87f9541963f4480055e4413"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "執行率(%)": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true,
+                  "plain_names": [
+                    "繰越明許費分",
+                    "継続費逓次繰越分"
+                  ],
+                  "bare_amounts": true
+                },
+                "quirks": {
+                  "bracketed_remainder": true,
+                  "headings": true
+                }
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            550,
+            556
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-settlement"
+        }
+      ]
     }
   ]
 }
