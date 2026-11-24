@@ -95,6 +95,8 @@ RUN_TOGETHER = re.compile(r'[△▲−–-]?[0-9]{1,3}(?:,[0-9]{3})+|0(?=[1-9△
 def _split(word: Word, cuts: list[float]) -> list[Word]:
     """Cut a piece that crosses vertical rules, giving each side its share of the characters."""
     inside = [x for x in cuts if word.x0 + 1 < x < word.x1 - 1]
+    if (grouped := document_quirk('code_after_amount')) is not None and grouped.module.cuts_after_group(grouped.value):
+        inside = sorted(set(inside))  # a page of stacked tables draws each rule once per table
     if not inside or len(word.text) < 2:
         return [word]
     pieces, start, used = [], word.x0, 0
@@ -192,7 +194,9 @@ def _paddle_pieces(line: dict, children: list[Word], corrected: bool, cuts: list
         # (only where cutting by a share of the box would put the rule at another digit than the grouping says)
         share = lambda x: round((x - child.x0) / ((child.x1 - child.x0) / max(1, len(child.text))))
         if (ordered and ordered[-1].text == ',' and re.fullmatch(r'[0-9]{4,}', child.text)
-                and crossing and any(share(x) != 3 for x in crossing)):
+                and crossing and (any(share(x) != 3 for x in crossing)
+                                  or ((after := document_quirk('code_after_amount')) is not None
+                                      and after.module.cuts_after_group(after.value)))):
             # The group after a comma has three digits: a longer run that a rule crosses is the end of one amount
             # and the first digits of the next cell's (`0005` = `000` + `5` of `…,051,000` | `5,918,437,000`, 281000).
             width = (child.x1 - child.x0) / len(child.text)
@@ -427,7 +431,8 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
                           for other, full in marks)}
     gone |= fragments
     if (after := document_quirk('code_after_amount')) is not None:
-        trimmed = after.module.read_twice([o for _, o in readings if o['id'] not in gone], cuts)
+        trimmed = after.module.read_twice([o for _, o in readings if o['id'] not in gone],
+                                          sorted(set(cuts)) if after.module.cuts_after_group(after.value) else cuts)
         gone |= {o['id'] for region in observation_page['regions'] for o in region['observations']
                  if o.get('parent_id') in trimmed}
     else:

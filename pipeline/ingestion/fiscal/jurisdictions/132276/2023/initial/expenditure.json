@@ -119,6 +119,749 @@
           "table_id": "general-initial"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "1167b6b182f6794d15922169ec0461a1c3b3ca5d6c500759b1fe5a9171a3640a"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-insurance-expenditure",
+        "pages": [
+          [
+            18,
+            39
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度予算額の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "carried_names": true,
+                "title_amount": "本年度予算額"
+              },
+              "rules": {
+                "row_gaps": true,
+                "line_pieces": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                },
+                "quirks": {
+                  "spaced_project_codes": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true,
+            "code_after_amount": {
+              "code_digits": 7,
+              "cut_after_group": true
+            },
+            "grouped_ends_at_rule": true,
+            "glued_titles": true,
+            "carried_names_across_rules": true
+          }
+        },
+        "dropped_bands": [
+          {
+            "id": "p38-total-band",
+            "page": 38,
+            "y_range": [
+              326,
+              430
+            ],
+            "reason": "物理38頁の下の「歳出合計」の表（題字と見出し・金額の行）。題字を枠の外に印字し、行に名前が無いので合計の行と読めない。款の和と比べる統制値で、予算書の第1表の歳出合計と同じ額。原典の描画で位置を確かめた。この帯の読みは使わない。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-initial-ocr-1",
+          "origin_sha256": "1167b6b182f6794d15922169ec0461a1c3b3ca5d6c500759b1fe5a9171a3640a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27
+            ]
+          },
+          "sha256": "e68ce04de0154b72944798b90288210423e94880b0847376ad3e7792b6a18e8d",
+          "bytes": 2303105
+        },
+        {
+          "id": "national-health-insurance-initial-ocr-2",
+          "origin_sha256": "1167b6b182f6794d15922169ec0461a1c3b3ca5d6c500759b1fe5a9171a3640a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37
+            ]
+          },
+          "sha256": "c92fb7716ca1530640db708729bec181c7a1b8ff67de31b04623361295d3495c",
+          "bytes": 2445940
+        },
+        {
+          "id": "national-health-insurance-initial-ocr-3",
+          "origin_sha256": "1167b6b182f6794d15922169ec0461a1c3b3ca5d6c500759b1fe5a9171a3640a",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              38,
+              39
+            ]
+          },
+          "sha256": "8f12c6db36fbc044b23154e5e4f407d90cd6e3c7faf40565ccb8f2fb25d315fc",
+          "bytes": 231585
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ac5e9d64e49ac2d844f2bc9a5681561763985947ea0b2686a77c19a5de9976db"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "elderly-medical-expenditure",
+        "pages": [
+          [
+            16,
+            23
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度予算額の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源特源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。OCR が見出しの「特定財源」を崩して読む（原典の描画で確かめた）ので、読みどおりの見出しで宣言する。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源特源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。OCR が見出しの「特定財源」を崩して読む（原典の描画で確かめた）ので、読みどおりの見出しで宣言する。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源特源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。OCR が見出しの「特定財源」を崩して読む（原典の描画で確かめた）ので、読みどおりの見出しで宣言する。"
+                  }
+                }
+              },
+              "header": {
+                "carried_names": true,
+                "title_amount": "本年度予算額"
+              },
+              "rules": {
+                "row_gaps": true,
+                "line_pieces": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                },
+                "quirks": {
+                  "spaced_project_codes": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true,
+            "code_after_amount": {
+              "code_digits": 7,
+              "cut_after_group": true
+            },
+            "grouped_ends_at_rule": true,
+            "glued_titles": true,
+            "carried_names_across_rules": true
+          }
+        },
+        "dropped_bands": [
+          {
+            "id": "p22-total-band",
+            "page": 22,
+            "y_range": [
+              192,
+              300
+            ],
+            "reason": "物理22頁の下の「歳出合計」の表（題字と見出し・金額の行）。題字を枠の外に印字し、行に名前が無いので合計の行と読めない。款の和と比べる統制値で、予算書の第1表の歳出合計と同じ額。原典の描画で位置を確かめた。この帯の読みは使わない。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-initial-ocr-1",
+          "origin_sha256": "ac5e9d64e49ac2d844f2bc9a5681561763985947ea0b2686a77c19a5de9976db",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23
+            ]
+          },
+          "sha256": "a54f0e997ee1629b7728f56be4c1186c92d64b46cf108babda470adc7b6b2db4",
+          "bytes": 1507417
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "8ddf9b90391dea33bc663bdb01e4e4b9e589320f33ddfc5be6fae991a45d3008"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "long-term-care-expenditure",
+        "pages": [
+          [
+            18,
+            57
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度予算額の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。OCR が見出しの「特定財源」を崩して読む（原典の描画で確かめた）ので、読みどおりの見出しで宣言する。"
+                  }
+                },
+                "本年度予算額の財源内訳の財源内訳／特定財／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。OCR が見出しの「特定財源」を崩して読む（原典の描画で確かめた）ので、読みどおりの見出しで宣言する。"
+                  }
+                },
+                "本年度予算額の財源内訳の財源内訳／特定財／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。OCR が見出しの「特定財源」を崩して読む（原典の描画で確かめた）ので、読みどおりの見出しで宣言する。"
+                  }
+                },
+                "本年度予算額の財源内訳の財源内訳／特定財／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。OCR が見出しの「特定財源」を崩して読む（原典の描画で確かめた）ので、読みどおりの見出しで宣言する。"
+                  }
+                },
+                "本年度予算額の財源内訳の財源内訳／特定財／国都支出金地方債その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。OCR が見出しの「特定財源」を崩して読む（原典の描画で確かめた）ので、読みどおりの見出しで宣言する。"
+                  }
+                }
+              },
+              "header": {
+                "carried_names": true,
+                "title_amount": "本年度予算額"
+              },
+              "rules": {
+                "row_gaps": true,
+                "line_pieces": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                },
+                "quirks": {
+                  "spaced_project_codes": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true,
+            "code_after_amount": {
+              "code_digits": 7,
+              "cut_after_group": true
+            },
+            "grouped_ends_at_rule": true,
+            "glued_titles": true,
+            "carried_names_across_rules": true
+          }
+        },
+        "dropped_bands": [
+          {
+            "id": "p56-total-band",
+            "page": 56,
+            "y_range": [
+              606,
+              715
+            ],
+            "reason": "物理56頁の下の「歳出合計」の表（題字と見出し・金額の行）。題字を枠の外に印字し、行に名前が無いので合計の行と読めない。款の和と比べる統制値で、予算書の第1表の歳出合計と同じ額。原典の描画で位置を確かめた。この帯の読みは使わない。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "ltc-p36-moku-heading",
+            "page": 36,
+            "observation_id": "p36:full-page:a0:result0:r103",
+            "observed": "目",
+            "reason": "物理36頁の下の表（項4 高額介護サービス等費）の見出し「目」。OCR が見出しの升の語を本文の行として読み、名前が「目」の項目が1つできる。原典の描画で、頁の見出しの「目」と確かめた。見出しの升は他の語（本年度予算額・前年度予算額・比較）から読めるので、この読みは使わない。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-initial-ocr-1",
+          "origin_sha256": "8ddf9b90391dea33bc663bdb01e4e4b9e589320f33ddfc5be6fae991a45d3008",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27
+            ]
+          },
+          "sha256": "5481afc3cb15bf9e05953c23a74135b7deafae2e84b79def4b97f0904b8fd5fa",
+          "bytes": 2116450
+        },
+        {
+          "id": "long-term-care-initial-ocr-2",
+          "origin_sha256": "8ddf9b90391dea33bc663bdb01e4e4b9e589320f33ddfc5be6fae991a45d3008",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37
+            ]
+          },
+          "sha256": "086ea69dbfac59defdf23972ebc694240a5c5eb933d94f81b1e3362d19f4add4",
+          "bytes": 2308001
+        },
+        {
+          "id": "long-term-care-initial-ocr-3",
+          "origin_sha256": "8ddf9b90391dea33bc663bdb01e4e4b9e589320f33ddfc5be6fae991a45d3008",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47
+            ]
+          },
+          "sha256": "40fe6627eac6cf6b2603263f5e81fcc5c565b86a7f0e997c6938bc51bd858963",
+          "bytes": 2271681
+        },
+        {
+          "id": "long-term-care-initial-ocr-4",
+          "origin_sha256": "8ddf9b90391dea33bc663bdb01e4e4b9e589320f33ddfc5be6fae991a45d3008",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57
+            ]
+          },
+          "sha256": "a5901bb067db171baa256eb0554d29bee6f8c06c12ca78950e685221b939c4f5",
+          "bytes": 2517286
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "land-readjustment-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "44520768b98ae3c37586873cfae1f66efe4b33555eea1bbd0fd6152a66b6a82c"
+        }
+      ],
+      "options": {
+        "account": "羽村市福生都市計画事業羽村駅西口土地区画整理事業会計",
+        "table_id": "land-readjustment-expenditure",
+        "pages": [
+          [
+            14,
+            21
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度予算額の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "carried_names": true,
+                "title_amount": "本年度予算額"
+              },
+              "rules": {
+                "row_gaps": true,
+                "line_pieces": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                },
+                "quirks": {
+                  "spaced_project_codes": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true,
+            "code_after_amount": {
+              "code_digits": 7,
+              "cut_after_group": true
+            },
+            "grouped_ends_at_rule": true,
+            "glued_titles": true,
+            "carried_names_across_rules": true
+          }
+        },
+        "dropped_bands": [
+          {
+            "id": "p20-total-band",
+            "page": 20,
+            "y_range": [
+              228,
+              335
+            ],
+            "reason": "物理20頁の下の「歳出合計」の表（題字と見出し・金額の行）。題字を枠の外に印字し、行に名前が無いので合計の行と読めない。款の和と比べる統制値で、予算書の第1表の歳出合計と同じ額。原典の描画で位置を確かめた。この帯の読みは使わない。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "land-readjustment-initial-ocr-1",
+          "origin_sha256": "44520768b98ae3c37586873cfae1f66efe4b33555eea1bbd0fd6152a66b6a82c",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ]
+          },
+          "sha256": "d9223257cca6ca5a33009bc985997be97a6f0f6a103a5dde51dff2839760b8b6",
+          "bytes": 1434516
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "land-readjustment-expenditure"
+        }
+      ]
     }
   ]
 }
