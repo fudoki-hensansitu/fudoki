@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import hashlib
+from http.client import IncompleteRead
 import html as html_lib
 import re
 import time
@@ -70,7 +71,7 @@ def http(url: str, data: dict | None = None, encoding: str = 'utf-8') -> str:
                 raise
             print(f'  取得に失敗（{attempt} 回目、{error}）。{attempt * 10} 秒後に取り直す', flush=True)
             time.sleep(attempt * 10)
-        except (urllib.error.URLError, ConnectionError, TimeoutError) as error:
+        except (urllib.error.URLError, IncompleteRead, ConnectionError, TimeoutError) as error:
             # 議会のサイトは時々接続を切る。間を空けて取り直し、続けて落ちたら止める
             if attempt == RETRIES:
                 raise
