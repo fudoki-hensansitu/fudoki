@@ -65,6 +65,230 @@
           "table_id": "general-expenditure"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b044a6de4f3d8e20bae3a9ccfd2f2968ff621a703e906ec9954f727938217f26"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-insurance-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        },
+        "excluded_boxes": [
+          {
+            "id": "p78-carryover-sum",
+            "page": 78,
+            "bbox": [
+              285,
+              114,
+              350,
+              134
+            ],
+            "kind": "本文",
+            "reason": "翌年度繰越額（明許繰越）の金額。款・項の行に印字され、科目の支出済額の列ではない。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-settlement"
+        }
+      ]
+    },
+    {
+      "id": "parking-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b044a6de4f3d8e20bae3a9ccfd2f2968ff621a703e906ec9954f727938217f26"
+        }
+      ],
+      "options": {
+        "account": "駐車場事業特別会計",
+        "table_id": "parking-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        },
+        "excluded_boxes": [
+          {
+            "id": "p78-carryover-sum",
+            "page": 78,
+            "bbox": [
+              285,
+              114,
+              350,
+              134
+            ],
+            "kind": "本文",
+            "reason": "翌年度繰越額（明許繰越）の金額。款・項の行に印字され、科目の支出済額の列ではない。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "parking-settlement"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b044a6de4f3d8e20bae3a9ccfd2f2968ff621a703e906ec9954f727938217f26"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        },
+        "excluded_boxes": [
+          {
+            "id": "p78-carryover-sum",
+            "page": 78,
+            "bbox": [
+              285,
+              114,
+              350,
+              134
+            ],
+            "kind": "本文",
+            "reason": "翌年度繰越額（明許繰越）の金額。款・項の行に印字され、科目の支出済額の列ではない。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-settlement"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b044a6de4f3d8e20bae3a9ccfd2f2968ff621a703e906ec9954f727938217f26"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        },
+        "excluded_boxes": [
+          {
+            "id": "p78-carryover-sum",
+            "page": 78,
+            "bbox": [
+              285,
+              114,
+              350,
+              134
+            ],
+            "kind": "本文",
+            "reason": "翌年度繰越額（明許繰越）の金額。款・項の行に印字され、科目の支出済額の列ではない。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-settlement"
+        }
+      ]
     }
   ]
 }

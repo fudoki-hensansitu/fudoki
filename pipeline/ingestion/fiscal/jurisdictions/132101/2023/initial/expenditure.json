@@ -1334,6 +1334,517 @@
           "table_id": "general-initial"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "21f21a3d7909060b41fbcdcceb44eaadebc6940edeb5d64cf66612cf675e4f07"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-initial",
+        "pages": [
+          [
+            10,
+            28
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財／源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財／源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財／源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "細節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "wrap": "amount_on_last_line",
+                  "name_start_slack": 7,
+                  "bare_amounts": true
+                },
+                "quirks": {
+                  "opening_bracket_ink": true,
+                  "bracketed_remainder": true,
+                  "glued_numbers": {
+                    "81歳6か月児健康診査に要す": "8"
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "unopened_brackets": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-initial-ocr-1",
+          "origin_sha256": "21f21a3d7909060b41fbcdcceb44eaadebc6940edeb5d64cf66612cf675e4f07",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19
+            ]
+          },
+          "sha256": "4cd6ef55b20988d085f6573d3454118085a5179b582767c782e32de2a9ae1dd8",
+          "bytes": 2392435
+        },
+        {
+          "id": "national-health-insurance-initial-ocr-2",
+          "origin_sha256": "21f21a3d7909060b41fbcdcceb44eaadebc6940edeb5d64cf66612cf675e4f07",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28
+            ]
+          },
+          "sha256": "df8fa72c669047958610cc4664e017a8893116cf84d8a88a84d4a1e4c3f52b82",
+          "bytes": 1425252
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ed5f7f332fb0f0e0f258b69d9360b624680cf593fdcea92f3dabfeed1620da2f"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-initial",
+        "pages": [
+          [
+            12,
+            36
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財／源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財／源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財／源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "細節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "wrap": "amount_on_last_line",
+                  "name_start_slack": 7,
+                  "bare_amounts": true
+                },
+                "quirks": {
+                  "opening_bracket_ink": true,
+                  "bracketed_remainder": true,
+                  "glued_numbers": {
+                    "81歳6か月児健康診査に要す": "8"
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "unopened_brackets": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-initial-ocr-1",
+          "origin_sha256": "ed5f7f332fb0f0e0f258b69d9360b624680cf593fdcea92f3dabfeed1620da2f",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ]
+          },
+          "sha256": "ec5c6e6e59e7c513242cdc3fb8deb2c23c25e2dcf8300f022b7d322a68d06480",
+          "bytes": 3068961
+        },
+        {
+          "id": "long-term-care-initial-ocr-2",
+          "origin_sha256": "ed5f7f332fb0f0e0f258b69d9360b624680cf593fdcea92f3dabfeed1620da2f",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31
+            ]
+          },
+          "sha256": "335a9257379742a5e245939429baf7b47d663a159675f64e7e2c96c34591f499",
+          "bytes": 2670335
+        },
+        {
+          "id": "long-term-care-initial-ocr-3",
+          "origin_sha256": "ed5f7f332fb0f0e0f258b69d9360b624680cf593fdcea92f3dabfeed1620da2f",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              32,
+              33,
+              34,
+              35,
+              36
+            ]
+          },
+          "sha256": "50f8f052695674b0c97dedd9832d25f982d1183dcbfb8324aafd32c3d0255a32",
+          "bytes": 550895
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "2553fac28ce3f7264b600e09d2defc37ba7834a184069336b2d42eb3ffab6045"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "pages": [
+          [
+            8,
+            15
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財／源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財／源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財／源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "細節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "wrap": "amount_on_last_line",
+                  "name_start_slack": 7,
+                  "bare_amounts": true
+                },
+                "quirks": {
+                  "opening_bracket_ink": true,
+                  "bracketed_remainder": true,
+                  "glued_numbers": {
+                    "81歳6か月児健康診査に要す": "8"
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "unopened_brackets": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-initial-ocr-1",
+          "origin_sha256": "2553fac28ce3f7264b600e09d2defc37ba7834a184069336b2d42eb3ffab6045",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ]
+          },
+          "sha256": "26722a6d0e1b172b30bf35ce0af8bbd93c74aa98e9ba90ff9bbffd777698df2b",
+          "bytes": 1051303
+        }
+      ]
     }
   ]
 }
