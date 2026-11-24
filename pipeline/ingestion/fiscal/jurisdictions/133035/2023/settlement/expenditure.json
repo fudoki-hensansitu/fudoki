@@ -368,6 +368,693 @@
           "bytes": 1216673
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-expenditure",
+        "pages": [
+          [
+            189,
+            198
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 200
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "備考": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-settlement-ocr-1",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              189,
+              190,
+              191,
+              192,
+              193,
+              194,
+              195,
+              196,
+              197,
+              198
+            ]
+          },
+          "sha256": "d0721109d5a18e80820424363f27eca66c11b9c438c75f2f94a4638dd3c310c1",
+          "bytes": 3435053
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "land-readjustment-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d"
+        }
+      ],
+      "options": {
+        "account": "福生都市計画瑞穂町箱根ケ崎駅西土地区画整理事業特別会計",
+        "table_id": "land-readjustment-expenditure",
+        "pages": [
+          [
+            215,
+            218
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 200
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "備考": {
+                "pattern": "shape"
+              }
+            }
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p217-drop-r27",
+            "page": 217,
+            "observation_id": "p217:full-page:a0:result0:r27",
+            "observed": "1,000",
+            "reason": "物理217・218頁の先頭の行は、款3 予備費・項1 予備費・目1 予備費の行（物理215・216頁の最後）の節の欄だけが次の見開きに送られたもの（目・節の名前は無く、金額 1,000・0・0・1,000 だけが印字される）。金額は前の見開きの目の行に既に読んでいる値の繰り返しで、この行の親になる目が頁に無いので、この読みは使わない。原画で確かめた。"
+          },
+          {
+            "id": "p218-drop-r12",
+            "page": 218,
+            "observation_id": "p218:full-page:a0:result0:r12",
+            "observed": "0",
+            "reason": "物理217・218頁の先頭の行（目1 予備費の行の節の欄だけが次の見開きに送られたもの）の翌年度繰越額の 0。前の見開きの目の行に既に読んでいる値の繰り返しなので使わない。原画で確かめた。"
+          },
+          {
+            "id": "p218-drop-r13",
+            "page": 218,
+            "observation_id": "p218:full-page:a0:result0:r13",
+            "observed": "0",
+            "reason": "物理217・218頁の先頭の行（目1 予備費の行の節の欄だけが次の見開きに送られたもの）の翌年度繰越額の 0。前の見開きの目の行に既に読んでいる値の繰り返しなので使わない。原画で確かめた。"
+          },
+          {
+            "id": "p218-drop-r14",
+            "page": 218,
+            "observation_id": "p218:full-page:a0:result0:r14",
+            "observed": "1,000",
+            "reason": "物理217・218頁の先頭の行（目1 予備費の行の節の欄だけが次の見開きに送られたもの）の不用額 1,000。前の見開きの目の行に既に読んでいる値の繰り返しなので使わない。原画で確かめた。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "land-readjustment-settlement-ocr-1",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              215,
+              216,
+              217,
+              218
+            ]
+          },
+          "sha256": "84fe8983ee8776b0c64319d231176f625c8f01332d1c480e5a45f29c949249c3",
+          "bytes": 848051
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "land-readjustment-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d"
+        }
+      ],
+      "options": {
+        "account": "瑞穂町介護保険特別会計",
+        "table_id": "long-term-care-expenditure",
+        "pages": [
+          [
+            241,
+            254
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 200
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "備考": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-settlement-ocr-1",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              241,
+              242,
+              243,
+              244,
+              245,
+              246,
+              247,
+              248,
+              249,
+              250
+            ]
+          },
+          "sha256": "ea986650b0676adb2744dcf2b56c92ddf5082e2e9bd8a00db347a3458367dd53",
+          "bytes": 3541021
+        },
+        {
+          "id": "long-term-care-settlement-ocr-2",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              251,
+              252,
+              253,
+              254
+            ]
+          },
+          "sha256": "ab097b327a03040fa42c2ef68c869e3265a20219a4180f330a4048ea725f2c6e",
+          "bytes": 1033301
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d"
+        }
+      ],
+      "options": {
+        "account": "瑞穂町後期高齢者医療特別会計",
+        "table_id": "elderly-medical-expenditure",
+        "pages": [
+          [
+            273,
+            276
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 200
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "備考": {
+                "pattern": "shape"
+              }
+            }
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p274-drop-r70",
+            "page": 274,
+            "observation_id": "p274:full-page:a0:result0:r70",
+            "observed": "307その他役務費",
+            "reason": "物理274頁、備考「07 その他役務費」。不用額の金額（94,058）の最後の桁にかかって「07」の前に「3」を読み、金額の読み（94,0583）の一部と備考の行が混ざって止まる。原画で印字を確かめ、この読みは使わず name_readings で備考の行を宣言する。"
+          }
+        ],
+        "name_readings": [
+          {
+            "id": "p274-name-r70",
+            "page": 274,
+            "box": [
+              277.0,
+              378.0,
+              348.4,
+              387.6
+            ],
+            "name": "07 その他役務費",
+            "reason": "物理274頁、備考「07 その他役務費」。不用額の金額（94,058）の最後の桁にかかって「3」が混ざったので、読みを除き名前を宣言する。原画で確かめた。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-settlement-ocr-1",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              273,
+              274,
+              275,
+              276
+            ]
+          },
+          "sha256": "f61a7f0d4493a31a85079590daf922a3cb997f26024fdd06954e9cca0e8e6f6f",
+          "bytes": 1296373
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "property-ward-tonogaya-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d"
+        }
+      ],
+      "options": {
+        "account": "瑞穂町殿ケ谷財産区特別会計",
+        "table_id": "property-ward-tonogaya-expenditure",
+        "pages": [
+          [
+            293,
+            294
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 200
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "備考": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "property-ward-tonogaya-settlement-ocr-1",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              293,
+              294
+            ]
+          },
+          "sha256": "56cae1dc787f3b563684a816f098d6c500c163fef675400cc8cc2099ee1964a7",
+          "bytes": 480403
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "property-ward-tonogaya-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "property-ward-ishihata-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d"
+        }
+      ],
+      "options": {
+        "account": "瑞穂町石畑財産区特別会計",
+        "table_id": "property-ward-ishihata-expenditure",
+        "pages": [
+          [
+            311,
+            314
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 200
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "備考": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "property-ward-ishihata-settlement-ocr-1",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              311,
+              312,
+              313,
+              314
+            ]
+          },
+          "sha256": "3feb6d2347f2c841a6cf5335153905e0295f0585e597e58597f49ee2ef2efea5",
+          "bytes": 870271
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "property-ward-ishihata-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "property-ward-hakonegasaki-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d"
+        }
+      ],
+      "options": {
+        "account": "瑞穂町箱根ケ崎財産区特別会計",
+        "table_id": "property-ward-hakonegasaki-expenditure",
+        "pages": [
+          [
+            331,
+            332
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 200
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "備考": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "property-ward-hakonegasaki-settlement-ocr-1",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              331,
+              332
+            ]
+          },
+          "sha256": "061173f61daaab68c217e04ccfeb2730d65147dbf4c243e613f3851ea22f8ec2",
+          "bytes": 515812
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "property-ward-hakonegasaki-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "property-ward-nagaoka-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d"
+        }
+      ],
+      "options": {
+        "account": "瑞穂町長岡財産区特別会計",
+        "table_id": "property-ward-nagaoka-expenditure",
+        "pages": [
+          [
+            349,
+            350
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 200
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "備考": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "property-ward-nagaoka-settlement-ocr-1",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              349,
+              350
+            ]
+          },
+          "sha256": "5bb186afa3abe3d79f473a214a6a5a2cc8c6c42cde72d5dcde7e74b61e9efc7d",
+          "bytes": 440148
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "property-ward-nagaoka-expenditure"
+        }
+      ]
     }
   ]
 }
