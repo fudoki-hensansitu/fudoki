@@ -159,11 +159,6 @@ function SectionHead({ title, sub, children }: { title: string; sub?: string; ch
     </div>
   )
 }
-/** 予算・決算・事業の頁の頭の、その言葉の意味の一文。頁の名前と年度は上に貼り付く帯に出す（2026-11-25 yuito「帯は最初から予算 年度、見出しは削除」） */
-function TabLead({ children }: { children: React.ReactNode }) {
-  return <p className="mb-5 min-w-0 text-base leading-(--line-height-body) text-muted-foreground">{children}</p>
-}
-
 const IconBox = ({ children }: { children: React.ReactNode }) => <span className="grid size-[30px] shrink-0 place-items-center rounded-[9px] bg-card text-muted-foreground [&_svg]:size-4">{children}</span>
 
 /** 行の間に Separator を挟む */
@@ -496,11 +491,6 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
   }, [active, urlRead, view, flowQuery])
   return (
     <div className="flex flex-col gap-3">
-      <TabLead>
-        {phase === 'settlement'
-          ? '決算は、1年間に実際に入ったお金と使ったお金を、年度が終わった後にまとめたものです。議会の認定を受けて確定します。'
-          : '予算は、1年間に何にいくら使うかを、年度が始まる前に決めた計画です。議会の議決を経て決まります。ここでは、年度の初めに決めた当初予算を扱います。'}
-      </TabLead>
       {/* 入る→使う（一般会計の歳入と歳出の総額と流れ）。その年度・資料の歳入を収録しているときだけ */}
       {total && revenueDoc ? <IncomeFlow doc={revenueDoc} revenue={current?.revenue} phase={phase} expTotal={total.yen} fields={v.fields} pop={d.pop} openField={openFieldDetail} /> : null}
       {/* 使い道の分野は入る→使うに出るので、ここは節で分けた「何に使う？」。節が載っていない資料では出さない（節は描いた後に届くので、届くまでは枠だけ） */}
@@ -724,7 +714,6 @@ function ProjectsTab({ filter, setFilter, fields, setFields, q, setQ }: { filter
   }
   return (
     <div className="flex flex-col gap-2">
-      <TabLead>事業は、自治体がお金を使って行う一つ一つの仕事です。</TabLead>
       {/* 検索の行と、絞り込み（事業の区分・分野の combobox）の行を分ける */}
       <div className="relative">
         <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
