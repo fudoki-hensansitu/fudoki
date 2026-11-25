@@ -75,7 +75,7 @@ function BackToTop({ hidden }: { hidden: boolean }) {
         onClick={() => scrollPageTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })}
         tabIndex={off ? -1 : 0}
         aria-hidden={off}
-        className={`fixed bottom-[max(16px,env(safe-area-inset-bottom))] left-4 z-20 grid size-11 place-items-center rounded-full border bg-background text-muted-foreground shadow-md transition-[opacity,transform] duration-200 hover:border-primary hover:text-foreground max-md:bottom-[calc(16px+var(--bottom-nav))] md:left-[calc(var(--nav-w)+16px)] motion-reduce:transition-none ${off ? 'pointer-events-none translate-y-4 opacity-0' : ''}`}
+        className={`fixed bottom-[max(16px,env(safe-area-inset-bottom))] left-4 z-20 grid size-11 place-items-center rounded-full border bg-background text-muted-foreground shadow-md transition-[opacity,transform] duration-200 hover:border-primary hover:text-foreground motion-reduce:transition-none ${off ? 'pointer-events-none translate-y-4 opacity-0' : ''}`}
       >
         <ArrowUpIcon className="size-4" aria-hidden="true" />
       </button>
@@ -384,7 +384,7 @@ export function AskDock({ name, code, sitekey, year, section, detail, page, ask 
   return (
     <>
       <BackToTop hidden={docked || drawer} />
-      <div ref={dock} onBlur={onDockBlur} onFocus={() => { focusedAt.current = Date.now(); anchor.current = window.scrollY }} className={`fixed inset-x-0 bottom-0 z-20 max-md:bottom-(--bottom-nav) md:left-(--nav-w) md:right-(--side-panel,0px) bg-gradient-to-t from-background from-60% to-transparent px-4 pb-[max(14px,env(safe-area-inset-bottom))] pt-3 transition-[opacity,transform] duration-200 motion-reduce:transition-none ${docked ? '' : 'pointer-events-none translate-y-4 opacity-0'}`} inert={!docked}>
+      <div ref={dock} onBlur={onDockBlur} onFocus={() => { focusedAt.current = Date.now(); anchor.current = window.scrollY }} className={`fixed inset-x-0 bottom-0 z-20 md:right-(--side-panel,0px) bg-gradient-to-t from-background from-60% to-transparent px-4 pb-[max(14px,env(safe-area-inset-bottom))] pt-3 transition-[opacity,transform] duration-200 motion-reduce:transition-none ${docked ? '' : 'pointer-events-none translate-y-4 opacity-0'}`} inert={!docked}>
         <div className="mx-auto max-w-[720px]">
           <StartForm
             sitekey={sitekey}
@@ -399,7 +399,7 @@ export function AskDock({ name, code, sitekey, year, section, detail, page, ask 
         type="button"
         onClick={show}
         aria-keyshortcuts="/"
-        className={`fixed bottom-[max(16px,env(safe-area-inset-bottom))] max-md:bottom-[calc(16px+var(--bottom-nav))] right-4 z-20 inline-flex items-center gap-2 rounded-full border bg-background px-4 py-3 text-sm shadow-md transition-[opacity,transform] duration-200 hover:border-primary motion-reduce:transition-none ${docked || drawer ? 'pointer-events-none translate-y-4 opacity-0' : ''}`}
+        className={`fixed bottom-[max(16px,env(safe-area-inset-bottom))] right-4 z-20 inline-flex items-center gap-2 rounded-full border bg-background px-4 py-3 text-sm shadow-md transition-[opacity,transform] duration-200 hover:border-primary motion-reduce:transition-none ${docked || drawer ? 'pointer-events-none translate-y-4 opacity-0' : ''}`}
         tabIndex={docked || drawer ? -1 : 0}
         aria-hidden={docked || drawer}
       >

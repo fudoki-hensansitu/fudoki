@@ -1,4 +1,4 @@
-// Turnstile の site key。アシスタントの頁と自治体の頁（「この自治体について質問」）の loader が使う
+// Turnstile の site key。自治体の頁（「この自治体について質問」）の loader が使う
 import type { Context } from 'hono'
 import type { Env } from './env'
 

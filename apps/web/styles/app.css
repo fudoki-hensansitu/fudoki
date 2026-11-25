@@ -1,5 +1,5 @@
 /* 全頁の CSS。layout（pages/layout.tsx）が読む。Tailwind（preflight 込み）と shadcn の token の対応、色・字の token、
-   サイドバーと本文の骨組み、お金の流れの全体図の動きを置く。頁ごとの見た目は各頁の CSS（landing/landing.css・jurisdiction/jurisdiction.css）に置く */
+   すりガラスの帯、お金の流れの全体図の動きを置く。頁ごとの見た目は各頁の CSS（landing/landing.css・jurisdiction/jurisdiction.css）に置く */
 @import "tailwindcss" source(none);
 @import "./tokens.css";
 @import "../chat/theme.css";
@@ -46,13 +46,18 @@
 @keyframes fudoki-flow-in-rev { from { clip-path: inset(0 0 0 100%); } to { clip-path: inset(0 0 0 0); } }
 @keyframes fudoki-flow-node-rev { from { opacity: 0; transform: translateX(6px); } }
 
-/* サイドバーを閉じた人の、hydrate するまでの見た目（nav/nav-state.ts）。サーバーは開いて描くので、幅だけを閉じたときに揃えて本文がずれないようにし、
-   開いたときの中身は隠す。hydrate したら nav/site-nav.tsx が data-nav-ready を付けて、shadcn の Sidebar の状態の見た目に戻す */
-html[data-nav-closed]:not([data-nav-ready]) [data-slot="sidebar-gap"],
-html[data-nav-closed]:not([data-nav-ready]) [data-slot="sidebar-container"] { width: var(--sidebar-width-icon); transition: none; }
-html[data-nav-closed]:not([data-nav-ready]) [data-slot="sidebar-inner"] { visibility: hidden; }
-
 /* 一覧の末尾の「続きを読む」印（components/more-dots.tsx）。点が順に跳ねる */
 @keyframes app-dot { 0%, 100% { opacity: .3; transform: translateY(0) } 50% { opacity: 1; transform: translateY(-3px) } }
 .app-dot { animation: app-dot 1s ease-in-out infinite }
 @media (prefers-reduced-motion: reduce) { .app-dot { animation: none } }
+
+/* すりガラスの帯（2026-11-25 yuito「すりガラスの帯めっちゃ良いね。全体的にそうしておいて」）。上に貼り付く帯（ヘッダー・頁の帯・絞り込みの帯）に使い、下の本文を透かす。
+   透けを減らす設定の人には地を塗りつぶす */
+.glass {
+  background: color-mix(in oklab, var(--background) 72%, transparent);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .glass { background: var(--background); -webkit-backdrop-filter: none; backdrop-filter: none; }
+}

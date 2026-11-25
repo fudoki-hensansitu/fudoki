@@ -1,6 +1,6 @@
 // 全頁に共通するもの。HTML の応答に CSP（server/csp.ts）を付け、<head> に Void の head では書けないものを足す:
 // 既定（ライト）の theme-color（選んだテーマへの差し替えは <head> の THEME_SCRIPT）と、本番だけアクセス解析の script（analytics/zaraz.ts）。
-// テーマ・サイドバーの開閉はブラウザで当て（nav/theme.ts・nav/nav-state.ts）、cookie を読まない。どの人にも同じ HTML を返し、CDN（Void の ISR）に置く。
+// テーマはブラウザで当て（nav/theme.ts）、cookie を読まない。どの人にも同じ HTML を返し、CDN（Void の ISR）に置く。
 // 頁の無い path・自治体の頁の loader が 404 にした path の HTML の要求は、見つからない頁（pages/404.tsx）を状態 404 で返す。
 // AI エージェント向けに、API の在処を Link ヘッダーで示し、Accept で text/markdown を望む要求には頁を Markdown にして返す（server/agent-discovery.ts）
 import { defineMiddleware } from 'void'

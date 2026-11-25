@@ -70,25 +70,17 @@
   --color-sidebar-ring: var(--sidebar-ring);
 }
 
-/* 全頁の骨組み。左にサイドバー（nav/render.tsx が書く #site-nav）、右に頁の本文。幅の狭い画面ではサイドバーの代わりに下にナビを置く。
-   --nav-w は画面に固定した要素（入口の入力など）を本文の中央に寄せるための、いまのサイドバーの幅 */
+/* 全頁の骨組み。上にヘッダー（nav/site-header.tsx）、その下に頁の本文。
+   --site-header は頁の中で上に貼り付く帯（sticky）をヘッダーの下に置くための高さ。ヘッダーが隠れている間（data-header-hidden）は 0 にして上へ詰める */
+:root { --site-header: calc(3.5rem + 1px + env(safe-area-inset-top)); }
+:root[data-header-hidden] { --site-header: 0px; }
 .site { min-height: 100svh; }
-#site-nav { display: contents; }
 .site-main { min-width: 0; }
-/* 幅の狭い画面の下のナビ（nav/site-nav.tsx の BottomNav）の高さ。隠れている間は 0 にし、下に固定した要素がその分だけ上に載る */
-@media (max-width: 767px) {
-  :root { --bottom-nav: calc(3.5rem + env(safe-area-inset-bottom)); }
-  :root[data-nav-hidden] { --bottom-nav: 0px; }
-  .site { padding-bottom: calc(3.5rem + env(safe-area-inset-bottom)); }
-}
 @media (min-width: 768px) {
-  :root { --nav-w: 13rem; }
-  :root:has(#site-nav [data-slot="sidebar"][data-state="collapsed"]) { --nav-w: 3.5rem; }
-  .site { display: flex; }
-  .site-main { flex: 1; }
   /* 会話を横に開いている間は、本文と会話をそれぞれの箱でスクロールさせ、横に並べる（nav/page-scroll.ts）。
-     window のスクロールのままだと、頁のスクロールバーが会話の右に出て二重になり、会話が本文の中に載って見える */
-  :root[data-side-panel] { overflow: hidden; }
-  :root[data-side-panel] .site { height: 100dvh; min-height: 0; }
-  :root[data-side-panel] .site-main { overflow-y: auto; margin-right: var(--side-panel); }
+     window のスクロールのままだと、頁のスクロールバーが会話の右に出て二重になり、会話が本文の中に載って見える。
+     ヘッダーは本文の箱の外に残るので、本文の中の帯は箱の頭（0）に貼り付ける */
+  :root[data-side-panel] { overflow: hidden; --site-header: 0px; }
+  :root[data-side-panel] .site { height: 100dvh; min-height: 0; display: flex; flex-direction: column; }
+  :root[data-side-panel] .site-main { flex: 1; min-height: 0; overflow-y: auto; margin-right: var(--side-panel); }
 }

@@ -4,11 +4,11 @@
 
 ## web（`@fudoki/web`）
 
-- 頁: ホーム（`/`。住んでいるまちのダッシュボードと、ほかのまちの検索）、紹介（`/about`）、アシスタント（`/assistant`）と会話（`/s/:id`・`/api/*`）、自治体の頁（`/tokyo/nakano`）、`/favicon.svg`・`/robots.txt`、samples のまち比べが読む地図のデータ（`/data/compare-map.json`）。`/spending`・`/compare` などサンプルの path は samples へ渡す（下の samples）。他は 404 で、HTML を望む要求には見つからない頁（`pages/404.tsx`、`middleware/01.site.ts` が rewrite する）を返す
-- [Void](https://void.cloud/)（Vite）で build する。設定は `void.config.ts`。頁は `pages/`（layout のサイドバーを残して SPA で移る）、API・sitemap・PWA は `routes/`、ファイル（icon・録画・出典の切り抜き）は `public/`（Workers static assets）
+- 頁: ホーム（`/`。住んでいるまちのダッシュボードと、ほかのまちの検索）、紹介（`/about`）、会話（`/s/:id`・`/api/*`。会話は自治体の頁の入力から始める）、自治体の頁（`/tokyo/nakano`）、`/favicon.svg`・`/robots.txt`、samples のまち比べが読む地図のデータ（`/data/compare-map.json`）。`/spending`・`/compare` などサンプルの path は samples へ渡す（下の samples）。他は 404 で、HTML を望む要求には見つからない頁（`pages/404.tsx`、`middleware/01.site.ts` が rewrite する）を返す
+- [Void](https://void.cloud/)（Vite）で build する。設定は `void.config.ts`。頁は `pages/`（layout のヘッダーを残して SPA で移る）、API・sitemap・PWA は `routes/`、ファイル（icon・録画・出典の切り抜き）は `public/`（Workers static assets）
 - データは apps/api の内部の RPC（entrypoint `Web`）を Service Binding で呼んで読む（`server/fudoki-api.ts`）。公開の REST・MCP は使わず、ブラウザは api.fudoki.dev を呼ばない（ADR 0044）
 - web が持つデータの binding は、web 自身の D1 `fudoki-web`（binding `DB`。会話の保存と、外部サービスから引く参照データ（ADR 0042））だけ
-- 会話: アシスタントの入力 → Turnstile → `/s/:id`。`server/` が Workers AI に、apps/api の内部の RPC を包んだ tool（`server/assistant-tools.ts`）と web の tool（出典の頁 `read_source_page`・人口・財政の指標・許可したドメインの頁を読む `fetch_page`）を渡す。MCP は使わない。出典の頁の文字は AI にだけ渡し、画面と保存には出さない。構成・上限・手で設定するもの・集計の SQL は `web/README.md`
+- 会話: 自治体の頁の入力 → Turnstile → `/s/:id`。`server/` が Workers AI に、apps/api の内部の RPC を包んだ tool（`server/assistant-tools.ts`）と web の tool（出典の頁 `read_source_page`・人口・財政の指標・許可したドメインの頁を読む `fetch_page`）を渡す。MCP は使わない。出典の頁の文字は AI にだけ渡し、画面と保存には出さない。構成・上限・手で設定するもの・集計の SQL は `web/README.md`
 - 自治体の OG 画像は `/jurisdictions/<code>/og.png` を Worker が頁と同じデータから描く（`server/og-render.ts`）
 - 自治体の頁の loader は最初の画面に要る分だけを await し、評価シート・お金のかかる事業・流れの図の節は Void の `defer` で同じ応答の後ろに流し、画面は使う部分だけを Suspense と `use()` で待つ（defer の値の script に hash を付けられないので、CSP は inline の script を許す）。頁の中の操作で後から要るもの（やめた事業を分野で絞るときの前の年度の分野の科目など）だけ、ブラウザが `/api/jurisdictions/<code>/<year>/*` から読む
 - brand・map の資産生成（`build:brand`・`fetch:boundaries`）はこの package の script
@@ -57,7 +57,7 @@
 
 ### compare
 
-まち比べ（`fudoki.dev/compare`）。東京都のまちを、1人あたりの借金・貯金や分野の割合などの問いごとにタイル地図で塗る。一覧（`/compare`）は問いごとの小さな地図のカード、問いの頁（`/compare/<問い>?town=`）は大きな地図と選んだまちの札。web のサイドバーからは外し、web の頁として持っていたものを 2026-11-25 にサンプルへ移した（yuito「まち比べを sample に移して sidenav から消そう」）。URL は変えず、紹介（`/about`）のリンクと web の sitemap はそのまま載せる
+まち比べ（`fudoki.dev/compare`）。東京都のまちを、1人あたりの借金・貯金や分野の割合などの問いごとにタイル地図で塗る。一覧（`/compare`）は問いごとの小さな地図のカード、問いの頁（`/compare/<問い>?town=`）は大きな地図と選んだまちの札。web のナビからは外し、web の頁として持っていたものを 2026-11-25 にサンプルへ移した（yuito「まち比べを sample に移して sidenav から消そう」）。URL は変えず、紹介（`/about`）のリンクと web の sitemap はそのまま載せる
 
 - 問い（並び・言葉・slug）と地図のデータの形は `packages/fiscal/compare.ts` を web と共有する（web の sitemap も問いを載せる）
 - 値は web が組んで `/data/compare-map.json` で返し（`apps/web/server/compare-map.ts`。決算状況調・人口は web の D1、分野の額は api の歳出の集約）、loader が Service Binding で読む（`compare/server/map.ts`）。web は `/api` の下でなく ISR に1時間置ける path にしている。手元の `vite dev` は公開の fudoki.dev を読むので、web の側を変えたときは deploy の後でないと手元に出ない

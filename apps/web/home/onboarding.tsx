@@ -4,7 +4,7 @@
 import * as React from 'react'
 import { MagnifyingGlassIcon, NavigationArrowIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
-import { Mark } from '../nav/site-nav'
+import { Mark } from '../nav/brand'
 import { Picker as TownPicker } from './town-picker'
 import { TownPalette } from '../nav/town-palette'
 import { LocateError, locateMunicipality } from './locate'

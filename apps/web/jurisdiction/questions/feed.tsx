@@ -94,7 +94,7 @@ export function QuestionFeedView({ feed, onOpen, onAsk }: { feed: QuestionFeed |
         <Title size="h1" as="h2" id="q-feed-title">気になること</Title>
         <p className="text-base leading-relaxed text-muted-foreground">住民が気になりそうな問いに、予算書・決算書の数字で答えています。押すと、その答えから AI に続けて聞けます。</p>
       </div>
-      <div role="group" aria-label="分野" className="sticky top-0 z-20 -mx-4 flex gap-2 overflow-x-auto bg-background px-4 py-2 [scrollbar-width:none]">
+      <div role="group" aria-label="分野" className="sticky top-(--site-header) z-20 transition-[top] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none -mx-4 flex gap-2 overflow-x-auto glass px-4 py-2 [scrollbar-width:none]">
         <button type="button" aria-pressed={!field} onClick={() => pick(null)} className={chip(!field)}>すべて</button>
         {fields.map((f) => (
           <button key={f.id} type="button" aria-pressed={field === f.id} onClick={() => pick(f.id)} className={chip(field === f.id)}>

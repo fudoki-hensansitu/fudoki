@@ -1,5 +1,5 @@
 // 住んでいるまち（1つ）と最近見たまち。ブラウザ（localStorage）にだけ置き、サーバーには送らない。
-// サイドバーとホームが同じものを読むので、変えたら window に知らせる。住んでいるまちのコードは前のホームと同じ鍵（saveHomeCode、fudoki:home-jurisdiction）を正にし、前に選んだ人はそのまま引き継ぐ
+// ヘッダー・自治体の頁とホームが同じものを読むので、変えたら window に知らせる。住んでいるまちのコードは前のホームと同じ鍵（saveHomeCode、fudoki:home-jurisdiction）を正にし、前に選んだ人はそのまま引き継ぐ
 import * as React from 'react'
 import { loadHomeCode, loadRecent, saveHomeCode, type RecentJurisdiction } from './recent'
 import type { MapEntry } from '../jurisdiction/index-table'

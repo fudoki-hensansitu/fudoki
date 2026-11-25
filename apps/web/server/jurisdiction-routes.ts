@@ -31,7 +31,7 @@ export const catalog = (env: Env) => {
   return p
 }
 
-/** ホーム（/）とサイドバーの検索に載せる、決算を収録している自治体 */
+/** ホーム（/）とヘッダーの検索に載せる、決算を収録している自治体 */
 export async function homeEntries(env: Env): Promise<MapEntry[]> {
   return (await catalog(env))
     .filter((e) => e.settlementYears.length > 0)
@@ -82,7 +82,7 @@ export async function receiptOgInput(env: Env, code: string, year?: number): Pro
   return { name: entry.name, year: y, settled: v.word === '決算', total: v.total, perHead: sum, rows: v.fields.map((f, i) => ({ name: f.name, yen: parts[i]! })) }
 }
 
-/** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口・アシスタント・まち比べだけで答える */
+/** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口・紹介・まち比べだけで答える */
 export async function sitemapResponse(env: Env): Promise<Response> {
   try {
     return new Response(sitemapXml(await catalog(env), pageYearsOf), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })

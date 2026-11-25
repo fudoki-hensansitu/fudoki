@@ -4,7 +4,6 @@
 import { defineConfig } from 'void/config'
 import { SW_REGISTER } from './pwa'
 import { THEME_SCRIPT } from './nav/theme'
-import { NAV_SCRIPT } from './nav/nav-state'
 import { HOME_REDIRECT_SCRIPT } from './home/redirect'
 import prefectures from '../../packages/jurisdictions/prefectures.json'
 
@@ -93,9 +92,9 @@ export default defineConfig({
       { rel: 'llms-txt', href: '/llms.txt' },
     ],
     // service worker（routes/sw.js.ts）は繋がらないときの案内だけを持つ。
-    // テーマ（nav/theme.ts）とサイドバーの開閉（nav/nav-state.ts）は描く前に当てる。サーバーはどちらでも HTML を書き分けない。
+    // テーマ（nav/theme.ts）は描く前に当てる。サーバーはテーマで HTML を書き分けない。
     // 住んでいるまちを選んだ人のホームは、描く前にそのまちの頁へ移す（home/redirect.ts）
-    script: [{ innerHTML: HOME_REDIRECT_SCRIPT }, { innerHTML: THEME_SCRIPT }, { innerHTML: NAV_SCRIPT }, { innerHTML: SW_REGISTER }],
+    script: [{ innerHTML: HOME_REDIRECT_SCRIPT }, { innerHTML: THEME_SCRIPT }, { innerHTML: SW_REGISTER }],
   },
   worker: {
     compatibility_date: '2026-08-23',

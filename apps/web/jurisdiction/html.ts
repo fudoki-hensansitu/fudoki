@@ -230,7 +230,7 @@ export const questionsHead = (d: PageData): Head =>
 
 /** sitemap。入口・まち比べ（/compare と問いの頁。頁は apps/samples が出す）と、財政（/tokyo/shinagawa/finance）と各年度のタブの頁（/tokyo/shinagawa/2026/projects）を載せる。自治体の頁そのもの（/tokyo/shinagawa）は入口（まちの頭と問いのフィード）。years は頁で選べる年度（新しい順） */
 export const sitemapXml = (entries: CatalogEntry[], yearsOf: (e: CatalogEntry) => number[] = (e) => [...e.settlementYears].sort((a, b) => b - a)) =>
-  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${ORIGIN}/</loc></url><url><loc>${ORIGIN}/assistant</loc></url><url><loc>${ORIGIN}/about</loc></url><url><loc>${ORIGIN}/compare</loc></url>${QUESTIONS.map((q) => `<url><loc>${ORIGIN}/compare/${q.slug}</loc></url>`).join('')}${entries
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${ORIGIN}/</loc></url><url><loc>${ORIGIN}/about</loc></url><url><loc>${ORIGIN}/compare</loc></url>${QUESTIONS.map((q) => `<url><loc>${ORIGIN}/compare/${q.slug}</loc></url>`).join('')}${entries
     .filter((e) => e.settlementYears.length > 0)
     .flatMap((e) => {
       const base = jurisdictionPath(e.code)
