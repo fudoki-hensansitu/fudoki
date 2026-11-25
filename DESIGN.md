@@ -124,7 +124,7 @@ shadcn/ui の語彙。色の役割は次のとおり。
   --ease-sweep: cubic-bezier(0.87, 0, 0.13, 1);
   --duration: 150ms;
 }
-/* 暗い色。実装（apps/web/styles/tokens.css）は light-dark() で両方を持ち、テーマ（ヘッダー、SP はヘッダーの「…」メニュー）は html の data-theme で切り替える。既定はライトで、「端末に合わせる」のときだけ端末の設定に従う */
+/* 暗い色。実装（apps/web/styles/tokens.css）は light-dark() で両方を持ち、テーマ（ヘッダー、SP はヘッダーのメニュー）は html の data-theme で切り替える。既定はライトで、「端末に合わせる」のときだけ端末の設定に従う */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #1b1916;

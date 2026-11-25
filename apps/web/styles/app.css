@@ -61,3 +61,7 @@
 @media (prefers-reduced-transparency: reduce) {
   .glass { background: var(--background); -webkit-backdrop-filter: none; backdrop-filter: none; }
 }
+/* コントラストを上げる設定の人には、透かさず塗りつぶし、下の線をはっきりさせる */
+@media (prefers-contrast: more) {
+  .glass { background: var(--background); -webkit-backdrop-filter: none; backdrop-filter: none; box-shadow: inset 0 -1px 0 var(--foreground); }
+}
