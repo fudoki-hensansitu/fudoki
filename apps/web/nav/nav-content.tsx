@@ -1,7 +1,7 @@
-// サイドバーの中身。項目は まちを探す（頭の検索欄）・選んだまち（ホームで住んでいるまちを選んだ人だけ）・アシスタント・まち比べ。
+// サイドバーの中身。項目は まちを探す（頭の検索欄）・選んだまち（ホームで住んでいるまちを選んだ人だけ）・アシスタント。まち比べはサンプル（apps/samples）に移したので置かない。
 // サイドバーは PC だけに出る（スマホは下の帯）ので、選んだまちもスマホには出さない
 import * as React from 'react'
-import { ArrowsLeftRightIcon, MagnifyingGlassIcon, MapPinIcon, RobotIcon } from '@phosphor-icons/react'
+import { MagnifyingGlassIcon, MapPinIcon, RobotIcon } from '@phosphor-icons/react'
 import { useRouter } from '@void/react'
 import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
 import { Item } from './site-nav'
@@ -69,7 +69,6 @@ export function NavContent() {
         <TownSearch />
         <MyTownItem path={path} />
         <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={isAssistant(path)} />
-        <Item href="/compare" label="まち比べ" icon={<ArrowsLeftRightIcon />} active={path === '/compare' || path.startsWith('/compare/')} />
       </SidebarMenu>
     </SidebarGroup>
   )

@@ -1,4 +1,4 @@
-// まち比べ（/compare）の分野の額。api の歳出の集約（list_expenditures）から、資料ごとの一般会計の総額と分野の額を引く
+// まち比べ（/data/compare-map.json）の分野の額。api の歳出の集約（list_expenditures）から、資料ごとの一般会計の総額と分野の額を引く
 import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
 import type { DocumentKind } from './jurisdiction'
 import type { Env } from './env'

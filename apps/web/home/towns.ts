@@ -22,7 +22,7 @@ const searchTowns = (q: string, cursor: string | null, signal?: AbortSignal): Pr
 /** 打ち終えるのを待つ間 */
 const TYPING_MS = 150
 
-/** 名前で自治体を探す候補（まちを探す・まち比べ）。開いている間だけ、打った語の1頁目を読み、more で続きを足す。
+/** 名前で自治体を探す候補（まちを探す）。開いている間だけ、打った語の1頁目を読み、more で続きを足す。
  * 全部を手元に取らず、一覧の末尾の印（MoreDots）が見えたら more を呼ぶ。entries は undefined が読んでいる、null が読めなかった。word は entries を読んだ語 */
 export function useTownSearch(open: boolean, q: string) {
   // 読んだ頁は、どの語で読んだかと一緒に持つ（続きは同じ語で読む）

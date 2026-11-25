@@ -1,28 +1,15 @@
-// まち比べ（/compare・/compare/<問い>）の値。東京都の市区町村（島しょを含む）について、全部の問いの値を一度に組む。
+// まち比べ（apps/samples の /compare・/compare/<問い>）の地図のデータ。東京都の市区町村（島しょを含む）について、全部の問いの値を一度に組む。
 // 決算状況調（web の D1 の local_finance）と人口（population）は1回の SELECT ずつ、分野の額は api の list_expenditures にまとめて聞く。
-// 頁は CDN（ISR）に置くので、ここを通るのは1時間に1回ほど
+// /data/compare-map.json（routes/data/compare-map.json.ts）が返し、CDN（ISR）に置くので、ここを通るのは1時間に1回ほど
 import { PREFECTURE_MAPS } from '../jurisdiction/map.generated'
 import { jurisdictionPath } from '../jurisdiction/path'
-import { FIELD_OF_QUESTION, QUESTIONS } from '../compare/questions'
+import { FIELD_OF_QUESTION, QUESTIONS, type CompareMap, type MapTown } from '@fudoki/fiscal/compare'
 import { loadFieldTotals, type FieldTotals } from './compare'
 import type { Population } from '../jurisdiction/types'
 import type { Env } from './env'
 import { logError } from './log'
 import { readPopulations } from './population'
 
-export type MapTown = {
-  code: string
-  name: string
-  path: string
-  /** タイルの列・行。島しょは本土の下の段に並べる */
-  col: number
-  row: number
-  pop: number | null
-  /** 問いの slug ごとの値。無いもの（未収録）は null */
-  values: Record<string, number | null>
-}
-/** partial は一部を読めなかった（D1 の決算・人口、api の失敗）印。その頁は CDN に置かない */
-export type CompareMap = { prefecture: string; cols: number; rows: number; year: number | null; towns: MapTown[]; partial: boolean }
 
 const PREFECTURE = PREFECTURE_MAPS.find((m) => m.code === '13')!
 
@@ -102,4 +89,16 @@ export async function loadCompareMap(env: Env): Promise<CompareMap> {
     return { ...t, path: jurisdictionPath(t.code), pop, values }
   })
   return { prefecture: PREFECTURE.name, cols: PREFECTURE.cols, rows: PREFECTURE.rows + (islands.length ? 2 : 0), year, towns, partial: loaded === null || people === null || failed }
+}
+
+/** /data/compare-map.json の応答。一部を読めなかった応答・読めなかった 502 は no-store にして CDN に残さない（直ったあとも1時間欠けたまま出続けるため） */
+export async function compareMapResponse(env: Env): Promise<Response> {
+  const json = { 'Content-Type': 'application/json; charset=utf-8' }
+  try {
+    const map = await loadCompareMap(env)
+    return new Response(JSON.stringify(map), { headers: { ...json, 'Cache-Control': map.partial ? 'no-store' : 'public, max-age=300' } })
+  } catch (e) {
+    logError(e)
+    return new Response(JSON.stringify({ error: { code: 'UNAVAILABLE', message: 'まち比べのデータを組めませんでした' } }), { status: 502, headers: { ...json, 'Cache-Control': 'no-store' } })
+  }
 }

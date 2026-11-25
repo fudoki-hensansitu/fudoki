@@ -208,10 +208,11 @@ export function Landing() {
           title="隣のまちと比べられる"
           body="1人あたりいくら使ったか、借金や貯金はどれくらいか。問いを選ぶと、まちごとの答えが地図に並びます。"
           links={
-            <Link href="/compare" className={textLink}>
+            // まち比べはサンプル（apps/samples）の頁なので、Void の Link で移らず読み直す
+            <a href="/compare" className={textLink}>
               まち比べを開く
               <ArrowRightIcon className="size-4" aria-hidden="true" />
-            </Link>
+            </a>
           }
         >
           <PhoneStage tone="sakura">

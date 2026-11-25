@@ -4,7 +4,7 @@
 
 ## web（`@fudoki/web`）
 
-- 頁: ホーム（`/`。住んでいるまちのダッシュボードと、ほかのまちの検索）、まち比べ（`/compare`・`/compare/<問い>`。東京都のまちを問いごとにタイル地図で塗る）、紹介（`/about`）、アシスタント（`/assistant`）と会話（`/s/:id`・`/api/*`）、自治体の頁（`/tokyo/nakano`）、`/favicon.svg`・`/robots.txt`。他は 404 で、HTML を望む要求には見つからない頁（`pages/404.tsx`、`middleware/01.site.ts` が rewrite する）を返す
+- 頁: ホーム（`/`。住んでいるまちのダッシュボードと、ほかのまちの検索）、紹介（`/about`）、アシスタント（`/assistant`）と会話（`/s/:id`・`/api/*`）、自治体の頁（`/tokyo/nakano`）、`/favicon.svg`・`/robots.txt`、samples のまち比べが読む地図のデータ（`/data/compare-map.json`）。`/spending`・`/compare` などサンプルの path は samples へ渡す（下の samples）。他は 404 で、HTML を望む要求には見つからない頁（`pages/404.tsx`、`middleware/01.site.ts` が rewrite する）を返す
 - [Void](https://void.cloud/)（Vite）で build する。設定は `void.config.ts`。頁は `pages/`（layout のサイドバーを残して SPA で移る）、API・sitemap・PWA は `routes/`、ファイル（icon・録画・出典の切り抜き）は `public/`（Workers static assets）
 - データは apps/api の内部の RPC（entrypoint `Web`）を Service Binding で呼んで読む（`server/fudoki-api.ts`）。公開の REST・MCP は使わず、ブラウザは api.fudoki.dev を呼ばない（ADR 0044）
 - web が持つデータの binding は、web 自身の D1 `fudoki-web`（binding `DB`。会話の保存と、外部サービスから引く参照データ（ADR 0042））だけ
@@ -54,6 +54,15 @@
 - 頁: まちを選ぶ頁（`/spending`）とレシートの頁（`/spending/<自治体コード>?year=`）。path の頭は `spending/lib/fudoki.ts` の `BASE`。レシートの演出（数え上げ・紙送り・押し出された紙の three.js）は `spending/receipt/`
 - 画面は同じ origin の本体の `/api/jurisdictions*`・`/jurisdictions/<code>/emblem.svg`・`receipt.png` を呼ぶ。loader は Service Binding で本体から読み（`spending/server/snapshot.ts`）、手元の `vite dev` では middleware がこれらを公開の fudoki.dev へ中継する。web がこれらの path や応答の形を変えるときは spending も直す
 - 色・字の token は `spending/styles/app.css` に web の `tokens.css` から写している
+
+### compare
+
+まち比べ（`fudoki.dev/compare`）。東京都のまちを、1人あたりの借金・貯金や分野の割合などの問いごとにタイル地図で塗る。一覧（`/compare`）は問いごとの小さな地図のカード、問いの頁（`/compare/<問い>?town=`）は大きな地図と選んだまちの札。web のサイドバーからは外し、web の頁として持っていたものを 2026-11-25 にサンプルへ移した（yuito「まち比べを sample に移して sidenav から消そう」）。URL は変えず、紹介（`/about`）のリンクと web の sitemap はそのまま載せる
+
+- 問い（並び・言葉・slug）と地図のデータの形は `packages/fiscal/compare.ts` を web と共有する（web の sitemap も問いを載せる）
+- 値は web が組んで `/data/compare-map.json` で返し（`apps/web/server/compare-map.ts`。決算状況調・人口は web の D1、分野の額は api の歳出の集約）、loader が Service Binding で読む（`compare/server/map.ts`）。web は `/api` の下でなく ISR に1時間置ける path にしている。手元の `vite dev` は公開の fudoki.dev を読むので、web の側を変えたときは deploy の後でないと手元に出ない
+- まちの札のボタンは本体のまちの頁（`https://fudoki.dev/tokyo/nakano`）へ繋ぐ
+- 色・字の token（地図の濃淡 `--shade-*` を含む）は `compare/styles/app.css` に web の `tokens.css` から写している
 
 ## 配信
 

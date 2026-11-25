@@ -1,0 +1,59 @@
+/* まち比べの頁の CSS。Tailwind と、色・字・角の token（fudoki の DESIGN.md・apps/web/styles/tokens.css が正本で、ここはその写しのうち使う分だけ） */
+@import "tailwindcss" source(none);
+@source "../../pages/compare";
+@source "..";
+
+:root{
+--background:light-dark(#ffffff,#1b1916);--foreground:light-dark(#2b2723,#ece6da);--card:light-dark(#f8f5ee,#24211d);--card-foreground:light-dark(#2b2723,#ece6da);
+--muted:light-dark(#ece6da,#302c26);--muted-foreground:light-dark(#6b655c,#a8a094);
+--primary:light-dark(#2f5d43,#8fbfa2);--primary-foreground:light-dark(#f8f5ee,#1b1916);
+--border:light-dark(#ddd6c8,#3b362f);--ring:light-dark(#2f5d43,#8fbfa2);
+--font-sans:"Hiragino Sans","Noto Sans JP","Yu Gothic UI","Yu Gothic",Meiryo,system-ui,sans-serif;
+--shade-1:color-mix(in oklab,var(--primary) 10%,var(--background));--shade-2:color-mix(in oklab,var(--primary) 30%,var(--background));--shade-3:color-mix(in oklab,var(--primary) 52%,var(--background));--shade-4:color-mix(in oklab,var(--primary) 85%,var(--background));--shade-5:var(--primary);
+--shade-none:repeating-linear-gradient(135deg,var(--card) 0 4px,var(--muted) 4px 6px);
+}
+:root{color-scheme:light dark}
+
+@theme inline {
+  --font-sans: "Hiragino Sans", "Noto Sans JP", "Yu Gothic UI", "Yu Gothic", Meiryo, system-ui, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-ring: var(--ring);
+}
+
+@layer base {
+  * { border-color: var(--border); }
+  html { background: var(--background); }
+  body { margin: 0; background: var(--background); color: var(--foreground); font: 400 15px/1.7 var(--font-sans); -webkit-font-smoothing: antialiased; word-break: auto-phrase; touch-action: manipulation; }
+  button:not(:disabled) { cursor: pointer; }
+  a { color: inherit; }
+  :is(h1, h2) { text-wrap: balance; }
+  p { text-wrap: pretty; }
+}
+
+/* 一覧の札は下から 300ms で現れ、問いの頁の札はまちを選び直すと 200ms で現れる（DESIGN.md の Motion）。transform と opacity だけを動かす */
+.cmp-rise {
+  animation: cmp-rise 300ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.cmp-swap {
+  animation: cmp-swap 200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes cmp-rise {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes cmp-swap {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: none; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cmp-rise, .cmp-swap {
+    animation: none;
+  }
+}

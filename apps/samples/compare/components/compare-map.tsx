@@ -1,16 +1,12 @@
 // まち比べ。東京都のまちを、風土記が用意した問いの答えでタイル地図に塗る。一覧（/compare）は問いごとの小さな地図のカード、
-// カードを押すと問いの頁（/compare/<問い>）で大きな地図と、選んだまちの札（その問いの値・まちの頁へのボタン）を出す。
-// 色は緑一色の濃淡で、値の並びを5つに分けて塗る（値の偏りが大きく、等間隔だと島しょだけが濃くなるため）。良し悪しの言葉は付けない
+// カードを押すと問いの頁（/compare/<問い>）で大きな地図と、選んだまちの札（その問いの値・本体のまちの頁へのボタン）を出す。
+// 色は緑一色の濃淡で、値の並びを5つに分けて塗る（値の偏りが大きく、等間隔だと島しょだけが濃くなるため）。良し悪しの言葉は付けない。
+// 問いと値の形は packages/fiscal/compare.ts を web と共有し、値は本体が組む（compare/server/map.ts）。頁の path（/compare/<問い>）と重ならないよう、compare/ の直下には module を置かない（vite dev で頁に取られる）
 import * as React from 'react'
+import { Link } from '@void/react'
 import { ArrowLeftIcon, ArrowRightIcon } from '@phosphor-icons/react'
-import { cn } from '@/lib/utils'
-import { Link } from '../nav/link'
-import { Button } from '@/components/ui/button'
-import { QUESTIONS, questionOf, type Question } from './questions'
-import { reiwa } from '../jurisdiction/types'
-import type { CompareMap, MapTown } from '../server/compare-map'
-import { Title, titleVariants } from '@/components/ui/title'
-import { Card, CardTitle } from '@/components/ui/card'
+import { QUESTIONS, questionOf, type CompareMap, type MapTown, type Question } from '@fudoki/fiscal/compare'
+import { BASE, FUDOKI_ORIGIN, cn, reiwa, titleClass } from '../lib/site'
 
 const STEPS = 5
 // 濃淡の段ごとの地（DESIGN.md の --shade-1〜5）と、その上の文字の色。未収録は斜線（--shade-none）にして 0 と分ける
@@ -191,9 +187,9 @@ function extremes(towns: MapTown[], slug: string) {
 
 export function CompareList({ map, failed }: { map: CompareMap; failed: boolean }) {
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 pt-10 pb-28 sm:px-8 sm:pt-14">
+    <main className="mx-auto w-full max-w-6xl px-4 pt-10 pb-12 sm:px-8 sm:pt-14">
       <header className="mb-5">
-        <Title size="h1">まち比べ</Title>
+        <h1 className={titleClass('h1')}>まち比べ</h1>
         <p className="mt-1 text-base leading-relaxed text-muted-foreground">まちのお金を1人あたりの金額に直すと、いろいろな見方で比べられます。いまは{map.prefecture || '東京都'}のまちから、少しずつ広げています。</p>
       </header>
       {failed ? failedText : (
@@ -204,19 +200,19 @@ export function CompareList({ map, failed }: { map: CompareMap; failed: boolean 
             return (
               <Link
                 key={q.slug}
-                href={`/compare/${q.slug}`}
-                className="group/link block animate-in rounded-xl fill-mode-both fade-in slide-in-from-bottom-1.5 duration-300 transition-transform active:scale-[0.985] motion-reduce:animate-none motion-reduce:transition-none"
+                href={`${BASE}/${q.slug}`}
+                className="group/link block cmp-rise rounded-xl no-underline transition-transform active:scale-[0.985] motion-reduce:transition-none"
                 style={{ animationDelay: `${Math.min(i, 8) * 30}ms` }}
               >
-                <Card className="h-full gap-3 bg-background px-4 py-4 transition-colors group-hover/link:bg-card">
-                <CardTitle className="min-h-[2.8em] leading-[1.4]">{q.title}</CardTitle>
+                <div className="flex h-full flex-col gap-3 overflow-hidden rounded-xl bg-background px-4 py-4 text-sm ring-1 ring-foreground/10 transition-colors group-hover/link:bg-card">
+                <h2 className={cn(titleClass('h3'), 'min-h-[2.8em] leading-[1.4]')}>{q.title}</h2>
                 <TileMap map={map} q={q} scale={scale} />
                 <p className="flex flex-col gap-1 text-xs text-muted-foreground">
                   {top ? <span>最多 <b className="font-medium text-foreground">{top.name}</b> <Num v={top.values[q.slug]!} q={q} /></span> : null}
                   {bottom ? <span>最小 <b className="font-medium text-foreground">{bottom.name}</b> <Num v={bottom.values[q.slug]!} q={q} /></span> : null}
                 </p>
                 <p className="mt-auto text-xs leading-relaxed text-muted-foreground">※{q.caveat}</p>
-                </Card>
+                </div>
               </Link>
             )
           })}
@@ -249,15 +245,15 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
   const { code, picked, pick } = useSelected(map, slug)
   const scale = scaleOf(map.towns, q.slug)
   const t = map.towns.find((x) => x.code === code)
-  const hrefOf = (s: string) => (picked ? `/compare/${s}?town=${picked}` : `/compare/${s}`)
+  const hrefOf = (s: string) => (picked ? `${BASE}/${s}?town=${picked}` : `${BASE}/${s}`)
   return (
-    <main className="mx-auto w-full max-w-6xl px-4 pt-10 pb-28 sm:px-8 sm:pt-14">
-      <Link href="/compare" className="mb-4 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
+    <main className="mx-auto w-full max-w-6xl px-4 pt-10 pb-12 sm:px-8 sm:pt-14">
+      <Link href={BASE} className="mb-4 inline-flex items-center gap-1 text-sm text-muted-foreground no-underline hover:text-foreground">
         <ArrowLeftIcon className="size-3.5" aria-hidden="true" />
         まち比べ
       </Link>
       <header className="mb-4">
-        <Title size="h1">{q.title}</Title>
+        <h1 className={titleClass('h1')}>{q.title}</h1>
         <p className="mt-1 text-base leading-relaxed text-muted-foreground">{q.note}</p>
         <p className="mt-1 text-xs leading-relaxed text-muted-foreground">※{q.caveat}</p>
       </header>
@@ -269,31 +265,31 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
             <SourceNote year={map.year} q={q} />
           </div>
           {t ? (
-            <aside key={t.code} aria-live="polite" className="flex animate-in flex-col rounded-2xl border bg-background p-5 fade-in slide-in-from-bottom-1 duration-200 motion-reduce:animate-none">
-              <Title size="h3" as="p" className="flex items-baseline gap-2">
+            <aside key={t.code} aria-live="polite" className="cmp-swap flex flex-col rounded-2xl border bg-background p-5">
+              <p className={cn(titleClass('h3'), 'flex items-baseline gap-2')}>
                 {t.name}
                 <small className="text-xs font-normal text-muted-foreground">{popText(t.pop)}</small>
-              </Title>
+              </p>
               <p className="mt-4 text-sm text-muted-foreground">{q.short}</p>
-              <Num v={t.values[q.slug] ?? null} q={q} className={cn(titleVariants({ size: 'h1' }), 'leading-tight text-primary')} />
+              <Num v={t.values[q.slug] ?? null} q={q} className={cn(titleClass('h1'), 'leading-tight text-primary')} />
               {scale ? <p className="text-sm text-muted-foreground">都内の中央値 <Num v={scale.median} q={q} /></p> : null}
-              <Button size="lg" nativeButton={false} render={<Link href={t.path} />} className="mt-6 h-11 w-full text-sm">
+              <a href={`${FUDOKI_ORIGIN}${t.path}`} className="mt-6 inline-flex h-11 w-full items-center justify-center gap-1.5 rounded-lg bg-primary px-2.5 text-sm font-medium text-primary-foreground no-underline transition-colors hover:bg-primary/80 active:translate-y-px">
                 {t.name}を開く
-                <ArrowRightIcon aria-hidden="true" />
-              </Button>
+                <ArrowRightIcon className="size-4" aria-hidden="true" />
+              </a>
             </aside>
           ) : null}
         </div>
       )}
       <nav aria-label="ほかの問い" className="mt-10 border-t pt-6">
-        <Title size="headline" as="h2" className="mb-3 text-muted-foreground">ほかの問い</Title>
+        <h2 className={cn(titleClass('headline'), 'mb-3 text-muted-foreground')}>ほかの問い</h2>
         <div className="flex flex-wrap gap-2">
           {QUESTIONS.map((x) => (
             <Link
               key={x.slug}
               href={hrefOf(x.slug)}
               aria-current={x.slug === slug ? 'page' : undefined}
-              className="inline-flex h-9 shrink-0 items-center rounded-full border bg-background px-4 text-sm font-medium transition-colors hover:bg-card aria-[current=page]:border-primary aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground"
+              className="inline-flex h-9 shrink-0 items-center rounded-full border bg-background px-4 text-sm font-medium no-underline transition-colors hover:bg-card aria-[current=page]:border-primary aria-[current=page]:bg-primary aria-[current=page]:text-primary-foreground"
             >
               {x.short}
             </Link>
@@ -301,5 +297,16 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
         </div>
       </nav>
     </main>
+  )
+}
+
+/** 頁の下。このサンプルが風土記のデータで作られていることと、本体への入口 */
+export function Footer() {
+  return (
+    <footer className="mx-auto mt-auto w-full max-w-6xl px-4 pb-10 text-sm text-muted-foreground sm:px-8">
+      <a href={`${FUDOKI_ORIGIN}/`} className="no-underline hover:text-foreground">
+        風土記
+      </a>
+    </footer>
   )
 }
