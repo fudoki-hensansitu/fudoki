@@ -91,14 +91,19 @@ export async function loadCompareMap(env: Env): Promise<CompareMap> {
   return { prefecture: PREFECTURE.name, cols: PREFECTURE.cols, rows: PREFECTURE.rows + (islands.length ? 2 : 0), year, towns, partial: loaded === null || people === null || failed }
 }
 
-/** /data/compare-map.json の応答。一部を読めなかった応答・読めなかった 502 は no-store にして CDN に残さない（直ったあとも1時間欠けたまま出続けるため） */
+/** /data/compare-map.json の応答。ISR（void.config.ts の revalidate）に1時間置く。一部を読めなかった応答・読めなかった 502 は x-revalidate: 0 と no-store にして
+ * CDN に残さない（直ったあとも1時間欠けたまま出続けるため。web のほかの応答と同じく x-revalidate で決め、Cache-Control も揃える） */
 export async function compareMapResponse(env: Env): Promise<Response> {
   const json = { 'Content-Type': 'application/json; charset=utf-8' }
+  const uncached = { 'Cache-Control': 'no-store', 'x-revalidate': '0' }
   try {
     const map = await loadCompareMap(env)
-    return new Response(JSON.stringify(map), { headers: { ...json, 'Cache-Control': map.partial ? 'no-store' : 'public, max-age=300' } })
+    return new Response(JSON.stringify(map), { headers: { ...json, ...(map.partial ? uncached : { 'Cache-Control': `public, max-age=${MAP_TTL}`, 'x-revalidate': String(MAP_TTL) }) } })
   } catch (e) {
     logError(e)
-    return new Response(JSON.stringify({ error: { code: 'UNAVAILABLE', message: 'まち比べのデータを組めませんでした' } }), { status: 502, headers: { ...json, 'Cache-Control': 'no-store' } })
+    return new Response(JSON.stringify({ error: { code: 'UNAVAILABLE', message: 'まち比べのデータを組めませんでした' } }), { status: 502, headers: { ...json, ...uncached } })
   }
 }
+
+/** 地図のデータを置く秒数（void.config.ts の revalidate と同じ） */
+const MAP_TTL = 3600
