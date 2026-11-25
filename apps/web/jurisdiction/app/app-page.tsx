@@ -1115,8 +1115,8 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
         {emblem ? <img src={emblem} alt="" className="size-full min-h-0 min-w-0 object-contain" /> : <span className={cn(titleVariants({ size: 'display' }), 'font-normal text-foreground')}>{data.name[0]}</span>}
       </div>
       <div className="flex flex-col items-center gap-2">
-        {/* 住んでいるまちの頁なら、名前のすぐ上に「私のまち」の札（2026-11-25 yuito「地名の近くの方が良い」） */}
-        <MyTownBadge code={data.code} />
+        {/* 住んでいるまちの頁なら、名前のすぐ上に「私のまち」の札（2026-11-25 yuito「地名の近くの方が良い」）。札は描いた後に出るので、跳ねないよう枠は誰にでも出す */}
+        <div className="flex h-8 items-center"><MyTownBadge code={data.code} /></div>
         <Title size="h1" as="h1">{data.name}</Title>
         {vision ? <p className="max-w-[36em] text-base leading-snug text-muted-foreground">{vision}</p> : null}
         <div className="mt-1 flex flex-wrap justify-center gap-x-4 gap-y-2 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">

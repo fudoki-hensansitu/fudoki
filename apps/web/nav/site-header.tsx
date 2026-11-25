@@ -79,7 +79,7 @@ function useHideOnScroll() {
   return { hidden, setHidden, scrolled }
 }
 
-/** まちを探す。虫眼鏡の icon だけを置き（2026-11-25 yuito「検索も検索 icon だけで良い」）、押すか ⌘K で、画面の中央に候補のパレット（TownPalette）を開く */
+/** まちを探す。狭い画面は虫眼鏡の icon だけ、広い画面は MCP などと同じく「検索」の文字も付ける（2026-11-25 yuito）。押すか ⌘K で候補のパレット（TownPalette）を開く */
 function TownSearch() {
   const [open, setOpen] = React.useState(false)
   React.useEffect(() => {
