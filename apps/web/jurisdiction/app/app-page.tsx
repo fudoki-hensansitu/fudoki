@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { useNavigation, useRouter } from '@void/react'
 import {
-  ArrowLeftIcon,
+  CaretLeftIcon,
   ArrowRightIcon,
   ArrowSquareOutIcon,
   BankIcon,
@@ -161,7 +161,7 @@ function SectionHead({ title, sub, children }: { title: string; sub?: string; ch
 }
 /** 予算・決算・事業の頁の頭の、その言葉の意味の一文。頁の名前と年度は上に貼り付く帯に出す（2026-11-25 yuito「帯は最初から予算 年度、見出しは削除」） */
 function TabLead({ children }: { children: React.ReactNode }) {
-  return <p className="mb-5 min-w-0 text-base leading-[1.7] text-muted-foreground">{children}</p>
+  return <p className="mb-5 min-w-0 text-base leading-(--line-height-body) text-muted-foreground">{children}</p>
 }
 
 const IconBox = ({ children }: { children: React.ReactNode }) => <span className="grid size-[30px] shrink-0 place-items-center rounded-[9px] bg-card text-muted-foreground [&_svg]:size-4">{children}</span>
@@ -559,7 +559,7 @@ function SetsuSection({ phase, account, groups, total, onOpen }: { phase: 'initi
       <Title size="h3" as="h2" className="mb-3">
         {phase === 'initial' ? '何に使う？' : '何に使った？'}
       </Title>
-      <p className="mb-3 text-base leading-[1.7] text-muted-foreground">{account}の歳出を、人件費・委託料・工事など、お金の出し方で分けています。予算書・決算書の「節」をまとめたものです。</p>
+      <p className="mb-3 text-base leading-(--line-height-body) text-muted-foreground">{account}の歳出を、人件費・委託料・工事など、お金の出し方で分けています。予算書・決算書の「節」をまとめたものです。</p>
       <div className="grid gap-x-8 @3xl:grid-flow-col @3xl:grid-cols-2 @3xl:grid-rows-(--rows)" style={{ '--rows': `repeat(${Math.ceil(n / 2)}, auto)` } as React.CSSProperties}>
         {groups ? groups.map((g, i) => <FieldRow key={g.id} f={g} i={i} max={max} total={total} onClick={onOpen && (() => onOpen(g.id))} />) : SETSU_SKELETON.map((w, i) => <FieldRowSkeleton key={i} width={w} />)}
       </div>
@@ -776,7 +776,7 @@ function ProjectCrumbs({ base, label, close, open, ancestors }: { base: string; 
     <Breadcrumb className="min-w-0">
       <BreadcrumbList className="flex-nowrap text-sm sm:text-base">
         <BreadcrumbItem className="shrink-0">
-          <BreadcrumbLink render={<button type="button" onClick={close} />} className="inline-flex cursor-pointer items-center gap-1"><ArrowLeftIcon className="size-4 shrink-0" aria-hidden="true" />{label}</BreadcrumbLink>
+          <BreadcrumbLink render={<button type="button" onClick={close} />} className="inline-flex cursor-pointer items-center gap-1"><CaretLeftIcon className="size-4 shrink-0" aria-hidden="true" />{label}</BreadcrumbLink>
         </BreadcrumbItem>
         {ancestors.map((a) => (
           <React.Fragment key={a.id}>
@@ -1167,7 +1167,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
             ) : v ? (
               // 帯は初めから、戻る・頁の名前（左寄せ、頁の h1）・年度の切り替え（右）の1行にする（財政は年度を持たない）
               <div className="flex min-w-0 flex-1 items-center gap-2">
-                <Link href={data.path} aria-label={`${data.name}へ戻る`} className="-ml-2 grid size-9 shrink-0 place-items-center rounded-full text-muted-foreground"><ArrowLeftIcon className="size-5" aria-hidden="true" /></Link>
+                <Link href={data.path} aria-label={`${data.name}へ戻る`} className="-ml-2 grid size-9 shrink-0 place-items-center rounded-full text-muted-foreground"><CaretLeftIcon className="size-5" aria-hidden="true" /></Link>
                 <Title size="headline" as="h1" className="min-w-0 flex-1 truncate">{TABS.find((t) => t.key === tab)?.label}</Title>
                 {tab !== 'overview' ? (
                   <div className="shrink-0">
@@ -1180,7 +1180,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
               <Breadcrumb className="min-w-0">
                 <BreadcrumbList className="flex-nowrap text-sm sm:text-base">
                   <BreadcrumbItem className="shrink-0">
-                    <BreadcrumbLink render={<Link href={data.path} />} className="inline-flex items-center gap-1"><ArrowLeftIcon className="size-4 shrink-0" aria-hidden="true" />{data.name}</BreadcrumbLink>
+                    <BreadcrumbLink render={<Link href={data.path} />} className="inline-flex items-center gap-1"><CaretLeftIcon className="size-4 shrink-0" aria-hidden="true" />{data.name}</BreadcrumbLink>
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
