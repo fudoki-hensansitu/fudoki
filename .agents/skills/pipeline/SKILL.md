@@ -1,6 +1,6 @@
 ---
 name: pipeline
-description: 風土記の出典選定（source_selection）、歳出・歳入のCSV・text PDF・scan PDFの取り込みと形式別検査、保存・採用、staging定義・dbt構築を行うときに参照する。CSVの全セル保持検査と、PDFの階層別合計検査・修正の手順を扱う。
+description: 風土記の出典選定（source_selection）、歳出・歳入のCSV・text PDF・scan PDFの取り込みと形式別検査、保存・採用、staging定義・dbt構築、議会の会議録の取り込みを行うときに参照する。CSVの全セル保持検査と、PDFの階層別合計検査・修正の手順を扱う。
 user-invocable: false
 ---
 
@@ -21,6 +21,7 @@ user-invocable: false
 | C. dbt：保存済みの取り込み表からstagingを定義し、構築する | [references/dbt.md](references/dbt.md) |
 | アシスタントが読む出典の頁の文字を作る・抜き出し方を変える（書く前に最初の数頁を目で確かめる） | [references/source-text.md](references/source-text.md) |
 | Queria の公開データセットへ配布する | [references/queria.md](references/queria.md) |
+| 議会の会議録を取り込む・議会を足す | [references/assembly.md](references/assembly.md) |
 
 ## 関連 skill
 

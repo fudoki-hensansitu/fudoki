@@ -611,6 +611,7 @@ name = "fudoki-pipeline"
 version = "0.1.0"
 source = { editable = "pipeline" }
 dependencies = [
+    { name = "certifi" },
     { name = "dbt-core" },
     { name = "dbt-duckdb" },
     { name = "duckdb" },
@@ -634,6 +635,7 @@ paddle-ocr = [
 
 [package.metadata]
 requires-dist = [
+    { name = "certifi", specifier = "==2026.10.19" },
     { name = "dbt-core", specifier = "==1.12.7" },
     { name = "dbt-duckdb", specifier = "==1.11.1" },
     { name = "duckdb", specifier = "==2.0.0" },

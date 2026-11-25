@@ -14,7 +14,7 @@
 | `shared/` | 取り込みと dbt を横断する辞書。取り込みは直接読み、dbt は seed として読む |
 | `dbt/` | 入力準備（`scripts/`）、staging・intermediate・marts、seeds、検査（`tests/`） |
 | `serving/` | marts を D1 へ写す同期（`sync_d1.py`）、列の契約（`columns.py`）、配信の入口（`publish.py`）、Queria への配布 |
-| `assembly/` | 議会の会議録の取り込み（`ingest.py`）。議会のサイトから手元で取り、発言に切って D1 の `assembly_*` に差分で書く（[ADR 0054](../docs/adr/0054-assembly-minutes-direct-to-d1.md)） |
+| `assembly/` | 議会の会議録の取り込み（`ingest.py`、読み方は会議録のシステムごとの module）。議会のサイトから手元で取り、発言に切って D1 の `assembly_*` に差分で書く（[ADR 0054](../docs/adr/0054-assembly-minutes-direct-to-d1.md)） |
 | `source_text/` | アシスタントが読む出典の頁の文字の組み方 |
 | `verify/` | repo の決まりの検査（`bun run lint`） |
 
