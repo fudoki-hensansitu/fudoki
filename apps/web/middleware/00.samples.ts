@@ -5,7 +5,7 @@ import { defineMiddleware } from 'void'
 import type { Env } from '../server/env'
 
 /** サンプルの Worker に渡す path の頭。/samples は資産（/samples/assets）の置き場 */
-const PREFIXES = ['/spending', '/samples']
+const PREFIXES = ['/spending', '/compare', '/samples']
 
 export default defineMiddleware(async (c, next) => {
   const path = c.req.path

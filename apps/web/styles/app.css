@@ -9,7 +9,6 @@
 @source "../home";
 @source "../landing";
 @source "../pages";
-@source "../compare";
 
 @layer base {
   * { border-color: var(--border); }

@@ -1,6 +1,7 @@
-// まち比べの問い。どの問いも、まちごとに1つの値を持ち、地図の濃淡で塗る。並びと言葉は風土記の判断（yuito と決めた順）。
-// slug は URL（/compare/<slug>）とコードで使う英語の名前。値はサーバー（server/compare-map.ts）が問いの id ごとに組む
-import { DOMAIN_FRAMES } from '../jurisdiction/domains'
+// まち比べの問いと、地図のデータの形。どの問いも、まちごとに1つの値を持ち、地図の濃淡で塗る。並びと言葉は風土記の判断（yuito と決めた順）。
+// slug は URL（/compare/<slug>）とコードで使う英語の名前。値は web（apps/web/server/compare-map.ts）が問いの slug ごとに組んで /data/compare-map.json で返し、
+// 画面は apps/samples の compare が描く。web の sitemap もこの問いを載せるので、両方がここを読む
+import { DOMAIN_FRAMES } from './domains'
 
 /** 値の単位。yen は円、percent は割合（%） */
 export type Unit = 'yen' | 'percent'
@@ -98,3 +99,18 @@ export const FIELD_OF_QUESTION: Record<string, string> = Object.fromEntries(Obje
 export const QUESTIONS: Question[] = [...FINANCE, ...FIELDS]
 
 export const questionOf = (slug: string | undefined) => QUESTIONS.find((q) => q.slug === slug)
+
+export type MapTown = {
+  code: string
+  name: string
+  /** 風土記の本体でのまちの頁の path（/tokyo/nakano） */
+  path: string
+  /** タイルの列・行。島しょは本土の下の段に並べる */
+  col: number
+  row: number
+  pop: number | null
+  /** 問いの slug ごとの値。無いもの（未収録）は null */
+  values: Record<string, number | null>
+}
+/** まち比べの地図（/data/compare-map.json の応答）。year は値の決算の年度。partial は一部を読めなかった（D1 の決算・人口、api の失敗）印 */
+export type CompareMap = { prefecture: string; cols: number; rows: number; year: number | null; towns: MapTown[]; partial: boolean }

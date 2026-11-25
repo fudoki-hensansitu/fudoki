@@ -47,9 +47,8 @@ export default defineConfig({
       // ホームと自治体の頁（都道府県自体の頁・市区町村の頁・年度・タブ・分野）。データは取り込みのときだけ変わる
       '/': 3600,
       ...Object.fromEntries(Object.values(prefectures.slugs).flatMap((slug) => [[`/${slug}`, 3600], [`/${slug}/*`, 3600]])),
-      // まち比べ（一覧と問いの頁。選んだまちの ?town は画面が読むので key に入れない）
-      '/compare': 3600,
-      '/compare/*': 3600,
+      // まち比べの地図のデータ（routes/data/compare-map.json.ts）。頁は apps/samples が出し、loader が Service Binding でここを読む
+      '/data/compare-map.json': 3600,
       '/sitemap.xml': 3600,
       // 事業の sitemap（目次と自治体ごと）。事業は取り込みのときだけ変わるので1日置く
       '/sitemap-projects.xml': 86400,

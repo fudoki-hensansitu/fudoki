@@ -22,7 +22,6 @@ import { cn } from '@/lib/utils'
 import { LOGO_G, LOGO_WIDTH } from '../logo'
 import { FEEDBACK } from './feedback'
 import { applyTheme, currentTheme, DEFAULT_THEME, type Theme } from './theme'
-import { ArrowsLeftRightIcon } from '@phosphor-icons/react'
 import { NavContent } from './nav-content'
 import { readNavOpen, saveNavOpen } from './nav-state'
 import { TownPalette } from './town-palette'
@@ -31,7 +30,7 @@ import { useMyTown } from '../home/towns'
 import { isTownPath } from './town-path'
 
 
-export const NAV_SECTIONS = ['home', 'assistant', 'compare'] as const
+export const NAV_SECTIONS = ['home', 'assistant'] as const
 export type NavSection = (typeof NAV_SECTIONS)[number]
 export type SiteNavProps = { active?: NavSection }
 /** site の中の頁へは Void の Link で頁を読み直さずに移り、外（docs・mail・SNS）へは普通の a で出る */
@@ -220,7 +219,6 @@ function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Them
   const items = [
     { href: town ? town.path : '/', label: 'ホーム', Icon: HouseIcon, active: town ? isTownPath(path, town.path) : active === 'home' },
     { href: '/assistant', label: 'アシスタント', Icon: RobotIcon, active: active === 'assistant' },
-    { href: '/compare', label: 'まち比べ', Icon: ArrowsLeftRightIcon, active: active === 'compare' },
   ]
   return (
     <nav
@@ -232,7 +230,7 @@ function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Them
     >
       {/* 上にだけ線を引いて中身と分ける。下端は画面の端なので線を引かない */}
       <Separator />
-      <ul className="grid h-14 grid-cols-5">
+      <ul className="grid h-14 grid-cols-4">
         {items.map((i) => (
           <React.Fragment key={i.href}>
             <li>
