@@ -31,7 +31,7 @@ export function TownPalette({ open, onOpenChange }: { open: boolean; onOpenChang
     return (
       <Sheet open={open} onOpenChange={onOpenChange}>
         {/* 下から出る iOS のシート。入力欄を上に置き、キーボードが下を覆っても候補を上から読める */}
-        <SheetContent side="bottom" className="h-[92dvh] gap-0 rounded-t-2xl pb-[env(safe-area-inset-bottom)]">
+        <SheetContent side="bottom" className="gap-0 rounded-t-2xl data-[side=bottom]:h-[92dvh] pb-[env(safe-area-inset-bottom)]">
           <SheetHeader className="pb-2">
             <SheetTitle>まちを探す</SheetTitle>
             <SheetDescription className="sr-only">自治体名で探して開きます</SheetDescription>
