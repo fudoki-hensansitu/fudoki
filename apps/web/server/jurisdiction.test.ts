@@ -98,7 +98,7 @@ const view = async (path: string, e: Env = env) => {
 const canonical = (h: Head) => h.link.find((l) => l.rel === 'canonical')?.href
 
 describe('自治体の個別ページ', () => {
-  test('API に繋がらないときは投げて（頁は 502）、sitemap は入口・アシスタント・まち比べだけで答える', async () => {
+  test('API に繋がらないときは投げて（頁は 502）、sitemap は入口・紹介・まち比べだけで答える', async () => {
     const down: Env = web({ fetch: async () => new Response('x', { status: 500 }) })
     await expect(resolveJurisdiction(down, '/tokyo/nakano')).rejects.toThrow()
     await expect(homeEntries(down)).rejects.toThrow()
@@ -106,7 +106,7 @@ describe('自治体の個別ページ', () => {
     expect(sitemap.status).toBe(200)
     const xml = await sitemap.text()
     expect(xml).not.toContain('https://fudoki.dev/jurisdictions')
-    expect(xml).toContain('https://fudoki.dev/assistant')
+    expect(xml).not.toContain('https://fudoki.dev/assistant')
     expect(xml).toContain('<loc>https://fudoki.dev/compare</loc>')
     expect(xml).toContain('<loc>https://fudoki.dev/compare/debt-per-person</loc>')
   })

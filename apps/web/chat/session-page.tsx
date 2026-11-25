@@ -9,7 +9,7 @@ import { myTownContext } from '../home/towns'
 // 会話の本体（AI SDK など）は重いので、この頁で会話を描く時だけ読む。同じ route（/:prefecture/:name）の自治体の頁へ移る時に一緒に読まないようにする
 const Conversation = React.lazy(() => import('./conversation').then((m) => ({ default: m.Conversation })))
 
-// ロゴと頁の行き来はサイドバー（nav/）に置く。ここは上端のフェードの下地だけ
+// ロゴと頁の行き来はヘッダー（nav/site-header.tsx）に置く。ここは上端のフェードの下地だけ
 const header = <div className="h-6" />
 
 function Expired() {

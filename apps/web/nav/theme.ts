@@ -1,4 +1,4 @@
-// 画面のテーマ（ライト・ダーク・端末に合わせる）。サイドバーで選び、ブラウザの localStorage に残す。
+// 画面のテーマ（ライト・ダーク・端末に合わせる）。ヘッダーで選び、ブラウザの localStorage に残す。
 // サーバーはテーマで HTML を書き分けない（どの人にも同じ HTML を返し、CDN に置けるようにする）。<head> の THEME_SCRIPT が描く前に html の data-theme を付け、
 // styles/tokens.css が data-theme（無ければ端末の設定）で色を切り替える。選んでいなければライト
 import { BACKGROUND_DARK, BACKGROUND_LIGHT } from '../tokens'
@@ -19,7 +19,7 @@ export const themeColorMeta = (theme: Theme) =>
     : `<meta name="theme-color" content="${theme === 'dark' ? BACKGROUND_DARK : BACKGROUND_LIGHT}">`
 
 /**
- * 描く前にテーマを当てる inline の script（void.config.ts の head、CSP は hash で許す）。選んだテーマは html の data-theme-choice にも置き、サイドバーが読む。
+ * 描く前にテーマを当てる inline の script（void.config.ts の head、CSP は hash で許す）。選んだテーマは html の data-theme-choice にも置き、ヘッダーが読む。
  * theme-color は既定（ライト）の meta が middleware で head の末尾に入るので、HTML を読み終えてから選んだテーマのものに差し替える
  */
 export const THEME_SCRIPT = [

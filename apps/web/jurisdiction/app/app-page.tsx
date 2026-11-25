@@ -65,7 +65,6 @@ import { onPageScroll, scrollPageTo } from '../../nav/page-scroll'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type Moku, type MokuBreakdowns, type PageData, type PageFlow, type YearTotal, TAB_SLUGS, FINANCE_SLUG, hasDocument, type PageTab } from '../types'
 import { QuestionFeedView } from '../questions/feed'
 import { Chip } from '../chip'
-import { Mark as BrandMark } from '../../nav/site-nav'
 import { MyTownBadge } from '../my-town-badge'
 import type { Question, QuestionFeed } from '../questions/types'
 import { Title, titleVariants } from '@/components/ui/title'
@@ -1199,9 +1198,8 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
       <div className="mx-auto max-w-[1120px] px-4 pb-48">
         {hub ? (
           <>
-            {/* 狭い画面はサイドバーが無いので、左上に風土記のマークを置いてホームへ戻れるようにする。住んでいるまちの頁なら、右上（狭い画面はマークと同じ行の右）に「私のまち」の札 */}
-            <div className="mt-4 flex h-9 items-center justify-between md:justify-end">
-              <Link href="/" aria-label="風土記 ホーム" className="inline-flex md:hidden"><BrandMark className="size-8 text-primary" /></Link>
+            {/* 住んでいるまちの頁なら、右上に「私のまち」の札 */}
+            <div className="mt-4 flex h-9 items-center justify-end">
               <MyTownBadge code={data.code} />
             </div>
             {hero}
@@ -1212,7 +1210,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
         <>
         <div ref={tabsTop} aria-hidden="true" />
         {/* 区切りの線は画面の端から端まで引く（50cqw は外側の幅の半分、50% は中身の幅の半分。px で文字の位置は中身に揃える） */}
-        <div ref={stickyBar} className="sticky top-0 z-20 mx-[calc(50%-50cqw)] px-[calc(50cqw-50%)] bg-background">
+        <div ref={stickyBar} className="sticky top-(--site-header) z-20 transition-[top] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none mx-[calc(50%-50cqw)] px-[calc(50cqw-50%)] glass">
           <Separator className="absolute inset-x-0 bottom-0 data-horizontal:w-auto" />
           <div className="relative z-10 flex h-[52px] min-w-0 items-center">
             {projectPage ? (

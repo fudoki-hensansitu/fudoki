@@ -286,8 +286,9 @@ export function Conversation({
     (status === 'streaming' &&
       (last === undefined || last.type === 'step-start' || (last.type === 'dynamic-tool' && (last.state === 'output-available' || last.state === 'output-error'))))
   return (
-    <div className={`flex w-full flex-col ${scroller ? 'min-h-full' : 'min-h-dvh'}`}>
-      <div className="sticky top-0 z-20 bg-background">
+    <div className={`flex w-full flex-col ${scroller ? 'min-h-full' : 'min-h-[calc(100dvh-var(--site-header))]'}`}>
+      {/* 頁全体で読むときはサイトのヘッダーの下に貼り付け、drawer の中では drawer の頭に貼り付ける */}
+      <div className={`glass sticky z-20 ${scroller ? 'top-0' : 'top-(--site-header) transition-[top] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none'}`}>
       {header}
       <div aria-hidden className={`pointer-events-none absolute inset-x-0 top-full h-10 bg-gradient-to-b from-background to-transparent transition-opacity duration-200 ${fade.top ? 'opacity-100' : 'opacity-0'}`} />
       </div>
@@ -350,7 +351,7 @@ export function Conversation({
           ) : null}
         </div>
       </div>
-      <div className={`sticky bottom-0 z-20 bg-background ${scroller ? '' : 'max-md:bottom-(--bottom-nav) max-md:motion-safe:transition-[bottom] max-md:duration-200'}`} style={{ transform: 'translateY(calc(-1 * var(--kb, 0px)))' }}>
+      <div className={"sticky bottom-0 z-20 bg-background"} style={{ transform: 'translateY(calc(-1 * var(--kb, 0px)))' }}>
         <div aria-hidden className={`pointer-events-none absolute inset-x-0 bottom-full h-10 bg-gradient-to-t from-background to-transparent transition-opacity duration-200 ${fade.bottom ? 'opacity-100' : 'opacity-0'}`} />
         <div className={`mx-auto w-full max-w-3xl px-4 pt-2 ${scroller ? 'pb-[max(1rem,env(safe-area-inset-bottom))]' : 'pb-[calc(2rem+env(safe-area-inset-bottom))] sm:pb-12'}`}>
           {beforeComposer}

@@ -1,4 +1,4 @@
-// GET /offline: 繋がらないときに service worker が見せる頁（pwa.ts）。サイドバーも JS も持たない1枚
+// GET /offline: 繋がらないときに service worker が見せる頁（pwa.ts）。ヘッダーも JS も持たない1枚
 import { defineHandler } from 'void'
 import { OFFLINE_HTML } from '../pwa'
 

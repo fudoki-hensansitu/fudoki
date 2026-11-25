@@ -1,4 +1,4 @@
-// 会話を始める入力（入口・アシスタント・自治体の個別ページが使う）。送ると Turnstile で確かめて会話を作り、/s/:id へ移る
+// 会話を始める入力（自治体の個別ページが使う）。送ると Turnstile で確かめて会話を作り、/s/:id へ移る
 import * as React from 'react'
 import { useRouter } from '@void/react'
 import { Composer } from './composer'
@@ -96,7 +96,7 @@ export function StartForm({
   onStart?: (id: string, session: StoredSession) => void
   /** 入力欄の上に出すもの（選んだ文など） */
   before?: React.ReactNode
-  /** 入力欄の下に出すもの。渡す start でその質問の会話を始める（アシスタントの頁の例のカードなど） */
+  /** 入力欄の下に出すもの。渡す start でその質問の会話を始める */
   after?: (start: (text: string) => Promise<boolean>, pending: boolean) => React.ReactNode
 }) {
   const router = useRouter()
@@ -121,7 +121,7 @@ export function StartForm({
         onStart(body.id, session)
         return true
       }
-      // 頁を読み直さずに移る（サイドバーはそのまま）
+      // 頁を読み直さずに移る（ヘッダーはそのまま）
       await router.visit(`/s/${body.id}`)
       return true
     } catch (e) {

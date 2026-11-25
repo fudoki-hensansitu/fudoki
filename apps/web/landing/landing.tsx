@@ -9,7 +9,7 @@ import { Title } from '@/components/ui/title'
 import { cn } from '@/lib/utils'
 import { Footer } from '../nav/footer'
 import { HOME } from '../home-data'
-import { Logo } from '../nav/site-nav'
+import { Logo } from '../nav/brand'
 
 const DOCS = 'https://docs.fudoki.dev'
 const HOME_PATH = '/'
@@ -141,7 +141,7 @@ export function Landing() {
       {/* 冒頭: 緑の面に問いの見出し・できるようになること・ボタン。下に実際の画面を、面の縁にまたがせて並べる */}
       <header>
         <div className="rounded-3xl bg-brand px-6 pt-12 pb-40 text-center text-brand-foreground sm:pt-16 sm:pb-64">
-          {/* 白抜きのロゴ（DESIGN.md の Logo）。サイドバーの無いスマホでも風土記の頁だと分かるように、見出しの上に置く */}
+          {/* 白抜きのロゴ（DESIGN.md の Logo）。風土記の頁だと分かるように、見出しの上に置く */}
           <p className="flex justify-center">
             <Logo className="h-9 w-auto sm:h-10" />
             <span className="sr-only">風土記</span>
@@ -248,10 +248,6 @@ export function Landing() {
           body="「子育てにいくら使ってる？」と聞くと、風土記のデータから答えます。ChatGPT や Claude など、いつもの AI からも使えます。"
           links={
             <>
-              <Link href="/assistant" className={textLink}>
-                アシスタントに聞く
-                <ArrowRightIcon className="size-4" aria-hidden="true" />
-              </Link>
               <a href={DOCS} target="_blank" rel="noopener" className={textLink}>
                 いつもの AI につなぐ
                 <ArrowSquareOutIcon className="size-4" aria-hidden="true" />
