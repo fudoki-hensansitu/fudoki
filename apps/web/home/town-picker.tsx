@@ -1,4 +1,4 @@
-// 自治体を名前で選ぶ検索欄と、自治体の紋章。ホーム・ヘッダーのまちを探すで使う
+// 自治体を名前で選ぶ検索欄と、自治体の紋章。ホームのオンボーディングで使う
 import * as React from 'react'
 import { MagnifyingGlassIcon } from '@phosphor-icons/react'
 import { Combobox, ComboboxCollection, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from '@/components/ui/combobox'

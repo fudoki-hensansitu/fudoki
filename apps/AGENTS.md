@@ -57,7 +57,7 @@
 
 ### compare
 
-まち比べ（`fudoki.dev/compare`）。東京都のまちを、1人あたりの借金・貯金や分野の割合などの問いごとにタイル地図で塗る。一覧（`/compare`）は問いごとの小さな地図のカード、問いの頁（`/compare/<問い>?town=`）は大きな地図と選んだまちの札。web のサイドバーからは外し、web の頁として持っていたものを 2026-11-25 にサンプルへ移した（yuito「まち比べを sample に移して sidenav から消そう」）。URL は変えず、紹介（`/about`）のリンクと web の sitemap はそのまま載せる
+まち比べ（`fudoki.dev/compare`）。東京都のまちを、1人あたりの借金・貯金や分野の割合などの問いごとにタイル地図で塗る。一覧（`/compare`）は問いごとの小さな地図のカード、問いの頁（`/compare/<問い>?town=`）は大きな地図と選んだまちの札。web のナビからは外し、web の頁として持っていたものを 2026-11-25 にサンプルへ移した（yuito「まち比べを sample に移して sidenav から消そう」）。URL は変えず、紹介（`/about`）のリンクと web の sitemap はそのまま載せる
 
 - 問い（並び・言葉・slug）と地図のデータの形は `packages/fiscal/compare.ts` を web と共有する（web の sitemap も問いを載せる）
 - 値は web が組んで `/data/compare-map.json` で返し（`apps/web/server/compare-map.ts`。決算状況調・人口は web の D1、分野の額は api の歳出の集約）、loader が Service Binding で読む（`compare/server/map.ts`）。web は `/api` の下でなく ISR に1時間置ける path にしている。手元の `vite dev` は公開の fudoki.dev を読むので、web の側を変えたときは deploy の後でないと手元に出ない

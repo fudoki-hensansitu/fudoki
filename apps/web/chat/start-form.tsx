@@ -80,7 +80,6 @@ export function StartForm({
   context,
   onStart,
   before,
-  after,
 }: {
   sitekey: string
   placeholder: string
@@ -96,8 +95,6 @@ export function StartForm({
   onStart?: (id: string, session: StoredSession) => void
   /** 入力欄の上に出すもの（選んだ文など） */
   before?: React.ReactNode
-  /** 入力欄の下に出すもの。渡す start でその質問の会話を始める */
-  after?: (start: (text: string) => Promise<boolean>, pending: boolean) => React.ReactNode
 }) {
   const router = useRouter()
   const [pending, setPending] = React.useState(false)
@@ -148,7 +145,6 @@ export function StartForm({
       <Composer onSubmit={start} pending={pending} placeholder={placeholder} onFocus={warm} />
       <div ref={widget} className={challenge ? 'mt-3 flex justify-center' : 'hidden'} />
       {error ? <p role="alert" className="mt-3 text-sm text-destructive">{error}</p> : null}
-      {after?.(start, pending)}
     </div>
   )
 }

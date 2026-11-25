@@ -1,6 +1,6 @@
 // 全頁の上に置くヘッダー。ロゴ・まちを探す・MCP・フィードバック・X・GitHub・テーマだけを1本に並べる（2026-11-25 yuito「sidenav を header に」）。
 // pages/layout.tsx が置き、頁の間を移っても描き直さない。下へ読み進めている間は上へ隠し、上へ戻したら出す。
-// ロゴはホーム（/）へ。住んでいるまちを選んだ人はホームがそのまちの頁へ移す（home/redirect.ts・home/home.tsx）ので、ロゴが「私のまち」への戻り口になる
+// ロゴはホームへ。住んでいるまちを選んだ人のホームはそのまちの頁なので（2026-11-19 yuito「ホームイコール登録した町」）、ロゴはそのまちの頁を直接指し、「私のまち」への戻り口になる
 import * as React from 'react'
 import { CircleHalfIcon, DesktopIcon, DotsThreeIcon, GithubLogoIcon, MagnifyingGlassIcon, MoonIcon, PlugIcon, SunIcon, XLogoIcon, ChatIcon } from '@phosphor-icons/react'
 import { useRouter } from '@void/react'
@@ -13,6 +13,7 @@ import { FEEDBACK } from './feedback'
 import { applyTheme, currentTheme, DEFAULT_THEME, type Theme } from './theme'
 import { TownPalette } from './town-palette'
 import { onPageScroll, pageScroller, pageScrollY } from './page-scroll'
+import { useMyTown } from '../home/towns'
 
 const DOCS = 'https://docs.fudoki.dev'
 const MCP = `${DOCS}/mcp`
@@ -174,6 +175,8 @@ function NarrowMenu({ theme, onPick }: { theme: Theme; onPick: (t: Theme) => voi
 export function SiteHeader() {
   const [hidden, setHidden] = useHideOnScroll()
   const [theme, pickTheme] = useTheme()
+  // 初めの描画はサーバーもブラウザも town=null なので、hydrate はずれない
+  const { town } = useMyTown()
   return (
     <header
       data-hidden={hidden || undefined}
@@ -182,7 +185,7 @@ export function SiteHeader() {
       className="glass sticky top-0 z-30 pt-[env(safe-area-inset-top)] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none data-hidden:-translate-y-full"
     >
       <div className="flex h-14 items-center gap-3 px-4 md:gap-6 md:px-6">
-        <Link href="/" aria-label="風土記 ホーム" className="flex shrink-0 items-center">
+        <Link href={town ? town.path : '/'} aria-label="風土記 ホーム" className="flex shrink-0 items-center">
           {/* 色は svg に付ける（a { color: inherit } に負けて黒くならないように）。狭い画面はマークだけにして検索欄の幅を残す */}
           <Mark className="block size-8 text-primary md:hidden" />
           <Logo className="hidden h-7 w-auto text-primary md:block" />
