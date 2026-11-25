@@ -54,6 +54,7 @@
         "@cloudflare/vite-plugin": "catalog:",
         "@types/bun": "catalog:",
         "blume": "2.2.7",
+        "cf": "1.0.0-rc.0",
         "typescript": "catalog:",
         "vite": "catalog:",
       },
