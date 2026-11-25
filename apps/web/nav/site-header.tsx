@@ -59,9 +59,13 @@ function useHideOnScroll() {
   React.useEffect(() => setHidden(false), [path])
   React.useEffect(() => {
     let last = pageScrollY()
+    // 本文が自分でスクロールしている間（会話を横に開いた広い画面）は、本文がヘッダーの下に潜らないので線を出さない
+    const syncScrolled = (y: number) => setScrolled(!pageScroller() && y > 0)
+    // 再読込・戻るで途中の位置から開いたときも、最初から線を出す
+    syncScrolled(last)
     const onScroll = () => {
       const y = pageScrollY()
-      setScrolled(y > 0)
+      syncScrolled(y)
       const d = y - last
       if (Math.abs(d) < 6) return
       setHidden(!pageScroller() && d > 0 && y > 56)
@@ -194,7 +198,7 @@ export function SiteHeader() {
         </div>
       </div>
       {/* 区切りの線は本文がヘッダーの下に潜ったときだけ出す */}
-      <Separator className={`transition-opacity duration-200 ${scrolled ? 'opacity-100' : 'opacity-0'}`} />
+      <Separator className={`transition-opacity duration-200 motion-reduce:transition-none ${scrolled ? 'opacity-100' : 'opacity-0'}`} />
     </header>
   )
 }
