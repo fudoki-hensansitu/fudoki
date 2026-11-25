@@ -3,7 +3,7 @@
 import * as React from 'react'
 import { useNavigation, useRouter } from '@void/react'
 import {
-  ArrowLeftIcon,
+  CaretLeftIcon,
   ArrowRightIcon,
   ArrowSquareOutIcon,
   BankIcon,
@@ -61,7 +61,7 @@ import { DOMAIN_FRAMES, OTHER_FRAME, frameOf } from '../domains'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock, type AskHandle, type PresetAnswer } from '../ask-dock'
-import { onPageScroll, scrollPageTo } from '../../nav/page-scroll'
+import { scrollPageTo } from '../../nav/page-scroll'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type Moku, type MokuBreakdowns, type PageData, type PageFlow, type YearTotal, TAB_SLUGS, FINANCE_SLUG, hasDocument, type PageTab } from '../types'
 import { QuestionFeedView } from '../questions/feed'
 import { Chip } from '../chip'
@@ -159,30 +159,6 @@ function SectionHead({ title, sub, children }: { title: string; sub?: string; ch
     </div>
   )
 }
-/** タブの年度の切り替え。広い画面は年度を並べ、狭い画面はメニュー1つ */
-function TabYear() {
-  const { years, v, setYear, yearHref } = useApp()
-  // 頁の上に貼り付く帯は、この切り替えが帯の下に隠れたら戻る・頁の名前・年度を1行にまとめて出す（data-tab-year で探す）
-  return (
-    <div data-tab-year className="shrink-0">
-      <div className="md:hidden"><YearMenu years={years} current={v.year} onChange={setYear} /></div>
-      <div className="max-md:hidden"><YearPicker years={years} current={v.year} onChange={setYear} hrefOf={yearHref} /></div>
-    </div>
-  )
-}
-/** 財政以外の頁の頭。頁の名前と年度の切り替え、その言葉の意味の一文 */
-function TabHead({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="mb-5 flex flex-col gap-3">
-      <div className="flex items-center justify-between gap-3">
-        <Title size="h1" as="h1">{title}</Title>
-        <TabYear />
-      </div>
-      <p className="min-w-0 text-base leading-[1.7] text-muted-foreground">{children}</p>
-    </div>
-  )
-}
-
 const IconBox = ({ children }: { children: React.ReactNode }) => <span className="grid size-[30px] shrink-0 place-items-center rounded-[9px] bg-card text-muted-foreground [&_svg]:size-4">{children}</span>
 
 /** 行の間に Separator を挟む */
@@ -515,11 +491,6 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
   }, [active, urlRead, view, flowQuery])
   return (
     <div className="flex flex-col gap-3">
-      <TabHead title={label === '決算' ? '決算' : '予算'}>
-        {phase === 'settlement'
-          ? '決算は、1年間に実際に入ったお金と使ったお金を、年度が終わった後にまとめたものです。議会の認定を受けて確定します。'
-          : '予算は、1年間に何にいくら使うかを、年度が始まる前に決めた計画です。議会の議決を経て決まります。ここでは、年度の初めに決めた当初予算を扱います。'}
-      </TabHead>
       {/* 入る→使う（一般会計の歳入と歳出の総額と流れ）。その年度・資料の歳入を収録しているときだけ */}
       {total && revenueDoc ? <IncomeFlow doc={revenueDoc} revenue={current?.revenue} phase={phase} expTotal={total.yen} fields={v.fields} pop={d.pop} openField={openFieldDetail} /> : null}
       {/* 使い道の分野は入る→使うに出るので、ここは節で分けた「何に使う？」。節が載っていない資料では出さない（節は描いた後に届くので、届くまでは枠だけ） */}
@@ -578,7 +549,7 @@ function SetsuSection({ phase, account, groups, total, onOpen }: { phase: 'initi
       <Title size="h3" as="h2" className="mb-3">
         {phase === 'initial' ? '何に使う？' : '何に使った？'}
       </Title>
-      <p className="mb-3 text-base leading-[1.7] text-muted-foreground">{account}の歳出を、人件費・委託料・工事など、お金の出し方で分けています。予算書・決算書の「節」をまとめたものです。</p>
+      <p className="mb-3 text-base leading-(--line-height-body) text-muted-foreground">{account}の歳出を、人件費・委託料・工事など、お金の出し方で分けています。予算書・決算書の「節」をまとめたものです。</p>
       <div className="grid gap-x-8 @3xl:grid-flow-col @3xl:grid-cols-2 @3xl:grid-rows-(--rows)" style={{ '--rows': `repeat(${Math.ceil(n / 2)}, auto)` } as React.CSSProperties}>
         {groups ? groups.map((g, i) => <FieldRow key={g.id} f={g} i={i} max={max} total={total} onClick={onOpen && (() => onOpen(g.id))} />) : SETSU_SKELETON.map((w, i) => <FieldRowSkeleton key={i} width={w} />)}
       </div>
@@ -627,7 +598,6 @@ function Overview() {
   const { v, page } = useApp()
   return (
     <div className="flex flex-col gap-8">
-      <Title size="h1" as="h1" data-tab-year>財政</Title>
       {/* ホームのまちの札と同じく、濃い緑の地に総額と1人あたりを載せる。事業の件数は出さない */}
       <section className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7">
         <p className="text-sm opacity-80">{reiwa(v.year)}の{v.word}（一般会計）</p>
@@ -744,7 +714,6 @@ function ProjectsTab({ filter, setFilter, fields, setFields, q, setQ }: { filter
   }
   return (
     <div className="flex flex-col gap-2">
-      <TabHead title="事業">事業は、自治体がお金を使って行う一つ一つの仕事です。</TabHead>
       {/* 検索の行と、絞り込み（事業の区分・分野の combobox）の行を分ける */}
       <div className="relative">
         <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
@@ -796,7 +765,7 @@ function ProjectCrumbs({ base, label, close, open, ancestors }: { base: string; 
     <Breadcrumb className="min-w-0">
       <BreadcrumbList className="flex-nowrap text-sm sm:text-base">
         <BreadcrumbItem className="shrink-0">
-          <BreadcrumbLink render={<button type="button" onClick={close} />} className="inline-flex cursor-pointer items-center gap-1"><ArrowLeftIcon className="size-4 shrink-0" aria-hidden="true" />{label}</BreadcrumbLink>
+          <BreadcrumbLink render={<button type="button" onClick={close} />} className="inline-flex cursor-pointer items-center gap-1"><CaretLeftIcon className="size-4 shrink-0" aria-hidden="true" />{label}</BreadcrumbLink>
         </BreadcrumbItem>
         {ancestors.map((a) => (
           <React.Fragment key={a.id}>
@@ -1102,29 +1071,6 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     const el = tabsTop.current
     if (el && el.getBoundingClientRect().top < 0) el.scrollIntoView({ block: 'start' })
   }
-  // 頁の頭（見出しと年度の切り替え）が帯の下に隠れたら、帯を戻る・頁の名前・年度の1行に切り替える
-  const stickyBar = React.useRef<HTMLDivElement>(null)
-  const [yearStuck, setYearStuck] = React.useState(false)
-  React.useEffect(() => {
-    let frame = 0
-    const check = () => {
-      cancelAnimationFrame(frame)
-      frame = requestAnimationFrame(() => {
-        const bar = stickyBar.current?.getBoundingClientRect().bottom ?? 0
-        // 見えているタブの切り替えだけ（隠れたタブは幅が 0、スマホの隣のタブは画面の横の外）
-        const heads = [...document.querySelectorAll<HTMLElement>('[data-tab-year]')].map((el) => el.getBoundingClientRect()).filter((r) => r.width > 0 && r.right > 0 && r.left < innerWidth)
-        setYearStuck(heads.length > 0 && heads.every((r) => r.bottom <= bar))
-      })
-    }
-    check()
-    const off = onPageScroll(check)
-    addEventListener('resize', check)
-    return () => {
-      cancelAnimationFrame(frame)
-      off()
-      removeEventListener('resize', check)
-    }
-  }, [tab, year, projectPage])
   const go: Go = (t, opt = {}) => {
     // タブと同じ描画で絞り込みも変える。transition で後から変えると、先に絞らない一覧が描かれてその続きの頁まで読みに行き、
     // 絞った一覧も頁の移動（loader）が終わるまで出ない
@@ -1140,8 +1086,6 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   const hub = tab === 'questions' && !projectPage
 
   // 入口のまちの頭。画面の半分ほどを使ってまちを大きく見せ、予算・決算・事業・財政への入口を並べる
-  const hl = data.headline
-  const lead = hl?.budget ? { label: '予算', ...hl.budget } : hl?.settlement ? { label: '決算', ...hl.settlement } : undefined
   const people = data.population?.people
   /** その資料を収録した最新の年度（無ければ開いている年度） */
   const latestOf = (doc: 'initial' | 'settlement') => years.find((y) => hasDocument(data, y, doc)) ?? year
@@ -1160,6 +1104,8 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
         {emblem ? <img src={emblem} alt="" className="size-full min-h-0 min-w-0 object-contain" /> : <span className={cn(titleVariants({ size: 'display' }), 'font-normal text-foreground')}>{data.name[0]}</span>}
       </div>
       <div className="flex flex-col items-center gap-2">
+        {/* 住んでいるまちの頁なら、名前のすぐ上に「私のまち」の札（2026-11-25 yuito「地名の近くの方が良い」）。札は描いた後に出るので、跳ねないよう枠は誰にでも出す */}
+        <div className="flex h-8 items-center"><MyTownBadge code={data.code} /></div>
         <Title size="h1" as="h1">{data.name}</Title>
         {vision ? <p className="max-w-[36em] text-base leading-snug text-muted-foreground">{vision}</p> : null}
         <div className="mt-1 flex flex-wrap justify-center gap-x-4 gap-y-2 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
@@ -1168,13 +1114,6 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
           {data.officialUrl ? <span className="inline-flex items-center gap-1 sm:gap-2"><GlobeIcon className="size-3.5 sm:size-4" aria-hidden="true" /><Button variant="link" size="inline" nativeButton={false} render={<a href={data.officialUrl} target="_blank" rel="noopener" />}>公式サイト</Button></span> : null}
         </div>
       </div>
-      {lead ? (
-        <p className="flex flex-col items-center gap-1">
-          <span className="text-sm text-muted-foreground">{reiwa(lead.year)}の{lead.label}</span>
-          <Title size="display" as="span" className="text-primary"><Amt yen={lead.yen} /></Title>
-          {people ? <span className="text-sm text-muted-foreground">1人あたり <Amt yen={lead.yen / people} plainUnit /></span> : null}
-        </p>
-      ) : null}
       <nav aria-label="お金の使い道を見る" className="grid w-full max-w-[720px] grid-cols-2 gap-3 sm:grid-cols-4">
         {doors.map(({ key, sub, year: y }) => {
           const t = TABS.find((x) => x.key === key)!
@@ -1198,10 +1137,6 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
       <div className="mx-auto max-w-[1120px] px-4 pb-48">
         {hub ? (
           <>
-            {/* 住んでいるまちの頁なら、右上に「私のまち」の札 */}
-            <div className="mt-4 flex h-9 items-center justify-end">
-              <MyTownBadge code={data.code} />
-            </div>
             {hero}
             <Separator />
             <div className="pt-6"><QuestionFeedView feed={questions} onOpen={(q) => ask.current?.openPreset(q.q)} onAsk={() => ask.current?.openAsk()} /></div>
@@ -1210,7 +1145,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
         <>
         <div ref={tabsTop} aria-hidden="true" />
         {/* 区切りの線は画面の端から端まで引く（50cqw は外側の幅の半分、50% は中身の幅の半分。px で文字の位置は中身に揃える） */}
-        <div ref={stickyBar} className="sticky top-(--site-header) z-20 transition-[top] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none mx-[calc(50%-50cqw)] px-[calc(50cqw-50%)] glass">
+        <div className="sticky top-(--site-header) z-20 transition-[top] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none mx-[calc(50%-50cqw)] px-[calc(50cqw-50%)] glass">
           <Separator className="absolute inset-x-0 bottom-0 data-horizontal:w-auto" />
           <div className="relative z-10 flex h-[52px] min-w-0 items-center">
             {projectPage ? (
@@ -1218,11 +1153,11 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
               <ClientSuspense fallback={<ProjectCrumbs base={data.path} label="事業" close={closeProject} open={openProject} ancestors={[]} />} ready={!!res.peek(projectLatestKey(projectPage))}>
                 <ProjectBack res={res} id={projectPage} base={data.path} label="事業" close={closeProject} open={openProject} />
               </ClientSuspense>
-            ) : yearStuck && v ? (
-              // 頁の頭が帯の下に隠れたら、戻る・小さくした頁の名前（左寄せ）・年度の切り替え（右）を帯の1行にまとめる（財政は年度を持たない）
+            ) : v ? (
+              // 帯は初めから、戻る・頁の名前（左寄せ、頁の h1）・年度の切り替え（右）の1行にする（財政は年度を持たない）
               <div className="flex min-w-0 flex-1 items-center gap-2">
-                <Link href={data.path} aria-label={`${data.name}へ戻る`} className="-ml-2 grid size-9 shrink-0 place-items-center rounded-full text-muted-foreground"><ArrowLeftIcon className="size-5" aria-hidden="true" /></Link>
-                <Title size="headline" as="p" className="min-w-0 flex-1 truncate">{TABS.find((t) => t.key === tab)?.label}</Title>
+                <Link href={data.path} aria-label={`${data.name}へ戻る`} className="-ml-2 grid size-9 shrink-0 place-items-center rounded-full text-muted-foreground"><CaretLeftIcon className="size-5" aria-hidden="true" /></Link>
+                <Title size="headline" as="h1" className="min-w-0 flex-1 truncate">{TABS.find((t) => t.key === tab)?.label}</Title>
                 {tab !== 'overview' ? (
                   <div className="shrink-0">
                     <div className="md:hidden"><YearMenu years={years} current={v.year} onChange={setYear} /></div>
@@ -1234,7 +1169,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
               <Breadcrumb className="min-w-0">
                 <BreadcrumbList className="flex-nowrap text-sm sm:text-base">
                   <BreadcrumbItem className="shrink-0">
-                    <BreadcrumbLink render={<Link href={data.path} />} className="inline-flex items-center gap-1"><ArrowLeftIcon className="size-4 shrink-0" aria-hidden="true" />{data.name}</BreadcrumbLink>
+                    <BreadcrumbLink render={<Link href={data.path} />} className="inline-flex items-center gap-1"><CaretLeftIcon className="size-4 shrink-0" aria-hidden="true" />{data.name}</BreadcrumbLink>
                   </BreadcrumbItem>
                 </BreadcrumbList>
               </Breadcrumb>
