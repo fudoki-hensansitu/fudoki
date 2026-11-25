@@ -90,8 +90,10 @@ function TownSearch() {
   }, [])
   return (
     <>
-      <Button variant="ghost" size="icon-lg" onClick={() => setOpen(true)} aria-label="まちを探す" aria-haspopup="dialog" aria-keyshortcuts="Meta+K Control+K" className="size-11 shrink-0 text-muted-foreground md:size-9">
-        <MagnifyingGlassIcon className="size-5" aria-hidden="true" />
+      {/* 広い画面は MCP・フィードバックと同じ icon と文字の大きさで「検索」と出し、狭い画面は icon だけにする */}
+      <Button variant="ghost" size="lg" onClick={() => setOpen(true)} aria-label="まちを探す" aria-haspopup="dialog" aria-keyshortcuts="Meta+K Control+K" className="size-11 shrink-0 text-muted-foreground md:size-auto">
+        <MagnifyingGlassIcon className="size-5 md:size-4" aria-hidden="true" />
+        <span className="hidden md:inline">検索</span>
       </Button>
       <TownPalette open={open} onOpenChange={setOpen} />
     </>
