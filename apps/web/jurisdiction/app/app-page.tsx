@@ -1140,8 +1140,6 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   const hub = tab === 'questions' && !projectPage
 
   // 入口のまちの頭。画面の半分ほどを使ってまちを大きく見せ、予算・決算・事業・財政への入口を並べる
-  const hl = data.headline
-  const lead = hl?.budget ? { label: '予算', ...hl.budget } : hl?.settlement ? { label: '決算', ...hl.settlement } : undefined
   const people = data.population?.people
   /** その資料を収録した最新の年度（無ければ開いている年度） */
   const latestOf = (doc: 'initial' | 'settlement') => years.find((y) => hasDocument(data, y, doc)) ?? year
@@ -1160,6 +1158,8 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
         {emblem ? <img src={emblem} alt="" className="size-full min-h-0 min-w-0 object-contain" /> : <span className={cn(titleVariants({ size: 'display' }), 'font-normal text-foreground')}>{data.name[0]}</span>}
       </div>
       <div className="flex flex-col items-center gap-2">
+        {/* 住んでいるまちの頁なら、名前のすぐ上に「私のまち」の札（2026-11-25 yuito「地名の近くの方が良い」） */}
+        <MyTownBadge code={data.code} />
         <Title size="h1" as="h1">{data.name}</Title>
         {vision ? <p className="max-w-[36em] text-base leading-snug text-muted-foreground">{vision}</p> : null}
         <div className="mt-1 flex flex-wrap justify-center gap-x-4 gap-y-2 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
@@ -1168,13 +1168,6 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
           {data.officialUrl ? <span className="inline-flex items-center gap-1 sm:gap-2"><GlobeIcon className="size-3.5 sm:size-4" aria-hidden="true" /><Button variant="link" size="inline" nativeButton={false} render={<a href={data.officialUrl} target="_blank" rel="noopener" />}>公式サイト</Button></span> : null}
         </div>
       </div>
-      {lead ? (
-        <p className="flex flex-col items-center gap-1">
-          <span className="text-sm text-muted-foreground">{reiwa(lead.year)}の{lead.label}</span>
-          <Title size="display" as="span" className="text-primary"><Amt yen={lead.yen} /></Title>
-          {people ? <span className="text-sm text-muted-foreground">1人あたり <Amt yen={lead.yen / people} plainUnit /></span> : null}
-        </p>
-      ) : null}
       <nav aria-label="お金の使い道を見る" className="grid w-full max-w-[720px] grid-cols-2 gap-3 sm:grid-cols-4">
         {doors.map(({ key, sub, year: y }) => {
           const t = TABS.find((x) => x.key === key)!
@@ -1198,10 +1191,6 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
       <div className="mx-auto max-w-[1120px] px-4 pb-48">
         {hub ? (
           <>
-            {/* 住んでいるまちの頁なら、右上に「私のまち」の札 */}
-            <div className="mt-4 flex h-9 items-center justify-end">
-              <MyTownBadge code={data.code} />
-            </div>
             {hero}
             <Separator />
             <div className="pt-6"><QuestionFeedView feed={questions} onOpen={(q) => ask.current?.openPreset(q.q)} onAsk={() => ask.current?.openAsk()} /></div>
