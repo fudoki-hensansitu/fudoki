@@ -61,7 +61,7 @@ import { DOMAIN_FRAMES, OTHER_FRAME, frameOf } from '../domains'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock, type AskHandle, type PresetAnswer } from '../ask-dock'
-import { onPageScroll, scrollPageTo } from '../../nav/page-scroll'
+import { scrollPageTo } from '../../nav/page-scroll'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type Moku, type MokuBreakdowns, type PageData, type PageFlow, type YearTotal, TAB_SLUGS, FINANCE_SLUG, hasDocument, type PageTab } from '../types'
 import { QuestionFeedView } from '../questions/feed'
 import { Chip } from '../chip'
@@ -159,28 +159,9 @@ function SectionHead({ title, sub, children }: { title: string; sub?: string; ch
     </div>
   )
 }
-/** タブの年度の切り替え。広い画面は年度を並べ、狭い画面はメニュー1つ */
-function TabYear() {
-  const { years, v, setYear, yearHref } = useApp()
-  // 頁の上に貼り付く帯は、この切り替えが帯の下に隠れたら戻る・頁の名前・年度を1行にまとめて出す（data-tab-year で探す）
-  return (
-    <div data-tab-year className="shrink-0">
-      <div className="md:hidden"><YearMenu years={years} current={v.year} onChange={setYear} /></div>
-      <div className="max-md:hidden"><YearPicker years={years} current={v.year} onChange={setYear} hrefOf={yearHref} /></div>
-    </div>
-  )
-}
-/** 財政以外の頁の頭。頁の名前と年度の切り替え、その言葉の意味の一文 */
-function TabHead({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <div className="mb-5 flex flex-col gap-3">
-      <div className="flex items-center justify-between gap-3">
-        <Title size="h1" as="h1">{title}</Title>
-        <TabYear />
-      </div>
-      <p className="min-w-0 text-base leading-[1.7] text-muted-foreground">{children}</p>
-    </div>
-  )
+/** 予算・決算・事業の頁の頭の、その言葉の意味の一文。頁の名前と年度は上に貼り付く帯に出す（2026-11-25 yuito「帯は最初から予算 年度、見出しは削除」） */
+function TabLead({ children }: { children: React.ReactNode }) {
+  return <p className="mb-5 min-w-0 text-base leading-[1.7] text-muted-foreground">{children}</p>
 }
 
 const IconBox = ({ children }: { children: React.ReactNode }) => <span className="grid size-[30px] shrink-0 place-items-center rounded-[9px] bg-card text-muted-foreground [&_svg]:size-4">{children}</span>
@@ -515,11 +496,11 @@ function MoneyTab({ phase, active }: { phase: 'initial' | 'settlement'; /** 開�
   }, [active, urlRead, view, flowQuery])
   return (
     <div className="flex flex-col gap-3">
-      <TabHead title={label === '決算' ? '決算' : '予算'}>
+      <TabLead>
         {phase === 'settlement'
           ? '決算は、1年間に実際に入ったお金と使ったお金を、年度が終わった後にまとめたものです。議会の認定を受けて確定します。'
           : '予算は、1年間に何にいくら使うかを、年度が始まる前に決めた計画です。議会の議決を経て決まります。ここでは、年度の初めに決めた当初予算を扱います。'}
-      </TabHead>
+      </TabLead>
       {/* 入る→使う（一般会計の歳入と歳出の総額と流れ）。その年度・資料の歳入を収録しているときだけ */}
       {total && revenueDoc ? <IncomeFlow doc={revenueDoc} revenue={current?.revenue} phase={phase} expTotal={total.yen} fields={v.fields} pop={d.pop} openField={openFieldDetail} /> : null}
       {/* 使い道の分野は入る→使うに出るので、ここは節で分けた「何に使う？」。節が載っていない資料では出さない（節は描いた後に届くので、届くまでは枠だけ） */}
@@ -627,7 +608,6 @@ function Overview() {
   const { v, page } = useApp()
   return (
     <div className="flex flex-col gap-8">
-      <Title size="h1" as="h1" data-tab-year>財政</Title>
       {/* ホームのまちの札と同じく、濃い緑の地に総額と1人あたりを載せる。事業の件数は出さない */}
       <section className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7">
         <p className="text-sm opacity-80">{reiwa(v.year)}の{v.word}（一般会計）</p>
@@ -744,7 +724,7 @@ function ProjectsTab({ filter, setFilter, fields, setFields, q, setQ }: { filter
   }
   return (
     <div className="flex flex-col gap-2">
-      <TabHead title="事業">事業は、自治体がお金を使って行う一つ一つの仕事です。</TabHead>
+      <TabLead>事業は、自治体がお金を使って行う一つ一つの仕事です。</TabLead>
       {/* 検索の行と、絞り込み（事業の区分・分野の combobox）の行を分ける */}
       <div className="relative">
         <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
@@ -1102,29 +1082,6 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     const el = tabsTop.current
     if (el && el.getBoundingClientRect().top < 0) el.scrollIntoView({ block: 'start' })
   }
-  // 頁の頭（見出しと年度の切り替え）が帯の下に隠れたら、帯を戻る・頁の名前・年度の1行に切り替える
-  const stickyBar = React.useRef<HTMLDivElement>(null)
-  const [yearStuck, setYearStuck] = React.useState(false)
-  React.useEffect(() => {
-    let frame = 0
-    const check = () => {
-      cancelAnimationFrame(frame)
-      frame = requestAnimationFrame(() => {
-        const bar = stickyBar.current?.getBoundingClientRect().bottom ?? 0
-        // 見えているタブの切り替えだけ（隠れたタブは幅が 0、スマホの隣のタブは画面の横の外）
-        const heads = [...document.querySelectorAll<HTMLElement>('[data-tab-year]')].map((el) => el.getBoundingClientRect()).filter((r) => r.width > 0 && r.right > 0 && r.left < innerWidth)
-        setYearStuck(heads.length > 0 && heads.every((r) => r.bottom <= bar))
-      })
-    }
-    check()
-    const off = onPageScroll(check)
-    addEventListener('resize', check)
-    return () => {
-      cancelAnimationFrame(frame)
-      off()
-      removeEventListener('resize', check)
-    }
-  }, [tab, year, projectPage])
   const go: Go = (t, opt = {}) => {
     // タブと同じ描画で絞り込みも変える。transition で後から変えると、先に絞らない一覧が描かれてその続きの頁まで読みに行き、
     // 絞った一覧も頁の移動（loader）が終わるまで出ない
@@ -1199,7 +1156,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
         <>
         <div ref={tabsTop} aria-hidden="true" />
         {/* 区切りの線は画面の端から端まで引く（50cqw は外側の幅の半分、50% は中身の幅の半分。px で文字の位置は中身に揃える） */}
-        <div ref={stickyBar} className="sticky top-(--site-header) z-20 transition-[top] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none mx-[calc(50%-50cqw)] px-[calc(50cqw-50%)] glass">
+        <div className="sticky top-(--site-header) z-20 transition-[top] duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none mx-[calc(50%-50cqw)] px-[calc(50cqw-50%)] glass">
           <Separator className="absolute inset-x-0 bottom-0 data-horizontal:w-auto" />
           <div className="relative z-10 flex h-[52px] min-w-0 items-center">
             {projectPage ? (
@@ -1207,11 +1164,11 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
               <ClientSuspense fallback={<ProjectCrumbs base={data.path} label="事業" close={closeProject} open={openProject} ancestors={[]} />} ready={!!res.peek(projectLatestKey(projectPage))}>
                 <ProjectBack res={res} id={projectPage} base={data.path} label="事業" close={closeProject} open={openProject} />
               </ClientSuspense>
-            ) : yearStuck && v ? (
-              // 頁の頭が帯の下に隠れたら、戻る・小さくした頁の名前（左寄せ）・年度の切り替え（右）を帯の1行にまとめる（財政は年度を持たない）
+            ) : v ? (
+              // 帯は初めから、戻る・頁の名前（左寄せ、頁の h1）・年度の切り替え（右）の1行にする（財政は年度を持たない）
               <div className="flex min-w-0 flex-1 items-center gap-2">
                 <Link href={data.path} aria-label={`${data.name}へ戻る`} className="-ml-2 grid size-9 shrink-0 place-items-center rounded-full text-muted-foreground"><ArrowLeftIcon className="size-5" aria-hidden="true" /></Link>
-                <Title size="headline" as="p" className="min-w-0 flex-1 truncate">{TABS.find((t) => t.key === tab)?.label}</Title>
+                <Title size="headline" as="h1" className="min-w-0 flex-1 truncate">{TABS.find((t) => t.key === tab)?.label}</Title>
                 {tab !== 'overview' ? (
                   <div className="shrink-0">
                     <div className="md:hidden"><YearMenu years={years} current={v.year} onChange={setYear} /></div>
