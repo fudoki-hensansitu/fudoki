@@ -50,15 +50,18 @@ function useTheme() {
 }
 
 /** 下へ読み進めている間は隠し、上へ戻したら出す。隠れている間は html に data-header-hidden を付け、頁の中で上に貼り付く帯が --site-header で上へ詰める。
- * 会話を横に開いて本文が自分でスクロールしている間（data-side-panel）は、ヘッダーは本文の外にあるので隠さない */
+ * 会話を横に開いて本文が自分でスクロールしている間（data-side-panel）は、ヘッダーは本文の外にあるので隠さない。
+ * scrolled は本文がヘッダーの下に潜っているか。頁の頭では区切りの線を出さず、本文が潜ったときだけ出す（Apple の scroll edge） */
 function useHideOnScroll() {
   const [hidden, setHidden] = React.useState(false)
+  const [scrolled, setScrolled] = React.useState(false)
   const { path } = useRouter()
   React.useEffect(() => setHidden(false), [path])
   React.useEffect(() => {
     let last = pageScrollY()
     const onScroll = () => {
       const y = pageScrollY()
+      setScrolled(y > 0)
       const d = y - last
       if (Math.abs(d) < 6) return
       setHidden(!pageScroller() && d > 0 && y > 56)
@@ -69,7 +72,7 @@ function useHideOnScroll() {
   React.useEffect(() => {
     document.documentElement.toggleAttribute('data-header-hidden', hidden)
   }, [hidden])
-  return [hidden, setHidden] as const
+  return { hidden, setHidden, scrolled }
 }
 
 /** まちを探す欄。押すか ⌘K で、画面の中央に候補のパレット（TownPalette）を開く */
@@ -92,7 +95,7 @@ function TownSearch() {
         onClick={() => setOpen(true)}
         aria-haspopup="dialog"
         aria-keyshortcuts="Meta+K Control+K"
-        className="flex h-9 w-full min-w-0 items-center gap-2 rounded-full bg-muted px-3 text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring focus-visible:outline-none active:scale-[0.99]"
+        className="flex h-10 w-full min-w-0 items-center gap-2 rounded-full bg-muted px-3 text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring focus-visible:outline-none active:scale-[0.99]"
       >
         <MagnifyingGlassIcon className="size-4 shrink-0" aria-hidden="true" />
         <span className="truncate">まちを探す</span>
@@ -150,7 +153,7 @@ function NarrowMenu({ theme, onPick }: { theme: Theme; onPick: (t: Theme) => voi
   ]
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger render={<Button variant="ghost" size="icon-lg" aria-label="メニュー" className="shrink-0 text-muted-foreground md:hidden" />}>
+      <DropdownMenuTrigger render={<Button variant="ghost" size="icon-lg" aria-label="メニュー" className="-me-2 size-11 shrink-0 text-muted-foreground md:hidden" />}>
         <DotsThreeIcon className="size-6" weight="bold" aria-hidden="true" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" sideOffset={8} className="w-52">
@@ -173,7 +176,7 @@ function NarrowMenu({ theme, onPick }: { theme: Theme; onPick: (t: Theme) => voi
 }
 
 export function SiteHeader() {
-  const [hidden, setHidden] = useHideOnScroll()
+  const { hidden, setHidden, scrolled } = useHideOnScroll()
   const [theme, pickTheme] = useTheme()
   // 初めの描画はサーバーもブラウザも town=null なので、hydrate はずれない
   const { town } = useMyTown()
@@ -184,8 +187,9 @@ export function SiteHeader() {
       onFocus={() => setHidden(false)}
       className="glass sticky top-0 z-30 pt-[env(safe-area-inset-top)] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none data-hidden:-translate-y-full"
     >
+      {/* 指で押す所（ロゴ・メニュー）は 44px にする（Apple HIG の最小の押せる大きさ） */}
       <div className="flex h-14 items-center gap-3 px-4 md:gap-6 md:px-6">
-        <Link href={town ? town.path : '/'} aria-label="風土記 ホーム" className="flex shrink-0 items-center">
+        <Link href={town ? town.path : '/'} aria-label="風土記 ホーム" className="-ms-1 flex size-11 shrink-0 items-center justify-center md:ms-0 md:size-auto">
           {/* 色は svg に付ける（a { color: inherit } に負けて黒くならないように）。狭い画面はマークだけにして検索欄の幅を残す */}
           <Mark className="block size-8 text-primary md:hidden" />
           <Logo className="hidden h-7 w-auto text-primary md:block" />
@@ -198,7 +202,8 @@ export function SiteHeader() {
           <NarrowMenu theme={theme} onPick={pickTheme} />
         </div>
       </div>
-      <Separator />
+      {/* 区切りの線は本文がヘッダーの下に潜ったときだけ出す */}
+      <Separator className={`transition-opacity duration-200 ${scrolled ? 'opacity-100' : 'opacity-0'}`} />
     </header>
   )
 }
