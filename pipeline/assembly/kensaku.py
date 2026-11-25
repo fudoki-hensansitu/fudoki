@@ -129,7 +129,10 @@ def split_label(line: str) -> tuple[str, str]:
 def classify(label: str, attendance: str) -> tuple[str, str | None]:
     """印字の役職で話し手の区分を決め、議員の名前は出席者の欄で確かめられるときだけ入れる。"""
     # 委員会の出席者の欄が姓だけの議会がある（豊島「高橋委員長　芳賀副委員長　小林（弘）委員」）
-    surnames = set(re.findall(r'([^│├┤┼┬┴（）〈〉、。\d]+?)(?:（.）)?(?:副?委員長|委員|副?議長|副?会長)', attendance))
+    # 「小林（弘）」のように同じ姓を括弧の字で分けるものは、その字も持つ（字の無い姓は None）
+    surnames: dict[str, set[str | None]] = {}
+    for s, h in re.findall(r'([^│├┤┼┬┴（）〈〉、。\d]+?)(?:（(.)）)?(?:副?委員長|委員|副?議長|副?会長)', attendance):
+        surnames.setdefault(s, set()).add(h or None)
 
     # 出席者の欄を役職（と「〃」）で切った名前（目黒「委員長関けんいち副委員長岩崎ふみひろ」）。欄が姓だけなら姓が入る
     names = {n.group(0) for seg in re.split(r'副?委員長|委員|副?議長|副?会長|〃', attendance)
@@ -144,11 +147,12 @@ def classify(label: str, attendance: str) -> tuple[str, str | None]:
             return fuller.pop() if len(fuller) == 1 else None
         if len(name) < 2:
             return None
-        # 欄に名前として切り出せたもの、または姓だけと紛れない長さのものだけ
-        if name in attendance and (name in names or len(name) >= 3):
+        # 2字は姓だけと区別できないので、欄にそのまま載っていても入れない（3字以上はフルネームとみなす）
+        if name in attendance and len(name) >= 3:
             return name
-        # 印字のフルネームが、欄に載る姓で始まるときも入れる。名前そのものは印字から取る
-        return name if any(len(s) < len(name) and name.startswith(s) for s in surnames) else None
+        # 印字のフルネームが、欄に載る姓で始まるときも入れる。欄が括弧の字で分けていれば、姓の次の字がそれと合うときだけ
+        return name if any(len(s) < len(name) and name.startswith(s) and (None in hints or name[len(s)] in hints)
+                           for s, hints in surnames.items()) else None
 
     # 葛飾は印字を括弧で囲む（「（伊藤よしのり委員長）」「（区長）」）
     if m := re.fullmatch(r'（(.+)）', label):
