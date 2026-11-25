@@ -129,21 +129,38 @@ def split_label(line: str) -> tuple[str, str]:
 def classify(label: str, attendance: str) -> tuple[str, str | None]:
     """印字の役職で話し手の区分を決め、議員の名前は出席者の欄で確かめられるときだけ入れる。"""
     # 委員会の出席者の欄が姓だけの議会がある（豊島「高橋委員長　芳賀副委員長　小林（弘）委員」）
-    surnames = set(re.findall(r'([^│├┤┼┬┴（）〈〉、。\d]+?)(?:（.）)?(?:副?委員長|委員|副?議長)', attendance))
+    # 「小林（弘）」のように同じ姓を括弧の字で分けるものは、その字も持つ（字の無い姓は None）
+    surnames: dict[str, set[str | None]] = {}
+    for s, h in re.findall(r'([^│├┤┼┬┴（）〈〉、。\d]+?)(?:（(.)）)?(?:副?委員長|委員|副?議長|副?会長)', attendance):
+        surnames.setdefault(s, set()).add(h or None)
+
+    # 出席者の欄を役職（と「〃」）で切った名前（目黒「委員長関けんいち副委員長岩崎ふみひろ」）。欄が姓だけなら姓が入る
+    names = {n.group(0) for seg in re.split(r'副?委員長|委員|副?議長|副?会長|〃', attendance)
+             if (n := re.match(r'[^\d０-９（）│├┤┼┬┴〈〉、。・]+', seg))}
 
     def known(name: str) -> str | None:
+        # 印字が姓だけ（目黒 R6「関委員長」「佐藤（昇）委員長」）なら、欄の名前でその姓から始まる人が1人のときだけ入れる
+        surname, hint = (m.group(1), m.group(2)) if (m := re.fullmatch(r'(.+?)（(.+?)）', name)) else (name, None)
+        fuller = {n for n in names if len(n) > len(surname) and n.startswith(surname)
+                  and (hint is None or hint in n[len(surname):])}
+        if name not in names and (hint or fuller):
+            return fuller.pop() if len(fuller) == 1 else None
         if len(name) < 2:
             return None
-        if name in attendance:
+        # 2字は姓だけと区別できないので、欄にそのまま載っていても入れない（3字以上はフルネームとみなす）
+        if name in attendance and len(name) >= 3:
             return name
-        # 印字のフルネームが、欄に載る姓で始まるときも入れる。名前そのものは印字から取る
-        return name if any(len(s) < len(name) and name.startswith(s) for s in surnames) else None
+        # 印字のフルネームが、欄に載る姓で始まるときも入れる。欄が括弧の字で分けていれば、姓の次の字がそれと合うときだけ
+        return name if any(len(s) < len(name) and name.startswith(s) and (None in hints or name[len(s)] in hints)
+                           for s, hints in surnames.items()) else None
 
     # 葛飾は印字を括弧で囲む（「（伊藤よしのり委員長）」「（区長）」）
     if m := re.fullmatch(r'（(.+)）', label):
         label = m.group(1)
-    # 本会議: ２４番（吉野正人議員）・議長（鈴木まさし議員）
-    if m := re.match(r'^(.+?)（(.+?)議員）$', label):
+    # 本会議: ２４番（吉野正人議員）・議長（鈴木まさし議員）・豊島 R6「21番（森とおる）」・目黒「７番（かいでん和弘委員長）」
+    # 括弧の前が番や議長でないもの（「再開発担当課長（心得）」）は区側
+    if m := (re.match(r'^(.+?)（(.+?)議員）$', label)
+             or re.match(r'^(.+?(?:番|議長))（(.+?)(?:副?委員長|委員)?）$', label)):
         return ('chair' if m.group(1).endswith('議長') else 'member'), known(m.group(2))
     # 委員会: 岩崎ふみひろ委員長・佐藤ゆたか年長委員・鈴木まさし前議長・そのべせいや委員外議員
     m = re.match(rf'^(.+?)(年長|前|臨時|委員外)?{ROLE}$', label)
