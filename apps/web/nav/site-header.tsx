@@ -2,13 +2,13 @@
 // pages/layout.tsx が置き、頁の間を移っても描き直さない。下へ読み進めている間は上へ隠し、上へ戻したら出す。
 // ロゴはホームへ。住んでいるまちを選んだ人のホームはそのまちの頁なので（2026-11-19 yuito「ホームイコール登録した町」）、ロゴはそのまちの頁を直接指し、「私のまち」への戻り口になる
 import * as React from 'react'
-import { CircleHalfIcon, DesktopIcon, DotsThreeIcon, GithubLogoIcon, MagnifyingGlassIcon, MoonIcon, PlugIcon, SunIcon, XLogoIcon, ChatIcon } from '@phosphor-icons/react'
+import { CircleHalfIcon, ListIcon, DesktopIcon, GithubLogoIcon, MagnifyingGlassIcon, MoonIcon, PlugIcon, SunIcon, XLogoIcon, ChatIcon } from '@phosphor-icons/react'
 import { useRouter } from '@void/react'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Separator } from '@/components/ui/separator'
 import { Link } from './link'
-import { Logo, Mark } from './brand'
+import { Logo } from './brand'
 import { FEEDBACK } from './feedback'
 import { applyTheme, currentTheme, DEFAULT_THEME, type Theme } from './theme'
 import { TownPalette } from './town-palette'
@@ -75,7 +75,7 @@ function useHideOnScroll() {
   return { hidden, setHidden, scrolled }
 }
 
-/** まちを探す欄。押すか ⌘K で、画面の中央に候補のパレット（TownPalette）を開く */
+/** まちを探す。虫眼鏡の icon だけを置き（2026-11-25 yuito「検索も検索 icon だけで良い」）、押すか ⌘K で、画面の中央に候補のパレット（TownPalette）を開く */
 function TownSearch() {
   const [open, setOpen] = React.useState(false)
   React.useEffect(() => {
@@ -90,17 +90,9 @@ function TownSearch() {
   }, [])
   return (
     <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-haspopup="dialog"
-        aria-keyshortcuts="Meta+K Control+K"
-        className="flex h-10 w-full min-w-0 items-center gap-2 rounded-full bg-muted px-3 text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring focus-visible:outline-none active:scale-[0.99]"
-      >
-        <MagnifyingGlassIcon className="size-4 shrink-0" aria-hidden="true" />
-        <span className="truncate">まちを探す</span>
-        <kbd className="ms-auto hidden font-sans text-xs md:inline">⌘K</kbd>
-      </button>
+      <Button variant="ghost" size="icon-lg" onClick={() => setOpen(true)} aria-label="まちを探す" aria-haspopup="dialog" aria-keyshortcuts="Meta+K Control+K" className="size-11 shrink-0 text-muted-foreground md:size-9">
+        <MagnifyingGlassIcon className="size-5" aria-hidden="true" />
+      </Button>
       <TownPalette open={open} onOpenChange={setOpen} />
     </>
   )
@@ -154,7 +146,7 @@ function NarrowMenu({ theme, onPick }: { theme: Theme; onPick: (t: Theme) => voi
   return (
     <DropdownMenu>
       <DropdownMenuTrigger render={<Button variant="ghost" size="icon-lg" aria-label="メニュー" className="-me-2 size-11 shrink-0 text-muted-foreground md:hidden" />}>
-        <DotsThreeIcon className="size-6" weight="bold" aria-hidden="true" />
+        <ListIcon className="size-5" aria-hidden="true" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" sideOffset={8} className="w-52">
         <DropdownMenuGroup>
@@ -187,17 +179,14 @@ export function SiteHeader() {
       onFocus={() => setHidden(false)}
       className="glass sticky top-0 z-30 pt-[env(safe-area-inset-top)] transition-transform duration-300 ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none data-hidden:-translate-y-full"
     >
-      {/* 指で押す所（ロゴ・メニュー）は 44px にする（Apple HIG の最小の押せる大きさ） */}
-      <div className="flex h-14 items-center gap-3 px-4 md:gap-6 md:px-6">
-        <Link href={town ? town.path : '/'} aria-label="風土記 ホーム" className="-ms-1 flex size-11 shrink-0 items-center justify-center md:ms-0 md:size-auto">
-          {/* 色は svg に付ける（a { color: inherit } に負けて黒くならないように）。狭い画面はマークだけにして検索欄の幅を残す */}
-          <Mark className="block size-8 text-primary md:hidden" />
-          <Logo className="hidden h-7 w-auto text-primary md:block" />
+      {/* 狭い画面で指で押す所（検索・メニュー）は 44px にする（Apple HIG の最小の押せる大きさ） */}
+      <div className="flex h-14 items-center gap-3 px-4 md:px-6">
+        <Link href={town ? town.path : '/'} aria-label="風土記 ホーム" className="flex h-11 shrink-0 items-center">
+          {/* 色は svg に付ける（a { color: inherit } に負けて黒くならないように） */}
+          <Logo className="block h-7 w-auto text-primary" />
         </Link>
-        <div className="min-w-0 flex-1 md:max-w-sm">
+        <div className="ms-auto flex items-center gap-1">
           <TownSearch />
-        </div>
-        <div className="ms-auto flex items-center">
           <WideActions theme={theme} onPick={pickTheme} />
           <NarrowMenu theme={theme} onPick={pickTheme} />
         </div>
