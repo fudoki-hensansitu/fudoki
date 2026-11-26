@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import html as html_lib
 import re
+import urllib.error
 
 import pypdfium2
 
@@ -113,8 +114,12 @@ def classify(label: str, members: dict[str, Member]) -> tuple[str, str | None]:
     if not m:
         return 'other', None
     role, name = m.group(1), m.group(2)
-    if name in members:
-        return ('chair' if re.match(r'^(議長|副議長)', role) else 'member'), name
+    known = name if name in members else None
+    if re.match(r'^(議長|副議長)', role):
+        return 'chair', known
+    # 「１２番（…君）」は議席番号なので、名簿で引けなくても議員。名前は名簿で決まるときだけ入れる（引けなければ数えて見えるようにする）
+    if re.match(r'^[0-9０-９]+番$', role) or known:
+        return 'member', known
     return 'official', None
 
 
@@ -197,24 +202,27 @@ class Hachijo:
     base = 'https://www.town.hachijo.tokyo.jp/chousei/chougikai/katsushin/kaigi-kiroku/kairoku'
 
     def __init__(self) -> None:
-        self._pdfs: dict[str, tuple[str, str]] = {}  # list_ids が埋める。local id -> (PDF の URL, 会期の見出し)
+        self._pdfs: dict[str, tuple[str, str]] = {}  # list_ids が埋める。local id -> (PDF の URL, 号の名前「第1号」)
 
     def list_ids(self, from_reiwa: int) -> list[str]:
         for reiwa in range(from_reiwa, current_reiwa() + 1):
-            page = http(f'{self.base}/r{reiwa}-kairoku/')
-            heading = ''
-            for m in re.finditer(r'<h[2-4][^>]*>([^<]*会議録)</h|<a[^>]+href="([^"]+\.pdf)"[^>]*>(.*?)</a>', page, re.S):
-                if m.group(1):
-                    heading = m.group(1)
+            try:
+                page = http(f'{self.base}/r{reiwa}-kairoku/')
+            except urllib.error.HTTPError as error:
+                # 年の頁は、その年の最初の会議録が載るまで無い（404）。無い年は会議が無いものとして飛ばす
+                if error.code == 404:
                     continue
-                label = to_ascii_digits(re.sub(r'<[^>]+>', '', m.group(3))).translate(str.maketrans('ＲＨ．', 'RH.'))
+                raise
+            for m in re.finditer(r'<a[^>]+href="([^"]+\.pdf)"[^>]*>(.*?)</a>', page, re.S):
+                label = to_ascii_digits(re.sub(r'<[^>]+>', '', m.group(2))).translate(str.maketrans('ＲＨ．', 'RH.'))
                 d = re.search(r'R\s*(\d+)\.(\d+)\.(\d+)', label)
                 if not d:
                     raise ValueError(f'八丈の会議録の名前から日付が読めない: {label}')
                 local_id = f'r{int(d.group(1)):02d}_{int(d.group(2)):02d}{int(d.group(3)):02d}'
                 if local_id in self._pdfs:
                     raise ValueError(f'八丈の会議録で同じ日が2冊ある: {local_id}')
-                self._pdfs[local_id] = (m.group(2), heading)
+                gou = re.match(r'\s*(\d+)号', label)
+                self._pdfs[local_id] = (m.group(1), f'第{gou.group(1)}号' if gou else '')
         return sorted(self._pdfs)
 
     def url(self, local_id: str) -> str:
@@ -231,6 +239,8 @@ class Hachijo:
         # 号ごとの冊なので、開催日は冊の題の日付（会期の初日）ではなく、一覧の名前の日付
         m = re.match(r'r(\d+)_(\d{2})(\d{2})', local_id)
         meeting.held_on = f'{2018 + int(m.group(1))}-{m.group(2)}-{m.group(3)}'
+        if gou := self._pdfs[local_id][1]:
+            meeting.title += f'（{gou}）'
         return meeting, speeches
 
 
