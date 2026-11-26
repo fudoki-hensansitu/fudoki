@@ -96,6 +96,12 @@ def parse_minutes(meeting_id: str, code: str, url: str, text: str, fallback_titl
             paragraphs = [m.group(2).strip()]
             continue
         stripped = line.strip()
+        # 会期の2日目からは、冊の途中に「令和７年１２月１２日（第２号）」「議事日程第２号」と会期の題・議事日程・出席議員の欄が入る。
+        # 前の日の最後の発言をそこで閉じ、次の話し手の印までは発言として読まない
+        if re.match(r'^(令和\S+日（第[0-9０-９]+号）$|議事日程(（第[0-9０-９]+号）$|第[0-9０-９]+号)|令和\S+年第\S+回\S+(定例会|臨時会)(会議録)?$)', squeeze(stripped)):
+            flush()
+            label = None
+            continue
         # ◎の見出し・〔登壇〕などのト書き・（午前９時３２分）の時刻は発言ではない
         if re.match(r'^(◎|〔.*〕$|（(午前|午後).*）$|─{5,})', stripped) or label is None:
             continue
