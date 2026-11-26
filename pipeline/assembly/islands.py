@@ -17,7 +17,7 @@ import pypdfium2
 from assembly.common import Unreadable, Meeting, Member, Speech, current_reiwa, http, http_bytes, reiwa_date, sha, to_ascii_digits
 
 # 「〇４番（井口 保君）」「○総務課長（兼務）（榎本雅仁君）」。印は○（U+25CB）と〇（U+3007）の両方がある
-SPEAKER = re.compile(r'^[○〇]((?:[^（\s]+(?:（[^）]*）)?)*?（[^）]+?(?:君|議員)）)[\s　]*(.*)$')
+SPEAKER = re.compile(r'^[○〇]([^\n]{1,60}?（[^（）\n]{1,30}?(?:君|議員)）)[\s　]*(.*)$')
 PAGE_NUMBER = re.compile(r'^[\s　]*[-－‐―]\s*[0-9０-９]+\s*[-－‐―][\s　]*$')
 REIWA_YEAR = re.compile(r'令和\s*([0-9０-９元]+)\s*年')
 
@@ -44,7 +44,7 @@ def squeeze(text: str) -> str:
 def roster(text: str) -> dict[str, Member]:
     """「１番 小 林 正吾郎 君」の出席・応招議員の欄から、会議に出た議員の名前を集める。"""
     found: dict[str, Member] = {}
-    for m in re.finditer(r'[0-9０-９]+番[\s　]+(\S(?:[\s　]?\S)*?)[\s　]*君', text):
+    for m in re.finditer(r'[0-9０-９]+番[\s　]+([^君\n]{1,20}?)[\s　]*君', text):
         name = squeeze(m.group(1))
         if 2 <= len(name) <= 8 and not re.search(r'[（）、。]', name):
             found[name] = Member(name, '')
