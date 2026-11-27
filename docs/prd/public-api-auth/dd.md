@@ -1,7 +1,7 @@
 # 公開の REST・MCP に認証をかける — 設計
 
 担当者: wwwyo / Claude
-更新日: `2026-11-13`
+更新日: `2026-11-16`
 状態: Accepted（2026-11-13 yuito と合意。実装は WorkOS の環境ができてから）
 
 ## Summary
@@ -123,9 +123,12 @@ REST の client ── Authorization: Bearer <API キー> ──▶ api.fudoki.d
 
 1. WorkOS の環境を作る（Google のログイン、Connect の CIMD・DCR、Resource Indicator、developers の organization、API キーの permission）。
 2. アカウントの頁を作って公開する。
-3. api に認証・記録・流量の制限を入れ、`/mcp` と `/v1/*` を同時に認証必須に切り替える。匿名の猶予は設けない。
-4. 同じ PR で docs.fudoki.dev・llms.txt・`/.well-known/mcp/server-card.json`・agent readiness の案内・plugin bundle（`plugins/fudoki`）・OpenAPI（`OPENAPI_CONFIG` に `http`/`bearer` の securityScheme、PDF の中継以外の operation に `security`。docs.fudoki.dev のリファレンスはここから作られる）・[policies](../mcp-distribution/policies.md)・privacy・terms・[submission](../mcp-distribution/submission.md)（「アカウント・API key は不要」と審査の test case）を認証つきに直す。
-5. ChatGPT のアプリと Claude の connector を OAuth の設定で出し直し、審査を受ける。審査用には専用の Google アカウントを作って渡す。OpenAI は MFA・確認コードなしで入れるテスト用のアカウントを求めるが、Google は見慣れない端末からのログインに本人確認を求めることがある。それで差し戻されたら、審査の通し方を yuito と決め直す（AuthKit のパスワードのログインを審査用のアカウントだけに限れるかは確かめていない。全員に開くなら Google だけという決定を変えることになる）。3 から審査が通るまで、ChatGPT に掲載中のアプリは使えない（2026-11-13 yuito 了承）。
+3. api に認証・記録・流量の制限を入れ、`/v1/*` を認証必須に切り替える。匿名の猶予は設けない。`/mcp` の OAuth は後で別に切り替える（2026-11-16 yuito「まずは api を先にやって mcp は後回し」）。
+   - api の Worker の secret `WORKOS_API_KEY`・`WORKOS_DEVELOPERS_ORG_ID` を置いてから merge する。`cloudflare.config.ts` が secret を宣言するので、置く前の deploy は止まる。
+   - WAF の IP ごとの制限の値を上げる。
+4. 3 と 5 の PR で、それぞれの口の分だけ docs.fudoki.dev・llms.txt・`/.well-known/mcp/server-card.json`・agent readiness の案内・plugin bundle（`plugins/fudoki`）・OpenAPI（`OPENAPI_CONFIG` に `http`/`bearer` の securityScheme、PDF の中継以外の operation に `security`。docs.fudoki.dev のリファレンスはここから作られる）・[policies](../mcp-distribution/policies.md)・privacy・terms・[submission](../mcp-distribution/submission.md)（「アカウント・API key は不要」と審査の test case）を認証つきに直す。
+5. `/mcp` を OAuth で認証必須に切り替える（[MCP（OAuth）](#mcpoauth)）。
+6. ChatGPT のアプリと Claude の connector を OAuth の設定で出し直し、審査を受ける。審査用には専用の Google アカウントを作って渡す。OpenAI は MFA・確認コードなしで入れるテスト用のアカウントを求めるが、Google は見慣れない端末からのログインに本人確認を求めることがある。それで差し戻されたら、審査の通し方を yuito と決め直す（AuthKit のパスワードのログインを審査用のアカウントだけに限れるかは確かめていない。全員に開くなら Google だけという決定を変えることになる）。5 から審査が通るまで、ChatGPT に掲載中のアプリは使えない（2026-11-13 yuito 了承）。
 
 ## テスト
 

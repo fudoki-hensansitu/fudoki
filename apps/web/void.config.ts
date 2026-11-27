@@ -23,7 +23,7 @@ const shared = {
     // 小さなサンプル（apps/samples）をまとめた Worker。fudoki.dev/<名前> と /samples の下を渡す（middleware/00.samples.ts）。サンプルは自分の入口を持たない
     { binding: 'SAMPLES', service: 'fudoki-samples' },
   ],
-  // 値は server/limits.ts の CHAT_RATE_LIMIT・VIEW_RATE_LIMIT と同じ（試験が照合する）。namespace は apps/api の 1001 と別にする
+  // 値は server/limits.ts の CHAT_RATE_LIMIT・VIEW_RATE_LIMIT と同じ（試験が照合する）。namespace は apps/api の 1001・1004 と別にする
   ratelimits: [
     { name: 'CHAT_RATE_LIMIT', namespace_id: '1002', simple: { limit: 10, period: 60 } },
     { name: 'VIEW_RATE_LIMIT', namespace_id: '1003', simple: { limit: 60, period: 60 } },

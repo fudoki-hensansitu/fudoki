@@ -5,4 +5,10 @@ export interface Ctx {
   db: Db
 }
 
-export type AppEnv = { Bindings: Env; Variables: { ctx: Ctx; json: unknown } }
+/** 資格情報を確かめた呼び出し元。問い合わせの処理（queries.ts・model.ts）には渡さない */
+export interface Caller {
+  userId: string
+  credential: 'api_key'
+}
+
+export type AppEnv = { Bindings: Env; Variables: { ctx: Ctx; json: unknown; caller: Caller } }
