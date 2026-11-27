@@ -22,6 +22,10 @@ RETRIES = 4
 SSL_CONTEXT = ssl.create_default_context(cafile=certifi.where())
 
 
+class Unreadable(Exception):
+    """会議録の本文が文字として取れない（画像だけの PDF など）。その会議は飛ばし、ほかの会議は書く。"""
+
+
 @dataclass
 class Member:
     surname: str
@@ -63,6 +67,12 @@ def sha(text: str) -> str:
 
 def http(url: str, data: dict | None = None, encoding: str = 'utf-8') -> str:
     """data があれば POST。値が list なら同じ名前で繰り返す。送る値も受け取る本文も encoding で扱う。"""
+    # 文字コードを取り違えたら化けた本文を D1 に入れず、ここで止める
+    return http_bytes(url, data, encoding).decode(encoding)
+
+
+def http_bytes(url: str, data: dict | None = None, encoding: str = 'utf-8') -> bytes:
+    """http と同じ取り方で、本文を bytes のまま返す（PDF の会議録）。"""
     body = urllib.parse.urlencode(data, doseq=True, encoding=encoding).encode('ascii') if data else None
     request = urllib.request.Request(url, data=body, headers={'User-Agent': USER_AGENT})
     for attempt in range(1, RETRIES + 1):
@@ -83,8 +93,7 @@ def http(url: str, data: dict | None = None, encoding: str = 'utf-8') -> str:
             print(f'  取得に失敗（{attempt} 回目、{error}）。{attempt * 10} 秒後に取り直す', flush=True)
             time.sleep(attempt * 10)
     time.sleep(FETCH_INTERVAL_SECONDS)
-    # 文字コードを取り違えたら化けた本文を D1 に入れず、ここで止める
-    return raw.decode(encoding)
+    return raw
 
 
 def strip_tags(t: str) -> list[str]:

@@ -12,7 +12,7 @@
   表はこの script が自分で作る（create table if not exists）。
 - 推定でしか決まらない項目（問いと答えの対応・款・理事者の役職）は持たない。議員のフルネームは印字・名簿・出席者の欄で1人に決まるときだけ入れる（ADR 0054）。
 - 同じ D1 に同時に2本流さない（差分は流し始めの D1 の中身から決めるので、並ぶと同じ会議を二重に書く）。
-- 会議録のシステムは自治体ごとに違うので、読み方はシステムごとの module に置く（中央区は `chuo.py`、kensakusystem.jp は `kensaku.py`、VOICES は `voices.py`）。
+- 会議録のシステムは自治体ごとに違うので、読み方はシステムごとの module に置く（中央区は `chuo.py`、kensakusystem.jp は `kensaku.py`、VOICES は `voices.py`、島しょの村の PDF は `islands.py`）。
 - DiscussNet（ssp.kaigiroku.net）は robots.txt が /tenant/ 以外を禁じ、会議録を返す API（/dnp/search/）も禁止に入るので取らない（新宿・墨田・渋谷・北・荒川・練馬・立川・青梅・昭島・小平・東大和・清瀬・武蔵村山・瑞穂・小笠原、2026-11-25 確認）。
 """
 from __future__ import annotations
@@ -24,7 +24,8 @@ from pathlib import Path
 from typing import Iterator
 
 from assembly.chuo import Chuo
-from assembly.common import Meeting, Member, Speech, State
+from assembly.islands import ISLANDS
+from assembly.common import Meeting, Member, Speech, State, Unreadable
 from assembly.kensaku import KENSAKU
 from assembly.voices import VOICES
 from serving.sync_d1 import D1, LOCAL_DATABASE_ID, LOCAL_PERSIST_TO, literal, pack
@@ -70,7 +71,7 @@ SCHEMA = [
 ]
 
 
-SOURCES = {s.code: s for s in [Chuo(), *KENSAKU, *VOICES]}
+SOURCES = {s.code: s for s in [Chuo(), *KENSAKU, *VOICES, *ISLANDS]}
 
 
 # ---- D1 ----
@@ -174,8 +175,14 @@ def main() -> int:
     statements: list[str] = [row(MEMBER, {'jurisdiction_code': source.code, 'name': n, 'surname': m.surname, 'given': m.given}, 'insert or ignore')
                              for n, m in new_members.items()]
     written = speech_count = unresolved = unchanged = 0
+    skipped: list[str] = []
     for local_id, page, replace in pages:
-        meeting, speeches = source.parse(local_id, page, members)
+        try:
+            meeting, speeches = source.parse(local_id, page, members)
+        except Unreadable as error:
+            skipped.append(local_id)
+            print(f'  飛ばす: {error}', flush=True)
+            continue
         if replace and state.meetings.get(local_id) == meeting.content_hash:
             unchanged += 1
             continue
@@ -192,7 +199,7 @@ def main() -> int:
         # 続けて書くと D1 が overloaded（429）を返し、同じ D1 を読む API まで止まる。batch の間を空ける
         time.sleep(BATCH_INTERVAL_SECONDS)
     print(f'{target_name} に書いた: 会議 {written}、発言 {speech_count}、議員 {len(new_members)}'
-          f'（変わらず飛ばした取り直し {unchanged}、議員の発言で名前が決まらなかったもの {unresolved}）/ cf {d1.calls} 回')
+          f'（変わらず飛ばした取り直し {unchanged}、本文の取れない会議 {len(skipped)}、議員の発言で名前が決まらなかったもの {unresolved}）/ cf {d1.calls} 回')
     return 0
 
 
