@@ -681,7 +681,7 @@ function FieldMenu({ v, fields, setFields }: { v: YearView; fields: string[]; se
 }
 
 function ProjectsTab({ filter, setFilter, fields, setFields, q, setQ }: { filter: string; setFilter: (f: string) => void; /** 選んだ分野（空はすべて） */ fields: string[]; setFields: (f: string[]) => void; /** 探す語（URL の ?q=） */ q: string; setQ: (q: string) => void }) {
-  const { v, res } = useApp()
+  const { d, v, res } = useApp()
   // 入力は少し待ってから絞る（打つたびに API を呼ばない）。待つあいだと読むあいだは前の一覧を出したまま
   const [text, setText] = React.useState(q)
   // 戻る・URL から語が変わったら入力欄も合わせる
@@ -724,8 +724,9 @@ function ProjectsTab({ filter, setFilter, fields, setFields, q, setQ }: { filter
         <Full fallback={<KindMenu v={v} filter={filter} setFilter={setFilter} />}>{(v) => <KindMenu v={v} filter={filter} setFilter={setFilter} />}</Full>
         <FieldMenu v={v} fields={fields} setFields={setFields} />
       </div>
-      {/* 事業の収録があるかは、事業のタブの頁なら loader が渡し、他のタブの頁（スマホで横に並ぶ事業のタブ）では残り（defer）で届く */}
-      {v.hasProjects === undefined ? <Full fallback={<RowsSkeleton />}>{(v) => (v.failed && v.hasProjects === undefined ? <LoadFailed /> : body(v))}</Full> : body(v)}
+      {/* 事業の収録があるかは、事業のタブの頁なら loader が渡し、他のタブの頁（スマホで横に並ぶ事業のタブ）では残り（defer）で届く。
+          事業の頁は一覧を読まないので、閉じて事業のタブの頁の loader が届くまでは読み込み中を出す（「事業が無い」と取り違えない） */}
+      {v.hasProjects === undefined && !d.pending ? <RowsSkeleton /> : v.hasProjects === undefined ? <Full fallback={<RowsSkeleton />}>{(v) => (v.failed && v.hasProjects === undefined ? <LoadFailed /> : body(v))}</Full> : body(v)}
     </div>
   )
 }
