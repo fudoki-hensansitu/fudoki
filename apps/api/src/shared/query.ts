@@ -1,7 +1,7 @@
 // 検索の表を構造化した入力で引き、結果の行が指す出典を同じ batch（トランザクション）で読む。
 import { toRow, type FiscalTable } from '../columns'
 import type { Ctx } from './context'
-import { decodeToken, MAX_TOTAL_SIZE, nextToken } from './paging'
+import { decodeToken, nextToken } from './paging'
 import { buildWhere, canonicalJson, type SearchInput } from './search'
 
 /** 出典の表（origin_id が主キー）。行の origin_id から引く */
@@ -19,8 +19,8 @@ export interface Condition {
 export const withExtra = (where: Condition, extra: Condition | undefined): Condition =>
   extra ? { sql: `${where.sql} AND ${extra.sql}`, params: [...where.params, ...extra.params] } : where
 
-/** origin が null の表（事業の年度など、行が出典を指さない表）は出典を読まない。count のときは条件に当たる行の数も返す */
-export async function searchRows(t: FiscalTable, origin: OriginSource | null, ctx: Ctx, input: SearchInput, opts: { count?: boolean; extra?: Condition } = {}) {
+/** origin が null の表（事業の年度など、行が出典を指さない表）は出典を読まない。合計件数は数えない（一覧と同じだけ D1 を走査するため） */
+export async function searchRows(t: FiscalTable, origin: OriginSource | null, ctx: Ctx, input: SearchInput, opts: { extra?: Condition } = {}) {
   const { db } = ctx
   const where = withExtra(buildWhere(t, input.document_kind, input.fiscal_year, input.where as never), opts.extra)
   const order = [...(input.order_by ?? [])]
@@ -33,7 +33,6 @@ export async function searchRows(t: FiscalTable, origin: OriginSource | null, ct
     db
       .prepare(`SELECT ${t.selectList} FROM ${t.table} WHERE ${where.sql} ORDER BY ${orderSql} LIMIT ? OFFSET ?`)
       .bind(...where.params, limit + 1, offset),
-    ...(opts.count ? [db.prepare(`SELECT COUNT(*) AS n FROM (SELECT 1 FROM ${t.table} WHERE ${where.sql} LIMIT ?)`).bind(...where.params, MAX_TOTAL_SIZE + 1)] : []),
     ...(origin
       ? [
           db
@@ -46,12 +45,9 @@ export async function searchRows(t: FiscalTable, origin: OriginSource | null, ct
       : []),
   ])
   const page = results[0]!
-  const counted = opts.count ? results[1] : undefined
-  const origins = results[opts.count ? 2 : 1]
+  const origins = results[1]
   const more = page.results.length > limit
-  const n = Number((counted?.results[0] as { n: number } | undefined)?.n ?? 0)
   return {
-    ...(opts.count ? { total_size: Math.min(n, MAX_TOTAL_SIZE), total_size_capped: n > MAX_TOTAL_SIZE } : {}),
     rows: page.results.slice(0, limit).map((r) => toRow(t.columns, r)),
     next_page_token: more ? await nextToken(offset + limit, fp) : null,
     origins: origins?.results ?? [],

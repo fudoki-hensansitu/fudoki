@@ -3,7 +3,7 @@
 import { z } from 'zod'
 import { described, PROJECT_COLUMNS, PROJECT_YEAR_COLUMNS, PROJECT_YEAR_SEARCH } from '../columns'
 import { FiscalYear, JurisdictionCode, RowId } from '../shared/model'
-import { MAX_TOTAL_SIZE, nextPageToken } from '../shared/paging'
+import { nextPageToken } from '../shared/paging'
 import { yearSearchInputFor } from '../shared/search'
 
 /** 始めた年度。収録の範囲でしか決まらない */
@@ -103,8 +103,6 @@ export const ProjectSearchInput = yearSearchInputFor(PROJECT_YEAR_SEARCH)
 export const ProjectSearchOutput = z.strictObject({
   project_years: z.array(ProjectYearRow),
   projects: z.array(ProjectRow).describe('この頁の事業の年度が属する事業（project_id の順）。'),
-  total_size: z.int().min(0).describe(`条件に当たる事業の年度の数（頁をまたいだ合計）。${MAX_TOTAL_SIZE.toLocaleString('en-US')} で数えるのをやめる。`),
-  total_size_capped: z.boolean().describe(`true なら ${MAX_TOTAL_SIZE.toLocaleString('en-US')} 件で数えるのをやめていて、total_size は下限。`),
   next_page_token: nextPageToken,
 })
 export type ProjectSearchOutput = z.infer<typeof ProjectSearchOutput>

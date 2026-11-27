@@ -30,7 +30,7 @@ export async function getProject(ctx: Ctx, input: { project_id: string }): Promi
 /** 事業の年度を探す。条件には事業の始め・終え・親も使える（検索の中で事業と JOIN する）。行の事業は projects で返す */
 export async function searchProjects(ctx: Ctx, input: SearchInput): Promise<ProjectSearchOutput> {
   const byYearKey = PROJECT_YEAR_KEY_COLUMNS.some((c) => (input.where as Record<string, { eq?: unknown } | undefined> | undefined)?.[c]?.eq !== undefined)
-  const { rows, next_page_token, total_size, total_size_capped } = await searchRows(byYearKey ? PROJECT_YEAR_SEARCH_BY_YEAR_KEY : PROJECT_YEAR_SEARCH, null, ctx, input, { count: true })
+  const { rows, next_page_token } = await searchRows(byYearKey ? PROJECT_YEAR_SEARCH_BY_YEAR_KEY : PROJECT_YEAR_SEARCH, null, ctx, input)
   const years = rows.map((r) => Object.fromEntries(Y.columns.map((c) => [c.name, r[c.name] ?? null])))
   const ids = [...new Set(years.map((r) => r.project_id as string))].sort()
   const { db } = ctx
@@ -39,5 +39,5 @@ export async function searchProjects(ctx: Ctx, input: SearchInput): Promise<Proj
     ? await db.batch(chunks.map((c) => db.prepare(`SELECT ${PROJECT_SELECT_LIST} FROM ${PROJECT_VIEW} WHERE "project_id" IN (${c.map(() => '?').join(', ')}) ORDER BY "project_id"`).bind(...c)))
     : []
   const projects = found.flatMap((r) => r.results.map((p) => toRow(PROJECT_COLUMNS, p as Record<string, unknown>)))
-  return { project_years: years, projects, total_size, total_size_capped, next_page_token } as ProjectSearchOutput
+  return { project_years: years, projects, next_page_token } as ProjectSearchOutput
 }

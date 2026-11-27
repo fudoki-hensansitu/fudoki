@@ -187,13 +187,13 @@ describe('事業の読み込み（/api/projects）', () => {
   test('内部の RPC で読み、引数の形が違えば 400、流量の binding が無ければ 503', async () => {
     const seen: unknown[] = []
     const WEB: Env['WEB'] = {
-      call: async (name, input) => (seen.push([name, input]), { ok: true, value: { project_years: [], projects: [], total_size: 0, total_size_capped: false, next_page_token: null } as never }),
+      call: async (name, input) => (seen.push([name, input]), { ok: true, value: { project_years: [], projects: [], next_page_token: null } as never }),
       tools: async () => [],
       runTool: async () => ({ ok: false, status: 404, code: 'NOT_FOUND', message: '' }),
     }
     const ok = await post({ query }, { ...env, WEB })
     expect(ok.status).toBe(200)
-    expect(await ok.json()).toEqual({ rows: [], total: 0, capped: false, next: null })
+    expect(await ok.json()).toEqual({ rows: [], next: null })
     expect(seen.map((s) => (s as [string])[0])).toEqual(['search_projects'])
     expect((await post({ query: { ...query, code: 'nakano' } })).status).toBe(400)
     expect((await post({ query: { ...query, subjects: ['x'] } })).status).toBe(400)
