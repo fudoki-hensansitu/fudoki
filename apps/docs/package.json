@@ -4,13 +4,14 @@
   "type": "module",
   "scripts": {
     "openapi": "bun run --cwd ../api openapi ../docs/openapi.json",
-    "build": "bun run openapi && blume build && mise exec -- cf deploy --dry-run",
-    "deploy": "bun run openapi && blume build && mise exec -- cf deploy",
+    "build": "bun run openapi && blume build && cf deploy --dry-run",
+    "deploy": "bun run openapi && blume build && cf deploy",
     "dev": "bun run openapi && blume dev",
     "doctor": "bun run openapi && blume doctor",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "cf": "1.0.0-rc.0",
     "@cloudflare/config": "catalog:",
     "@cloudflare/vite-plugin": "catalog:",
     "@types/bun": "catalog:",
