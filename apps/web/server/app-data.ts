@@ -135,7 +135,7 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
   const fallback: Kind | undefined = tab === 'projects' && me.kind === 'settlement' && has('initial') ? 'initial' : undefined
   const projectPage = tab === 'projects'
     ? Promise.all([readListPage(apiCall(env), queryOf(docKind)), fallback ? readListPage(apiCall(env), queryOf(fallback)).catch(() => undefined) : undefined]).then(([own, alt]) =>
-        own.total === 0 && alt && alt.total > 0 ? { kind: fallback!, page: alt } : { kind: docKind, page: own },
+        own.rows.length === 0 && alt && alt.rows.length > 0 ? { kind: fallback!, page: alt } : { kind: docKind, page: own },
       )
     : Promise.resolve(undefined)
   const ownSubjects = subjectsAs(docKind)
@@ -164,7 +164,7 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
     ...(prev ? { prev: { year: prev.year, kind: prev.kind } } : {}),
     // 会計の札は款項目と同じ資料のものだけ渡す（事業のタブで当初予算の事業を並べたときは、決算で読んだ札を捨てる）
     ...(accountTotals && subjects.kind === docKind ? { accounts: accountTotals } : {}),
-    ...(allPage ? { hasProjects: allPage.total > 0, lists: { [listKey(allQuery)]: allPage } } : { lists: {} }),
+    ...(allPage ? { hasProjects: allPage.rows.length > 0, lists: { [listKey(allQuery)]: allPage } } : { lists: {} }),
     // ホームは残りを読まないので、待つものが無い
     ...(tab ? { pending: true as const } : {}),
   }
@@ -182,7 +182,7 @@ export async function loadYearExtras(env: Env, code: string, year: number, kind:
     readListPage(apiCall(env), allQuery),
     newQuery ? readListPage(apiCall(env), newQuery) : undefined,
   ])
-  return { hasProjects: allPage.total > 0, lists: { [listKey(allQuery)]: allPage, ...(newQuery && newPage ? { [listKey(newQuery)]: newPage } : {}) } }
+  return { hasProjects: allPage.rows.length > 0, lists: { [listKey(allQuery)]: allPage, ...(newQuery && newPage ? { [listKey(newQuery)]: newPage } : {}) } }
 }
 
 /** 前の年度の分野ごとの末端の科目。やめた事業を分野で絞るときだけ、画面が読む */

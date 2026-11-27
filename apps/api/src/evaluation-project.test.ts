@@ -143,20 +143,10 @@ describe('事業', () => {
     const hit = ProjectSearchOutput.parse(await (await post('/v1/projects:search', { fiscal_year: { min: 2024, max: 2026 }, where: { name: { contains: '子育て' } } })).json())
     expect(hit.project_years.map((y) => y.fiscal_year).sort()).toEqual([2024, 2026])
     expect(hit.projects.map((p) => [p.project_id, p.first_year_kind, p.last_year_kind])).toEqual([[P, 'before_coverage', 'latest']])
-    expect([hit.total_size, hit.total_size_capped]).toEqual([2, false])
     // 事業の列（親・終えた年度）は project にだけあり、検索の中で JOIN して絞る
     const top = ProjectSearchOutput.parse(await (await post('/v1/projects:search', { fiscal_year: { min: 2024, max: 2026 }, where: { parent_project_id: { is_null: true }, last_year_kind: { eq: ['latest'] } } })).json())
     expect(top.project_years.map((y) => y.project_id)).toEqual([P, P])
     const ended = ProjectSearchOutput.parse(await (await post('/v1/projects:search', { fiscal_year: { min: 2024, max: 2026 }, where: { last_year_kind: { eq: ['confirmed'] } } })).json())
-    expect([ended.project_years, ended.projects, ended.total_size]).toEqual([[], [], 0])
-  })
-
-  test('合計件数は 10,000 で数えるのをやめる', async () => {
-    const add = sqlite.prepare(`INSERT INTO project_year ("project_year_id", "project_id", "fiscal_year", "initial_expenditure_detail_id") VALUES (?, ?, 2025, 'd-initial')`)
-    sqlite.transaction(() => {
-      for (let i = 0; i < 10_001; i++) add.run(`py-${i}`, P)
-    })()
-    const body = ProjectSearchOutput.parse(await (await post('/v1/projects:search', { fiscal_year: { min: 2025, max: 2025 }, page_size: 1 })).json())
-    expect([body.total_size, body.total_size_capped, body.project_years.length]).toEqual([10_000, true, 1])
+    expect([ended.project_years, ended.projects]).toEqual([[], []])
   })
 })

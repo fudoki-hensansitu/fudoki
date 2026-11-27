@@ -50,7 +50,7 @@ export type ListQuery = {
   /** 事業名（所管課を含む）で絞る */
   q?: string
 }
-export type ListPage = { rows: ProjRow[]; total: number; capped: boolean; next: string | null }
+export type ListPage = { rows: ProjRow[]; next: string | null }
 
 export const listKey = (q: ListQuery) => JSON.stringify([q.code, q.year, q.kind, q.filter, q.prevKind ?? null, q.subjects ?? null, q.cofog ?? null, q.q?.trim() || null])
 
@@ -117,11 +117,11 @@ function bodyOf(q: ListQuery, pageSize: number, token?: string): { body: SearchB
 
 /** 一覧の1頁（サーバー）。分野・目の科目が無ければ空 */
 export async function readListPage(call: ApiCall, q: ListQuery, token?: string): Promise<ListPage> {
-  if (q.subjects && !q.subjects.length) return { rows: [], total: 0, capped: false, next: null }
+  if (q.subjects && !q.subjects.length) return { rows: [], next: null }
   const { body, kind } = bodyOf(q, token ? NEXT_PAGE : FIRST_PAGE, token)
   const r = await searchYears(call, body)
   const rows = await withGrades(call, rowsOf(r, kind))
-  return { rows, total: r.total_size, capped: r.total_size_capped, next: r.next_page_token ?? null }
+  return { rows, next: r.next_page_token ?? null }
 }
 
 /** 頁の事業に、その年度の評価シートの A〜D を付ける。評価シートを読めなくても一覧は出す */
