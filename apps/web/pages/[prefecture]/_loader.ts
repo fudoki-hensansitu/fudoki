@@ -212,7 +212,8 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
   const latestSettled = props.data.settlementYears.at(-1)
   const newest = year === appPageYears(props.data)[0]
   const [snapshot, expenditureFlow, revenueFlow, settledSummary] = await Promise.all([
-    entry ? within(loadYearSnapshot(env, entry, year, { tab: props.tab === 'questions' ? 'money' : (props.tab ?? 'overview') }), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
+    // 事業の頁は事業の中身（projectFull）だけを出すので、款項目だけを読み、事業の一覧は読まない（閉じると事業のタブの頁へ移り、そこで読む）
+    entry ? within(loadYearSnapshot(env, entry, year, props.project ? {} : { tab: props.tab === 'questions' ? 'money' : (props.tab ?? 'overview') }), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
     entry && phase ? within(loadFlowParts(env, entry.code, year, 'moku', phase, account), FLOW_WAIT_MS)
       // 款が1つも無い流れは読めなかったものとして扱う（CDN に置かず、画面が読み直しを出す）
       .then(({ drills, loose }): PageFlow | undefined => (drills.length ? { year, phase, account, drills, loose } : undefined))
@@ -238,7 +239,7 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
   const pageYears = entry ? appYears(entry) : []
   const kind = pageYears.find((y) => y.year === year)?.kind
   const prevYear = pageYears.find((y) => y.year === year - 1)
-  const extras = entry && kind ? defer(() => loadYearExtras(env, entry.code, year, kind, prevYear)) : undefined
+  const extras = entry && kind && !props.project ? defer(() => loadYearExtras(env, entry.code, year, kind, prevYear)) : undefined
   const mokuIdsOf = (drills: PageFlow['drills']) => drills.flatMap((k) => k.kou.flatMap((o) => o.moku.map((m) => m.id)))
   const mokuIds = flow ? [...mokuIdsOf(flow.drills), ...flow.loose.map((m) => m.id)] : []
   // 歳入の目の節も同じ defer で渡す（目の id は歳出と重ならない）。歳入の節が読めなくても歳出の節は出す
